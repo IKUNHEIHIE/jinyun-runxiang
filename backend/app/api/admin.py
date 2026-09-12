@@ -247,11 +247,15 @@ def test_llm_connection(
     """真实大模型接口 HTTP 探测与连通性探活"""
     actual_key = (req.api_key or "").strip()
     if not actual_key or "*" in actual_key:
-        setting = db.query(SystemSetting).filter(SystemSetting.key == "llm_config").first()
-        if setting and setting.value_json and setting.value_json.get("api_key"):
-            saved_key = setting.value_json["api_key"]
-            if "*" not in saved_key:
-                actual_key = saved_key
+        cfg = db.query(SysConfig).filter(SysConfig.config_key == "llm_settings").first()
+        if cfg and cfg.config_value:
+            try:
+                saved_val = json.loads(cfg.config_value)
+                saved_key = saved_val.get("api_key", "")
+                if saved_key and "*" not in saved_key:
+                    actual_key = saved_key
+            except Exception:
+                pass
 
     if not actual_key or "*" in actual_key or len(actual_key) < 8:
         return error_response(code=4001, message="请先输入有效的 API Key 后再发起连通性测试")
@@ -266,7 +270,7 @@ def test_llm_connection(
             resp = client.post(
                 endpoint,
                 headers={
-                    "Authorization": f"Bearer {req.api_key.strip()}",
+                    "Authorization": f"Bearer {actual_key}",
                     "Content-Type": "application/json"
                 },
                 json={
