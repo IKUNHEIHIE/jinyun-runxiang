@@ -46,7 +46,7 @@
         @click="openPostDetail(post.id)"
       >
         <div class="post-cover">
-          <img :src="post.cover_url" :alt="post.title" />
+          <img :src="post.cover_url" :alt="post.title" @error="handleImageError" />
           <span v-if="post.heritage_master_like" class="master-badge">
             ❖ 非遗大师点赞
           </span>
@@ -61,7 +61,7 @@
 
           <div class="post-meta">
             <div class="author-info">
-              <el-avatar :size="24" :src="post.author?.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150'" />
+              <el-avatar :size="24" :src="post.author?.avatar_url || '/static/images/default_avatar.svg'" />
               <span class="author-name">{{ post.author?.nickname || '非遗学徒' }}</span>
             </div>
 
@@ -84,9 +84,9 @@
       </template>
 
       <div v-if="activePost" class="drawer-content">
-        <img :src="activePost.cover_url" class="drawer-cover" />
+        <img :src="activePost.cover_url" class="drawer-cover" @error="handleImageError" />
         <div class="drawer-author-bar">
-          <el-avatar :size="36" :src="activePost.author?.avatar_url" />
+          <el-avatar :size="36" :src="activePost.author?.avatar_url || '/static/images/default_avatar.svg'" />
           <div>
             <div class="author-name-lg font-serif">{{ activePost.author?.nickname }}</div>
             <div class="author-time">{{ activePost.created_at }} · 乡村美育创作</div>
@@ -177,9 +177,16 @@ const publishing = ref(false)
 const newPost = ref({
   title: '',
   category: 'SHADOW_PUPPET',
-  cover_url: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600',
+  cover_url: '/static/images/shadow_puppet_1.svg',
   content: ''
 })
+
+const handleImageError = (e: Event) => {
+  const target = e.target as HTMLImageElement
+  if (target && target.src && !target.src.endsWith('/static/images/shadow_puppet_1.svg')) {
+    target.src = '/static/images/shadow_puppet_1.svg'
+  }
+}
 
 const sortOptions = [
   { key: 'latest', label: '最新发布' },

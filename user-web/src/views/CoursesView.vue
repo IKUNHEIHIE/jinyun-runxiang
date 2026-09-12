@@ -47,7 +47,7 @@
         @click="openDetail(course.id)"
       >
         <div class="thumb-wrapper">
-          <img :src="course.cover_url" :alt="course.title" />
+          <img :src="course.cover_url" :alt="course.title" @error="handleImgError" />
           <span class="tag-age">{{ formatAge(course.age_group) }}</span>
         </div>
         <div class="item-content">
@@ -195,6 +195,13 @@ const fetchCourses = async () => {
   } catch (e) {
   } finally {
     loading.value = false
+  }
+}
+
+const handleImgError = (e: Event) => {
+  const target = e.target as HTMLImageElement
+  if (target && target.src && !target.src.endsWith('/static/images/shadow_puppet_1.svg')) {
+    target.src = '/static/images/shadow_puppet_1.svg'
   }
 }
 

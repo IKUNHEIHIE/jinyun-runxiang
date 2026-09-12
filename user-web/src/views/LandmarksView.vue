@@ -16,7 +16,7 @@
         class="paper-card landmark-card"
       >
         <div class="lm-cover">
-          <img :src="item.cover_url" :alt="item.name" />
+          <img :src="item.cover_url" :alt="item.name" @error="handleImgError" />
           <span class="district-badge">{{ item.district }}</span>
         </div>
 
@@ -102,6 +102,13 @@ const fetchLandmarks = async () => {
   } catch (e) {
   } finally {
     loading.value = false
+  }
+}
+
+const handleImgError = (e: Event) => {
+  const target = e.target as HTMLImageElement
+  if (target && target.src && !target.src.endsWith('/static/images/landmark_duleyi.svg')) {
+    target.src = '/static/images/landmark_duleyi.svg'
   }
 }
 

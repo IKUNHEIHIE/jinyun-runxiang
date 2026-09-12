@@ -50,7 +50,7 @@
 
       <div class="hero-visual">
         <div class="visual-card paper-card">
-          <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600" alt="津门非遗手作" class="visual-img" />
+          <img :src="'/static/images/shadow_puppet_1.svg'" alt="津门非遗手作" class="visual-img" />
           <div class="visual-caption">
             <span class="tag-heritage">今日非遗聚焦</span>
             <h4 class="font-serif">津派皮影戏 · 巧手镂空</h4>

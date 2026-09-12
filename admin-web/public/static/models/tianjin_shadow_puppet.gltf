@@ -1,0 +1,105 @@
+{
+  "asset": {
+    "version": "2.0",
+    "generator": "津韵润乡·天津非遗数字工坊3D生成器",
+    "copyright": "Tianjin Intangible Cultural Heritage Digital Lab"
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "DefaultScene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "津门皮影·文生可动骨骼数字模型",
+      "mesh": 0
+    }
+  ],
+  "materials": [
+    {
+      "name": "津派皮影透光驴皮材质",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.84,
+          0.35,
+          0.2,
+          1.0
+        ],
+        "metallicFactor": 0.1,
+        "roughnessFactor": 0.6
+      },
+      "doubleSided": true
+    }
+  ],
+  "meshes": [
+    {
+      "name": "ShadowPuppetMesh",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0
+          },
+          "indices": 1,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 344,
+      "uri": "shadow_puppet.bin"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 264,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 264,
+      "byteLength": 80,
+      "target": 34963
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 22,
+      "type": "VEC3",
+      "max": [
+        0.9,
+        2.2,
+        0.0
+      ],
+      "min": [
+        -0.9,
+        -1.2,
+        0.0
+      ]
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 0,
+      "componentType": 5123,
+      "count": 39,
+      "type": "SCALAR",
+      "max": [
+        21
+      ],
+      "min": [
+        0
+      ]
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="grad_landmark_guangdong_guild" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBF5F2"/>
+      <stop offset="100%" stop-color="#F4E5DC"/>
+    </linearGradient>
+    <filter id="shadow_landmark_guangdong_guild" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- 背景底色与宣纸纹理 -->
+  <rect width="600" height="400" fill="url(#grad_landmark_guangdong_guild)"/>
+  <rect x="15" y="15" width="570" height="370" fill="none" stroke="#CB4335" stroke-width="1.5" stroke-dasharray="8 4" opacity="0.6"/>
+  <rect x="22" y="22" width="556" height="356" fill="none" stroke="#CB4335" stroke-width="0.75" opacity="0.4"/>
+
+  <!-- 四角传统纹样回纹装饰 -->
+  <g stroke="#CB4335" stroke-width="2" fill="none" opacity="0.7">
+    <path d="M 28 45 L 28 28 L 45 28 M 34 40 L 34 34 L 40 34"/>
+    <path d="M 572 45 L 572 28 L 555 28 M 566 40 L 566 34 L 560 34"/>
+    <path d="M 28 355 L 28 372 L 45 372 M 34 360 L 34 366 L 40 366"/>
+    <path d="M 572 355 L 572 372 L 555 372 M 566 360 L 566 366 L 560 366"/>
+  </g>
+
+  <!-- 艺术图形主体 -->
+  <g transform="translate(300, 160)" filter="url(#shadow_landmark_guangdong_guild)">
+    
+<circle cx="0" cy="0" r="70" fill="#8B4A2F" opacity="0.08"/>
+<!-- 殿顶飞檐斗栱 -->
+<path d="M -60 -15 Q -40 -40 0 -45 Q 40 -40 60 -15 Q 40 -22 0 -22 Q -40 -22 -60 -15 Z" fill="#B71C1C"/>
+<rect x="-42" y="-14" width="84" height="8" fill="#D6A85C"/>
+<!-- 立柱与匾额 -->
+<rect x="-35" y="-6" width="70" height="48" fill="#FBF7EE" stroke="#8B4A2F" stroke-width="2"/>
+<rect x="-16" y="-2" width="32" height="14" fill="#B71C1C" rx="2"/>
+<text x="0" y="9" text-anchor="middle" font-size="8" fill="#FFD54F" font-weight="bold">独乐古刹</text>
+<!-- 廊柱 -->
+<rect x="-30" y="8" width="6" height="34" fill="#8B4A2F"/>
+<rect x="24" y="8" width="6" height="34" fill="#8B4A2F"/>
+<rect x="-10" y="14" width="20" height="28" fill="#5D4037"/>
+
+  </g>
+
+  <!-- 顶部标签徽章 -->
+  <g transform="translate(300, 55)">
+    <rect x="-80" y="-14" width="160" height="28" rx="14" fill="#CB4335" opacity="0.15"/>
+    <rect x="-78" y="-12" width="156" height="24" rx="12" fill="none" stroke="#CB4335" stroke-width="1" opacity="0.6"/>
+    <text text-anchor="middle" y="5" fill="#CB4335" font-size="12" font-family="'Noto Serif SC', 'PingFang SC', serif" font-weight="600" letter-spacing="2">❖ 历史风貌建筑 ❖</text>
+  </g>
+
+  <!-- 底部标题与说明 -->
+  <text x="300" y="315" text-anchor="middle" fill="#2C241E" font-size="22" font-weight="bold" font-family="'Noto Serif SC', 'SimSun', serif" letter-spacing="1">广东会馆戏楼 · 津门皮影剧场</text>
+  <text x="300" y="345" text-anchor="middle" fill="#786B61" font-size="13" font-family="'Noto Sans SC', sans-serif" letter-spacing="0.5">全木质古典戏楼与非遗展演现场</text>
+
+  <!-- 右下角朱砂印章 -->
+  <g transform="translate(520, 320)">
+    <rect x="0" y="0" width="34" height="34" rx="4" fill="#A8382B" opacity="0.9"/>
+    <rect x="2" y="2" width="30" height="30" rx="3" fill="none" stroke="#FDE2DE" stroke-width="0.8"/>
+    <text x="17" y="15" text-anchor="middle" fill="#FFF" font-size="9" font-family="serif" font-weight="bold">津韵</text>
+    <text x="17" y="27" text-anchor="middle" fill="#FFF" font-size="9" font-family="serif" font-weight="bold">润乡</text>
+  </g>
+</svg>

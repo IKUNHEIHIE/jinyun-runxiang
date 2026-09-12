@@ -24,7 +24,7 @@
         class="paper-card product-card"
       >
         <div class="prod-thumb">
-          <img :src="prod.cover_url" :alt="prod.name" />
+          <img :src="prod.cover_url" :alt="prod.name" @error="handleImgError" />
           <span class="fund-rate-badge">
             ♥ {{ prod.fund_rate_percent }}% 捐赠美育基金
           </span>
@@ -53,7 +53,7 @@
     <el-dialog v-model="orderModal" title="非遗手作认购与美育助力" width="560px">
       <div v-if="selectedProd" class="order-form">
         <div class="selected-prod-card">
-          <img :src="selectedProd.cover_url" class="order-thumb" />
+          <img :src="selectedProd.cover_url" class="order-thumb" @error="handleImgError" />
           <div>
             <h4 class="font-serif">{{ selectedProd.name }}</h4>
             <p class="order-tip">
@@ -137,6 +137,13 @@ const fetchProducts = async () => {
   } catch (e) {
   } finally {
     loading.value = false
+  }
+}
+
+const handleImgError = (e: Event) => {
+  const target = e.target as HTMLImageElement
+  if (target && target.src && !target.src.endsWith('/static/images/product_diy_kit.svg')) {
+    target.src = '/static/images/product_diy_kit.svg'
   }
 }
 
