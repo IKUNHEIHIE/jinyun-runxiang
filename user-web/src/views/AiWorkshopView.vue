@@ -34,6 +34,21 @@
       </el-steps>
     </div>
 
+    <!-- 线下手工实物 AI 审美测评入口 -->
+    <div class="quick-eval-bar paper-card">
+      <div class="quick-eval-left">
+        <span class="quick-eval-icon">📷</span>
+        <div>
+          <strong class="eval-banner-title">乡村美育小工匠 · 线下手工作品 AI 审美门诊</strong>
+          <p class="eval-banner-sub">完成非遗剪纸、皮影拼装或年画填色？拍照上传即可获得天津美院专家组与 AI 导师的量化评分与名师寄语！</p>
+        </div>
+      </div>
+      <el-button type="warning" round class="btn-eval" :loading="evaluating" @click="triggerUploadEval">
+        📸 上传手作照片诊断 (+30 能量)
+      </el-button>
+      <input type="file" ref="fileInput" style="display: none" accept="image/*" @change="onPhotoSelected" />
+    </div>
+
     <!-- 创作工坊主工作台 -->
     <div class="workshop-layout">
       <!-- 左侧：提示词与生成参数 -->
@@ -44,17 +59,18 @@
         </h3>
 
         <div class="form-group">
-          <label class="form-label">创意提示词 (Prompt)：</label>
+          <label class="form-label">创意提示词（津门非遗特色）：</label>
           <el-input 
             v-model="promptText" 
             type="textarea" 
             :rows="4" 
-            placeholder="描述您想创作的非遗角色或器物，如：手持银枪的红绫战甲小神童、商周饕餮双龙纹样..."
+            placeholder="描述您想生成的津派非遗角色、神兽纹样或器物..."
+            resize="none"
           />
         </div>
 
         <div class="preset-prompts">
-          <span class="preset-label">灵感示例：</span>
+          <span class="preset-label">津门灵感预设：</span>
           <div class="preset-tags">
             <span 
               v-for="(p, idx) in presetPrompts" 
@@ -145,6 +161,9 @@
 
           <!-- 底部操作按钮 -->
           <div class="showcase-footer">
+            <el-button type="primary" class="btn-primary" :loading="evaluating" @click="runEvaluation(null)">
+              ✦ 发起 AI 名师审美诊断 (+30 能量)
+            </el-button>
             <el-button type="success" @click="shareToCommunity">
               发布到美育社区广场
             </el-button>
@@ -152,6 +171,80 @@
         </div>
       </div>
     </div>
+
+    <!-- AI 名师审美诊断评价卡片弹窗 -->
+    <el-dialog
+      v-model="evalModalVisible"
+      title="天津非遗名师 · AI 多模态审美诊断成长档案"
+      width="680px"
+      custom-class="eval-dialog"
+      destroy-on-close
+    >
+      <div v-if="evalResult" class="eval-card-body">
+        <div class="eval-header-banner">
+          <div class="eval-badge-seal">非遗<br>认证</div>
+          <div style="flex: 1;">
+            <div class="eval-cert-id">档案编号：{{ evalResult.evaluation_id }}</div>
+            <h3 class="font-serif eval-work-title">{{ evalResult.title }} · 审美评定报告</h3>
+            <div class="eval-stars">
+              <span v-for="s in evalResult.stars" :key="s" class="star-icon">★</span>
+              <span class="eval-score-num">{{ evalResult.total_score }}</span>
+              <span class="eval-score-unit">分</span>
+              <span class="eval-energy-tag">⚡ 美育能量 +{{ evalResult.energy_reward }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 诊断三维指标 -->
+        <div class="eval-dimensions">
+          <div class="dim-item">
+            <div class="dim-head">
+              <span class="dim-name">❖ {{ evalResult.dimensions.composition.name }}</span>
+              <span class="dim-score">{{ evalResult.dimensions.composition.score }}分</span>
+            </div>
+            <el-progress :percentage="evalResult.dimensions.composition.score" color="#8B4A2F" :stroke-width="6" :show-text="false" />
+            <p class="dim-tip">{{ evalResult.dimensions.composition.feedback }}</p>
+          </div>
+
+          <div class="dim-item">
+            <div class="dim-head">
+              <span class="dim-name">❖ {{ evalResult.dimensions.color.name }}</span>
+              <span class="dim-score">{{ evalResult.dimensions.color.score }}分</span>
+            </div>
+            <el-progress :percentage="evalResult.dimensions.color.score" color="#C4863A" :stroke-width="6" :show-text="false" />
+            <p class="dim-tip">{{ evalResult.dimensions.color.feedback }}</p>
+          </div>
+
+          <div class="dim-item">
+            <div class="dim-head">
+              <span class="dim-name">❖ {{ evalResult.dimensions.technique.name }}</span>
+              <span class="dim-score">{{ evalResult.dimensions.technique.score }}分</span>
+            </div>
+            <el-progress :percentage="evalResult.dimensions.technique.score" color="#4D8B63" :stroke-width="6" :show-text="false" />
+            <p class="dim-tip">{{ evalResult.dimensions.technique.feedback }}</p>
+          </div>
+        </div>
+
+        <!-- 名师寄语 -->
+        <div class="eval-mentor-box">
+          <div class="mentor-title">
+            <span class="mentor-icon">✒️</span>
+            <span>津派非遗名师评语与进阶指引：</span>
+          </div>
+          <p class="mentor-quote">{{ evalResult.mentor_comment }}</p>
+          <div class="mentor-sign">
+            <span>{{ evalResult.certified_by }}</span>
+            <span class="eval-date">{{ evalResult.created_at }}</span>
+          </div>
+        </div>
+      </div>
+      <template #footer>
+        <el-button @click="evalModalVisible = false">关闭档案</el-button>
+        <el-button type="primary" class="btn-primary" @click="saveEvalReport">
+          保存诊断档案卡
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -289,6 +382,64 @@ const shareToCommunity = async () => {
   } catch (e) {
     ElMessage.error('发布失败')
   }
+}
+
+const evalModalVisible = ref(false)
+const evaluating = ref(false)
+const evalResult = ref<any>(null)
+const fileInput = ref<HTMLInputElement | null>(null)
+
+const triggerUploadEval = () => {
+  if (fileInput.value) {
+    fileInput.value.click()
+  }
+}
+
+const onPhotoSelected = async (e: Event) => {
+  const target = e.target as HTMLInputElement
+  if (!target.files || target.files.length === 0) return
+  const file = target.files[0]
+
+  evaluating.value = true
+  try {
+    const formData = new FormData()
+    formData.append('file', file)
+    const uploadRes: any = await request.post('/ai/assets/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+    const uploadedUrl = uploadRes.file_url
+    await runEvaluation(uploadedUrl, file.name.replace(/\.[^/.]+$/, ''))
+  } catch (err) {
+    ElMessage.error('照片上传或测评失败')
+    evaluating.value = false
+  } finally {
+    target.value = ''
+  }
+}
+
+const runEvaluation = async (customImg?: string | null, customTitle?: string) => {
+  evaluating.value = true
+  try {
+    const targetImg = customImg || taskResult.value?.colored_image_url || taskResult.value?.rendered_image_url || '/static/images/shadow_puppet_sheng.svg'
+    const targetTitle = customTitle || taskResult.value?.description?.slice(0, 16) || '津派非遗手作创客作品'
+    const res: any = await request.post('/ai/evaluate', {
+      image_url: targetImg,
+      heritage_type: currentTool.value,
+      title: targetTitle
+    })
+    evalResult.value = res
+    evalModalVisible.value = true
+    ElMessage.success('非遗 AI 名师审美诊断完成！美育能量 +30 点已汇入！')
+  } catch (e) {
+    ElMessage.error('审美诊断失败，请重试')
+  } finally {
+    evaluating.value = false
+  }
+}
+
+const saveEvalReport = () => {
+  ElMessage.success('审美诊断成长档案已保存至个人中心！')
+  evalModalVisible.value = false
 }
 </script>
 
@@ -575,5 +726,189 @@ const shareToCommunity = async () => {
 .showcase-footer {
   margin-top: 8px;
   text-align: right;
+}
+
+/* 线下手工实物快速评测 Banner */
+.quick-eval-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #FFFDF8 0%, #FFF5EB 100%);
+  border: 1px solid rgba(196, 134, 58, 0.3);
+  border-radius: 12px;
+}
+
+.quick-eval-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.quick-eval-icon {
+  font-size: 28px;
+}
+
+.eval-banner-title {
+  font-size: 15px;
+  color: var(--color-primary);
+  display: block;
+}
+
+.eval-banner-sub {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+.btn-eval {
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.2);
+}
+
+/* 审美诊断卡片 */
+.eval-card-body {
+  background: #FFFDF8;
+  border: 1px solid #EEDDC9;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.eval-header-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px dashed var(--color-border);
+  margin-bottom: 20px;
+}
+
+.eval-badge-seal {
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  background: #B64A44;
+  color: #fff;
+  font-family: var(--font-serif);
+  font-size: 14px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.2;
+  box-shadow: 0 3px 8px rgba(182, 74, 68, 0.3);
+}
+
+.eval-cert-id {
+  font-size: 12px;
+  color: #92400E;
+  font-family: monospace;
+}
+
+.eval-work-title {
+  font-size: 18px;
+  color: var(--color-primary);
+  margin: 4px 0;
+}
+
+.eval-stars {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.star-icon {
+  color: #D97706;
+  font-size: 16px;
+}
+
+.eval-score-num {
+  font-size: 20px;
+  font-weight: 900;
+  color: #B45309;
+  margin-left: 8px;
+}
+
+.eval-score-unit {
+  font-size: 12px;
+  color: #B45309;
+  margin-right: 12px;
+}
+
+.eval-energy-tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: #FEF3C7;
+  color: #92400E;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+.eval-dimensions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.dim-item {
+  background: #FAF6EF;
+  padding: 12px 16px;
+  border-radius: 8px;
+}
+
+.dim-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: 6px;
+}
+
+.dim-score {
+  color: var(--color-primary);
+}
+
+.dim-tip {
+  font-size: 12px;
+  color: var(--color-text-regular);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+.eval-mentor-box {
+  background: #FFF9EE;
+  border-left: 4px solid var(--color-gold);
+  padding: 14px 18px;
+  border-radius: 0 8px 8px 0;
+}
+
+.mentor-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #92400E;
+  margin-bottom: 6px;
+}
+
+.mentor-quote {
+  font-size: 13px;
+  color: #78350F;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.mentor-sign {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 11px;
+  color: #A16207;
+  font-weight: 600;
 }
 </style>

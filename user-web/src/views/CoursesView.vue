@@ -96,15 +96,27 @@
           ></video>
           <div class="video-bar">
             <span>正在学习：{{ activeChapter?.title || currentDetail.title }}</span>
-            <el-button 
-              type="primary" 
-              size="small" 
-              class="btn-primary"
-              :disabled="activeChapter?.progress?.completed"
-              @click="reportFinish(currentDetail.id, activeChapter?.id || 1)"
-            >
-              {{ activeChapter?.progress?.completed ? '已完成学习' : '完成本讲学习打卡 (+10 能量)' }}
-            </el-button>
+            <div class="video-bar-actions">
+              <el-button 
+                v-if="currentDetail.quiz_id" 
+                type="warning" 
+                size="small" 
+                round 
+                class="btn-quiz-start"
+                @click="openQuizModal"
+              >
+                ❖ 课中非遗知识挑战 (+25 能量)
+              </el-button>
+              <el-button 
+                type="primary" 
+                size="small" 
+                class="btn-primary"
+                :disabled="activeChapter?.progress?.completed"
+                @click="reportFinish(currentDetail.id, activeChapter?.id || 1)"
+              >
+                {{ activeChapter?.progress?.completed ? '已完成学习' : '完成本讲打卡 (+10 能量)' }}
+              </el-button>
+            </div>
           </div>
         </div>
 
@@ -140,6 +152,93 @@
           </div>
         </div>
       </div>
+    </el-dialog>
+
+    <!-- 课中非遗知识挑战弹窗 -->
+    <el-dialog
+      v-model="quizModalVisible"
+      title="非遗小课堂 · 互动闯关挑战"
+      width="640px"
+      custom-class="quiz-dialog"
+      destroy-on-close
+    >
+      <div v-if="quizData" class="quiz-modal-body">
+        <div class="quiz-head">
+          <span class="quiz-badge">❖ 考考你</span>
+          <h3 class="font-serif quiz-title">{{ quizData.title }}</h3>
+          <span class="quiz-energy-tip">及格线 {{ quizData.pass_score }} 分 · 通关奖励 +{{ quizData.energy_reward }} 能量</span>
+        </div>
+
+        <div v-if="!quizSubmitted" class="quiz-questions-list">
+          <div 
+            v-for="(q, qIdx) in quizData.questions" 
+            :key="q.id" 
+            class="quiz-q-card"
+          >
+            <div class="q-title">
+              <span class="q-seq">{{ qIdx + 1 }}.</span>
+              <span>{{ q.content }}</span>
+              <span class="q-score">({{ q.score }}分)</span>
+            </div>
+            <div class="q-options">
+              <el-radio-group v-model="userAnswers[q.id]">
+                <el-radio 
+                  v-for="opt in q.options" 
+                  :key="opt.key" 
+                  :value="opt.key"
+                  class="quiz-option-radio"
+                >
+                  <span class="opt-key">{{ opt.key }}.</span> {{ opt.text }}
+                </el-radio>
+              </el-radio-group>
+            </div>
+          </div>
+        </div>
+
+        <!-- 提交后的评测与解析展示 -->
+        <div v-else class="quiz-result-view">
+          <div class="result-score-banner" :class="quizResult.passed ? 'pass' : 'fail'">
+            <div class="score-number font-serif">{{ quizResult.score }} <span class="score-unit">分</span></div>
+            <div class="score-status">
+              {{ quizResult.passed ? '🎉 恭喜闯关成功！非遗工艺要点掌握优秀' : '💪 距离通关只差一点，仔细阅读名师解析再试一次吧！' }}
+            </div>
+            <div v-if="quizResult.passed" class="reward-tag">
+              ⚡ 已斩获美育能量 +{{ quizResult.energy_reward }} 点
+            </div>
+          </div>
+
+          <div class="quiz-explanations">
+            <h4 class="font-serif exp-heading">❖ 名师工艺解析与要点回顾</h4>
+            <div 
+              v-for="(d, dIdx) in quizResult.details" 
+              :key="dIdx" 
+              class="exp-item"
+              :class="d.is_correct ? 'exp-correct' : 'exp-wrong'"
+            >
+              <div class="exp-status-row">
+                <span>第 {{ dIdx + 1 }} 题：{{ d.is_correct ? '✓ 作答正确' : '✕ 作答错误' }}</span>
+                <span class="exp-answer-tag">正确答案：{{ d.correct_answers.join(', ') }}</span>
+              </div>
+              <p class="exp-text">{{ d.explanation }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <template #footer>
+        <div v-if="!quizSubmitted">
+          <el-button @click="quizModalVisible = false">稍后再测</el-button>
+          <el-button type="primary" class="btn-primary" :loading="submittingQuiz" @click="submitQuizAction">
+            提交非遗答卷
+          </el-button>
+        </div>
+        <div v-else>
+          <el-button @click="resetQuiz">重新挑战</el-button>
+          <el-button type="primary" class="btn-primary" @click="quizModalVisible = false">
+            完成闯关并返回
+          </el-button>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -254,6 +353,64 @@ const reportFinish = async (courseId: number, chapterId: number) => {
   } catch (e) {
     ElMessage.error('打卡同步失败')
   }
+}
+
+const quizModalVisible = ref(false)
+const quizData = ref<any>(null)
+const userAnswers = ref<Record<string, string>>({})
+const submittingQuiz = ref(false)
+const quizSubmitted = ref(false)
+const quizResult = ref<any>(null)
+
+const openQuizModal = async () => {
+  if (!currentDetail.value || !currentDetail.value.quiz_id) return
+  try {
+    const res: any = await request.get(`/courses/quiz/${currentDetail.value.quiz_id}`)
+    quizData.value = res
+    userAnswers.value = {}
+    quizSubmitted.value = false
+    quizResult.value = null
+    quizModalVisible.value = true
+  } catch (err) {
+    ElMessage.error('加载测验题目失败')
+  }
+}
+
+const submitQuizAction = async () => {
+  if (!quizData.value) return
+  const payloadAnswers: Record<string, string[]> = {}
+  for (const q of quizData.value.questions) {
+    const selected = userAnswers.value[q.id]
+    if (!selected) {
+      ElMessage.warning(`第 ${q.seq} 题尚未作答，请完成后再提交`)
+      return
+    }
+    payloadAnswers[q.id] = [selected]
+  }
+
+  submittingQuiz.value = true
+  try {
+    const res: any = await request.post(`/courses/quiz/${quizData.value.id}/submit`, {
+      answers: payloadAnswers
+    })
+    quizResult.value = res
+    quizSubmitted.value = true
+    if (res.passed) {
+      ElMessage.success(`🎉 闯关成功！获得美育能量 +${res.energy_reward} 点！`)
+    } else {
+      ElMessage.warning(`本次得分 ${res.score} 分，未达及格线，请仔细查看名师解析后再试！`)
+    }
+  } catch (err) {
+    ElMessage.error('提交答卷失败')
+  } finally {
+    submittingQuiz.value = false
+  }
+}
+
+const resetQuiz = () => {
+  userAnswers.value = {}
+  quizSubmitted.value = false
+  quizResult.value = null
 }
 
 onMounted(() => {
@@ -535,5 +692,195 @@ onMounted(() => {
   background-color: var(--color-paper-card);
   border-radius: var(--radius-card);
   overflow: hidden;
+}
+
+.video-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-quiz-start {
+  font-weight: 700;
+  box-shadow: 0 3px 8px rgba(217, 119, 6, 0.25);
+}
+
+/* 测验弹窗样式 */
+.quiz-modal-body {
+  padding: 10px 4px;
+}
+
+.quiz-head {
+  text-align: center;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed var(--color-border);
+  margin-bottom: 20px;
+}
+
+.quiz-badge {
+  font-size: 12px;
+  background: rgba(196, 134, 58, 0.15);
+  color: #92400E;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+.quiz-title {
+  font-size: 18px;
+  color: var(--color-primary);
+  margin: 8px 0 4px;
+}
+
+.quiz-energy-tip {
+  font-size: 12px;
+  color: #B45309;
+}
+
+.quiz-questions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.quiz-q-card {
+  background: var(--color-paper);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.q-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.q-seq {
+  color: var(--color-primary);
+}
+
+.q-score {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  font-weight: 400;
+}
+
+.q-options {
+  padding-left: 14px;
+}
+
+.quiz-option-radio {
+  display: flex !important;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.opt-key {
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+/* 测验结果 */
+.result-score-banner {
+  text-align: center;
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.result-score-banner.pass {
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+}
+
+.result-score-banner.fail {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+}
+
+.score-number {
+  font-size: 40px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.result-score-banner.pass .score-number { color: #15803D; }
+.result-score-banner.fail .score-number { color: #B91C1C; }
+
+.score-unit {
+  font-size: 16px;
+}
+
+.score-status {
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+.result-score-banner.pass .score-status { color: #166534; }
+.result-score-banner.fail .score-status { color: #991B1B; }
+
+.reward-tag {
+  margin-top: 10px;
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 14px;
+  background: #FEF3C7;
+  color: #92400E;
+  border-radius: 20px;
+}
+
+.quiz-explanations {
+  border-top: 1px dashed var(--color-border);
+  padding-top: 16px;
+}
+
+.exp-heading {
+  font-size: 15px;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+}
+
+.exp-item {
+  padding: 12px 14px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.exp-correct {
+  background: #F0FDF4;
+  border: 1px solid #DCFCE7;
+}
+
+.exp-wrong {
+  background: #FEF2F2;
+  border: 1px solid #FEE2E2;
+}
+
+.exp-status-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.exp-correct .exp-status-row { color: #15803D; }
+.exp-wrong .exp-status-row { color: #B91C1C; }
+
+.exp-answer-tag {
+  color: var(--color-primary);
+}
+
+.exp-text {
+  font-size: 12px;
+  color: var(--color-text-regular);
+  line-height: 1.6;
 }
 </style>

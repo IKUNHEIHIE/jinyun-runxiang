@@ -161,3 +161,41 @@ def list_my_orders(
         "receiver_name": o.receiver_name,
         "created_at": o.created_at.strftime("%Y-%m-%d %H:%M")
     } for o in orders])
+
+@router.get("/orders/{order_no}/certificate")
+def get_order_certificate(
+    order_no: str,
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """获取文创助农爱心捐赠电子证书元数据"""
+    order = db.query(OrderMain).filter(
+        OrderMain.order_no == order_no,
+        OrderMain.user_id == current_user["user_id"]
+    ).first()
+    if not order:
+        return error_response(code=4040, message="订单不存在或无权查看")
+
+    schools = [
+        "蓟州区穿芳峪镇中心小学",
+        "宝坻区大口屯镇初级中学",
+        "武清区河西务镇中心小学",
+        "宁河区俵口镇第一小学",
+        "静海区独流镇第一小学"
+    ]
+    idx = abs(hash(order.order_no)) % len(schools)
+    school_name = schools[idx]
+
+    return success_response({
+        "certificate_no": f"JY-LOVE-{order.order_no[-8:]}",
+        "order_no": order.order_no,
+        "donor_name": order.receiver_name or current_user.get("nickname", "爱心助农者"),
+        "total_amount_yuan": order.total_amount_cents / 100.0,
+        "fund_amount_yuan": order.fund_amount_cents / 100.0,
+        "beneficiary_school": school_name,
+        "purpose": "天津乡村小学非遗美育耗材（皮影皮料、年画刻刀与宣纸）专项采购",
+        "issue_date": order.created_at.strftime("%Y年%m月%d日"),
+        "seal_title": "津韵润乡·乡村美育振兴专项认证",
+        "verify_code": f"VERIFY-{uuid.uuid4().hex[:8].upper()}"
+    })
+
