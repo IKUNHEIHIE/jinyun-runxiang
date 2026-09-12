@@ -70,11 +70,13 @@ def register(req: RegisterRequest, db: Session = Depends(get_db)):
     if existing:
         return error_response(code=4090, message="用户名已存在")
         
+    # 限制开放注册角色仅限普通学员，防范越权提权漏洞 (CWE-269)
+    role = "STUDENT"
     new_user = SysUser(
         username=req.username,
         password_hash=hash_password(req.password),
         nickname=req.nickname,
-        role_code=req.role_code or "STUDENT",
+        role_code=role,
         grade=req.grade,
         avatar_url="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150",
         status="ACTIVE"

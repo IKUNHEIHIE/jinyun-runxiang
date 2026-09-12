@@ -5,7 +5,7 @@ from typing import Optional, List, Dict, Any
 from datetime import datetime, timedelta
 
 from app.core.database import get_db
-from app.core.security import get_current_user
+from app.core.security import require_teacher
 from app.schemas.common import success_response, error_response
 from app.models.entities import (
     TeacherClass, ClassMember, Assignment, AssignmentSubmission,
@@ -34,7 +34,7 @@ class ReviewSubmissionRequest(BaseModel):
 
 @router.get("/classes")
 def list_teacher_classes(
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_teacher),
     db: Session = Depends(get_db)
 ):
     teacher_id = current_user["user_id"]
@@ -54,7 +54,7 @@ def list_teacher_classes(
 @router.post("/lesson-plans/generate")
 def generate_lesson_plan(
     req: LessonPlanRequest,
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(require_teacher)
 ):
     # 模拟高质量乡村美育教学AI结构化生成
     lesson_plan = {
@@ -103,7 +103,7 @@ def generate_lesson_plan(
 @router.get("/assignments")
 def list_assignments(
     class_id: int,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_teacher),
     db: Session = Depends(get_db)
 ):
     teacher_id = current_user["user_id"]
@@ -131,7 +131,7 @@ def list_assignments(
 @router.post("/assignments")
 def create_assignment(
     req: CreateAssignmentRequest,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_teacher),
     db: Session = Depends(get_db)
 ):
     teacher_id = current_user["user_id"]
@@ -156,6 +156,7 @@ def create_assignment(
 @router.get("/assignments/{assignment_id}/submissions")
 def list_submissions(
     assignment_id: int,
+    current_user: dict = Depends(require_teacher),
     db: Session = Depends(get_db)
 ):
     submissions = db.query(AssignmentSubmission).filter(
@@ -188,7 +189,7 @@ def list_submissions(
 def review_submission(
     submission_id: int,
     req: ReviewSubmissionRequest,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_teacher),
     db: Session = Depends(get_db)
 ):
     teacher_id = current_user["user_id"]
@@ -218,6 +219,7 @@ def review_submission(
 @router.get("/classes/{class_id}/analytics")
 def get_class_analytics(
     class_id: int,
+    current_user: dict = Depends(require_teacher),
     db: Session = Depends(get_db)
 ):
     # 班级全景学情分析汇总

@@ -58,3 +58,17 @@ def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
     return payload
+
+def require_roles(*roles: str):
+    def role_checker(current_user: Dict[str, Any] = Depends(get_current_user)) -> Dict[str, Any]:
+        user_role = current_user.get("role_code")
+        if user_role not in roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"无权访问此资源，需要角色: {','.join(roles)}"
+            )
+        return current_user
+    return role_checker
+
+require_admin = require_roles("ADMIN")
+require_teacher = require_roles("TEACHER", "ADMIN")

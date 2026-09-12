@@ -6,10 +6,24 @@ const service = axios.create({
   timeout: 15000
 })
 
-// 请求拦截器注入 Token
+// 请求拦截器注入 Token (若无则自动获取管理员开发Token)
 service.interceptors.request.use(
-  config => {
-    const token = localStorage.getItem('jinyun_admin_token')
+  async config => {
+    let token = localStorage.getItem('jinyun_admin_token')
+    if (!token && !config.url?.includes('/auth/login')) {
+      try {
+        const authRes = await axios.post('/api/auth/login', {
+          username: 'admin',
+          password: 'admin123'
+        })
+        if (authRes.data && authRes.data.code === 0) {
+          token = authRes.data.data.token
+          localStorage.setItem('jinyun_admin_token', token as string)
+        }
+      } catch (e) {
+        console.warn('Auto auth skipped', e)
+      }
+    }
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`
     }

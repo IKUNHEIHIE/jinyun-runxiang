@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 
 from app.core.database import get_db
-from app.core.security import get_current_user
+from app.core.security import require_admin
 from app.schemas.common import success_response, error_response
 from app.models.entities import (
     OperationStatDaily, CommunityPost, ContentReview,
@@ -20,7 +20,7 @@ class ReviewActionRequest(BaseModel):
 
 @router.get("/dashboard")
 def get_dashboard_data(
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_admin),
     db: Session = Depends(get_db)
 ):
     # 历史日统计
@@ -61,6 +61,7 @@ def get_dashboard_data(
 @router.get("/reviews")
 def list_pending_reviews(
     status: str = "PENDING_REVIEW",
+    current_user: dict = Depends(require_admin),
     db: Session = Depends(get_db)
 ):
     posts = db.query(CommunityPost).filter(CommunityPost.status == status).all()
@@ -88,7 +89,7 @@ def list_pending_reviews(
 def review_post_action(
     post_id: int,
     req: ReviewActionRequest,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_admin),
     db: Session = Depends(get_db)
 ):
     post = db.query(CommunityPost).filter(CommunityPost.id == post_id).first()
