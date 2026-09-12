@@ -1,3 +1,5 @@
+import json
+import httpx
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
@@ -9,7 +11,7 @@ from app.core.security import require_teacher
 from app.schemas.common import success_response, error_response
 from app.models.entities import (
     TeacherClass, ClassMember, Assignment, AssignmentSubmission,
-    AssignmentReview, LearningProgress, UserGrowth, SysUser
+    AssignmentReview, LearningProgress, UserGrowth, SysUser, SysConfig
 )
 
 router = APIRouter(prefix="/teacher", tags=["教师工作台与AI智能备课"])
@@ -54,9 +56,75 @@ def list_teacher_classes(
 @router.post("/lesson-plans/generate")
 def generate_lesson_plan(
     req: LessonPlanRequest,
-    current_user: dict = Depends(require_teacher)
+    current_user: dict = Depends(require_teacher),
+    db: Session = Depends(get_db)
 ):
-    # 模拟高质量乡村美育教学AI结构化生成
+    # 1. 优先读取系统设置中保存的大模型真实接口配置
+    llm_cfg = db.query(SysConfig).filter(SysConfig.config_key == "llm_settings").first()
+    if llm_cfg and llm_cfg.config_value:
+        try:
+            cfg = json.loads(llm_cfg.config_value)
+            api_key = cfg.get("api_key", "").strip()
+            api_base = cfg.get("api_base", "https://api.deepseek.com/v1").strip().rstrip("/")
+            model_name = cfg.get("model_name", "deepseek-chat").strip()
+            temperature = float(cfg.get("temperature", 0.7))
+
+            # 当用户录入了真实的 API Key 时，发起真实 DeepSeek API 推理
+            if api_key and "*" not in api_key and len(api_key) > 10:
+                prompt = (
+                    f"你是一位精通天津非遗文化与乡村美育的专家。请针对学段【{req.grade}】、"
+                    f"非遗主题【{req.topic}】、时长【{req.duration_minutes}分钟】，"
+                    f"生成结构化美育备课方案。\n"
+                    f"输出必须为纯 JSON 对象，格式包含："
+                    f"targets: {{aesthetic, skill, emotion}}, "
+                    f"key_difficult_points: {{key, difficult}}, "
+                    f"teaching_process: [{{step, content}}], "
+                    f"teacher_script: 教师讲稿, "
+                    f"interactive_questions: [问题1, 问题2], "
+                    f"homework_proposal: 课后作业建议。"
+                )
+                with httpx.Client(timeout=15.0) as client:
+                    resp = client.post(
+                        f"{api_base}/chat/completions",
+                        headers={
+                            "Authorization": f"Bearer {api_key}",
+                            "Content-Type": "application/json"
+                        },
+                        json={
+                            "model": model_name,
+                            "messages": [
+                                {"role": "system", "content": "You are a professional art education assistant. You must output JSON."},
+                                {"role": "user", "content": prompt}
+                            ],
+                            "temperature": temperature,
+                            "response_format": {"type": "json_object"}
+                        }
+                    )
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        raw_content = data["choices"][0]["message"]["content"]
+                        ai_parsed = json.loads(raw_content)
+                        steps = ai_parsed.get("teaching_process", [])
+                        return success_response({
+                            "title": f"《津韵润乡·乡土美育微课：{req.topic}》",
+                            "grade": req.grade,
+                            "topic": req.topic,
+                            "duration": f"{req.duration_minutes} 分钟",
+                            "targets": ai_parsed.get("targets", {}),
+                            "key_difficult_points": ai_parsed.get("key_difficult_points", {}),
+                            "teaching_process": steps,
+                            "activity_design": [s.get("step", "") if isinstance(s, dict) else str(s) for s in steps],
+                            "teacher_script": ai_parsed.get("teacher_script", ""),
+                            "interactive_questions": ai_parsed.get("interactive_questions", []),
+                            "homework_proposal": ai_parsed.get("homework_proposal", f"设计1幅{req.topic}非遗作品"),
+                            "ppt_download_url": f"https://example.com/assets/lesson_plans/{req.topic}_课件.pptx",
+                            "generated_by": f"DeepSeek 官方大模型 ({model_name}) 实时生成"
+                        }, message=f"已由 DeepSeek 官方大模型 ({model_name}) 实时生成智能备课方案")
+        except Exception:
+            # 外部大模型调用失败或网络离线时，平滑降级至本地高质量非遗专家教案
+            pass
+
+    # 2. 默认降级方案：天津非遗专家预置结构化教案
     lesson_plan = {
         "title": f"《津韵润乡·乡土美育微课：{req.topic}》",
         "grade": req.grade,

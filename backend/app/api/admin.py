@@ -1,4 +1,6 @@
 import json
+import time
+import httpx
 from datetime import datetime
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
@@ -241,20 +243,66 @@ def test_llm_connection(
     req: TestLlmRequest,
     current_user: dict = Depends(require_admin)
 ):
-    """连通性探测：模拟调用大模型 API 探活接口"""
+    """连通性探测：支持真实 HTTP 探活与演示桩智能分流"""
     # 验证 API Key 格式
     if not req.api_key or len(req.api_key) < 6:
         return error_response(code=4001, message="API Key 格式不合法或未填写")
 
-    # 返回真实的探测状态与延迟指标
-    return success_response({
-        "provider": req.provider,
-        "model_name": req.model_name,
-        "status": "ONLINE",
-        "latency_ms": 142,
-        "prompt_tokens_tested": 16,
-        "reply_preview": f"【{req.provider} · {req.model_name}】网络探测正常，天津非遗多模态推理网关已就绪！"
-    }, message=f"大模型 API 连通性测试通过 (响应耗时: 142ms)")
+    # 1. 检测是否为演示占位符或掩码 Key
+    if "*" in req.api_key or "sk-d7a8" in req.api_key:
+        return success_response({
+            "provider": req.provider,
+            "model_name": req.model_name,
+            "status": "ONLINE (DEMO)",
+            "latency_ms": 142,
+            "prompt_tokens_tested": 16,
+            "is_real_call": False,
+            "reply_preview": f"【{req.provider} · 演示模拟】当前使用系统预置演示占位符 Key。如需调用真实 DeepSeek，请在输入框填入您在 platform.deepseek.com 申请的真实 API Key。"
+        }, message="系统预置演示桩探活通过。如需真实调用官方大模型，请输入您的真实 API Key。")
+
+    # 2. 发起真实的大模型接口 HTTP 探测
+    base_url = req.api_base.strip().rstrip("/")
+    endpoint = f"{base_url}/chat/completions"
+
+    start_time = time.time()
+    try:
+        with httpx.Client(timeout=10.0) as client:
+            resp = client.post(
+                endpoint,
+                headers={
+                    "Authorization": f"Bearer {req.api_key.strip()}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "model": req.model_name.strip(),
+                    "messages": [
+                        {"role": "user", "content": "你好，请仅回复【津韵润乡测试连通成功】八个字。"}
+                    ],
+                    "max_tokens": 30
+                }
+            )
+            latency = int((time.time() - start_time) * 1000)
+
+            if resp.status_code == 200:
+                data = resp.json()
+                reply = data.get("choices", [{}])[0].get("message", {}).get("content", "OK")
+                return success_response({
+                    "provider": req.provider,
+                    "model_name": req.model_name,
+                    "status": "ONLINE (LIVE)",
+                    "latency_ms": latency,
+                    "is_real_call": True,
+                    "reply_preview": reply.strip()
+                }, message=f"真实 DeepSeek 官方服务连接成功！网络往返耗时: {latency}ms")
+            else:
+                err_body = resp.text[:300]
+                return error_response(code=4002, message=f"DeepSeek 服务商返回错误 (HTTP {resp.status_code}): {err_body}")
+    except httpx.ConnectTimeout:
+        return error_response(code=5004, message="连接服务商 API Base 超时，请检查网络或是否开启代理网关")
+    except httpx.ConnectError as e:
+        return error_response(code=5002, message=f"无法建立与 {base_url} 的网络连接: {str(e)}")
+    except Exception as e:
+        return error_response(code=5001, message=f"大模型连通性探测异常: {str(e)}")
 
 
 # -----------------------------------------------------------------------------
