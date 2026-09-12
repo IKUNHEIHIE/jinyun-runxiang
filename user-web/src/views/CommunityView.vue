@@ -12,33 +12,47 @@
       </el-button>
     </div>
 
-    <!-- 筛选与排序 -->
+    <!-- 筛选与排序 (Element Plus 工业级规范) -->
     <div class="filter-bar paper-card">
       <div class="tabs-group">
-        <button 
-          v-for="s in sortOptions" 
-          :key="s.key"
-          :class="['sort-tab', { active: currentSort === s.key }]"
-          @click="currentSort = s.key; fetchPosts()"
-        >
-          {{ s.label }}
-        </button>
+        <el-segmented 
+          v-model="currentSort" 
+          :options="sortOptions.map(s => ({ label: s.label, value: s.key }))"
+          @change="fetchPosts"
+        />
       </div>
 
       <div class="category-pills">
-        <span 
+        <el-check-tag 
           v-for="c in categories" 
           :key="c.key"
-          :class="['pill', { active: currentCategory === c.key }]"
-          @click="currentCategory = c.key; fetchPosts()"
+          :checked="currentCategory === c.key"
+          @change="() => { currentCategory = c.key; fetchPosts(); }"
+          class="heritage-check-tag"
         >
           {{ c.label }}
-        </span>
+        </el-check-tag>
+      </div>
+    </div>
+
+    <!-- 骨架屏加载状态 -->
+    <div v-if="loading" class="posts-grid">
+      <div v-for="i in 6" :key="i" class="paper-card post-skeleton-card">
+        <el-skeleton animated>
+          <template #template>
+            <el-skeleton-item variant="image" style="width: 100%; height: 200px; border-radius: 12px 12px 0 0;" />
+            <div style="padding: 14px;">
+              <el-skeleton-item variant="h3" style="width: 70%;" />
+              <el-skeleton-item variant="text" style="width: 90%; margin-top: 10px;" />
+              <el-skeleton-item variant="text" style="width: 50%; margin-top: 10px;" />
+            </div>
+          </template>
+        </el-skeleton>
       </div>
     </div>
 
     <!-- 瀑布流作品列表 -->
-    <div v-loading="loading" class="posts-grid">
+    <div v-else class="posts-grid">
       <div 
         v-for="post in posts" 
         :key="post.id" 
@@ -585,5 +599,18 @@ onMounted(() => {
 
 .w-full {
   width: 100%;
+}
+
+.heritage-check-tag {
+  margin-right: 8px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.post-skeleton-card {
+  height: 320px;
+  background-color: var(--color-paper-card);
+  border-radius: var(--radius-card);
+  overflow: hidden;
 }
 </style>

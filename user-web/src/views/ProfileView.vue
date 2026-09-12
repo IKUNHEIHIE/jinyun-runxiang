@@ -3,7 +3,7 @@
     <!-- 用户顶部名片 -->
     <div class="paper-card profile-hero">
       <div class="hero-left">
-        <el-avatar :size="80" :src="userInfo.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150'" />
+        <el-avatar :size="80" :src="userInfo.avatar_url || '/static/images/default_avatar.svg'" />
         <div class="user-meta">
           <div class="name-row">
             <h2 class="font-serif user-title">{{ userInfo.nickname || '小明同学' }}</h2>

@@ -12,34 +12,48 @@
       <div class="filter-row">
         <span class="filter-label">学段分龄：</span>
         <div class="filter-tags">
-          <button 
-            v-for="g in ageGroups" 
-            :key="g.key" 
-            :class="['filter-btn', { active: currentAge === g.key }]"
-            @click="currentAge = g.key; fetchCourses()"
-          >
-            {{ g.label }}
-          </button>
+          <el-segmented 
+            v-model="currentAge" 
+            :options="ageGroups.map(g => ({ label: g.label, value: g.key }))"
+            @change="fetchCourses"
+          />
         </div>
       </div>
 
-      <div class="filter-row">
+      <div class="filter-row" style="margin-top: 14px;">
         <span class="filter-label">非遗门类：</span>
         <div class="filter-tags">
-          <button 
+          <el-check-tag 
             v-for="c in categories" 
             :key="c.key" 
-            :class="['filter-btn', { active: currentCategory === c.key }]"
-            @click="currentCategory = c.key; fetchCourses()"
+            :checked="currentCategory === c.key"
+            @change="() => { currentCategory = c.key; fetchCourses(); }"
+            class="heritage-check-tag"
           >
             {{ c.label }}
-          </button>
+          </el-check-tag>
         </div>
       </div>
     </div>
 
+    <!-- 骨架屏加载状态 -->
+    <div v-if="loading" class="courses-grid">
+      <div v-for="i in 6" :key="i" class="paper-card course-skeleton-card">
+        <el-skeleton animated>
+          <template #template>
+            <el-skeleton-item variant="image" style="width: 100%; height: 160px; border-radius: 12px 12px 0 0;" />
+            <div style="padding: 14px;">
+              <el-skeleton-item variant="h3" style="width: 60%;" />
+              <el-skeleton-item variant="text" style="width: 90%; margin-top: 10px;" />
+              <el-skeleton-item variant="text" style="width: 40%; margin-top: 10px;" />
+            </div>
+          </template>
+        </el-skeleton>
+      </div>
+    </div>
+
     <!-- 课程列表网格 -->
-    <div v-loading="loading" class="courses-grid">
+    <div v-else class="courses-grid">
       <div 
         v-for="course in courses" 
         :key="course.id" 
@@ -507,5 +521,19 @@ onMounted(() => {
 .point-tag {
   font-size: 11px;
   color: var(--color-text-secondary);
+}
+
+.heritage-check-tag {
+  margin-right: 8px;
+  margin-bottom: 6px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.course-skeleton-card {
+  height: 280px;
+  background-color: var(--color-paper-card);
+  border-radius: var(--radius-card);
+  overflow: hidden;
 }
 </style>

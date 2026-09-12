@@ -21,6 +21,19 @@
   --shadow-hover: 0 12px 32px -4px rgba(139, 74, 47, 0.16), 0 4px 12px -2px rgba(0, 0, 0, 0.06);
   --radius-card: 16px;
   --radius-btn: 10px;
+
+  /* Element Plus 全局非遗紫铜主题变量 */
+  --el-color-primary: #8B4A2F;
+  --el-color-primary-light-3: #ad7865;
+  --el-color-primary-light-5: #c59f91;
+  --el-color-primary-light-7: #ddc6be;
+  --el-color-primary-light-8: #e8d9d3;
+  --el-color-primary-light-9: #f3ece8;
+  --el-color-primary-dark-2: #6f3b26;
+  --el-color-success: #4D8B63;
+  --el-color-warning: #C4863A;
+  --el-color-danger: #B64A44;
+  --el-color-info: #776D65;
 }
 
 * {

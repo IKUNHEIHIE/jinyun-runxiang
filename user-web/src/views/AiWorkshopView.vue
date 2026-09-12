@@ -24,6 +24,16 @@
       </div>
     </div>
 
+    <!-- 创作流程引导步骤条 (Element Plus 工业级组件) -->
+    <div class="steps-box paper-card" style="margin-bottom: 24px; padding: 18px 24px;">
+      <el-steps :active="activeStep" finish-status="success" align-center>
+        <el-step title="1. 选择非遗工艺" description="皮影 / 青铜 / 曲牌 / 漆艺" />
+        <el-step title="2. 灵感与提示词" description="自然语言描述角色或器物" />
+        <el-step title="3. AI 多模态推理" description="抽取津派特征并生成矢量线稿" />
+        <el-step title="4. 纸样下料与3D检视" description="下载激光纸样与3D骨骼模型" />
+      </el-steps>
+    </div>
+
     <!-- 创作工坊主工作台 -->
     <div class="workshop-layout">
       <!-- 左侧：提示词与生成参数 -->
@@ -169,6 +179,13 @@ const taskResult = ref<any>(null)
 const currentToolName = computed(() => {
   const t = tools.find(x => x.key === currentTool.value)
   return t ? t.name : '非遗工坊'
+})
+
+const activeStep = computed(() => {
+  if (taskResult.value) return 4
+  if (generating.value) return 2
+  if (promptText.value && promptText.value.trim().length > 0) return 1
+  return 0
 })
 
 const presetPrompts = computed(() => {

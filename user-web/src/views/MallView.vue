@@ -11,13 +11,32 @@
       </div>
       <div class="fund-stat-box">
         <span class="fund-label">累计筹集美育耗材专项基金</span>
-        <span class="fund-val font-serif">¥ 150.95</span>
+        <span class="fund-val font-serif">¥ 164.15</span>
+        <div style="width: 160px; margin: 6px 0;">
+          <el-progress :percentage="33" :stroke-width="6" color="#8B4A2F" :show-text="false" />
+        </div>
         <span class="fund-tag">公开透明 · 实时链上入账</span>
       </div>
     </div>
 
+    <!-- 骨架屏加载状态 -->
+    <div v-if="loading" class="products-grid">
+      <div v-for="i in 4" :key="i" class="paper-card product-skeleton-card">
+        <el-skeleton animated>
+          <template #template>
+            <el-skeleton-item variant="image" style="width: 100%; height: 180px; border-radius: 12px 12px 0 0;" />
+            <div style="padding: 14px;">
+              <el-skeleton-item variant="h3" style="width: 70%;" />
+              <el-skeleton-item variant="text" style="width: 90%; margin-top: 10px;" />
+              <el-skeleton-item variant="text" style="width: 40%; margin-top: 10px;" />
+            </div>
+          </template>
+        </el-skeleton>
+      </div>
+    </div>
+
     <!-- 商品网格 -->
-    <div v-loading="loading" class="products-grid">
+    <div v-else class="products-grid">
       <div 
         v-for="prod in products" 
         :key="prod.id" 
