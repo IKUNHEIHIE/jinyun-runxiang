@@ -158,29 +158,31 @@ onMounted(() => {
 }
 
 .header-container {
-  max-width: 1280px;
+  max-width: 1440px;
   margin: 0 auto;
   height: 72px;
-  padding: 0 24px;
+  padding: 0 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
 }
 
 .brand-logo {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   text-decoration: none;
+  flex-shrink: 0;
 }
 
 .logo-seal {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   background: var(--color-primary);
   color: #fff;
   font-family: var(--font-serif);
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 900;
   display: flex;
   align-items: center;
@@ -189,38 +191,44 @@ onMounted(() => {
   box-shadow: 0 3px 8px rgba(139, 74, 47, 0.3);
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
 }
 
 .brand-title {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 900;
   color: var(--color-primary);
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
 .brand-sub {
   display: block;
   font-size: 11px;
   color: var(--color-text-secondary);
+  white-space: nowrap;
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
 .nav-item {
-  padding: 8px 14px;
-  font-size: 15px;
+  padding: 6px 11px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--color-text-regular);
   text-decoration: none;
   border-radius: 8px;
   transition: all 0.2s ease;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .nav-item:hover {
@@ -242,17 +250,20 @@ onMounted(() => {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .energy-badge {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
+  gap: 5px;
+  padding: 4px 10px;
   background: #FFF8EA;
   border: 1px solid rgba(214, 168, 92, 0.4);
   border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .energy-icon {
@@ -263,17 +274,20 @@ onMounted(() => {
 .energy-value {
   font-weight: 800;
   color: #B45309;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .energy-label {
   font-size: 11px;
   color: #92400E;
+  white-space: nowrap;
 }
 
 .role-btn {
   border-color: var(--color-border);
   font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .admin-portal-link {
@@ -285,10 +299,42 @@ onMounted(() => {
   background: rgba(44, 79, 84, 0.08);
   font-weight: 600;
   transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .admin-portal-link:hover {
   background: rgba(44, 79, 84, 0.15);
+}
+
+@media (max-width: 1260px) {
+  .brand-sub {
+    display: none;
+  }
+  .nav-item {
+    padding: 6px 8px;
+    font-size: 13.5px;
+  }
+  .header-actions {
+    gap: 8px;
+  }
+}
+
+@media (max-width: 1080px) {
+  .energy-label {
+    display: none;
+  }
+  .nav-links {
+    gap: 2px;
+  }
+  .nav-item {
+    padding: 5px 6px;
+    font-size: 13px;
+  }
+  .header-actions .role-btn {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
 }
 
 .app-main {
