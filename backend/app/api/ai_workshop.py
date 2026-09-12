@@ -244,11 +244,18 @@ def update_ai_model(model_id: int, req: UpdateAiModelRequest, db: Session = Depe
 
 @router.post("/assets/upload")
 async def upload_asset(file: UploadFile = File(...)):
-    """真实多模态素材与学生作品文件上传"""
-    ext = os.path.splitext(file.filename)[1] or ".png"
-    file_id = f"{uuid.uuid4().hex}{ext}"
-    dest_path = os.path.join(STATIC_UPLOADS_DIR, file_id)
+    """真实多模态素材与学生作品文件上传 (含安全白名单校验)"""
+    allowed_exts = {".png", ".jpg", ".jpeg", ".svg", ".webp", ".mp4", ".glb"}
+    raw_ext = os.path.splitext(file.filename or "")[1].lower()
+    if raw_ext not in allowed_exts:
+        return error_response(code=4003, message="不支持的文件格式，仅允许上传图片、微课视频或3D非遗模型")
+
     content = await file.read()
+    if len(content) > 50 * 1024 * 1024:
+        return error_response(code=4004, message="文件体积超过限制 (最大 50MB)")
+
+    file_id = f"{uuid.uuid4().hex}{raw_ext}"
+    dest_path = os.path.join(STATIC_UPLOADS_DIR, file_id)
     with open(dest_path, "wb") as f:
         f.write(content)
     file_url = f"/static/uploads/{file_id}"

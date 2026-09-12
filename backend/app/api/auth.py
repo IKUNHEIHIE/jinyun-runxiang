@@ -78,7 +78,7 @@ def register(req: RegisterRequest, db: Session = Depends(get_db)):
         nickname=req.nickname,
         role_code=role,
         grade=req.grade,
-        avatar_url="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150",
+        avatar_url="/static/images/default_avatar.svg",
         status="ACTIVE"
     )
     db.add(new_user)
