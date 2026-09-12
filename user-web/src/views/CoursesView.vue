@@ -72,18 +72,24 @@
       custom-class="course-dialog"
     >
       <div v-if="currentDetail" class="dialog-body">
-        <div class="video-mockup">
-          <div class="video-screen">
-            <el-icon class="play-icon"><VideoPlay /></el-icon>
-            <div class="video-overlay">
-              <span class="tag-heritage">天津非遗大师示范讲学</span>
-              <h3>{{ currentDetail.title }}</h3>
-            </div>
-          </div>
+        <div class="video-player-box">
+          <video 
+            ref="videoPlayer" 
+            class="real-video-player"
+            :src="activeChapter?.video_url || '/static/videos/tianjin_shadow_puppet_lesson.mp4'" 
+            controls 
+            playsinline
+          ></video>
           <div class="video-bar">
-            <span>模拟微课播放时长：{{ currentDetail.duration_minutes }} 分钟</span>
-            <el-button type="primary" size="small" @click="reportFinish(currentDetail.id, 1)">
-              打卡完成本讲学习 (+10 能量)
+            <span>正在学习：{{ activeChapter?.title || currentDetail.title }}</span>
+            <el-button 
+              type="primary" 
+              size="small" 
+              class="btn-primary"
+              :disabled="activeChapter?.progress?.completed"
+              @click="reportFinish(currentDetail.id, activeChapter?.id || 1)"
+            >
+              {{ activeChapter?.progress?.completed ? '已完成学习' : '完成本讲学习打卡 (+10 能量)' }}
             </el-button>
           </div>
         </div>
@@ -92,9 +98,16 @@
           <h2 class="font-serif detail-title">{{ currentDetail.title }}</h2>
           <p class="detail-desc">{{ currentDetail.description }}</p>
 
-          <h4 class="font-serif section-heading">讲次与核心工序要点</h4>
+          <h4 class="font-serif section-heading">讲次与核心工序要点（点击切换播放）</h4>
           <div class="chapters-list">
-            <div v-for="ch in currentDetail.chapters" :key="ch.id" class="chapter-card">
+            <div 
+              v-for="ch in currentDetail.chapters" 
+              :key="ch.id" 
+              class="chapter-card"
+              :class="{ 'active-chapter': activeChapter?.id === ch.id }"
+              style="cursor: pointer;"
+              @click="selectChapter(ch)"
+            >
               <div class="ch-left">
                 <span class="ch-num">第{{ ch.seq }}讲</span>
                 <div>
@@ -185,10 +198,21 @@ const fetchCourses = async () => {
   }
 }
 
+const activeChapter = ref<any>(null)
+
+const selectChapter = (ch: any) => {
+  activeChapter.value = ch
+}
+
 const openDetail = async (id: number) => {
   try {
     const res: any = await request.get(`/courses/${id}`)
     currentDetail.value = res
+    if (res.chapters && res.chapters.length > 0) {
+      activeChapter.value = res.chapters[0]
+    } else {
+      activeChapter.value = null
+    }
     detailVisible.value = true
   } catch (e) {
     ElMessage.error('加载课程详情失败')
@@ -380,38 +404,19 @@ onMounted(() => {
 }
 
 /* Modal styles */
-.video-mockup {
+.video-player-box {
   background: #000;
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.video-screen {
-  height: 320px;
-  background: linear-gradient(135deg, #2A2421, #141110);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  position: relative;
-}
-
-.play-icon {
-  font-size: 54px;
-  color: var(--color-gold);
-  opacity: 0.9;
-  margin-bottom: 12px;
-}
-
-.video-overlay {
-  text-align: center;
-}
-
-.video-overlay h3 {
-  font-size: 20px;
-  margin-top: 8px;
+.real-video-player {
+  width: 100%;
+  max-height: 380px;
+  display: block;
+  background-color: #000;
 }
 
 .video-bar {
@@ -422,6 +427,11 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.chapter-card.active-chapter {
+  border-color: #8B4A2F;
+  background-color: rgba(139, 74, 47, 0.06);
 }
 
 .detail-title {

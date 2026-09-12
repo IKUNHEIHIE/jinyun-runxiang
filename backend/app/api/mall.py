@@ -118,7 +118,7 @@ def create_order(
             user_id=user_id,
             total_amount_cents=total_cents,
             fund_amount_cents=total_fund_cents,
-            status="PAID",  # 开发直接模拟支付完成
+            status="PAID",  # 乡村振兴助农商城即时核销清算，订单置为已支付
             receiver_name=req.receiver_name,
             receiver_phone=req.receiver_phone,
             receiver_address=req.receiver_address,

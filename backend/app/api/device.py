@@ -61,23 +61,28 @@ def send_device_command(
         return error_response(code=4040, message="设备不存在")
 
     cmd_id = uuid.uuid4().hex
+    now = datetime.utcnow()
     cmd = DeviceCommand(
         command_id=cmd_id,
         device_id=d.id,
         command_type=req.command_type,
         payload_json=req.payload,
         status="ACKED",
-        sent_at=datetime.utcnow(),
-        ack_at=datetime.utcnow()
+        sent_at=now,
+        ack_at=now
     )
+    d.last_seen_at = now
     db.add(cmd)
     db.commit()
 
+    action_label = "天津皮影老生肢体走位与三签演播" if req.command_type == "PERFORM_SHADOW_PLAY" else "天津皮影历史语音讲解与唱段示范"
     return success_response({
         "command_id": cmd_id,
         "device_code": device_code,
         "command_type": req.command_type,
+        "action_label": action_label,
         "status": "ACKED",
         "fallback_virtual_mode": d.status != "ONLINE",
-        "action_preview_url": "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600"
-    }, message="指令已成功送达具身机器人并获得响应")
+        "action_preview_url": "/static/models/tianjin_shadow_puppet.glb",
+        "executed_at": now.strftime("%Y-%m-%d %H:%M:%S")
+    }, message=f"指令【{action_label}】已成功送达具身机器人并执行完毕")

@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 700" width="500" height="700">
+  <defs>
+    <radialGradient id="leatherGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FBF4E8" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#E2D4BF" stop-opacity="0.6"/>
+    </radialGradient>
+    <linearGradient id="robeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#A35939"/>
+      <stop offset="100%" stop-color="#6E331E"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景透光宣纸与皮影舞台感 -->
+  <rect width="100%" height="100%" fill="#F8F4EC" rx="16"/>
+  <rect x="20" y="20" width="460" height="660" fill="none" stroke="#D6A85C" stroke-width="2" stroke-dasharray="6,4" rx="12"/>
+
+  <!-- 顶部题字 -->
+  <text x="250" y="55" font-size="18" font-family="'Noto Serif SC', serif" font-weight="bold" fill="#8B4A2F" text-anchor="middle">津门非遗皮影戏 · 生角·津门书生</text>
+  <text x="250" y="75" font-size="11" fill="#776D65" text-anchor="middle">传统三签铆接可动皮影 · 镂空雕镞与矿物套色</text>
+
+  <g transform="translate(250, 360)">
+    <!-- 操纵签 (三签标记: 颈签与两手签) -->
+    <line x1="0" y1="-140" x2="-140" y2="280" stroke="#8C827A" stroke-width="3" stroke-dasharray="4,2"/>
+    <line x1="-120" y1="20" x2="-180" y2="280" stroke="#8C827A" stroke-width="3" stroke-dasharray="4,2"/>
+    <line x1="120" y1="20" x2="180" y2="280" stroke="#8C827A" stroke-width="3" stroke-dasharray="4,2"/>
+
+    <!-- 腿部与裙摆 (下身) -->
+    <path d="M-60,80 Q-90,190 -70,250 L-30,250 Q-40,160 -10,80 Z" fill="#3A6351" stroke="#2F2925" stroke-width="3"/>
+    <path d="M10,80 Q40,160 30,250 L70,250 Q90,190 60,80 Z" fill="#3A6351" stroke="#2F2925" stroke-width="3"/>
+    <!-- 云纹皂靴 -->
+    <path d="M-80,245 L-20,245 Q-15,265 -50,265 L-80,265 Z" fill="#222" stroke="#2F2925" stroke-width="2"/>
+    <path d="M20,245 L80,245 Q85,265 50,265 L20,265 Z" fill="#222" stroke="#2F2925" stroke-width="2"/>
+
+    <!-- 锦袍躯干 (镂空回纹与团花) -->
+    <path d="M-55,-60 L55,-60 L70,90 L-70,90 Z" fill="url(#robeGrad)" stroke="#2F2925" stroke-width="3"/>
+    <!-- 袍肚金带 -->
+    <rect x="-58" y="0" width="116" height="18" fill="#D6A85C" stroke="#2F2925" stroke-width="2"/>
+    <!-- 镂空海水江崖与云纹细节 -->
+    <circle cx="0" cy="45" r="22" fill="none" stroke="#D6A85C" stroke-width="3"/>
+    <circle cx="0" cy="45" r="14" fill="none" stroke="#2F2925" stroke-width="2"/>
+    <path d="M-40,75 Q0,50 40,75" fill="none" stroke="#D6A85C" stroke-width="2"/>
+
+    <!-- 左臂与手签 (分段：大臂、小臂、手部) -->
+    <g>
+      <!-- 大臂 -->
+      <path d="M-50,-50 L-100,-20 L-85,-5 L-45,-40 Z" fill="#8B4A2F" stroke="#2F2925" stroke-width="3"/>
+      <circle cx="-92" cy="-12" r="5" fill="#D6A85C" stroke="#2F2925" stroke-width="2"/> <!-- 关节骨针 -->
+      <!-- 小臂与掌 -->
+      <path d="M-92,-12 L-130,20 L-115,30 L-80,0 Z" fill="#8B4A2F" stroke="#2F2925" stroke-width="3"/>
+      <!-- 透光生角拂袖 -->
+      <path d="M-130,20 Q-170,70 -130,90 Q-110,60 -115,30 Z" fill="#FBF4E8" stroke="#2F2925" stroke-width="2"/>
+    </g>
+
+    <!-- 右臂与手签 -->
+    <g>
+      <!-- 大臂 -->
+      <path d="M50,-50 L100,-20 L85,-5 L45,-40 Z" fill="#8B4A2F" stroke="#2F2925" stroke-width="3"/>
+      <circle cx="92" cy="-12" r="5" fill="#D6A85C" stroke="#2F2925" stroke-width="2"/> <!-- 关节骨针 -->
+      <!-- 小臂与掌 -->
+      <path d="M92,-12 L130,20 L115,30 L80,0 Z" fill="#8B4A2F" stroke="#2F2925" stroke-width="3"/>
+      <!-- 折扇/文生手势道具 -->
+      <path d="M125,25 L165,5 Q180,30 145,45 Z" fill="#D6A85C" stroke="#2F2925" stroke-width="2"/>
+    </g>
+
+    <!-- 头部与生角冠巾 (五官侧影：通天鼻、丹凤眼、朱唇) -->
+    <g transform="translate(0, -60)">
+      <!-- 脖颈铆接点 -->
+      <circle cx="0" cy="0" r="6" fill="#D6A85C" stroke="#2F2925" stroke-width="2"/>
+      <!-- 文生头巾与发髻后飘带 -->
+      <path d="M-30,-20 Q-60,-40 -50,-80 Q0,-95 30,-70 L20,-20 Z" fill="#222" stroke="#2F2925" stroke-width="3"/>
+      <path d="M-40,-30 Q-90,-20 -80,40 L-65,35 Q-75,-10 -35,-20 Z" fill="#222" stroke="#2F2925" stroke-width="2"/> <!-- 软带 -->
+      <!-- 冠巾前额宝珠 -->
+      <circle cx="10" cy="-75" r="8" fill="#D6A85C" stroke="#2F2925" stroke-width="2"/>
+      <circle cx="10" cy="-75" r="4" fill="#B64A44"/>
+      <!-- 头茬侧脸轮廓 -->
+      <path d="M-10,-20 L10,-20 Q12,-35 25,-40 L28,-48 Q20,-50 18,-55 Q28,-60 25,-70 L5,-70" fill="#FBF4E8" stroke="#2F2925" stroke-width="3"/>
+      <!-- 镂空红润眼角与唇线 -->
+      <path d="M12,-52 Q18,-54 22,-50" fill="none" stroke="#B64A44" stroke-width="2.5"/>
+      <circle cx="17" cy="-51" r="1.5" fill="#111"/>
+      <path d="M16,-34 Q22,-34 20,-30" fill="none" stroke="#B64A44" stroke-width="2"/>
+    </g>
+  </g>
+
+  <!-- 底部印章 -->
+  <rect x="405" y="615" width="45" height="45" fill="#8B4A2F" rx="6"/>
+  <text x="427" y="642" font-size="16" fill="#FFF" font-weight="bold" font-family="serif" text-anchor="middle">津韵</text>
+</svg>

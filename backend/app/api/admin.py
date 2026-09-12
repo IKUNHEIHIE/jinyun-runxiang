@@ -241,26 +241,22 @@ def save_system_settings(
 @router.post("/settings/test-llm")
 def test_llm_connection(
     req: TestLlmRequest,
-    current_user: dict = Depends(require_admin)
+    current_user: dict = Depends(require_admin),
+    db: Session = Depends(get_db)
 ):
-    """连通性探测：支持真实 HTTP 探活与演示桩智能分流"""
-    # 验证 API Key 格式
-    if not req.api_key or len(req.api_key) < 6:
-        return error_response(code=4001, message="API Key 格式不合法或未填写")
+    """真实大模型接口 HTTP 探测与连通性探活"""
+    actual_key = (req.api_key or "").strip()
+    if not actual_key or "*" in actual_key:
+        setting = db.query(SystemSetting).filter(SystemSetting.key == "llm_config").first()
+        if setting and setting.value_json and setting.value_json.get("api_key"):
+            saved_key = setting.value_json["api_key"]
+            if "*" not in saved_key:
+                actual_key = saved_key
 
-    # 1. 检测是否为演示占位符或掩码 Key
-    if "*" in req.api_key or "sk-d7a8" in req.api_key:
-        return success_response({
-            "provider": req.provider,
-            "model_name": req.model_name,
-            "status": "ONLINE (DEMO)",
-            "latency_ms": 142,
-            "prompt_tokens_tested": 16,
-            "is_real_call": False,
-            "reply_preview": f"【{req.provider} · 演示模拟】当前使用系统预置演示占位符 Key。如需调用真实 DeepSeek，请在输入框填入您在 platform.deepseek.com 申请的真实 API Key。"
-        }, message="系统预置演示桩探活通过。如需真实调用官方大模型，请输入您的真实 API Key。")
+    if not actual_key or "*" in actual_key or len(actual_key) < 8:
+        return error_response(code=4001, message="请先输入有效的 API Key 后再发起连通性测试")
 
-    # 2. 发起真实的大模型接口 HTTP 探测
+    # 发起真实的大模型接口 HTTP 探测
     base_url = req.api_base.strip().rstrip("/")
     endpoint = f"{base_url}/chat/completions"
 

@@ -17,6 +17,9 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+import os
+from fastapi.staticfiles import StaticFiles
+
 # 允许跨域
 app.add_middleware(
     CORSMiddleware,
@@ -25,6 +28,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 挂载真实多模态资产静态目录
+static_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")
+os.makedirs(static_dir, exist_ok=True)
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 # 链路追踪中间件
 @app.middleware("http")

@@ -145,7 +145,7 @@ def main():
         """, (
             task_uuid, uid, tool,
             f'{{"prompt":"{p_text}","style":"TIANJIN_HERITAGE"}}',
-            f'{{"colored_image_url":"https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=800","mesh_3d_url":"https://modelviewer.dev/shared-assets/models/Astronaut.glb","description":"AI成功提取非遗艺术语言，完成刀法拓印与传统矿物色渲染。"}}',
+            f'{{"colored_image_url":"/static/generated/shadow_colored_sample.svg","mesh_3d_url":"/static/models/tianjin_shadow_puppet.glb","description":"AI成功提取津门皮影艺术语言，完成刀法拓印与传统矿物色渲染。"}}',
             f"trace_{task_uuid[:8]}"
         ))
         total_inserted += 1

@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1130" width="800" height="1130">
+  <rect width="100%" height="100%" fill="#FFFFFF"/>
+  <!-- 裁切与对齐参考线 (A4 标淮尺寸: 210mm x 297mm) -->
+  <rect x="30" y="30" width="740" height="1070" fill="none" stroke="#B64A44" stroke-width="1.5" stroke-dasharray="10,5"/>
+  <text x="400" y="65" font-size="20" font-family="serif" font-weight="bold" fill="#2F2925" text-anchor="middle">《津韵润乡》乡村美育手工坊 · A4激光切割与实操排版纸样</text>
+  <text x="400" y="90" font-size="13" fill="#776D65" text-anchor="middle">非遗剧目配课教具 · 【生角·津门书生】· 红色实线剪裁，小圆圈穿孔铆钉，蓝色虚线折叠</text>
+
+  <!-- 部件1：头茬 (包含发冠与侧影) -->
+  <g transform="translate(150, 220)">
+    <rect x="-100" y="-80" width="200" height="170" fill="#FDFBF7" stroke="#CCC" stroke-dasharray="4,4" rx="8"/>
+    <text x="0" y="-60" font-size="12" fill="#8B4A2F" text-anchor="middle">【部件一：头部与冠帽】</text>
+    <path d="M-40,40 Q-80,10 -70,-40 Q-10,-65 30,-30 L20,30 Q-10,45 -40,40 Z" fill="none" stroke="#B64A44" stroke-width="2"/>
+    <circle cx="0" cy="40" r="4" fill="none" stroke="#1C3D5A" stroke-width="2"/> <!-- 颈部铆孔 -->
+    <text x="0" y="55" font-size="10" fill="#1C3D5A" text-anchor="middle">◎ 颈铆孔</text>
+  </g>
+
+  <!-- 部件2：身段 (前胸与后背镂空雕花) -->
+  <g transform="translate(480, 220)">
+    <rect x="-140" y="-80" width="280" height="240" fill="#FDFBF7" stroke="#CCC" stroke-dasharray="4,4" rx="8"/>
+    <text x="0" y="-60" font-size="12" fill="#8B4A2F" text-anchor="middle">【部件二：上身锦袍躯干】</text>
+    <path d="M-70,-30 L70,-30 L90,120 L-90,120 Z" fill="none" stroke="#B64A44" stroke-width="2"/>
+    <!-- 镂空花纹切割线 -->
+    <circle cx="0" cy="30" r="28" fill="none" stroke="#B64A44" stroke-width="1.5"/>
+    <circle cx="0" cy="30" r="18" fill="none" stroke="#B64A44" stroke-width="1.5"/>
+    <!-- 颈部与左右肩关节穿孔 -->
+    <circle cx="0" cy="-25" r="4" fill="none" stroke="#1C3D5A" stroke-width="2"/>
+    <circle cx="-60" cy="-20" r="4" fill="none" stroke="#1C3D5A" stroke-width="2"/>
+    <circle cx="60" cy="-20" r="4" fill="none" stroke="#1C3D5A" stroke-width="2"/>
+    <circle cx="0" cy="115" r="4" fill="none" stroke="#1C3D5A" stroke-width="2"/>
+    <text x="0" y="-35" font-size="10" fill="#1C3D5A" text-anchor="middle">◎ 颈部穿孔</text>
+    <text x="-60" y="-32" font-size="10" fill="#1C3D5A" text-anchor="middle">◎ 左肩孔</text>
+    <text x="60" y="-32" font-size="10" fill="#1C3D5A" text-anchor="middle">◎ 右肩孔</text>
+  </g>
+
+  <!-- 部件3：左右四肢四臂 -->
+  <g transform="translate(150, 520)">
+    <rect x="-100" y="-60" width="200" height="240" fill="#FDFBF7" stroke="#CCC" stroke-dasharray="4,4" rx="8"/>
+    <text x="0" y="-40" font-size="12" fill="#8B4A2F" text-anchor="middle">【部件三：大臂与小臂】</text>
+    <!-- 左上臂 -->
+    <path d="M-60,-10 L-20,-10 L-25,60 L-55,60 Z" fill="none" stroke="#B64A44" stroke-width="2"/>
+    <circle cx="-40" cy="-5" r="4" fill="none" stroke="#1C3D5A" stroke-width="2"/>
+    <circle cx="-40" cy="55" r="4" fill="none" stroke="#1C3D5A" stroke-width="2"/>
+    <!-- 右上臂 -->
+    <path d="M20,-10 L60,-10 L55,60 L25,60 Z" fill="none" stroke="#B64A44" stroke-width="2"/>
+    <circle cx="40" cy="-5" r="4" fill="none" stroke="#1C3D5A" stroke-width="2"/>
+    <circle cx="40" cy="55" r="4" fill="none" stroke="#1C3D5A" stroke-width="2"/>
+    <!-- 小臂及手掌带签环 -->
+    <path d="M-60,90 L-20,90 L-15,160 L-65,160 Z" fill="none" stroke="#B64A44" stroke-width="2"/>
+    <circle cx="-40" cy="95" r="4" fill="none" stroke="#1C3D5A" stroke-width="2"/>
+    <circle cx="-40" cy="155" r="3" fill="#1C3D5A"/>
+    <text x="-40" y="170" font-size="10" fill="#1C3D5A" text-anchor="middle">手签铁丝孔</text>
+  </g>
+
+  <!-- 部件4：下身下裳与皮影腿靴 -->
+  <g transform="translate(480, 560)">
+    <rect x="-140" y="-80" width="280" height="200" fill="#FDFBF7" stroke="#CCC" stroke-dasharray="4,4" rx="8"/>
+    <text x="0" y="-60" font-size="12" fill="#8B4A2F" text-anchor="middle">【部件四：下裳锦褶与靴履】</text>
+    <path d="M-80,-20 L80,-20 L100,80 L-100,80 Z" fill="none" stroke="#B64A44" stroke-width="2"/>
+    <circle cx="0" cy="-15" r="4" fill="none" stroke="#1C3D5A" stroke-width="2"/>
+    <!-- 腿段1 -->
+    <path d="M-50,90 L-20,90 L-20,160 L-50,160 Z" fill="none" stroke="#B64A44" stroke-width="2"/>
+    <!-- 腿段2 -->
+    <path d="M20,90 L50,90 L50,160 L20,160 Z" fill="none" stroke="#B64A44" stroke-width="2"/>
+  </g>
+
+  <!-- 底部教学安装说明 -->
+  <g transform="translate(400, 850)">
+    <rect x="-350" y="0" width="700" height="200" fill="#FBF9F5" stroke="#EAE3D9" rx="8"/>
+    <text x="-330" y="30" font-size="15" font-weight="bold" fill="#2F2925">皮影装配与美育教学指南：</text>
+    <text x="-330" y="60" font-size="13" fill="#555">1. 选材推荐：请使用 180g~250g 哑光牛皮纸或透明磨砂 PVC 片（模仿传统刮浆驴皮质感）。</text>
+    <text x="-330" y="85" font-size="13" fill="#555">2. 镂雕工艺：沿红色实线用美工刀或激光机镂切，注意面部与冠帽镂空要精巧细腻。</text>
+    <text x="-330" y="110" font-size="13" fill="#555">3. 关节穿孔：在所有标注【◎】的圆孔位置用打孔钳打出 2mm 圆孔，使用两脚开脚钉或鱼线穿铆固定。</text>
+    <text x="-330" y="135" font-size="13" fill="#555">4. 操纵三签：在颈部和左右双手铆接点固定 20cm 细竹签或铁丝操纵杆，即可在光源幕布后表演！</text>
+    <text x="-330" y="165" font-size="12" fill="#8B4A2F" font-weight="bold">津韵润乡乡村美育工程 · 天津非遗传承数字化中心监制</text>
+  </g>
+</svg>

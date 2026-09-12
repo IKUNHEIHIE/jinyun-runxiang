@@ -33,16 +33,67 @@ class OfflineSyncRequest(BaseModel):
 class QuizSubmitRequest(BaseModel):
     answers: dict  # {"1": ["B"], "2": ["C"]}
 
+class CreateCourseRequest(BaseModel):
+    title: str
+    subtitle: Optional[str] = "传承津沽非遗文化"
+    category: str = "SHADOW_PUPPET"
+    age_group: str = "小学低段"
+    duration_minutes: int = 45
+    energy_reward: int = 50
+    cover_url: Optional[str] = None
+    description: Optional[str] = "非遗美育专业微课"
+
+@router.post("")
+def create_course(
+    req: CreateCourseRequest,
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    course = Course(
+        title=req.title,
+        subtitle=req.subtitle,
+        category=req.category,
+        age_group=req.age_group,
+        cover_url=req.cover_url or "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600",
+        description=req.description,
+        duration_minutes=req.duration_minutes,
+        energy_reward=req.energy_reward,
+        status="PUBLISHED",
+        view_count=0
+    )
+    db.add(course)
+    db.commit()
+    db.refresh(course)
+    return success_response({"id": course.id, "title": course.title}, message="非遗课程已成功创建并发布")
+
+@router.put("/{course_id}/status")
+def toggle_course_status(
+    course_id: int,
+    db: Session = Depends(get_db)
+):
+    course = db.query(Course).filter(Course.id == course_id).first()
+    if not course:
+        return error_response(code=4040, message="课程不存在")
+    course.status = "OFFLINE" if course.status == "PUBLISHED" else "PUBLISHED"
+    db.commit()
+    msg = "课程已上线发布" if course.status == "PUBLISHED" else "课程已下架"
+    return success_response({"id": course.id, "status": course.status}, message=msg)
+
 @router.get("")
 def list_courses(
     category: Optional[str] = None,
     age_group: Optional[str] = None,
     keyword: Optional[str] = None,
+    status: Optional[str] = None,
     page: int = Query(1, ge=1),
     pageSize: int = Query(10, ge=1, le=50),
     db: Session = Depends(get_db)
 ):
-    query = db.query(Course).filter(Course.status == "PUBLISHED")
+    query = db.query(Course)
+    if status and status != "ALL":
+        query = query.filter(Course.status == status)
+    elif status is None:
+        query = query.filter(Course.status == "PUBLISHED")
     if category:
         query = query.filter(Course.category == category)
     if age_group:
@@ -63,6 +114,7 @@ def list_courses(
             "cover_url": c.cover_url,
             "duration_minutes": c.duration_minutes,
             "energy_reward": c.energy_reward,
+            "status": c.status,
             "view_count": c.view_count
         } for c in courses],
         "page": page,

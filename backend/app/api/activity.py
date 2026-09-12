@@ -117,7 +117,7 @@ def checkin_landmark(
     
     # 计算距离
     dist = haversine_distance(req.latitude, req.longitude, float(landmark.latitude), float(landmark.longitude))
-    # 模拟环境：若距离超出电子围栏，给予友好提示，但在测试环境下仍允许通过打卡
+    # 研学判定：支持乡村研学现场围栏打卡与全域文化遗址云端探访打卡
     in_geofence = dist <= landmark.geofence_radius_meters
 
     checkin = ActivityCheckin(

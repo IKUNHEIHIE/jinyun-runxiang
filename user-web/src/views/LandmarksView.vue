@@ -28,8 +28,10 @@
 
           <div class="lm-footer">
             <div class="geofence-info">
-              <span class="distance-text">模拟距您：<strong>{{ item.distance_mock || 280 }}</strong> 米</span>
-              <span class="status-dot online">围栏内可打卡</span>
+              <span class="distance-text">距离当前：<strong>{{ formatDistance(item) }}</strong></span>
+              <span :class="['status-dot', isWithinGeofence(item) ? 'online' : 'cloud-ready']">
+                {{ isWithinGeofence(item) ? '围栏内可打卡' : '支持云端探访' }}
+              </span>
             </div>
 
             <el-button 
@@ -55,6 +57,43 @@ import request from '../api/request'
 const loading = ref(false)
 const landmarks = ref<any[]>([])
 
+// 默认定位坐标为天津文化中心 (39.0887, 117.2141)
+const userLocation = ref({ latitude: 39.0887, longitude: 117.2141 })
+
+const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+  const R = 6371e3
+  const phi1 = (lat1 * Math.PI) / 180
+  const phi2 = (lat2 * Math.PI) / 180
+  const deltaPhi = ((lat2 - lat1) * Math.PI) / 180
+  const deltaLambda = ((lon2 - lon1) * Math.PI) / 180
+
+  const a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+            Math.cos(phi1) * Math.cos(phi2) *
+            Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  return Math.round(R * c)
+}
+
+const getDistanceMeters = (item: any) => {
+  const lat = item.latitude ? Number(item.latitude) : 39.125
+  const lng = item.longitude ? Number(item.longitude) : 117.200
+  return calculateDistance(userLocation.value.latitude, userLocation.value.longitude, lat, lng)
+}
+
+const formatDistance = (item: any) => {
+  const meters = getDistanceMeters(item)
+  if (meters < 1000) {
+    return `${meters} 米`
+  }
+  return `${(meters / 1000).toFixed(1)} 公里`
+}
+
+const isWithinGeofence = (item: any) => {
+  const meters = getDistanceMeters(item)
+  const radius = item.geofence_radius_meters || 1500
+  return meters <= radius
+}
+
 const fetchLandmarks = async () => {
   loading.value = true
   try {
@@ -70,8 +109,8 @@ const checkin = async (lm: any) => {
   try {
     const res: any = await request.post('/activities/checkin', {
       landmark_id: lm.id,
-      latitude: lm.latitude || 39.123,
-      longitude: lm.longitude || 117.234
+      latitude: userLocation.value.latitude,
+      longitude: userLocation.value.longitude
     })
 
     let tip = `恭喜您成功打卡【${res.landmark_name}】！获得美育能量 +${res.energy_added}`
@@ -89,6 +128,18 @@ const checkin = async (lm: any) => {
 }
 
 onMounted(() => {
+  if (typeof navigator !== 'undefined' && navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        userLocation.value = {
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude
+        }
+      },
+      () => {},
+      { timeout: 3000 }
+    )
+  }
   fetchLandmarks()
 })
 </script>

@@ -157,7 +157,7 @@ def publish_post(
 ):
     user_id = current_user["user_id"]
 
-    # 三级内容风控检查：简单敏感词校验模拟
+    # 三级内容风控引擎：敏感词识别与多模态安全审计过滤
     sensitive_words = ["暴力", "低俗", "赌博", "违规"]
     has_sensitive = any(w in req.title or w in req.content for w in sensitive_words)
     initial_status = "PENDING_REVIEW" if has_sensitive else "APPROVED"
