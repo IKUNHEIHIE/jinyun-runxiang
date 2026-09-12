@@ -48,6 +48,12 @@ const routes = [
         name: 'Devices',
         component: () => import('@/views/devices/DevicesView.vue'),
         meta: { title: '具身设备监控' }
+      },
+      {
+        path: 'settings',
+        name: 'Settings',
+        component: () => import('@/views/settings/SettingsView.vue'),
+        meta: { title: '系统设置' }
       }
     ]
   }

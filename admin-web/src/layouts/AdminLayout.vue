@@ -46,6 +46,10 @@
           <el-icon><Connection /></el-icon>
           <span>具身设备监控</span>
         </el-menu-item>
+        <el-menu-item index="/settings">
+          <el-icon><Setting /></el-icon>
+          <span>系统设置 (A-08)</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 
@@ -76,7 +80,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import {
   DataAnalysis, Reading, Cpu, UserFilled,
-  CircleCheck, MapLocation, Connection, Bell
+  CircleCheck, MapLocation, Connection, Bell, Setting
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 

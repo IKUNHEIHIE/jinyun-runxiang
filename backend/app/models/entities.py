@@ -465,3 +465,11 @@ class OperationStatDaily(Base):
     order_gmv_cents = Column(Integer, default=0)
     fund_added_cents = Column(Integer, default=0)
     device_active_count = Column(Integer, default=0)
+
+class SysConfig(Base):
+    __tablename__ = "sys_config"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    config_key = Column(String(64), unique=True, nullable=False)
+    config_value = Column(Text, nullable=False)
+    description = Column(String(255))
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
