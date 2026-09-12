@@ -1,0 +1,118 @@
+:root {
+  --color-primary: #8B4A2F;
+  --color-primary-light: #A75C3E;
+  --color-primary-dark: #6E3821;
+  --color-gold: #D6A85C;
+  --color-gold-light: #E8C382;
+  --color-teal: #2C4F54;
+  --color-teal-light: #3D6A70;
+  --color-paper: #F8F4EC;
+  --color-paper-card: #FFFDF9;
+  --color-text-main: #1F1E1B;
+  --color-text-regular: #4A463F;
+  --color-text-secondary: #8C8477;
+  --color-border: #E8DFCE;
+  --color-border-light: #F0E9DC;
+
+  --font-serif: "Noto Serif SC", "STSong", "Songti SC", "SimSun", serif;
+  --font-sans: "Noto Sans SC", system-ui, -apple-system, sans-serif;
+
+  --shadow-soft: 0 4px 20px -2px rgba(139, 74, 47, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+  --shadow-hover: 0 12px 32px -4px rgba(139, 74, 47, 0.16), 0 4px 12px -2px rgba(0, 0, 0, 0.06);
+  --radius-card: 16px;
+  --radius-btn: 10px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-text-main);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* 传统非遗书法标题 */
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+/* 宣纸卡片质感 */
+.paper-card {
+  background-color: var(--color-paper-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+  transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.paper-card:hover {
+  box-shadow: var(--shadow-hover);
+  border-color: var(--color-gold);
+  transform: translateY(-2px);
+}
+
+/* 传统瓦当纹样与金边胶囊 */
+.tag-heritage {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: rgba(139, 74, 47, 0.08);
+  border: 1px solid rgba(139, 74, 47, 0.2);
+  border-radius: 9999px;
+}
+
+.tag-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8C6212;
+  background: rgba(214, 168, 92, 0.15);
+  border: 1px solid rgba(214, 168, 92, 0.4);
+  border-radius: 9999px;
+}
+
+/* 经典岱红按钮 */
+.btn-primary {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: #fff !important;
+  border-radius: var(--radius-btn);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-light) !important;
+  border-color: var(--color-primary-light) !important;
+  box-shadow: 0 4px 14px rgba(139, 74, 47, 0.3);
+}
+
+/* Element Plus 主题变量重写 */
+.el-button--primary {
+  --el-button-bg-color: var(--color-primary);
+  --el-button-border-color: var(--color-primary);
+  --el-button-hover-bg-color: var(--color-primary-light);
+  --el-button-hover-border-color: var(--color-primary-light);
+  --el-button-active-bg-color: var(--color-primary-dark);
+  --el-button-active-border-color: var(--color-primary-dark);
+}
+
+.el-menu--horizontal .el-menu-item.is-active {
+  border-bottom: 3px solid var(--color-primary) !important;
+  color: var(--color-primary) !important;
+  font-weight: 700;
+}
