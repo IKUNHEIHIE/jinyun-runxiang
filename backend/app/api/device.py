@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from typing import Dict, Any, Optional
 
 from app.core.database import get_db
-from app.core.security import get_current_user
+from app.core.security import require_teacher
 from app.schemas.common import success_response, error_response
 from app.models.entities import Device, DeviceCommand
 
@@ -53,7 +53,7 @@ def get_device_status(device_code: str, db: Session = Depends(get_db)):
 def send_device_command(
     device_code: str,
     req: DeviceCommandRequest,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_teacher),
     db: Session = Depends(get_db)
 ):
     d = db.query(Device).filter(Device.device_code == device_code).first()

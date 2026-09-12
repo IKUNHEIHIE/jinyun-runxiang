@@ -91,43 +91,54 @@ def create_order(
     total_cents = 0
     total_fund_cents = 0
 
-    for item in req.items:
-        sku = db.query(ProductSku).filter(ProductSku.id == item.sku_id).first()
-        prod = db.query(Product).filter(Product.id == item.product_id).first()
-        if not sku or not prod:
-            return error_response(code=4040, message="商品SKU不存在")
-        if sku.stock < item.quantity:
-            return error_response(code=4090, message=f"商品【{sku.name}】库存不足")
-        
-        sku.stock -= item.quantity
-        line_total = sku.price_cents * item.quantity
-        total_cents += line_total
-        total_fund_cents += int(line_total * float(prod.fund_rate_percent) / 100.0)
+    try:
+        for item in req.items:
+            sku = db.query(ProductSku).filter(ProductSku.id == item.sku_id).first()
+            prod = db.query(Product).filter(Product.id == item.product_id).first()
+            if not sku or not prod:
+                db.rollback()
+                return error_response(code=4040, message="商品SKU不存在")
+            
+            # 原子条件扣减库存，杜绝并发超卖 (CWE-362)
+            affected = db.query(ProductSku).filter(
+                ProductSku.id == item.sku_id,
+                ProductSku.stock >= item.quantity
+            ).update({"stock": ProductSku.stock - item.quantity})
 
-    order = OrderMain(
-        order_no=order_no,
-        user_id=user_id,
-        total_amount_cents=total_cents,
-        fund_amount_cents=total_fund_cents,
-        status="PAID",  # 开发直接模拟支付完成
-        receiver_name=req.receiver_name,
-        receiver_phone=req.receiver_phone,
-        receiver_address=req.receiver_address,
-        pay_time=datetime.utcnow()
-    )
-    db.add(order)
-    db.commit()
-    db.refresh(order)
+            if affected == 0:
+                db.rollback()
+                return error_response(code=4090, message=f"商品【{sku.name}】库存不足")
+            
+            line_total = sku.price_cents * item.quantity
+            total_cents += line_total
+            total_fund_cents += int(line_total * float(prod.fund_rate_percent) / 100.0)
 
-    # 注入专项基金流水
-    fund_rec = FundRecord(
-        source_order_id=order.id,
-        amount_cents=total_fund_cents,
-        purpose="乡村小学非遗美育耗材定向采购",
-        status="ALLOCATED"
-    )
-    db.add(fund_rec)
-    db.commit()
+        order = OrderMain(
+            order_no=order_no,
+            user_id=user_id,
+            total_amount_cents=total_cents,
+            fund_amount_cents=total_fund_cents,
+            status="PAID",  # 开发直接模拟支付完成
+            receiver_name=req.receiver_name,
+            receiver_phone=req.receiver_phone,
+            receiver_address=req.receiver_address,
+            pay_time=datetime.utcnow()
+        )
+        db.add(order)
+        db.flush()
+
+        # 注入专项基金流水
+        fund_rec = FundRecord(
+            source_order_id=order.id,
+            amount_cents=total_fund_cents,
+            purpose="乡村小学非遗美育耗材定向采购",
+            status="ALLOCATED"
+        )
+        db.add(fund_rec)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise e
 
     return success_response({
         "order_no": order.order_no,

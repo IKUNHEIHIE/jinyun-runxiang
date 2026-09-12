@@ -263,6 +263,7 @@ def sync_offline(
     return success_response({
         "synced_count": len(success_ids),
         "success_event_ids": success_ids,
+        "synced_event_ids": success_ids,
         "conflict_event_ids": conflict_ids
     }, message="离线事件同步完成")
 
