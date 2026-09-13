@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 760" width="540" height="760">
+  <rect width="100%" height="100%" fill="#F8F4EC" rx="16"/>
+  <rect x="18" y="18" width="504" height="724" fill="none" stroke="none" stroke-width="2" stroke-dasharray="6,4" rx="12"/>
+
+  <text x="270" y="48" font-size="19" font-family="'Noto Serif SC', serif" font-weight="bold" fill="#222" text-anchor="middle">津门非遗皮影戏 · 绣金文生巾赶考书生</text>
+  <text x="270" y="68" font-size="11" fill="#776D65" text-anchor="middle">身穿绣金文生巾赶考书生 · 传统三签联动皮影</text>
+
+  <g transform="translate(270, 390)">
+    <line x1="0" y1="-140" x2="-150" y2="330" stroke="#8C827A" stroke-width="3" stroke-dasharray="4,2"/>
+    <line x1="-120" y1="20" x2="-210" y2="330" stroke="#8C827A" stroke-width="3" stroke-dasharray="4,2"/>
+    <line x1="120" y1="20" x2="180" y2="330" stroke="#8C827A" stroke-width="3" stroke-dasharray="4,2"/>
+
+    <path d="M-60,80 Q-90,190 -70,250 L-30,250 Q-40,160 -10,80 Z" fill="none" stroke="#111111" stroke-width="3"/>
+    <path d="M10,80 Q40,160 30,250 L70,250 Q90,190 60,80 Z" fill="none" stroke="#111111" stroke-width="3"/>
+    <path d="M-80,245 L-20,245 Q-15,265 -50,265 L-80,265 Z" fill="none" stroke="#111111" stroke-width="2"/>
+    <path d="M20,245 L80,245 Q85,265 50,265 L20,265 Z" fill="none" stroke="#111111" stroke-width="2"/>
+
+    <path d="M-55,-60 L55,-60 L70,90 L-70,90 Z" fill="none" stroke="#111111" stroke-width="3"/>
+    <rect x="-58" y="0" width="116" height="18" fill="none" stroke="#111111" stroke-width="2"/>
+    <circle cx="0" cy="45" r="22" fill="none" stroke="none" stroke-width="3"/>
+
+    <g transform="translate(90, 10)">
+      <path d="M25,15 L65,-5 Q80,20 45,35 Z" fill="none" stroke="#111111" stroke-width="2"/>
+    </g>
+
+    <g transform="translate(0, -60)">
+      <circle cx="0" cy="0" r="6" fill="none" stroke="#111111" stroke-width="2"/>
+      <path d="M-30,-20 Q-60,-40 -50,-80 Q0,-95 30,-70 L20,-20 Z" fill="none" stroke="#111111" stroke-width="3"/>
+      <path d="M-40,-30 Q-90,-20 -80,40 L-65,35 Q-75,-10 -35,-20 Z" fill="none" stroke="#111111" stroke-width="2"/>
+      <circle cx="10" cy="-75" r="8" fill="none" stroke="#111111" stroke-width="2"/>
+      <path d="M-10,-20 L10,-20 Q12,-35 25,-40 L28,-48 Q20,-50 18,-55 Q28,-60 25,-70 L5,-70" fill="none" stroke="#111111" stroke-width="3"/>
+      <path d="M12,-52 Q18,-54 22,-50" fill="none" stroke="none" stroke-width="2.5"/>
+      <circle cx="17" cy="-51" r="1.5" fill="#111"/>
+    </g>
+  </g>
+
+  <rect x="440" y="675" width="48" height="48" fill="#888" rx="6"/>
+  <text x="464" y="698" font-size="14" fill="#FFF" font-weight="bold" font-family="serif" text-anchor="middle">津韵</text>
+  <text x="464" y="714" font-size="14" fill="#FFF" font-weight="bold" font-family="serif" text-anchor="middle">书生</text>
+</svg>

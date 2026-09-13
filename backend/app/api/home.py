@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import get_current_user_optional
 from app.schemas.common import success_response
-from app.models.entities import BannerConfig, Course, CommunityPost, UserGrowth, SysUser
+from app.models.entities import BannerConfig, Course, CommunityPost, UserGrowth, SysUser, FolkFestival
 
 router = APIRouter(prefix="/home", tags=["首页聚合"])
 
@@ -43,13 +43,27 @@ def get_home_feed(
             }
 
     # 5. 民俗日历专题
-    festival_topic = {
-        "title": "津门中秋拜月与兔子王传习",
-        "date": "八月十五",
-        "description": "天津旧俗八月十五中秋节，家家户户供奉“泥人张兔儿爷”，品天津特色白皮月饼，寄托团圆安康的美好心愿。",
-        "custom": "供兔儿爷、吃白皮月饼、赏海河明月",
-        "tag": "津沽民俗专题"
-    }
+    festival_db = db.query(FolkFestival).filter(FolkFestival.status == "PUBLISHED").order_by(FolkFestival.sort_order.asc(), FolkFestival.id.asc()).first()
+    if festival_db:
+        festival_topic = {
+            "id": festival_db.id,
+            "title": festival_db.title,
+            "date": festival_db.lunar_date,
+            "solar_date": festival_db.solar_date,
+            "description": festival_db.description,
+            "custom": festival_db.customs,
+            "tag": festival_db.tag,
+            "category": festival_db.category,
+            "cover_url": festival_db.cover_url
+        }
+    else:
+        festival_topic = {
+            "title": "津门中秋拜月与兔子王传习",
+            "date": "八月十五",
+            "description": "天津旧俗八月十五中秋节，家家户户供奉“泥人张兔儿爷”，品天津特色白皮月饼，寄托团圆安康的美好心愿。",
+            "custom": "供兔儿爷、吃白皮月饼、赏海河明月",
+            "tag": "津沽民俗专题"
+        }
 
     return success_response({
         "banners": [{

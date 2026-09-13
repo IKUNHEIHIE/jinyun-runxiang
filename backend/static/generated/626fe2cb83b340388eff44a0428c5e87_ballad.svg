@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 460" width="700" height="460">
+  <rect width="100%" height="100%" fill="#FAF5EB" rx="12"/>
+  <rect x="15" y="15" width="670" height="430" fill="none" stroke="#D6A85C" stroke-width="2" stroke-dasharray="6,3" rx="8"/>
+
+  <text x="350" y="50" font-size="20" font-family="'Noto Serif SC', serif" font-weight="bold" fill="#B63E2C" text-anchor="middle">津门曲艺非遗档案 · 【《运河春韵·津门书场鼓韵图》】</text>
+  <text x="350" y="74" font-size="12" fill="#6B5B52" text-anchor="middle">传统五声音阶简谱对照 · 板眼：骆派京韵大鼓快板 · 鼓板结合伴奏谱</text>
+
+  <g transform="translate(50, 100)">
+    <rect x="0" y="0" width="600" height="230" fill="#FFFDF9" stroke="#E2D7C8" rx="8"/>
+    
+    <g transform="translate(40, 45)">
+      <circle cx="25" cy="25" r="22" fill="#B63E2C" stroke="#D6A85C" stroke-width="2"/>
+      <circle cx="25" cy="25" r="16" fill="#FFF" stroke="#D6A85C" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <rect x="60" y="8" width="12" height="36" rx="3" fill="#5C3317" stroke="#333" stroke-width="1"/>
+      <rect x="76" y="8" width="12" height="36" rx="3" fill="#5C3317" stroke="#333" stroke-width="1"/>
+    </g>
+    <text x="145" y="48" font-size="14" font-weight="bold" fill="#B63E2C">天津茶馆大鼓双楗与紫檀鸳鸯板伴奏板式</text>
+    <text x="145" y="68" font-size="11" fill="#8C796C">调式：正宫调 1=G (宫 商 角 徵 羽 五声音阶) · 速度：中板转快板流水</text>
+
+    <line x1="30" y1="95" x2="570" y2="95" stroke="#D1C4B2" stroke-width="1.5"/>
+    <text x="40" y="135" font-size="18" font-family="monospace" font-weight="bold" fill="#2F2925" letter-spacing="4">1 1 5 5 | 6 6 5 - | 4 4 3 3 | 2 2 1 -</text>
+    
+    <line x1="30" y1="160" x2="570" y2="160" stroke="#D1C4B2" stroke-width="1.5"/>
+    <text x="40" y="195" font-size="15" font-family="'Noto Serif SC', serif" fill="#B63E2C" font-weight="bold">【唱词】运河水阔映津门</text>
+  </g>
+
+  <g transform="translate(50, 350)">
+    <text x="0" y="32" font-size="12" fill="#8C796C">天津市非物质文化遗产数字赋能乡村美育工程 · 智能曲艺创客音律档案</text>
+    <rect x="530" y="5" width="48" height="48" fill="#B63E2C" rx="4"/>
+    <text x="554" y="26" font-size="13" fill="#FFF" font-family="'Noto Serif SC', serif" font-weight="bold" text-anchor="middle">津派</text>
+    <text x="554" y="44" font-size="13" fill="#FFF" font-family="'Noto Serif SC', serif" font-weight="bold" text-anchor="middle">曲艺</text>
+  </g>
+</svg>

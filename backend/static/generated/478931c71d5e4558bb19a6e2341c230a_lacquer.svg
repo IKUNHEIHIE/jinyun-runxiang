@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">
+  <defs>
+    <radialGradient id="lacquerBlack" cx="45%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#262322"/>
+      <stop offset="70%" stop-color="#141211"/>
+      <stop offset="100%" stop-color="#080706"/>
+    </radialGradient>
+    <linearGradient id="radenCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7CE8E2"/>
+      <stop offset="35%" stop-color="#B794F4"/>
+      <stop offset="70%" stop-color="#F6E05E"/>
+      <stop offset="100%" stop-color="#68D391"/>
+    </linearGradient>
+    <linearGradient id="radenPink" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FEB2B2"/>
+      <stop offset="50%" stop-color="#FAF089"/>
+      <stop offset="100%" stop-color="#9AE6B4"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="100%" height="100%" fill="#1A1817"/>
+  <circle cx="300" cy="300" r="260" fill="url(#lacquerBlack)" stroke="#4A3B32" stroke-width="4"/>
+  <circle cx="300" cy="300" r="252" fill="none" stroke="#1E3A5F" stroke-width="2.5"/>
+
+  <text x="300" y="65" font-size="18" font-family="'Noto Serif SC', serif" font-weight="bold" fill="#EAD6B8" text-anchor="middle">津派传统大漆髹饰 · 【天然大漆黑漆螺钿花鸟圆盘】</text>
+  <text x="300" y="88" font-size="11" fill="#A89485" text-anchor="middle">髹漆刮灰 · 点螺细嵌 · 推光出彩 · 风格：天然矿物大漆</text>
+
+  <g transform="translate(300, 305)">
+    <path d="M-140,140 Q-70,110 0,140 T140,140" fill="none" stroke="url(#radenCyan)" stroke-width="2" opacity="0.6"/>
+    <path d="M0,-30 C-45,-90 -10,-150 0,-150 C10,-150 45,-90 0,-30 Z" fill="url(#radenCyan)" stroke="#1E3A5F" stroke-width="1.8"/>
+    <path d="M-25,-20 C-95,-45 -140,-15 -135,-3 C-130,10 -75,2 -25,-20 Z" fill="url(#radenPink)" stroke="#1E3A5F" stroke-width="1.8"/>
+    <path d="M25,-20 C95,-45 140,-15 135,-3 C130,10 75,2 25,-20 Z" fill="url(#radenPink)" stroke="#1E3A5F" stroke-width="1.8"/>
+    <circle cx="0" cy="-5" r="24" fill="#0E0D0D" stroke="#1E3A5F" stroke-width="2"/>
+    <circle cx="0" cy="-5" r="14" fill="url(#radenCyan)"/>
+  </g>
+
+  <rect x="270" y="525" width="60" height="28" fill="#8B4A2F" rx="4"/>
+  <text x="300" y="544" font-size="13" fill="#FFF" font-family="serif" font-weight="bold" text-anchor="middle">津门大漆</text>
+</svg>

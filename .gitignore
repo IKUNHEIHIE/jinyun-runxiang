@@ -17,12 +17,20 @@ build/
 .flutter-plugins-dependencies
 .packages
 
+# Legacy Backups
+admin-web-legacy/
+
 # IDE & OS
 .DS_Store
 .idea/
 .vscode/
 *.swp
 *.swo
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
 
 # Logs
 *.log

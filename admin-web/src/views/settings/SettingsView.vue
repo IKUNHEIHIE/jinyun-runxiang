@@ -259,13 +259,105 @@
           </div>
         </el-form>
       </el-tab-pane>
+
+      <!-- Tab 3: 美育助农物资实体流向管理 (P3) -->
+      <el-tab-pane name="supplies">
+        <template #label>
+          <span class="tab-label">
+            <el-icon><Present /></el-icon>
+            <span>美育助农物资实体流向管理</span>
+          </span>
+        </template>
+
+        <div style="padding: 10px 0;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div>
+              <h3 style="margin: 0; color: #2F2925; font-size: 16px;">🌱 乡村小学美育耗材定向调拨实体流向</h3>
+              <p style="margin: 4px 0 0; color: #776D65; font-size: 13px;">每笔助农文创销售收益提取的 5% 专项基金，均 100% 实体化转化为对应乡村学校的非遗材料包与教具</p>
+            </div>
+            <el-button type="primary" style="background-color: #8B4A2F; border-color: #8B4A2F;" @click="supplyDialogVisible = true">
+              + 登记新增调拨批次
+            </el-button>
+          </div>
+
+          <el-table :data="suppliesList" v-loading="suppliesLoading" border stripe style="width: 100%">
+            <el-table-column prop="batch_no" label="调拨批次" width="180" />
+            <el-table-column prop="district" label="行政区划" width="100">
+              <template #default="{ row }">
+                <el-tag size="small">{{ row.district }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="school_name" label="受助乡村小学" min-width="160" />
+            <el-table-column prop="materials_name" label="定向物资名称" min-width="200" />
+            <el-table-column label="调拨数量" width="110">
+              <template #default="{ row }">
+                <strong style="color: #8B4A2F;">{{ row.quantity }}</strong> {{ row.unit }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="beneficiary_students" label="受益儿童" width="100">
+              <template #default="{ row }">
+                {{ row.beneficiary_students }} 人
+              </template>
+            </el-table-column>
+            <el-table-column prop="delivered_date" label="签收日期" width="120" />
+            <el-table-column prop="status" label="物资状态" width="100">
+              <template #default="{ row }">
+                <el-tag v-if="row.status === 'DELIVERED'" type="success" size="small">已送达校区</el-tag>
+                <el-tag v-else type="warning" size="small">调拨运送中</el-tag>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </el-tab-pane>
     </el-tabs>
+
+    <!-- 登记物资调拨弹窗 -->
+    <el-dialog v-model="supplyDialogVisible" title="登记新增助农美育耗材调拨批次" width="500px">
+      <el-form :model="newSupplyForm" label-width="110px">
+        <el-form-item label="行政区划" required>
+          <el-select v-model="newSupplyForm.district" placeholder="请选择天津涉农区" style="width: 100%;">
+            <el-option label="蓟州区" value="蓟州区" />
+            <el-option label="宝坻区" value="宝坻区" />
+            <el-option label="武清区" value="武清区" />
+            <el-option label="静海区" value="静海区" />
+            <el-option label="宁河区" value="宁河区" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="受助学校全称" required>
+          <el-input v-model="newSupplyForm.school_name" placeholder="例如：蓟州区下营镇中心小学" />
+        </el-form-item>
+        <el-form-item label="调拨物资名称" required>
+          <el-input v-model="newSupplyForm.materials_name" placeholder="例如：津派皮影牛皮材料包与刻刀" />
+        </el-form-item>
+        <el-row :gutter="12">
+          <el-col :span="14">
+            <el-form-item label="数量" required>
+              <el-input-number v-model="newSupplyForm.quantity" :min="1" :max="10000" style="width: 100%;" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="单位">
+              <el-input v-model="newSupplyForm.unit" placeholder="套/盒/箱" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="预计受益人数">
+          <el-input-number v-model="newSupplyForm.beneficiary_students" :min="1" style="width: 100%;" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="supplyDialogVisible = false">取消</el-button>
+        <el-button type="primary" :loading="addingSupply" style="background-color: #8B4A2F; border-color: #8B4A2F;" @click="submitAddSupply">
+          确认登记并入库
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { Check, Cpu, Setting, Connection } from '@element-plus/icons-vue'
+import { Check, Cpu, Setting, Connection, Present } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import request from '@/api/request'
 
@@ -416,8 +508,63 @@ const handleSaveAll = async () => {
   }
 }
 
+// -------------------------------------------------------------
+// 美育助农物资流向管理逻辑 (P3)
+// -------------------------------------------------------------
+const suppliesList = ref<any[]>([])
+const suppliesLoading = ref(false)
+const supplyDialogVisible = ref(false)
+const addingSupply = ref(false)
+const newSupplyForm = ref({
+  district: '蓟州区',
+  school_name: '',
+  materials_name: '',
+  quantity: 100,
+  unit: '套',
+  beneficiary_students: 80
+})
+
+const fetchSupplies = async () => {
+  suppliesLoading.value = true
+  try {
+    const res: any = await request.get('/admin/philanthropy/supplies')
+    suppliesList.value = res || []
+  } catch (e) {
+    console.error(e)
+  } finally {
+    suppliesLoading.value = false
+  }
+}
+
+const submitAddSupply = async () => {
+  if (!newSupplyForm.value.school_name || !newSupplyForm.value.materials_name) {
+    ElMessage.warning('请填写受助学校名称与调拨物资名称')
+    return
+  }
+  addingSupply.value = true
+  try {
+    await request.post('/admin/philanthropy/supplies', newSupplyForm.value)
+    ElMessage.success('助农美育物资批次已成功入库并生成调拨单')
+    supplyDialogVisible.value = false
+    newSupplyForm.value = {
+      district: '蓟州区',
+      school_name: '',
+      materials_name: '',
+      quantity: 100,
+      unit: '套',
+      beneficiary_students: 80
+    }
+    fetchSupplies()
+  } catch (e) {
+    ElMessage.error('登记失败')
+  } finally {
+    addingSupply.value = false
+  }
+}
+
 onMounted(() => {
   fetchSettings()
+  fetchSupplies()
 })
 </script>
 

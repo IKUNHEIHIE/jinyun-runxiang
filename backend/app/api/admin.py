@@ -13,7 +13,7 @@ from app.schemas.common import success_response, error_response
 from app.models.entities import (
     OperationStatDaily, CommunityPost, ContentReview,
     Course, AiModel, SysUser, OrderMain, FundRecord, Device,
-    SysConfig, UserProfile, UserGrowth, Badge, UserBadge
+    SysConfig, UserProfile, UserGrowth, Badge, UserBadge, PhilanthropySupply
 )
 
 router = APIRouter(prefix="/admin", tags=["运营管理后台"])
@@ -83,6 +83,10 @@ def list_pending_reviews(
             "category": p.category,
             "cover_url": p.cover_url,
             "author_name": author.nickname if author else "学生",
+            "is_co_creation": bool(p.is_co_creation),
+            "co_creator_name": p.co_creator_name,
+            "rural_author_name": p.rural_author_name,
+            "is_featured": bool(p.is_featured),
             "risk_level": rev.risk_level if rev else "LOW",
             "ai_analysis": rev.ai_analysis_json if rev else {},
             "created_at": p.created_at.strftime("%Y-%m-%d %H:%M") if p.created_at else ""
@@ -510,3 +514,66 @@ def delete_system_user(
     db.delete(user)
     db.commit()
     return success_response(message="用户已从系统安全注销删除")
+
+# -----------------------------------------------------------------------------
+# 美育助农物资实体流向管理模块
+# -----------------------------------------------------------------------------
+
+class CreateSupplyRequest(BaseModel):
+    school_name: str
+    district: str
+    materials_name: str
+    quantity: int
+    unit: Optional[str] = "套"
+    beneficiary_students: Optional[int] = 50
+    delivered_date: Optional[str] = None
+    batch_no: Optional[str] = None
+
+@router.get("/philanthropy/supplies")
+def list_admin_supplies(
+    current_user: dict = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """运营后台：查询助农美育物资调拨实体流向明细"""
+    supplies = db.query(PhilanthropySupply).order_by(PhilanthropySupply.delivered_date.desc()).all()
+    return success_response([{
+        "id": s.id,
+        "school_name": s.school_name,
+        "district": s.district,
+        "materials_name": s.materials_name,
+        "quantity": s.quantity,
+        "unit": s.unit,
+        "beneficiary_students": s.beneficiary_students,
+        "delivered_date": s.delivered_date,
+        "batch_no": s.batch_no,
+        "photo_url": s.photo_url,
+        "status": s.status,
+        "created_at": s.created_at.strftime("%Y-%m-%d %H:%M") if s.created_at else ""
+    } for s in supplies])
+
+@router.post("/philanthropy/supplies")
+def create_admin_supply(
+    req: CreateSupplyRequest,
+    current_user: dict = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """运营后台：登记新增向乡村小学调拨的美育耗材批次"""
+    new_supply = PhilanthropySupply(
+        school_name=req.school_name,
+        district=req.district,
+        materials_name=req.materials_name,
+        quantity=req.quantity,
+        unit=req.unit or "套",
+        beneficiary_students=req.beneficiary_students or 50,
+        delivered_date=req.delivered_date or datetime.utcnow().strftime("%Y-%m-%d"),
+        batch_no=req.batch_no or f"BATCH-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}",
+        status="DELIVERED"
+    )
+    db.add(new_supply)
+    db.commit()
+    db.refresh(new_supply)
+    return success_response({
+        "id": new_supply.id,
+        "batch_no": new_supply.batch_no,
+        "school_name": new_supply.school_name
+    }, message="助农美育物资调拨记录已登记入库")

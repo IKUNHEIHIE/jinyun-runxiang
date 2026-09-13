@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">
+  <defs>
+    <radialGradient id="taotieBg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#8B4513"/>
+      <stop offset="80%" stop-color="#2F4F4F"/>
+      <stop offset="100%" stop-color="#151211"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="100%" height="100%" fill="#1A1817"/>
+  <rect x="20" y="20" width="560" height="560" fill="none" stroke="#C0C0C0" stroke-width="2" stroke-dasharray="6,4" rx="8"/>
+
+  <text x="300" y="60" font-size="18" font-family="'Noto Serif SC', serif" font-weight="bold" fill="#E5DCC5" text-anchor="middle">蓟州青铜器 · 馆藏商周【津运饕餮纹青釉礼杯】矢量图谱</text>
+  <text x="300" y="82" font-size="11" fill="#C0C0C0" text-anchor="middle">巨角圆睛 · 云雷衬底 · 范铸重器 · 质感：MINERAL_LACQUER</text>
+
+  <g transform="translate(300, 310)">
+    <path d="M-30,-70 C-90,-160 -190,-150 -180,-60 C-170,10 -110,-30 -80,-40" fill="none" stroke="#C0C0C0" stroke-width="9" stroke-linecap="round"/>
+    <path d="M30,-70 C90,-160 190,-150 180,-60 C170,10 110,-30 80,-40" fill="none" stroke="#C0C0C0" stroke-width="9" stroke-linecap="round"/>
+
+    <g transform="translate(-75, 10)">
+      <rect x="-35" y="-20" width="70" height="40" rx="14" fill="#2F4F4F" stroke="#C0C0C0" stroke-width="4"/>
+      <circle cx="0" cy="0" r="12" fill="#C0C0C0"/>
+      <circle cx="0" cy="0" r="5" fill="#111"/>
+    </g>
+    <g transform="translate(75, 10)">
+      <rect x="-35" y="-20" width="70" height="40" rx="14" fill="#2F4F4F" stroke="#C0C0C0" stroke-width="4"/>
+      <circle cx="0" cy="0" r="12" fill="#C0C0C0"/>
+      <circle cx="0" cy="0" r="5" fill="#111"/>
+    </g>
+
+    <path d="M-15,-60 L15,-60 L20,70 L-20,70 Z" fill="#2F4F4F" stroke="#C0C0C0" stroke-width="4"/>
+    <path d="M-120,90 Q0,50 120,90 Q80,140 0,130 Q-80,140 -120,90 Z" fill="none" stroke="#C0C0C0" stroke-width="6"/>
+    <polygon points="-70,95 -60,120 -50,95" fill="#C0C0C0"/>
+    <polygon points="50,95 60,120 70,95" fill="#C0C0C0"/>
+  </g>
+
+  <rect x="255" y="535" width="90" height="28" fill="#2F4F4F" stroke="#C0C0C0" stroke-width="1.5" rx="4"/>
+  <text x="300" y="554" font-size="13" fill="#C0C0C0" font-family="serif" text-anchor="middle">蓟门金石</text>
+</svg>

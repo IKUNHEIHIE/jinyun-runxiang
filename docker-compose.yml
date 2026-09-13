@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # ========================================================
+  # 后端服务：FastAPI + SQLAlchemy + SQLite/MySQL + Uvicorn
+  # ========================================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: jinyun-backend
+    restart: unless-stopped
+    environment:
+      - PYTHONPATH=/app
+      - DATABASE_URL=sqlite:///./shumei.db
+      - ENVIRONMENT=production
+    volumes:
+      - ./backend/shumei.db:/app/shumei.db
+      - ./backend/app/static:/app/app/static
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/v1/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - jinyun-net
+
+  # ========================================================
+  # 管理后台前端：Vue 3 + PureAdmin + Element Plus + ECharts
+  # ========================================================
+  admin-web:
+    build:
+      context: ./admin-web
+      dockerfile: Dockerfile
+    container_name: jinyun-admin-web
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - jinyun-net
+
+  # ========================================================
+  # 用户前台门户：Vue 3 + Vite + Element Plus + 非遗国潮设计
+  # ========================================================
+  user-web:
+    build:
+      context: ./user-web
+      dockerfile: Dockerfile
+    container_name: jinyun-user-web
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - jinyun-net
+
+  # ========================================================
+  # 统一入口反向代理：Nginx
+  # ========================================================
+  nginx:
+    image: nginx:stable-alpine
+    container_name: jinyun-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+      - admin-web
+      - user-web
+    networks:
+      - jinyun-net
+
+networks:
+  jinyun-net:
+    driver: bridge

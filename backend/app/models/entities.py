@@ -218,6 +218,12 @@ class CommunityPost(Base):
     is_featured = Column(Boolean, default=False)
     is_pinned = Column(Boolean, default=False)
     heritage_master_like = Column(Boolean, default=False)
+    is_co_creation = Column(Boolean, default=False)
+    co_creator_name = Column(String(64))
+    co_creator_school = Column(String(128))
+    rural_author_name = Column(String(64))
+    rural_school = Column(String(128))
+    rural_original_url = Column(String(500))
     like_count = Column(Integer, default=0)
     comment_count = Column(Integer, default=0)
     favorite_count = Column(Integer, default=0)
@@ -473,3 +479,37 @@ class SysConfig(Base):
     config_value = Column(Text, nullable=False)
     description = Column(String(255))
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+# 10. 津门民俗与岁时文化
+class FolkFestival(Base):
+    __tablename__ = "folk_festival"
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    title = Column(String(128), nullable=False)
+    solar_date = Column(String(32))                 # 公历参考日期，如 "2026-02-15"
+    lunar_date = Column(String(32), nullable=False) # 农历日期，如 "正月十五"
+    category = Column(String(64), default="FOLK_CUSTOM")
+    tag = Column(String(64), default="津沽民俗专题")
+    customs = Column(String(255))                  # 特色风习，如 "赏花灯、玩皮影、拓木版年画"
+    description = Column(Text)                     # 文化内涵与研学指引
+    cover_url = Column(String(500))
+    status = Column(String(16), default="PUBLISHED") # PUBLISHED / OFFLINE
+    sort_order = Column(Integer, default=0)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+# 11. 美育助农与公益物资实体流向域
+class PhilanthropySupply(Base):
+    __tablename__ = "philanthropy_supply"
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    school_name = Column(String(128), nullable=False)     # 受助学校，如 "蓟州区穿芳峪中心小学"
+    district = Column(String(64), nullable=False)        # 行政区划，如 "蓟州区"
+    materials_name = Column(String(128), nullable=False)  # 物资名称，如 "津派皮影雕刻牛皮材料包与安全刻刀"
+    quantity = Column(Integer, nullable=False)           # 调拨数量
+    unit = Column(String(16), default="套")              # 单位
+    beneficiary_students = Column(Integer, default=50)   # 受益学生数
+    delivered_date = Column(String(32))                  # 交付日期，如 "2026-03-08"
+    batch_no = Column(String(64))                        # 调拨批次编号
+    photo_url = Column(String(500))                      # 现场发放照片
+    status = Column(String(16), default="DELIVERED")     # DELIVERED / IN_TRANSIT
+    created_at = Column(DateTime, default=datetime.utcnow)
+

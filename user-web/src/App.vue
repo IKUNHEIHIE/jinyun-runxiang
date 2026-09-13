@@ -1,5 +1,5 @@
 <template>
-  <div class="app-layout">
+  <div class="app-layout" :class="{ 'rural-classroom-mode': isClassroomMode }">
     <!-- 顶部津派非遗文化导航栏 -->
     <header class="app-header">
       <div class="header-container">
@@ -35,6 +35,17 @@
           <el-button size="small" round @click="toggleRole" class="role-btn">
             {{ currentRole === 'STUDENT' ? '🎒 乡村学徒端' : '🎓 美育名师端' }}
           </el-button>
+
+          <!-- 乡村大屏护眼高对比模式 (P1) -->
+          <button
+            class="eyecare-btn"
+            :class="{ active: isClassroomMode }"
+            @click="toggleClassroomMode"
+            :title="isClassroomMode ? '恢复默认模式' : '开启乡村教室大屏护眼高对比模式'"
+          >
+            <span>🏮</span>
+            <span>{{ isClassroomMode ? '大屏护眼开' : '大屏护眼' }}</span>
+          </button>
 
           <!-- 快速跳转后台管理系统 -->
           <a href="http://localhost:5173" target="_blank" class="admin-portal-link" title="前往运营管理中台">
@@ -78,6 +89,54 @@
         <p>© 2026 《津韵润乡》项目组 · 赋能乡村美育 · 天津乡土文化数字传承</p>
       </div>
     </footer>
+
+    <!-- 津门非遗留声钵·环境音浮动控制器 (P3) -->
+    <div class="soundscape-dock" :class="{ expanded: isSoundExpanded }">
+      <div class="soundscape-pill" @click="toggleSoundExpand">
+        <span class="sound-wave-icon" :class="{ playing: isPlayingSound }">🎵</span>
+        <span class="sound-title">{{ activeSoundTrack ? activeSoundTrack.title.split('·')[0] : '津门留声钵' }}</span>
+        <span class="sound-status-dot" :class="{ on: isPlayingSound }"></span>
+      </div>
+
+      <div v-if="isSoundExpanded" class="soundscape-panel">
+        <div class="soundscape-header">
+          <div class="panel-title font-serif">
+            <span>🎐 津门非遗留声钵</span>
+            <span class="panel-tag">环境音景</span>
+          </div>
+          <button class="close-btn" @click="isSoundExpanded = false">×</button>
+        </div>
+
+        <p class="soundscape-desc">{{ activeSoundTrack?.description }}</p>
+        <div class="soundscape-note" v-if="activeSoundTrack?.culture_note">
+          <span style="color: #C1272D; font-weight: bold;">❖ 文脉：</span>{{ activeSoundTrack.culture_note }}
+        </div>
+
+        <!-- 曲目切换列表 -->
+        <div class="soundscape-tracks">
+          <button
+            v-for="t in soundTracks"
+            :key="t.id"
+            class="track-item"
+            :class="{ active: activeSoundTrack?.id === t.id }"
+            @click="selectTrack(t)"
+          >
+            <span class="track-icon">{{ t.icon }}</span>
+            <span class="track-name">{{ t.title.split('·')[0] }}</span>
+          </button>
+        </div>
+
+        <div class="soundscape-controls">
+          <button class="play-toggle-btn" :class="{ playing: isPlayingSound }" @click="togglePlaySound">
+            {{ isPlayingSound ? '⏸ 暂停沉浸' : '▶ 开启津门音景' }}
+          </button>
+          <div class="vol-slider">
+            <span style="font-size: 11px; color: #8C827A;">音量</span>
+            <input type="range" min="0" max="1" step="0.05" v-model.number="soundVolume" @input="updateVolume" style="width: 60px;" />
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -135,8 +194,116 @@ const toggleRole = async () => {
   }
 }
 
+const isClassroomMode = ref(false)
+const toggleClassroomMode = () => {
+  isClassroomMode.value = !isClassroomMode.value
+  if (isClassroomMode.value) {
+    ElMessage.success('已开启【乡村教室大屏护眼高对比模式】，全站适老适幼高对比与暖宣纸质感生效')
+  } else {
+    ElMessage.info('已恢复标准显示模式')
+  }
+}
+
+// -------------------------------------------------------------
+// 津门非遗留声钵·环境音合成引擎 (P3)
+// -------------------------------------------------------------
+const isSoundExpanded = ref(false)
+const isPlayingSound = ref(false)
+const soundVolume = ref(0.4)
+const soundTracks = ref<any[]>([])
+const activeSoundTrack = ref<any>(null)
+
+let audioCtx: any = null
+let oscNode: any = null
+let gainNode: any = null
+
+const fetchSoundscapes = async () => {
+  try {
+    const res: any = await request.get('/heritage/soundscapes')
+    if (res && res.length) {
+      soundTracks.value = res
+      activeSoundTrack.value = res[0]
+    }
+  } catch (e) {
+    // default
+  }
+}
+
+const toggleSoundExpand = () => {
+  isSoundExpanded.value = !isSoundExpanded.value
+}
+
+const selectTrack = (t: any) => {
+  activeSoundTrack.value = t
+  if (isPlayingSound.value) {
+    stopSound()
+    startSound()
+  }
+}
+
+const startSound = () => {
+  try {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext
+    if (!audioCtx && AudioContextClass) {
+      audioCtx = new AudioContextClass()
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume()
+    }
+
+    const freq = activeSoundTrack.value?.ambient_freq || 220
+    const wave = activeSoundTrack.value?.wave_type || 'sine'
+
+    oscNode = audioCtx.createOscillator()
+    oscNode.type = wave
+    oscNode.frequency.setValueAtTime(freq, audioCtx.currentTime)
+
+    gainNode = audioCtx.createGain()
+    gainNode.gain.setValueAtTime(soundVolume.value * 0.12, audioCtx.currentTime)
+
+    const filter = audioCtx.createBiquadFilter()
+    filter.type = 'lowpass'
+    filter.frequency.setValueAtTime(700, audioCtx.currentTime)
+
+    oscNode.connect(filter)
+    filter.connect(gainNode)
+    gainNode.connect(audioCtx.destination)
+
+    oscNode.start()
+    isPlayingSound.value = true
+  } catch (e) {
+    console.warn('Audio start note', e)
+  }
+}
+
+const stopSound = () => {
+  if (oscNode) {
+    try { oscNode.stop() } catch (e) {}
+    try { oscNode.disconnect() } catch (e) {}
+    oscNode = null
+  }
+  isPlayingSound.value = false
+}
+
+const togglePlaySound = () => {
+  if (isPlayingSound.value) {
+    stopSound()
+    ElMessage.info('已暂停津门非遗环境音')
+  } else {
+    startSound()
+    ElMessage.success(`已伴随【${activeSoundTrack.value?.title}】开启沉浸式美育`)
+  }
+}
+
+const updateVolume = () => {
+  if (gainNode && audioCtx) {
+    gainNode.gain.setValueAtTime(soundVolume.value * 0.12, audioCtx.currentTime)
+  }
+}
+
 onMounted(() => {
   fetchProfile()
+  fetchSoundscapes()
 })
 </script>
 
@@ -399,5 +566,227 @@ onMounted(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+/* 乡村教室大屏护眼高对比模式 (P1) */
+.eyecare-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: #FFFDF9;
+  border: 1px solid #D6A85C;
+  color: #8B4A2F;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.eyecare-btn:hover {
+  background: #F8F1E5;
+}
+.eyecare-btn.active {
+  background: #8B4A2F;
+  border-color: #8B4A2F;
+  color: #FFFFFF;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(139, 74, 47, 0.3);
+}
+
+.app-layout.rural-classroom-mode {
+  background-color: #F8F4EB !important;
+  filter: contrast(108%);
+}
+.app-layout.rural-classroom-mode :deep(h1),
+.app-layout.rural-classroom-mode :deep(h2),
+.app-layout.rural-classroom-mode :deep(h3) {
+  letter-spacing: 0.5px;
+}
+
+/* 津门非遗留声钵·环境音浮动控制器 (P3) */
+.soundscape-dock {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.soundscape-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(47, 41, 37, 0.92);
+  color: #F8F4EC;
+  backdrop-filter: blur(8px);
+  padding: 9px 16px;
+  border-radius: 30px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  border: 1px solid #D6A85C;
+  transition: all 0.25s ease;
+}
+.soundscape-pill:hover {
+  transform: translateY(-2px);
+  background: #231E1B;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+}
+
+.sound-wave-icon {
+  font-size: 15px;
+}
+.sound-wave-icon.playing {
+  animation: pulseBeat 1.4s infinite ease-in-out;
+}
+@keyframes pulseBeat {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+.sound-title {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.sound-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #7D756C;
+}
+.sound-status-dot.on {
+  background: #52C41A;
+  box-shadow: 0 0 8px #52C41A;
+}
+
+.soundscape-panel {
+  position: absolute;
+  bottom: 52px;
+  right: 0;
+  width: 310px;
+  background: #FFFDF9;
+  border: 1px solid #D6A85C;
+  border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+  padding: 16px 18px;
+  color: #2F2925;
+}
+
+.soundscape-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #F0E6D8;
+  padding-bottom: 10px;
+}
+
+.panel-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #8B4A2F;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.panel-tag {
+  font-size: 10px;
+  background: #F4E8D7;
+  color: #8B4A2F;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  color: #A8A095;
+  cursor: pointer;
+}
+.close-btn:hover {
+  color: #2F2925;
+}
+
+.soundscape-desc {
+  font-size: 12px;
+  color: #6E655E;
+  margin: 10px 0 6px;
+  line-height: 1.6;
+}
+
+.soundscape-note {
+  font-size: 11px;
+  color: #8C827A;
+  background: #F8F4EB;
+  padding: 6px 8px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.soundscape-tracks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.track-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: #F9F6F0;
+  border: 1px solid #EBE2D5;
+  color: #554D46;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+.track-item:hover {
+  background: #F2ECE0;
+}
+.track-item.active {
+  background: #8B4A2F;
+  color: #FFF;
+  border-color: #8B4A2F;
+  font-weight: 600;
+}
+
+.soundscape-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid #F0E6D8;
+}
+
+.play-toggle-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: #8B4A2F;
+  color: #FFF;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.play-toggle-btn:hover {
+  background: #A35939;
+}
+.play-toggle-btn.playing {
+  background: #4A7A60;
+}
+
+.vol-slider {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 </style>

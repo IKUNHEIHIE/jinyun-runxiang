@@ -19,6 +19,53 @@
         <el-button size="small" round class="btn-cert-link mt-2" @click="openMyCert">
           ❖ 查验/生成爱心助农证书
         </el-button>
+    </div>
+
+    <!-- 🌱 P3: 美育微光林·助农物资实体流向树 -->
+    <div class="paper-card philanthropy-tree-card">
+      <div class="tree-header">
+        <div class="tree-title-group">
+          <span class="tree-icon">🌱</span>
+          <div>
+            <h3 class="font-serif tree-main-title">美育微光林 · 助农物资实体流向树</h3>
+            <p class="tree-sub">拒绝虚无捐款数字：市集每一笔爱心基金，皆转化为乡村学校看得见、摸得着的非遗耗材与教具</p>
+          </div>
+        </div>
+        <div class="tree-stats-row">
+          <div class="tree-stat-pill">
+            <span class="pill-label">累计调拨批次</span>
+            <span class="pill-val">{{ supplyData.total_batches }} 批</span>
+          </div>
+          <div class="tree-stat-pill">
+            <span class="pill-label">直达乡村学校</span>
+            <span class="pill-val">{{ supplyData.total_schools }} 所</span>
+          </div>
+          <div class="tree-stat-pill highlight">
+            <span class="pill-label">惠及乡村学子</span>
+            <span class="pill-val">{{ supplyData.total_students_benefited }} 人</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 物资流向动态卡片列表 -->
+      <div class="supplies-carousel">
+        <div v-for="item in supplyData.batches" :key="item.id" class="supply-node-card">
+          <div class="node-head">
+            <span class="node-batch">{{ item.batch_no }}</span>
+            <span class="node-status" :class="item.logistics_status.toLowerCase()">
+              {{ item.logistics_status === 'DELIVERED' ? '✓ 已送达签收' : '🚚 在途发运中' }}
+            </span>
+          </div>
+          <h4 class="node-name font-serif">{{ item.supply_name }}</h4>
+          <div class="node-detail">
+            <p><strong>物资规格：</strong>{{ item.quantity_desc }} (价值 ¥{{ item.allocated_amount_yuan }})</p>
+            <p><strong>受赠学校：</strong>🏫 {{ item.beneficiary_school }}</p>
+            <p><strong>物流运单：</strong>📦 {{ item.tracking_no }}</p>
+          </div>
+          <div v-if="item.receipt_feedback" class="node-feedback">
+            💬 “{{ item.receipt_feedback }}”
+          </div>
+        </div>
       </div>
     </div>
 

@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1130" width="800" height="1130">
+  <rect width="100%" height="100%" fill="#FFFFFF"/>
+  <rect x="30" y="30" width="740" height="1070" fill="none" stroke="#B64A44" stroke-width="1.5" stroke-dasharray="10,5"/>
+  <text x="400" y="65" font-size="20" font-family="serif" font-weight="bold" fill="#2F2925" text-anchor="middle">《津韵润乡》美育手工坊 · A4激光雕刻纸样【吉庆福娃·连年有余】</text>
+  <text x="400" y="90" font-size="13" fill="#776D65" text-anchor="middle">天津杨柳青非遗版画年画娃娃 · 红色实线激光外切，圆圈穿孔铆接，大红锦鲤独立雕琢</text>
+
+  <g transform="translate(180, 220)">
+    <rect x="-120" y="-80" width="240" height="180" fill="#FDFBF7" stroke="#CCC" stroke-dasharray="4,4" rx="8"/>
+    <text x="0" y="-60" font-size="12" fill="#B63E2C" text-anchor="middle">【部件一：福娃双抓髻头茬】</text>
+    <circle cx="-30" cy="-20" r="18" fill="none" stroke="#B64A44" stroke-width="2"/>
+    <circle cx="30" cy="-20" r="18" fill="none" stroke="#B64A44" stroke-width="2"/>
+    <ellipse cx="0" cy="15" rx="30" ry="25" fill="none" stroke="#B64A44" stroke-width="2"/>
+    <circle cx="0" cy="55" r="5" fill="none" stroke="#333" stroke-width="2"/>
+    <text x="0" y="75" font-size="10" fill="#666" text-anchor="middle">○ 领签穿孔</text>
+  </g>
+
+  <g transform="translate(520, 220)">
+    <rect x="-180" y="-80" width="360" height="180" fill="#FDFBF7" stroke="#CCC" stroke-dasharray="4,4" rx="8"/>
+    <text x="0" y="-60" font-size="12" fill="#B63E2C" text-anchor="middle">【部件二：杨柳青招牌大红锦鲤】</text>
+    <path d="M-130,20 C-90,-30 40,-40 120,10 C140,40 90,80 20,80 C-50,80 -110,60 -130,20 Z" fill="none" stroke="#B64A44" stroke-width="2.5"/>
+    <circle cx="-30" cy="20" r="5" fill="none" stroke="#333" stroke-width="2"/>
+    <circle cx="40" cy="20" r="5" fill="none" stroke="#333" stroke-width="2"/>
+    <text x="0" y="70" font-size="10" fill="#666" text-anchor="middle">双手抓持位铆钉孔</text>
+  </g>
+
+  <g transform="translate(200, 480)">
+    <rect x="-140" y="-80" width="280" height="230" fill="#FDFBF7" stroke="#CCC" stroke-dasharray="4,4" rx="8"/>
+    <text x="0" y="-60" font-size="12" fill="#B63E2C" text-anchor="middle">【部件三：红肚兜与躯干】</text>
+    <polygon points="0,-40 50,-15 55,120 -55,120 -50,-15" fill="none" stroke="#B64A44" stroke-width="2"/>
+    <circle cx="0" cy="-35" r="4" fill="none" stroke="#333" stroke-width="2"/>
+    <circle cx="-45" cy="110" r="4" fill="none" stroke="#333" stroke-width="2"/>
+    <circle cx="45" cy="110" r="4" fill="none" stroke="#333" stroke-width="2"/>
+  </g>
+
+  <g transform="translate(560, 480)">
+    <rect x="-150" y="-80" width="300" height="230" fill="#FDFBF7" stroke="#CCC" stroke-dasharray="4,4" rx="8"/>
+    <text x="0" y="-60" font-size="12" fill="#B63E2C" text-anchor="middle">【部件四：莲花荷叶与胖手足】</text>
+    <circle cx="-60" cy="20" r="35" fill="none" stroke="#B64A44" stroke-width="2"/>
+    <path d="M40,-20 C20,-60 50,-70 55,-75 C60,-70 90,-60 70,-20 Z" fill="none" stroke="#B64A44" stroke-width="2"/>
+    <circle cx="-60" cy="80" r="4" fill="none" stroke="#333" stroke-width="2"/>
+    <circle cx="60" cy="80" r="4" fill="none" stroke="#333" stroke-width="2"/>
+  </g>
+
+  <g transform="translate(400, 840)">
+    <rect x="-350" y="-50" width="700" height="180" fill="#F7FAFC" stroke="#E2E8F0" rx="10"/>
+    <text x="-320" y="-20" font-size="14" font-weight="bold" fill="#2D3748">【吉庆福娃皮影装配说明书】</text>
+    <text x="-320" y="10" font-size="12" fill="#4A5568">1. 年画意蕴：源自杨柳青经典《连年有余》，福娃怀抱活鲤，象征年年丰登。</text>
+    <text x="-320" y="35" font-size="12" fill="#4A5568">2. 锦鲤可动：锦鲤单独剪裁后，以子母铜扣与福娃左右手连接，既可抱于胸前，亦可摆动出跃水之态。</text>
+    <text x="-320" y="60" font-size="12" fill="#4A5568">3. 色彩套印：大红涂染肚兜与鲤鱼身躯，藤黄套印鱼鳞与长命锁，翡翠绿点缀并蒂莲叶。</text>
+  </g>
+</svg>

@@ -19,10 +19,23 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# 允许跨域
+# 安全合规跨域配置 (CWE-942 防御，明确白名单并兼容前端动态端口)
+ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5174",
+    "http://0.0.0.0:5173",
+    "http://0.0.0.0:5174",
+]
+custom_origins = os.environ.get("ALLOWED_ORIGINS")
+if custom_origins:
+    ALLOWED_ORIGINS.extend([o.strip() for o in custom_origins.split(",") if o.strip()])
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -60,9 +73,10 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     logger.exception(f"Unhandled Exception: {str(exc)}")
+    # 安全审计防御：抹平未捕获异常中的堆栈与 SQL 细节，避免敏感信息外泄 (CWE-209)
     return JSONResponse(
         status_code=500,
-        content={"code": 5000, "message": f"服务器开小差了: {str(exc)}", "data": None}
+        content={"code": 5000, "message": "服务器开小差了，请稍后重试", "data": None}
     )
 
 # 挂载业务路由：同时挂载 /api 与 /api/v1，确保完美向前与向后兼容

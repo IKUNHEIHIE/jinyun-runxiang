@@ -1,5 +1,22 @@
 <template>
   <div class="dashboard-container">
+    <!-- 乡村美育科技大屏入口 Banner -->
+    <div class="screen-entry-banner" @click="openScreen">
+      <div class="banner-left">
+        <span class="banner-badge">数字化大屏</span>
+        <span class="banner-title">津脉智韵 · 乡村美育科技数据大屏 (数字孪生 / 遥测监控)</span>
+        <span class="banner-desc">已连接天津市 48 所乡村试点校、3 台具身智能助教机器人及 AI 审美诊断中台</span>
+      </div>
+      <div class="banner-right">
+        <el-button type="primary" size="default" class="screen-launch-btn" @click.stop="openScreen">
+          开启全屏大盘 ↗
+        </el-button>
+        <el-button size="default" class="screen-sub-btn" @click.stop="openScreenNewTab">
+          新标签页打开 ↗
+        </el-button>
+      </div>
+    </div>
+
     <!-- 顶部 KPI 卡片 -->
     <el-row :gutter="16">
       <el-col :span="6">
@@ -107,11 +124,21 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import * as echarts from 'echarts'
 import request from '@/api/request'
 
+const router = useRouter()
 const kpi = ref<any>({})
 const chartRef = ref<HTMLElement | null>(null)
+
+const openScreen = () => {
+  router.push('/screen')
+}
+
+const openScreenNewTab = () => {
+  window.open('/#/screen', '_blank')
+}
 
 const hotCourses = ref([
   { rank: 1, title: '津门皮影戏：光影里的民间传奇', views: '2,840' },
@@ -199,5 +226,74 @@ onMounted(async () => {
 .header-title {
   font-weight: 600;
   color: #2F2925;
+}
+
+.screen-entry-banner {
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #0f1c3f 0%, #1e3c72 50%, #2a5298 100%);
+  border: 1px solid rgba(0, 242, 254, 0.4);
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #FFFFFF;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(15, 28, 63, 0.15);
+  transition: all 0.3s ease;
+}
+.screen-entry-banner:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 242, 254, 0.25);
+  border-color: #00f2fe;
+}
+.banner-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.banner-badge {
+  background: #00f2fe;
+  color: #060b19;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+.banner-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.banner-desc {
+  font-size: 13px;
+  color: #cbd5e1;
+  margin-left: 8px;
+}
+.banner-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.screen-launch-btn {
+  background: #00f2fe !important;
+  border-color: #00f2fe !important;
+  color: #060b19 !important;
+  font-weight: bold !important;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+}
+.screen-launch-btn:hover {
+  background: #fff !important;
+  border-color: #fff !important;
+}
+.screen-sub-btn {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: #ffffff !important;
+}
+.screen-sub-btn:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+  border-color: #ffffff !important;
 }
 </style>

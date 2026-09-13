@@ -6,9 +6,9 @@ from pydantic import BaseModel
 from typing import Optional, List
 
 from app.core.database import get_db
-from app.core.security import get_current_user
+from app.core.security import get_current_user, get_current_user_optional
 from app.schemas.common import success_response, error_response
-from app.models.entities import Product, ProductSku, OrderMain, FundRecord
+from app.models.entities import Product, ProductSku, OrderMain, FundRecord, PhilanthropySupply
 
 router = APIRouter(prefix="/mall", tags=["文创市集与电商助农"])
 
@@ -32,10 +32,19 @@ def list_products(
     if category:
         query = query.filter(Product.category == category)
     products = query.all()
+    if not products:
+        return success_response([])
+
+    # 性能优化：批量 in_ 加载消除 N+1 数据库并发查询
+    product_ids = [p.id for p in products]
+    all_skus = db.query(ProductSku).filter(ProductSku.product_id.in_(product_ids)).all()
+    skus_by_prod = {}
+    for sku in all_skus:
+        skus_by_prod.setdefault(sku.product_id, []).append(sku)
 
     res = []
     for p in products:
-        skus = db.query(ProductSku).filter(ProductSku.product_id == p.id).all()
+        skus = skus_by_prod.get(p.id, [])
         min_price = min([s.price_cents for s in skus]) if skus else 0
         res.append({
             "id": p.id,
@@ -197,5 +206,38 @@ def get_order_certificate(
         "issue_date": order.created_at.strftime("%Y年%m月%d日"),
         "seal_title": "津韵润乡·乡村美育振兴专项认证",
         "verify_code": f"VERIFY-{uuid.uuid4().hex[:8].upper()}"
+    })
+
+@router.get("/philanthropy/supplies")
+def list_philanthropy_supplies(db: Session = Depends(get_db)):
+    """
+    获取美育微光林·助农物资实体流向树数据 (已为乡村小学送出的真实物资批次明细)
+    """
+    supplies = db.query(PhilanthropySupply).order_by(PhilanthropySupply.delivered_date.desc()).all()
+    total_qty = sum(s.quantity for s in supplies)
+    total_students = sum(s.beneficiary_students for s in supplies)
+    districts = list(set(s.district for s in supplies))
+
+    return success_response({
+        "summary": {
+            "total_batches": len(supplies),
+            "total_materials_quantity": total_qty,
+            "total_beneficiary_students": total_students,
+            "covered_districts": districts,
+            "fund_conversion_rate": "100% 专款专用，每笔助农文创订单按 5% 定向转化为乡村耗材"
+        },
+        "supplies": [{
+            "id": s.id,
+            "school_name": s.school_name,
+            "district": s.district,
+            "materials_name": s.materials_name,
+            "quantity": s.quantity,
+            "unit": s.unit,
+            "beneficiary_students": s.beneficiary_students,
+            "delivered_date": s.delivered_date,
+            "batch_no": s.batch_no,
+            "photo_url": s.photo_url,
+            "status": s.status
+        } for s in supplies]
     })
 

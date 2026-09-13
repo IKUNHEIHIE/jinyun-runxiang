@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 
 from app.core.database import get_db
@@ -18,9 +18,9 @@ class LoginRequest(BaseModel):
     password: str
 
 class RegisterRequest(BaseModel):
-    username: str
-    password: str
-    nickname: str
+    username: str = Field(..., min_length=3, max_length=32, description="用户名(3-32位)")
+    password: str = Field(..., min_length=6, max_length=64, description="密码(至少6位)")
+    nickname: str = Field(..., min_length=1, max_length=32, description="用户昵称")
     role_code: Optional[str] = "STUDENT"
     grade: Optional[str] = "小学三年级"
 

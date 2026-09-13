@@ -60,6 +60,62 @@
       </div>
     </section>
 
+    <!-- ❖ 津门海河水脉非遗流动画卷长手卷 (Scroll-driven Narrative · P1) -->
+    <section class="haihe-scroll-section paper-card">
+      <div class="scroll-header">
+        <div class="scroll-title-box">
+          <span class="scroll-badge">❖ 九河下梢 · 水脉流金</span>
+          <h2 class="scroll-title font-serif">津门海河水脉非遗全景长卷手卷</h2>
+        </div>
+        <p class="scroll-subtitle">
+          自上游蓟州古刹顺水而下，穿宝坻稻香、杨柳青古镇与三岔河口，直达古文化街与渤海之滨，点击地标即刻启程非遗创作
+        </p>
+      </div>
+
+      <!-- 横向水脉画卷交互容器 -->
+      <div class="water-scroll-container">
+        <div class="water-line-glow"></div>
+        <div class="stations-track">
+          <div
+            v-for="(st, idx) in waterStations"
+            :key="st.id"
+            class="station-node"
+            :class="{ active: selectedStation?.id === st.id }"
+            @click="selectStation(st)"
+          >
+            <div class="node-marker">
+              <span class="node-icon">{{ st.icon }}</span>
+              <span class="node-seq">0{{ idx + 1 }}</span>
+            </div>
+            <div class="node-card">
+              <span class="node-region">{{ st.region }}</span>
+              <h4 class="font-serif node-name">{{ st.name }}</h4>
+              <p class="node-craft">{{ st.craft }}</p>
+              <div class="node-action">
+                <span>{{ st.actionText }} →</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 杨柳青年画五色色谱与宣纸指示栏 -->
+      <div class="nianhua-palette-bar">
+        <div class="palette-intro">
+          <span class="palette-seal">色谱</span>
+          <span class="palette-title font-serif">津沽杨柳青年画五色岁时色谱</span>
+        </div>
+        <div class="palette-colors">
+          <div v-for="c in nianhuaColors" :key="c.name" class="color-swatch">
+            <span class="color-dot" :style="{ backgroundColor: c.hex }"></span>
+            <span class="color-name">{{ c.name }}</span>
+            <span class="color-hex">{{ c.hex }}</span>
+            <span class="color-desc-tip">{{ c.desc }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- 2. 乡村美育学徒成长动态 -->
     <section class="section-apprentice">
       <div class="paper-card apprentice-card">
@@ -162,16 +218,119 @@
         </router-link>
       </div>
     </section>
+
+    <!-- 5. 津门非遗岁时日历专栏 (动态由后端 FolkFestival 表驱动) -->
+    <section class="section-festivals" v-if="festivals.length > 0">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title font-serif">津沽岁时记 · 非遗民俗日历</h2>
+          <p class="section-desc">传承津沽传统二十四节气与民俗节令，结合乡村中小学非遗研学实践</p>
+        </div>
+      </div>
+
+      <div class="festival-cards-grid">
+        <div v-for="item in festivals.slice(0, 3)" :key="item.id" class="paper-card festival-card">
+          <div class="f-badge-row">
+            <span class="f-date-badge">{{ item.lunar_date }}</span>
+            <span class="f-tag-badge">{{ item.tag }}</span>
+          </div>
+          <h3 class="f-title font-serif">{{ item.title }}</h3>
+          <div class="f-customs" v-if="item.customs">
+            <span class="f-custom-label">传统民俗：</span>{{ item.customs }}
+          </div>
+          <p class="f-desc">{{ item.description }}</p>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import request from '../api/request'
 
+const router = useRouter()
 const courses = ref<any[]>([])
 const fundTotal = ref(137.75)
 const userProfile = ref<any>({})
+const festivals = ref<any[]>([])
+
+// -------------------------------------------------------------
+// 津门海河水脉非遗流动画卷数据 (P1)
+// -------------------------------------------------------------
+const selectedStation = ref<any>(null)
+const waterStations = ref([
+  {
+    id: 'jizhou',
+    region: '蓟州山野',
+    name: '独乐古刹·青铜拓片',
+    craft: '商周青铜礼器、饕餮纹饰拓印与古建斗拱',
+    icon: '🏛️',
+    target: '/ai-workshop?tool=BRONZE',
+    actionText: '进入青铜工坊'
+  },
+  {
+    id: 'baodi',
+    region: '宝坻潮白',
+    name: '京东大鼓·时调曲韵',
+    craft: '津门曲艺摇篮、民间小调与传统板腔',
+    icon: '🥁',
+    target: '/courses',
+    actionText: '观摩曲艺微课'
+  },
+  {
+    id: 'yangliuqing',
+    region: '西青古镇',
+    name: '杨柳青·木版年画',
+    craft: '半印半画、五色套印与毛笔开脸工笔',
+    icon: '🪵',
+    target: '/ai-workshop?tool=SHADOW_PUPPET',
+    actionText: '年画皮影创作'
+  },
+  {
+    id: 'sancha',
+    region: '三岔河口',
+    name: '津门故里·津派皮影',
+    craft: '三签操纵、矿物透雕与光影戏楼传神',
+    icon: '🎭',
+    target: '/ai-workshop?tool=SHADOW_PUPPET',
+    actionText: '进入皮影工坊'
+  },
+  {
+    id: 'guwenhua',
+    region: '海河中游',
+    name: '古文化街·泥人与大漆',
+    craft: '泥人张捏塑彩绘、古法大漆推光与螺钿',
+    icon: '🏺',
+    target: '/ai-workshop?tool=LACQUER',
+    actionText: '体验大漆工坊'
+  },
+  {
+    id: 'dagu',
+    region: '渤海之滨',
+    name: '大沽口·汉沽版画助农',
+    craft: '盐滩木刻版画与乡村振兴文创市集',
+    icon: '🌊',
+    target: '/mall',
+    actionText: '逛文创助农集'
+  }
+])
+
+const selectStation = (st: any) => {
+  selectedStation.value = st
+  if (st.target) {
+    router.push(st.target)
+  }
+}
+
+const nianhuaColors = ref([
+  { name: '佛青', hex: '#0038A8', desc: '海河水脉与天色' },
+  { name: '品绿', hex: '#1A6840', desc: '运河垂柳与春草' },
+  { name: '槐黄', hex: '#F9D423', desc: '北方麦浪与祥光' },
+  { name: '朱砂红', hex: '#C1272D', desc: '年画喜庆点睛色' },
+  { name: '大漆黑', hex: '#1E1B18', desc: '北方推光古法黑' }
+])
 
 const formatCategory = (cat: string) => {
   const map: Record<string, string> = {
@@ -199,10 +358,16 @@ const loadData = async () => {
       userProfile.value = resMe
     }
   } catch (e) {}
+
+  try {
+    const resFestivals: any = await request.get('/festivals?status=PUBLISHED')
+    festivals.value = Array.isArray(resFestivals) ? resFestivals : (resFestivals.data || [])
+  } catch (e) {}
 }
 
 onMounted(() => {
   loadData()
+
 })
 </script>
 
@@ -595,5 +760,313 @@ onMounted(() => {
   font-size: 13px;
   font-weight: 700;
   color: var(--color-primary);
+}
+
+/* 5. 民俗日历专栏 */
+.section-festivals {
+  margin-top: 48px;
+}
+
+.festival-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.festival-card {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.festival-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.f-badge-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.f-date-badge {
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 12px;
+}
+
+.f-tag-badge {
+  background: rgba(214, 168, 92, 0.15);
+  color: #8C6212;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.f-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: 8px;
+}
+
+.f-customs {
+  font-size: 13px;
+  color: #C4863A;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.f-custom-label {
+  color: var(--color-text-secondary);
+}
+
+.f-desc {
+  font-size: 13px;
+  color: var(--color-text-regular);
+  line-height: 1.6;
+  margin: 0;
+  flex: 1;
+}
+
+/* ❖ 津门海河水脉非遗流动画卷长手卷样式 (P1) */
+.haihe-scroll-section {
+  margin: 24px 0 40px;
+  padding: 28px 32px;
+  background: #FFFDF9;
+  border: 1px solid #E6DCCD;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(139, 74, 47, 0.06);
+}
+
+.scroll-header {
+  margin-bottom: 24px;
+}
+
+.scroll-title-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.scroll-badge {
+  font-size: 12px;
+  font-weight: 600;
+  background: #F4E8D7;
+  color: #8B4A2F;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid #D6A85C;
+}
+
+.scroll-title {
+  font-size: 24px;
+  color: #2F2925;
+  margin: 0;
+}
+
+.scroll-subtitle {
+  font-size: 14px;
+  color: #7D756C;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.water-scroll-container {
+  position: relative;
+  overflow-x: auto;
+  padding: 24px 10px 20px;
+  scrollbar-width: thin;
+}
+
+.water-line-glow {
+  position: absolute;
+  top: 36px;
+  left: 20px;
+  right: 20px;
+  height: 4px;
+  background: linear-gradient(90deg, #1C3D5A 0%, #4facfe 30%, #00f2fe 60%, #1C3D5A 100%);
+  border-radius: 4px;
+  opacity: 0.65;
+  z-index: 1;
+}
+
+.stations-track {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 20px;
+  min-width: 1060px;
+}
+
+.station-node {
+  flex: 1;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.node-marker {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 14px;
+  background: #FFFFFF;
+  border: 3px solid #8B4A2F;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.node-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+.node-seq {
+  font-size: 9px;
+  font-weight: 800;
+  color: #8B4A2F;
+}
+
+.node-card {
+  background: #FDFBF7;
+  border: 1px solid #EBE2D5;
+  border-radius: 12px;
+  padding: 14px 12px;
+  text-align: center;
+  transition: all 0.25s ease;
+  height: calc(100% - 58px);
+  display: flex;
+  flex-direction: column;
+}
+
+.station-node:hover .node-marker {
+  transform: scale(1.15);
+  border-color: #C1272D;
+  box-shadow: 0 0 14px rgba(193, 39, 45, 0.4);
+}
+
+.station-node:hover .node-card {
+  border-color: #8B4A2F;
+  background: #FFF;
+  box-shadow: 0 4px 14px rgba(139, 74, 47, 0.12);
+  transform: translateY(-3px);
+}
+
+.node-region {
+  font-size: 11px;
+  color: #8C827A;
+  margin-bottom: 4px;
+}
+
+.node-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2F2925;
+  margin: 0 0 6px;
+  line-height: 1.4;
+}
+
+.node-craft {
+  font-size: 11px;
+  color: #6E655E;
+  line-height: 1.5;
+  margin: 0 0 10px;
+  flex: 1;
+}
+
+.node-action {
+  font-size: 11px;
+  font-weight: 600;
+  color: #8B4A2F;
+  padding-top: 6px;
+  border-top: 1px dashed #E5DBD0;
+}
+
+/* 杨柳青年画五色岁时色谱栏 */
+.nianhua-palette-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #F0E6D8;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.palette-intro {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.palette-seal {
+  background: #C1272D;
+  color: #FFF;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.palette-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2F2925;
+}
+
+.palette-colors {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.color-swatch {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #F8F4EB;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid #E8E0D2;
+}
+
+.color-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.color-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #332C27;
+}
+
+.color-hex {
+  font-size: 10px;
+  color: #8C827A;
+  font-family: monospace;
+}
+
+.color-desc-tip {
+  font-size: 11px;
+  color: #6E655E;
 }
 </style>

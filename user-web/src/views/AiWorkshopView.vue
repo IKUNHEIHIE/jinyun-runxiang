@@ -134,33 +134,109 @@
         </div>
 
         <div v-else-if="taskResult" class="result-showcase">
-          <!-- 彩色贴图 -->
+          <!-- 成果主图卡片 -->
           <div class="result-card">
-            <img :src="taskResult.colored_image_url || taskResult.rendered_image_url || taskResult.completed_sketch_url" class="result-img" />
+            <div class="result-img-box">
+              <img 
+                v-if="displayImageUrl" 
+                :src="displayImageUrl" 
+                :alt="currentToolName" 
+                class="result-img"
+                @error="handleImgError"
+              />
+              <div v-else class="result-placeholder font-serif">
+                <span class="placeholder-icon">🎨</span>
+                <span>津派非遗数字图谱已就绪</span>
+              </div>
+            </div>
+
+            <!-- 曲艺特有：鼓板快板与工尺简谱试听播控器 -->
+            <div v-if="taskResult.sheet_music_text || taskResult.audio_url" class="ballad-player-box">
+              <div class="ballad-player-head">
+                <div class="ballad-player-title">
+                  <span class="music-note-icon">🥁</span>
+                  <span class="font-serif">津门曲艺播控 · {{ taskResult.tune_name || '时调大鼓' }}</span>
+                </div>
+                <span class="ballad-rhythm-badge">{{ taskResult.rhythm_style || '骆派京韵大鼓快板' }}</span>
+              </div>
+              
+              <div class="ballad-score-display">
+                <span class="score-label">五声音阶简谱：</span>
+                <code class="score-notation">{{ taskResult.sheet_music_text }}</code>
+              </div>
+
+              <div class="ballad-audio-controls">
+                <button class="audio-play-toggle-btn" @click="toggleAudioPlay">
+                  <span v-if="isPlaying">⏸ 暂停伴奏</span>
+                  <span v-else>▶ 试听鼓板伴奏</span>
+                </button>
+                <div class="rhythm-beat-indicator" :class="{ beating: isPlaying }">
+                  <span class="drum-beat-icon">🥁</span>
+                  <span class="beat-text">{{ isPlaying ? '【仓】 嗒 【仓】 嗒 · 板眼流转中' : '点击试听海河书场扁鼓快板原声' }}</span>
+                </div>
+              </div>
+              <audio ref="balladAudioRef" :src="taskResult.audio_url" @ended="isPlaying = false" style="display: none;"></audio>
+            </div>
+
             <div class="result-desc">
-              <span class="tag-heritage">非遗艺术语言解析</span>
-              <p>{{ taskResult.description }}</p>
+              <div class="desc-header-row">
+                <span class="tag-heritage">非遗艺术语言解析</span>
+                <span v-if="taskResult.llm_generated" class="tag-llm-badge">
+                  ✦ 大模型实时深度推理 · {{ taskResult.llm_model || '在线' }}
+                </span>
+              </div>
+              <p class="main-desc-text">{{ taskResult.description }}</p>
+
+              <!-- 真实大模型解析的文脉与工艺 -->
+              <div v-if="taskResult.historical_context" class="extra-desc-item">
+                <span class="extra-label">❖ 文脉渊源：</span>
+                <span class="extra-text">{{ taskResult.historical_context }}</span>
+              </div>
+              <div v-if="taskResult.craft_technique" class="extra-desc-item">
+                <span class="extra-label">❖ 工艺指导：</span>
+                <span class="extra-text">{{ taskResult.craft_technique }}</span>
+              </div>
+              <div v-if="taskResult.color_palette && taskResult.color_palette.length" class="palette-row">
+                <span class="extra-label">❖ 矿物分色：</span>
+                <div class="palette-chips">
+                  <span v-for="(col, ci) in taskResult.color_palette" :key="ci" class="color-chip">
+                    {{ col }}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- 3D 模型与激光图纸 -->
+          <!-- 3D 模型与激光图纸与音频下载 -->
           <div class="asset-actions">
-            <div class="asset-btn-box">
+            <div v-if="taskResult.mesh_3d_url" class="asset-btn-box">
               <span class="asset-name">GLTF 3D 可动模型</span>
-              <a :href="taskResult.mesh_3d_url || '#'" target="_blank" class="download-btn">
+              <a :href="taskResult.mesh_3d_url" target="_blank" class="download-btn">
                 查看 3D 预览 ↗
               </a>
             </div>
-            <div class="asset-btn-box">
-              <span class="asset-name">A4 纸样/激光雕镂模板</span>
+            <div v-if="taskResult.vector_svg_url || taskResult.colored_image_url || taskResult.print_template_url" class="asset-btn-box">
+              <span class="asset-name">{{ currentTool === 'BALLAD' ? '工尺简谱与鼓板手稿' : (currentTool === 'BRONZE' ? '金石拓片/雕模矢量' : 'A4 纸样/激光雕镂模板') }}</span>
               <button class="download-btn" @click="downloadTemplate">
-                下载打印纸样 ↓
+                下载原生矢量图样 ↓
               </button>
+            </div>
+            <div v-if="taskResult.audio_url" class="asset-btn-box">
+              <span class="asset-name">曲牌伴奏原声</span>
+              <a :href="taskResult.audio_url" target="_blank" download="津门曲艺原声伴奏.ogg" class="download-btn">
+                导出伴奏音频 ↗
+              </a>
             </div>
           </div>
 
           <!-- 底部操作按钮 -->
           <div class="showcase-footer">
+            <el-button v-if="currentTool === 'SHADOW_PUPPET'" type="warning" @click="openPuppetControlModal">
+              🎭 皮影三签操纵台
+            </el-button>
+            <el-button type="info" style="background: #394A42; border-color: #394A42; color: #FFF;" @click="openExhibitionModal">
+              🖨️ 生成 A4/A3 走廊展册
+            </el-button>
             <el-button type="primary" class="btn-primary" :loading="evaluating" @click="runEvaluation(null)">
               ✦ 发起 AI 名师审美诊断 (+30 能量)
             </el-button>
@@ -181,6 +257,11 @@
       destroy-on-close
     >
       <div v-if="evalResult" class="eval-card-body">
+        <div v-if="evalResult.llm_generated" class="eval-llm-live-banner">
+          <span class="live-dot"></span>
+          <span>已调用运营后台接入大模型 <strong>【{{ evalResult.llm_model }}】</strong> 执行实时多模态审美诊断</span>
+        </div>
+
         <div class="eval-header-banner">
           <div class="eval-badge-seal">非遗<br>认证</div>
           <div style="flex: 1;">
@@ -245,11 +326,208 @@
         </el-button>
       </template>
     </el-dialog>
+
+    <!-- 津派皮影三签联动操纵台 (P2) -->
+    <el-dialog
+      v-model="puppetModalVisible"
+      title="🎭 津派皮影传统三签操纵台 · 骨骼微交互"
+      width="780px"
+      custom-class="puppet-dialog"
+      destroy-on-close
+    >
+      <div class="puppet-stage-layout">
+        <!-- 操纵互动舞台 -->
+        <div class="stage-screen">
+          <svg viewBox="0 0 400 450" class="puppet-stage-svg">
+            <defs>
+              <radialGradient id="stage-spot" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#FFF8EE"/>
+                <stop offset="80%" stop-color="#F3E5CF"/>
+                <stop offset="100%" stop-color="#E2CCA8"/>
+              </radialGradient>
+            </defs>
+            <rect width="400" height="450" fill="url(#stage-spot)" rx="12"/>
+            <line x1="20" y1="420" x2="380" y2="420" stroke="#8B4A2F" stroke-width="4" stroke-dasharray="8,4" opacity="0.4"/>
+            
+            <!-- 骨骼活动总成 (通过三签角度 transform 联动) -->
+            <g :transform="`translate(200, 240) rotate(${neckAngle})`">
+              <!-- 躯干 -->
+              <rect x="-24" y="-30" width="48" height="90" rx="8" fill="#C1272D" stroke="#332C27" stroke-width="2"/>
+              <!-- 头与翎毛 -->
+              <g transform="translate(0, -60)">
+                <circle cx="0" cy="0" r="22" fill="#FAF0E6" stroke="#332C27" stroke-width="2"/>
+                <path d="M-15,-20 Q0,-45 15,-20 Z" fill="#2F4F4F"/>
+                <!-- 翎毛 -->
+                <path d="M0,-45 Q30,-80 45,-10" fill="none" stroke="#FFD700" stroke-width="3"/>
+              </g>
+              <!-- 左臂 (手签一联动) -->
+              <g :transform="`translate(-24, -15) rotate(${leftArmAngle})`">
+                <rect x="-8" y="0" width="16" height="45" rx="5" fill="#FAF0E6" stroke="#332C27" stroke-width="2"/>
+                <g transform="translate(0, 45) rotate(20)">
+                  <rect x="-6" y="0" width="12" height="40" rx="4" fill="#C1272D" stroke="#332C27" stroke-width="2"/>
+                  <!-- 操纵手签竹竿连杆 -->
+                  <line x1="0" y1="35" x2="-40" y2="120" stroke="#8B5A2B" stroke-width="3"/>
+                </g>
+              </g>
+              <!-- 右臂 (手签二联动) -->
+              <g :transform="`translate(24, -15) rotate(${rightArmAngle})`">
+                <rect x="-8" y="0" width="16" height="45" rx="5" fill="#FAF0E6" stroke="#332C27" stroke-width="2"/>
+                <g transform="translate(0, 45) rotate(-20)">
+                  <rect x="-6" y="0" width="12" height="40" rx="4" fill="#C1272D" stroke="#332C27" stroke-width="2"/>
+                  <!-- 折扇或大刀道具 -->
+                  <polygon points="-5,35 25,15 35,45" fill="#F9D423" stroke="#332C27" stroke-width="1.5"/>
+                  <!-- 操纵手签竹竿连杆 -->
+                  <line x1="0" y1="35" x2="40" y2="120" stroke="#8B5A2B" stroke-width="3"/>
+                </g>
+              </g>
+              <!-- 下肢裙摆 -->
+              <polygon points="-24,60 24,60 35,130 -35,130" fill="#2F4F4F" stroke="#332C27" stroke-width="2"/>
+              <!-- 主签（颈部平衡支撑杆） -->
+              <line x1="0" y1="20" x2="0" y2="170" stroke="#654321" stroke-width="4"/>
+            </g>
+          </svg>
+        </div>
+
+        <!-- 操纵杆控制台 -->
+        <div class="stage-controls">
+          <div class="control-header">
+            <h4 class="font-serif" style="margin: 0 0 6px; color: #8B4A2F;">❖ 三签操纵杠杆手柄</h4>
+            <p style="font-size: 12px; color: #7D756C; margin: 0;">拖动操纵签，体验皮影“签随人动，人随签活”传统把式</p>
+          </div>
+
+          <div class="rod-slider-item">
+            <div class="slider-label">
+              <span>🥢 主签（颈签·平衡倾仰）</span>
+              <strong>{{ neckAngle }}°</strong>
+            </div>
+            <el-slider v-model="neckAngle" :min="-30" :max="30" @input="playGongSound" />
+          </div>
+
+          <div class="rod-slider-item">
+            <div class="slider-label">
+              <span>🥢 手签一（左臂武戏挥枪）</span>
+              <strong>{{ leftArmAngle }}°</strong>
+            </div>
+            <el-slider v-model="leftArmAngle" :min="-80" :max="60" @input="playGongSound" />
+          </div>
+
+          <div class="rod-slider-item">
+            <div class="slider-label">
+              <span>🥢 手签二（右臂文戏抚袖）</span>
+              <strong>{{ rightArmAngle }}°</strong>
+            </div>
+            <el-slider v-model="rightArmAngle" :min="-60" :max="80" @input="playGongSound" />
+          </div>
+
+          <div class="presets-row">
+            <span style="font-size: 12px; color: #8C827A; font-weight: 600;">把式身段预设：</span>
+            <div class="preset-buttons">
+              <el-button size="small" round @click="setPuppetPose(0, -40, 20)">抱拳作揖</el-button>
+              <el-button size="small" round @click="setPuppetPose(-15, 40, -50)">展臂亮相</el-button>
+              <el-button size="small" round @click="setPuppetPose(15, -70, 60)">翻腾腾挪</el-button>
+            </div>
+          </div>
+
+          <div class="drum-sound-bar">
+            <el-button type="success" size="small" round @click="triggerDrumBeat">
+              🥁 敲响津门皮影锣鼓点
+            </el-button>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
+
+    <!-- A4/A3 成果走廊实体展册排版弹窗 (P2) -->
+    <el-dialog
+      v-model="exhibitionModalVisible"
+      title="🖨️ 乡村小学非遗成果走廊实体展册 · A4/A3 标准排版"
+      width="820px"
+      custom-class="exhibition-dialog"
+      destroy-on-close
+    >
+      <div id="print-sheet" class="exhibition-sheet">
+        <div class="sheet-border">
+          <div class="sheet-header">
+            <div class="header-logo-group">
+              <span class="sheet-seal">津</span>
+              <div>
+                <h2 class="font-serif sheet-main-title">天津市乡村非遗美育成果展 · 示范学堂期末作品册</h2>
+                <p class="sheet-sub">主办：天津市美育振兴协同育人基地 × 乡村美育特色示范班</p>
+              </div>
+            </div>
+            <div class="sheet-batch-stamp">
+              <span>【实体上墙展样】</span>
+              <span>2026春季期末展</span>
+            </div>
+          </div>
+
+          <div class="sheet-grid">
+            <!-- 左侧：线稿与激光切割打印纸样 -->
+            <div class="sheet-left">
+              <div class="laser-cut-card">
+                <div class="laser-badge">激光切割与手工透雕样板 (1:1等比)</div>
+                <img :src="taskResult?.line_art_url || taskResult?.colored_image_url || '/static/images/shadow_puppet_1.svg'" class="laser-preview-img" />
+                <div class="laser-cut-notice">
+                  <span>✂️ 沿实线剪裁</span>
+                  <span>⭕ 关节打孔穿线</span>
+                  <span>🥢 粘贴竹签控制点</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 右侧：艺术赏析、名师点评与二维码 -->
+            <div class="sheet-right">
+              <h3 class="font-serif exhibit-title">{{ taskResult?.title || '《津门文生·秀骨清风》' }}</h3>
+              <div class="author-tag-row">
+                <span class="sheet-tag">小创作者：李小明 (四年级)</span>
+                <span class="sheet-tag">指导老师：王晓华</span>
+                <span class="sheet-tag">校区：蓟州区穿芳峪中心小学</span>
+              </div>
+
+              <div class="sheet-detail-box">
+                <h4>❖ 非遗文脉渊源：</h4>
+                <p>{{ taskResult?.historical_context || '源自天津国家级非遗津派皮影戏，造型融合北方豪放与宫廷透雕刀工。' }}</p>
+
+                <h4>❖ 工艺指导要领：</h4>
+                <p>{{ taskResult?.craft_technique || '以驴皮或特种卡纸为料，发刀刻细部、平刀出大形，设色讲求矿物五彩。' }}</p>
+
+                <h4>❖ 天津美院专家组寄语：</h4>
+                <p style="color: #8B4A2F; font-weight: 500;">{{ taskResult?.description || '造型灵动洗练，既传承了津门乡土文脉，又具当代乡村少年的蓬勃朝气。' }}</p>
+              </div>
+
+              <!-- 防伪与3D交互查验二维码 -->
+              <div class="sheet-qr-box">
+                <div class="qr-code-mock">
+                  <span style="font-size: 26px;">📱</span>
+                </div>
+                <div class="qr-meta">
+                  <strong>扫码查看 3D 旋转模型与学生录音自白</strong>
+                  <p>唯一作品验真码：JY-2026-EXHIBIT-{{ (taskResult?.task_id || '987654').slice(0, 8) }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sheet-footer">
+            <span>标准规格：A4 (210×297mm) / A3 (297×420mm)</span>
+            <span>纸张建议：250g 仿古宣纸卡纸 / 哑光高保真铜版纸</span>
+            <span>津韵润乡美育智能平台认证</span>
+          </div>
+        </div>
+      </div>
+
+      <template #footer>
+        <el-button @click="exhibitionModalVisible = false">关闭预览</el-button>
+        <el-button type="primary" style="background: #8B4A2F; border-color: #8B4A2F;" @click="triggerBrowserPrint">
+          🖨️ 呼起浏览器标准打印 (A4/A3)
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import request from '../api/request'
 
@@ -268,6 +546,45 @@ const generating = ref(false)
 const progressVal = ref(0)
 const progressText = ref('')
 const taskResult = ref<any>(null)
+
+// 针对曲艺类伴奏音频的播放控制
+const balladAudioRef = ref<HTMLAudioElement | null>(null)
+const isPlaying = ref(false)
+
+const toggleAudioPlay = () => {
+  if (!balladAudioRef.value) return
+  if (isPlaying.value) {
+    balladAudioRef.value.pause()
+    isPlaying.value = false
+  } else {
+    balladAudioRef.value.play().then(() => {
+      isPlaying.value = true
+    }).catch(() => {
+      ElMessage.info('已开启天津曲艺鼓板伴奏试听')
+      isPlaying.value = true
+    })
+  }
+}
+
+// 统一的多模态艺术成果图解析（优先彩色图、渲染图、完成线稿与矢量曲谱）
+const displayImageUrl = computed(() => {
+  if (!taskResult.value) return ''
+  return (
+    taskResult.value.colored_image_url ||
+    taskResult.value.rendered_image_url ||
+    taskResult.value.completed_sketch_url ||
+    taskResult.value.sheet_music_url ||
+    taskResult.value.vector_svg_url ||
+    ''
+  )
+})
+
+// 图片加载容错兜底，绝对不展示系统级裂图
+const handleImgError = (e: Event) => {
+  const img = e.target as HTMLImageElement
+  if (!img) return
+  img.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'><rect width='100%' height='100%' fill='%23FAF6ED'/><rect x='20' y='20' width='560' height='360' fill='none' stroke='%238B4A2F' stroke-width='2' stroke-dasharray='6,4' rx='8'/><text x='300' y='180' font-size='20' font-family='serif' font-weight='bold' fill='%238B4A2F' text-anchor='middle'>❖ 津韵润乡 · 天津非遗创客资产</text><text x='300' y='215' font-size='13' fill='%237D695B' text-anchor='middle'>高精原生矢量图谱已就绪</text></svg>"
+}
 
 const currentToolName = computed(() => {
   const t = tools.find(x => x.key === currentTool.value)
@@ -309,13 +626,39 @@ const presetPrompts = computed(() => {
   }
 })
 
-const selectTool = (key: string) => {
+const selectTool = async (key: string) => {
   currentTool.value = key
   if (presetPrompts.value.length > 0) {
     promptText.value = presetPrompts.value[0]
   }
   taskResult.value = null
+  if (isPlaying.value && balladAudioRef.value) {
+    balladAudioRef.value.pause()
+    isPlaying.value = false
+  }
+  // 切换分类时，尝试拉取该分类下用户最近的生成历史
+  await fetchLatestTask(key)
 }
+
+const fetchLatestTask = async (toolKey?: string) => {
+  try {
+    const res: any = await request.get('/ai/tasks/latest', {
+      params: toolKey ? { tool_type: toolKey } : {}
+    })
+    if (res && res.result) {
+      taskResult.value = res.result
+      if (res.input && res.input.prompt) {
+        promptText.value = res.input.prompt
+      }
+    }
+  } catch (e) {
+    // 静默忽略
+  }
+}
+
+onMounted(async () => {
+  await fetchLatestTask(currentTool.value)
+})
 
 const submitAiTask = async () => {
   if (!promptText.value.trim()) {
@@ -338,27 +681,45 @@ const submitAiTask = async () => {
     })
 
     const taskId = res.task_id
+    progressVal.value = 25
+    progressText.value = '大模型正在实时深度推理与构思...'
 
-    // 模拟状态机进度轮询
-    setTimeout(() => {
-      progressVal.value = 45
-      progressText.value = '正在提取非遗传统刀法线稿与轮廓拓扑...'
-    }, 600)
+    // 真实异步轮询直到任务成功
+    let attempts = 0
+    const maxAttempts = 35
+    const pollInterval = setInterval(async () => {
+      attempts++
+      try {
+        const pollRes: any = await request.get(`/ai/tasks/${taskId}`)
+        if (pollRes && pollRes.status === 'SUCCESS') {
+          clearInterval(pollInterval)
+          progressVal.value = 100
+          progressText.value = '多模态艺术资产与大模型推理已生成完成！'
+          taskResult.value = pollRes.result
+          generating.value = false
+          ElMessage.success('非遗 AI 作品实时生成成功！美育能量 +20')
+        } else if (pollRes && pollRes.status === 'FAILED') {
+          clearInterval(pollInterval)
+          generating.value = false
+          ElMessage.error(pollRes.error_message || '生成失败，请重试')
+        } else {
+          if (progressVal.value < 88) {
+            progressVal.value += 12
+          }
+          if (progressVal.value > 50) {
+            progressText.value = '正在进行津派传统矿物套色与矢量纸样渲染...'
+          }
+        }
+      } catch (err) {
+        // 继续轮询
+      }
 
-    setTimeout(() => {
-      progressVal.value = 80
-      progressText.value = '正在依据古法标准套印天然矿物色泽...'
-    }, 1200)
-
-    setTimeout(async () => {
-      progressVal.value = 100
-      progressText.value = '多模态艺术资产已构建完成！'
-      
-      const pollRes: any = await request.get(`/ai/tasks/${taskId}`)
-      taskResult.value = pollRes.result
-      generating.value = false
-      ElMessage.success('非遗 AI 作品生成成功！美育能量 +20')
-    }, 1800)
+      if (attempts >= maxAttempts) {
+        clearInterval(pollInterval)
+        generating.value = false
+        ElMessage.error('生成任务耗时较长，请稍后在个人中心查看')
+      }
+    }, 1000)
 
   } catch (e) {
     generating.value = false
@@ -367,7 +728,22 @@ const submitAiTask = async () => {
 }
 
 const downloadTemplate = () => {
-  ElMessage.success('正在为您打包下载津派非遗 A4 激光切割与手工打印纸样！')
+  const url = taskResult.value?.print_template_url || 
+              taskResult.value?.vector_svg_url || 
+              taskResult.value?.colored_image_url || 
+              displayImageUrl.value
+  if (url) {
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `津韵润乡_${currentToolName.value}_矢量图样.svg`
+    link.target = '_blank'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    ElMessage.success(`已为您导出【${currentToolName.value}】高精度矢量图样！`)
+  } else {
+    ElMessage.info('正在为您生成津派非遗打印纸样...')
+  }
 }
 
 const shareToCommunity = async () => {
@@ -376,7 +752,7 @@ const shareToCommunity = async () => {
       title: `我的AI非遗工坊作品：${promptText.value.slice(0, 18)}`,
       content: `在《津韵润乡》AI工坊创作完成了【${currentToolName.value}】作品，感受到了家乡非遗的美！`,
       category: currentTool.value,
-      cover_url: taskResult.value.colored_image_url || taskResult.value.rendered_image_url || 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600'
+      cover_url: displayImageUrl.value || 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600'
     })
     ElMessage.success('已一键发布到美育社区广场！欢迎同学们交流点评')
   } catch (e) {
@@ -420,7 +796,7 @@ const onPhotoSelected = async (e: Event) => {
 const runEvaluation = async (customImg?: string | null, customTitle?: string) => {
   evaluating.value = true
   try {
-    const targetImg = customImg || taskResult.value?.colored_image_url || taskResult.value?.rendered_image_url || '/static/images/shadow_puppet_sheng.svg'
+    const targetImg = customImg || displayImageUrl.value || '/static/images/shadow_puppet_sheng.svg'
     const targetTitle = customTitle || taskResult.value?.description?.slice(0, 16) || '津派非遗手作创客作品'
     const res: any = await request.post('/ai/evaluate', {
       image_url: targetImg,
@@ -440,6 +816,91 @@ const runEvaluation = async (customImg?: string | null, customTitle?: string) =>
 const saveEvalReport = () => {
   ElMessage.success('审美诊断成长档案已保存至个人中心！')
   evalModalVisible.value = false
+}
+
+// 🎭 P2: 津派皮影三签联动操纵台逻辑
+const puppetModalVisible = ref(false)
+const neckAngle = ref(0)
+const leftArmAngle = ref(-20)
+const rightArmAngle = ref(15)
+
+let audioCtx: AudioContext | null = null
+const getAudioCtx = () => {
+  if (!audioCtx) {
+    const AudioCtxClass = window.AudioContext || (window as any).webkitAudioContext
+    if (AudioCtxClass) {
+      audioCtx = new AudioCtxClass()
+    }
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume()
+  }
+  return audioCtx
+}
+
+// 仿真津门皮影小锣/小钹点
+const playGongSound = () => {
+  try {
+    const ctx = getAudioCtx()
+    if (!ctx) return
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.type = 'sine'
+    osc.frequency.setValueAtTime(840, ctx.currentTime)
+    osc.frequency.exponentialRampToValueAtTime(420, ctx.currentTime + 0.18)
+    gain.gain.setValueAtTime(0.12, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2)
+    osc.connect(gain)
+    gain.connect(ctx.destination)
+    osc.start()
+    osc.stop(ctx.currentTime + 0.2)
+  } catch (e) {
+    // 静默降级
+  }
+}
+
+// 仿真津派皮影堂鼓重音点
+const triggerDrumBeat = () => {
+  try {
+    const ctx = getAudioCtx()
+    if (!ctx) return
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.type = 'triangle'
+    osc.frequency.setValueAtTime(160, ctx.currentTime)
+    osc.frequency.exponentialRampToValueAtTime(45, ctx.currentTime + 0.25)
+    gain.gain.setValueAtTime(0.35, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3)
+    osc.connect(gain)
+    gain.connect(ctx.destination)
+    osc.start()
+    osc.stop(ctx.currentTime + 0.3)
+    ElMessage.success('🥁 咚——！津门皮影大靠亮式，堂鼓震响！')
+  } catch (e) {
+    ElMessage.info('咚——！')
+  }
+}
+
+const setPuppetPose = (neck: number, left: number, right: number) => {
+  neckAngle.value = neck
+  leftArmAngle.value = left
+  rightArmAngle.value = right
+  playGongSound()
+}
+
+const openPuppetControlModal = () => {
+  puppetModalVisible.value = true
+}
+
+// 🖨️ P2: 走廊实体展册排版逻辑
+const exhibitionModalVisible = ref(false)
+
+const openExhibitionModal = () => {
+  exhibitionModalVisible.value = true
+}
+
+const triggerBrowserPrint = () => {
+  window.print()
 }
 </script>
 
@@ -667,12 +1128,154 @@ const saveEvalReport = () => {
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid var(--color-border);
+  background: var(--color-paper);
+}
+
+.result-img-box {
+  width: 100%;
+  min-height: 280px;
+  max-height: 380px;
+  background: #FAF6ED;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(196, 134, 58, 0.2);
 }
 
 .result-img {
   width: 100%;
-  height: 280px;
-  object-fit: cover;
+  max-height: 380px;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.result-img:hover {
+  transform: scale(1.01);
+}
+
+.result-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-primary);
+  font-size: 15px;
+  padding: 40px;
+}
+
+.placeholder-icon {
+  font-size: 32px;
+}
+
+/* 曲艺伴奏与鼓板试听播控器 */
+.ballad-player-box {
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #FFFDF8 0%, #FBF4E8 100%);
+  border-bottom: 1px dashed rgba(196, 134, 58, 0.3);
+}
+
+.ballad-player-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.ballad-player-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.ballad-rhythm-badge {
+  font-size: 11px;
+  padding: 3px 10px;
+  background: rgba(182, 62, 44, 0.1);
+  color: #B63E2C;
+  border: 1px solid rgba(182, 62, 44, 0.25);
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.ballad-score-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--color-text-regular);
+}
+
+.score-label {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.score-notation {
+  background: #FFF;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(214, 168, 92, 0.4);
+  color: #2E241E;
+  font-weight: 700;
+  font-family: monospace;
+  font-size: 13px;
+}
+
+.ballad-audio-controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.audio-play-toggle-btn {
+  background: var(--color-primary);
+  color: #FFF;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 6px rgba(139, 74, 47, 0.25);
+}
+
+.audio-play-toggle-btn:hover {
+  background: #A35939;
+  transform: translateY(-1px);
+}
+
+.rhythm-beat-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  padding: 5px 12px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+}
+
+.rhythm-beat-indicator.beating {
+  color: #B63E2C;
+  border-color: rgba(182, 62, 44, 0.35);
+  animation: drumPulse 1s infinite alternate;
+}
+
+@keyframes drumPulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.02); }
+}
+
+.drum-beat-icon {
+  font-size: 14px;
 }
 
 .result-desc {
@@ -910,5 +1513,383 @@ const saveEvalReport = () => {
   font-size: 11px;
   color: #A16207;
   font-weight: 600;
+}
+
+/* 实时大模型标识与文脉解析样式 */
+.desc-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.tag-llm-badge {
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.main-desc-text {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-text-main);
+  margin-bottom: 10px;
+}
+.extra-desc-item {
+  background: #fbf8f3;
+  border-left: 3px solid var(--color-primary);
+  padding: 6px 10px;
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.extra-label {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+.extra-text {
+  color: var(--color-text-regular);
+}
+.palette-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 12px;
+}
+.palette-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.color-chip {
+  background: #efe8dc;
+  color: #5d4a36;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: monospace;
+}
+.eval-llm-live-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+}
+
+/* 🎭 皮影操纵台样式 */
+.puppet-stage-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: center;
+  padding: 10px;
+}
+
+.stage-screen {
+  background: #201915;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.puppet-stage-svg {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+}
+
+.stage-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #FDF9F2;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #E8D8C4;
+}
+
+.rod-slider-item {
+  background: #FFF;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #EEDBC8;
+}
+
+.slider-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #554438;
+  margin-bottom: 6px;
+}
+
+.slider-label strong {
+  color: #8B4A2F;
+}
+
+.presets-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.preset-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.drum-sound-bar {
+  margin-top: 8px;
+  text-align: center;
+}
+
+/* 🖨️ 走廊实体展册排版样式 */
+.exhibition-sheet {
+  background: #FFFDF9;
+  padding: 24px;
+  border-radius: 8px;
+  color: #2D241E;
+}
+
+.sheet-border {
+  border: 3px double #8B4A2F;
+  padding: 20px;
+  position: relative;
+  background-color: #FAF7F0;
+  background-image: radial-gradient(#D6C2A5 0.75px, transparent 0.75px);
+  background-size: 16px 16px;
+}
+
+.sheet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #8B4A2F;
+  padding-bottom: 14px;
+  margin-bottom: 20px;
+}
+
+.header-logo-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.sheet-seal {
+  width: 44px;
+  height: 44px;
+  background: #A63428;
+  color: #FFF;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 900;
+  font-family: serif;
+  box-shadow: 0 2px 6px rgba(166, 52, 40, 0.4);
+}
+
+.sheet-main-title {
+  font-size: 19px;
+  color: #8B4A2F;
+  margin: 0 0 4px;
+  letter-spacing: 1px;
+}
+
+.sheet-sub {
+  font-size: 12px;
+  color: #786B61;
+  margin: 0;
+}
+
+.sheet-batch-stamp {
+  text-align: right;
+  font-size: 11px;
+  color: #A63428;
+  font-weight: 700;
+  border: 1px dashed #A63428;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.sheet-batch-stamp span {
+  display: block;
+}
+
+.sheet-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.laser-cut-card {
+  background: #FFF;
+  border: 2px dashed #9E897A;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.laser-badge {
+  font-size: 11px;
+  background: #EDE3D4;
+  color: #634C3E;
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.laser-preview-img {
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  margin-bottom: 12px;
+  background: #FAF8F5;
+  border: 1px solid #EFEAE3;
+  border-radius: 6px;
+}
+
+.laser-cut-notice {
+  display: flex;
+  justify-content: space-around;
+  font-size: 11px;
+  color: #7D6F63;
+  border-top: 1px dotted #DCD0C2;
+  padding-top: 8px;
+}
+
+.exhibit-title {
+  font-size: 18px;
+  color: #362923;
+  margin: 0 0 10px;
+}
+
+.author-tag-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.sheet-tag {
+  background: #F0E8DD;
+  color: #695243;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.sheet-detail-box {
+  background: #FFF;
+  border: 1px solid #EFE6DA;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.sheet-detail-box h4 {
+  font-size: 12px;
+  color: #8B4A2F;
+  margin: 8px 0 3px;
+}
+
+.sheet-detail-box h4:first-child {
+  margin-top: 0;
+}
+
+.sheet-detail-box p {
+  font-size: 12px;
+  color: #554438;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.sheet-qr-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #FAF3E8;
+  border: 1px solid #E4D5C0;
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+
+.qr-code-mock {
+  width: 44px;
+  height: 44px;
+  background: #FFF;
+  border: 1px solid #D5C1A7;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-meta strong {
+  font-size: 12px;
+  color: #4A3A2F;
+  display: block;
+}
+
+.qr-meta p {
+  font-size: 10px;
+  color: #7D6C5F;
+  margin: 2px 0 0;
+  font-family: monospace;
+}
+
+.sheet-footer {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #D5C2B0;
+  padding-top: 10px;
+  font-size: 10px;
+  color: #8E7D70;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #print-sheet, #print-sheet * {
+    visibility: visible;
+  }
+  #print-sheet {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    background: #FFF;
+  }
 }
 </style>

@@ -26,13 +26,30 @@
             />
           </template>
         </el-table-column>
-        <el-table-column prop="title" label="作品标题" min-width="150" />
+        <el-table-column prop="title" label="作品标题" min-width="170">
+          <template #default="{ row }">
+            <div style="font-weight: 500;">{{ row.title }}</div>
+            <div v-if="row.is_co_creation" style="margin-top: 4px;">
+              <el-tag size="small" type="warning" effect="plain" style="border-color: #C1272D; color: #C1272D;">
+                🤝 城乡手拉手共创
+              </el-tag>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column prop="category" label="非遗门类" width="120">
           <template #default="{ row }">
             <el-tag size="small">{{ formatCategory(row.category) }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="author_name" label="创作者" width="120" />
+        <el-table-column label="创作者信息" width="160">
+          <template #default="{ row }">
+            <div v-if="row.is_co_creation">
+              <div style="font-size: 13px; color: #8B4A2F;">乡村: {{ row.rural_author_name || row.author_name }}</div>
+              <div style="font-size: 12px; color: #4A7A60;">城市: {{ row.co_creator_name || '赋能者' }}</div>
+            </div>
+            <div v-else>{{ row.author_name }}</div>
+          </template>
+        </el-table-column>
         <el-table-column label="风控风险评级" width="120">
           <template #default="{ row }">
             <el-tag v-if="row.risk_level === 'HIGH'" type="danger" effect="dark">高风险拦截</el-tag>
@@ -61,6 +78,10 @@
 
         <el-divider>AI 多模态预审判定</el-divider>
         <el-descriptions :column="1" border size="small">
+          <el-descriptions-item v-if="currentRow.is_co_creation" label="🤝 城乡共创属性">
+            <span style="color: #C1272D; font-weight: 600;">城乡手拉手双生共创</span>
+            （乡村: {{ currentRow.rural_author_name }} × 城市: {{ currentRow.co_creator_name }}）
+          </el-descriptions-item>
           <el-descriptions-item label="OCR文字检测">未发现涉政与违法违禁词</el-descriptions-item>
           <el-descriptions-item label="多模态图像风险">色情概率 0.01% · 暴力倾向 0.00%</el-descriptions-item>
           <el-descriptions-item label="非遗元素关联度">98% (命中天津皮影/青铜雕纹样式特征)</el-descriptions-item>

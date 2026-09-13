@@ -41,8 +41,10 @@
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="160" fixed="right">
+            <el-table-column label="操作" width="310" fixed="right">
               <template #default="{ row }">
+                <el-button size="small" type="warning" link @click="exportLessonPlan(row)">导出教案 ↗</el-button>
+                <el-button size="small" type="success" link @click="exportLessonPPT(row)">课件PPT ↗</el-button>
                 <el-button size="small" type="primary" link @click="viewChapters(row)">章节详情</el-button>
                 <el-button 
                   size="small" 
@@ -58,26 +60,97 @@
         </el-tab-pane>
 
         <el-tab-pane label="民俗节日日历" name="festivals">
-          <el-timeline style="margin-top: 15px;">
-            <el-timeline-item timestamp="农历正月十五" placement="top" color="#8B4A2F">
-              <el-card>
-                <h4>杨柳青元宵灯会与年画展</h4>
-                <p>展出经典明清木版套印画样，乡村小学组织实地研学采风与拓印体验。</p>
-              </el-card>
-            </el-timeline-item>
-            <el-timeline-item timestamp="农历八月十五" placement="top" color="#D6A85C">
-              <el-card>
-                <h4>津门中秋拜月与兔子王泥塑节</h4>
-                <p>学习泥人张兔子王彩塑技法，体味津派民间雕塑的神韵。</p>
-              </el-card>
-            </el-timeline-item>
-            <el-timeline-item timestamp="农历五月初五" placement="top" color="#409EFF">
-              <el-card>
-                <h4>海河端午龙舟竞渡非遗展演</h4>
-                <p>津派传统龙舟模型制作与水上非遗展演，弘扬团结协作与坚韧不拔的津沽精神。</p>
-              </el-card>
-            </el-timeline-item>
-          </el-timeline>
+          <div class="festival-header-bar">
+            <div class="festival-info">
+              <span class="festival-subtitle">❖ 津沽传统岁时文化与非遗民俗档案（已由 SQLite 数据库动态持久化驱动）</span>
+            </div>
+            <div class="festival-controls">
+              <el-radio-group v-model="festivalViewMode" size="small" style="margin-right: 12px;">
+                <el-radio-button label="timeline">时间轴视图</el-radio-button>
+                <el-radio-button label="table">数据表格视图</el-radio-button>
+              </el-radio-group>
+              <el-button type="primary" size="small" style="background-color: #8B4A2F; border-color: #8B4A2F;" @click="openAddFestival">
+                + 新建民俗节日
+              </el-button>
+            </div>
+          </div>
+
+          <!-- 时间轴视图 -->
+          <div v-if="festivalViewMode === 'timeline'" v-loading="loadingFestivals" style="margin-top: 20px;">
+            <el-timeline>
+              <el-timeline-item
+                v-for="item in festivals"
+                :key="item.id"
+                :timestamp="`${item.lunar_date}${item.solar_date ? ' (' + item.solar_date + ')' : ''}`"
+                placement="top"
+                :color="item.status === 'PUBLISHED' ? '#8B4A2F' : '#909399'"
+              >
+                <el-card class="festival-timeline-card">
+                  <div class="f-card-header">
+                    <div class="f-title-wrap">
+                      <span class="f-title">{{ item.title }}</span>
+                      <el-tag size="small" type="warning" style="margin-left: 8px;">{{ item.tag || '津沽非遗' }}</el-tag>
+                      <el-tag size="small" :type="item.status === 'PUBLISHED' ? 'success' : 'info'" style="margin-left: 6px;">
+                        {{ item.status === 'PUBLISHED' ? '已上线' : '已下架' }}
+                      </el-tag>
+                    </div>
+                    <div class="f-actions">
+                      <el-button size="small" link type="primary" @click="openEditFestival(item)">编辑</el-button>
+                      <el-button size="small" link :type="item.status === 'PUBLISHED' ? 'warning' : 'success'" @click="handleToggleFestival(item)">
+                        {{ item.status === 'PUBLISHED' ? '下架' : '上架' }}
+                      </el-button>
+                      <el-button size="small" link type="danger" @click="handleDeleteFestival(item)">删除</el-button>
+                    </div>
+                  </div>
+                  <div class="f-customs" v-if="item.customs">
+                    <span class="f-label">特色风俗：</span>{{ item.customs }}
+                  </div>
+                  <p class="f-desc">{{ item.description }}</p>
+                </el-card>
+              </el-timeline-item>
+            </el-timeline>
+          </div>
+
+          <!-- 数据表格视图 -->
+          <div v-else v-loading="loadingFestivals" style="margin-top: 15px;">
+            <el-table :data="festivals" border stripe style="width: 100%;">
+              <el-table-column prop="title" label="节日名称" min-width="160">
+                <template #default="{ row }">
+                  <strong>{{ row.title }}</strong>
+                </template>
+              </el-table-column>
+              <el-table-column prop="lunar_date" label="农历时令" width="120" />
+              <el-table-column prop="solar_date" label="公历参考" width="120" />
+              <el-table-column prop="tag" label="标签专题" width="130">
+                <template #default="{ row }">
+                  <el-tag size="small" type="warning">{{ row.tag }}</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="customs" label="传统民俗活动" min-width="200" show-overflow-tooltip />
+              <el-table-column label="状态" width="100">
+                <template #default="{ row }">
+                  <el-tag :type="row.status === 'PUBLISHED' ? 'success' : 'info'" size="small">
+                    {{ row.status === 'PUBLISHED' ? '已上线' : '已下架' }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="sort_order" label="排序" width="80" />
+              <el-table-column label="操作" width="180" fixed="right">
+                <template #default="{ row }">
+                  <el-button size="small" type="primary" link @click="openEditFestival(row)">编辑</el-button>
+                  <el-button 
+                    size="small" 
+                    :type="row.status === 'PUBLISHED' ? 'warning' : 'success'" 
+                    link 
+                    @click="handleToggleFestival(row)"
+                  >
+                    {{ row.status === 'PUBLISHED' ? '下架' : '上架' }}
+                  </el-button>
+                  <el-button size="small" type="danger" link @click="handleDeleteFestival(row)">删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
         </el-tab-pane>
       </el-tabs>
     </el-card>
@@ -127,6 +200,58 @@
       <template #footer>
         <el-button @click="showAddDialog = false">取消</el-button>
         <el-button type="primary" :loading="submitting" style="background-color: #8B4A2F; border-color: #8B4A2F;" @click="handleCreateCourse">确认发布</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 新建/编辑民俗节日弹窗 -->
+    <el-dialog v-model="showFestivalDialog" :title="festivalForm.id ? '编辑民俗节日' : '新建津门民俗节日'" width="560px">
+      <el-form label-width="100px">
+        <el-form-item label="节日名称" required>
+          <el-input v-model="festivalForm.title" placeholder="如：蓟州盘山重阳登高与茱萸民俗" />
+        </el-form-item>
+        <el-row :gutter="15">
+          <el-col :span="12">
+            <el-form-item label="农历时令" required>
+              <el-input v-model="festivalForm.lunar_date" placeholder="如：九月初九" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="公历参考">
+              <el-input v-model="festivalForm.solar_date" placeholder="如：2026-10-18" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="15">
+          <el-col :span="12">
+            <el-form-item label="非遗门类">
+              <el-select v-model="festivalForm.category" style="width: 100%">
+                <el-option label="民俗礼仪" value="FOLK_CUSTOM" />
+                <el-option label="杨柳青年画" value="PAINTING" />
+                <el-option label="泥人张彩塑" value="CLAY" />
+                <el-option label="津门皮影" value="SHADOW_PUPPET" />
+                <el-option label="风筝魏制作" value="KITE" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="排序权重">
+              <el-input-number v-model="festivalForm.sort_order" :min="0" :max="99" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="专题标签">
+          <el-input v-model="festivalForm.tag" placeholder="如：秋日茱萸雅集 / 津沽民俗专题" />
+        </el-form-item>
+        <el-form-item label="传统民俗风习">
+          <el-input v-model="festivalForm.customs" placeholder="如：登盘山古道、插茱萸、品重阳花糕" />
+        </el-form-item>
+        <el-form-item label="文化内涵指引">
+          <el-input v-model="festivalForm.description" type="textarea" :rows="3" placeholder="请输入节令文化渊源与乡村美育实践指引" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showFestivalDialog = false">取消</el-button>
+        <el-button type="primary" :loading="submittingFestival" style="background-color: #8B4A2F; border-color: #8B4A2F;" @click="handleSaveFestival">保存并同步</el-button>
       </template>
     </el-dialog>
 
@@ -238,6 +363,16 @@ const handleToggleStatus = async (row: any) => {
   }
 }
 
+const exportLessonPlan = (row: any) => {
+  const url = `http://localhost:8000/api/v1/teacher/lesson-plans/export-html?topic=${encodeURIComponent(row.title)}&grade=${encodeURIComponent(row.age_group || '小学三年级')}`
+  window.open(url, '_blank')
+}
+
+const exportLessonPPT = (row: any) => {
+  const url = `http://localhost:8000/api/v1/teacher/lesson-plans/export-pptx?topic=${encodeURIComponent(row.title)}&grade=${encodeURIComponent(row.age_group || '小学三年级')}`
+  window.open(url, '_blank')
+}
+
 const viewChapters = async (row: any) => {
   currentCourse.value = row
   chapterDrawer.value = true
@@ -245,15 +380,112 @@ const viewChapters = async (row: any) => {
   try {
     const res: any = await request.get(`/courses/${row.id}`)
     courseChapters.value = res.chapters || []
-  } catch (e: any) {
+  } catch (e) {
     ElMessage.error('获取章节详情失败')
   } finally {
     loadingChapters.value = false
   }
 }
 
+// ----------------------------------------------------
+// 民俗节日日历动态 CRUD 逻辑
+// ----------------------------------------------------
+const festivals = ref<any[]>([])
+const loadingFestivals = ref(false)
+const festivalViewMode = ref<'timeline' | 'table'>('timeline')
+const showFestivalDialog = ref(false)
+const submittingFestival = ref(false)
+
+const festivalForm = ref<any>({
+  id: null,
+  title: '',
+  lunar_date: '',
+  solar_date: '',
+  category: 'FOLK_CUSTOM',
+  tag: '津沽民俗专题',
+  customs: '',
+  description: '',
+  sort_order: 0
+})
+
+const fetchFestivals = async () => {
+  try {
+    loadingFestivals.value = true
+    const res: any = await request.get('/festivals')
+    festivals.value = Array.isArray(res) ? res : (res.data || [])
+  } catch (e) {
+    console.error('Failed to fetch festivals:', e)
+  } finally {
+    loadingFestivals.value = false
+  }
+}
+
+const openAddFestival = () => {
+  festivalForm.value = {
+    id: null,
+    title: '',
+    lunar_date: '',
+    solar_date: '',
+    category: 'FOLK_CUSTOM',
+    tag: '津沽民俗专题',
+    customs: '',
+    description: '',
+    sort_order: festivals.value.length + 1
+  }
+  showFestivalDialog.value = true
+}
+
+const openEditFestival = (row: any) => {
+  festivalForm.value = { ...row }
+  showFestivalDialog.value = true
+}
+
+const handleSaveFestival = async () => {
+  if (!festivalForm.value.title.trim() || !festivalForm.value.lunar_date.trim()) {
+    ElMessage.warning('请填写民俗节日名称及农历时令')
+    return
+  }
+  try {
+    submittingFestival.value = true
+    if (festivalForm.value.id) {
+      await request.put(`/admin/festivals/${festivalForm.value.id}`, festivalForm.value)
+      ElMessage.success('民俗节日信息已更新')
+    } else {
+      await request.post('/admin/festivals', festivalForm.value)
+      ElMessage.success('民俗节日发布成功')
+    }
+    showFestivalDialog.value = false
+    await fetchFestivals()
+  } catch (e: any) {
+    ElMessage.error(e.message || '保存失败')
+  } finally {
+    submittingFestival.value = false
+  }
+}
+
+const handleToggleFestival = async (row: any) => {
+  try {
+    const res: any = await request.put(`/admin/festivals/${row.id}/status`)
+    ElMessage.success(res.message || '状态已切换')
+    await fetchFestivals()
+  } catch (e: any) {
+    ElMessage.error(e.message || '切换状态失败')
+  }
+}
+
+const handleDeleteFestival = async (row: any) => {
+  try {
+    await request.delete(`/admin/festivals/${row.id}`)
+    ElMessage.success('民俗节日已删除')
+    await fetchFestivals()
+  } catch (e: any) {
+    ElMessage.error(e.message || '删除失败')
+  }
+}
+
 onMounted(() => {
   fetchCourses()
+  fetchFestivals()
 })
 </script>
 
@@ -269,5 +501,54 @@ onMounted(() => {
 .header-title {
   font-weight: 600;
   color: #2F2925;
+}
+.festival-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #FAF8F5;
+  border: 1px solid #EFEAE3;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+.festival-subtitle {
+  font-size: 13px;
+  color: #8B4A2F;
+  font-weight: 600;
+}
+.festival-timeline-card {
+  border-radius: 8px;
+  border: 1px solid #ECE7E1;
+}
+.f-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.f-title-wrap {
+  display: flex;
+  align-items: center;
+}
+.f-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #2F2925;
+}
+.f-customs {
+  font-size: 13px;
+  color: #C4863A;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.f-label {
+  color: #776D65;
+}
+.f-desc {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
 }
 </style>

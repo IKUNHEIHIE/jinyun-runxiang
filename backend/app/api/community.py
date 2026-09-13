@@ -33,9 +33,10 @@ class ReportRequest(BaseModel):
 
 @router.get("/posts")
 def list_posts(
-    sort: str = "latest",  # latest, hot, featured
+    sort: str = "latest",  # latest, hot, featured, co_creation
     topic_id: Optional[int] = None,
     category: Optional[str] = None,
+    is_co_creation: Optional[bool] = None,
     page: int = Query(1, ge=1),
     pageSize: int = Query(10, ge=1, le=50),
     db: Session = Depends(get_db)
@@ -45,11 +46,15 @@ def list_posts(
         query = query.filter(CommunityPost.topic_id == topic_id)
     if category:
         query = query.filter(CommunityPost.category == category)
+    if is_co_creation is not None:
+        query = query.filter(CommunityPost.is_co_creation == is_co_creation)
     
     if sort == "hot":
         query = query.order_by(CommunityPost.like_count.desc())
     elif sort == "featured":
         query = query.filter(CommunityPost.is_featured == True).order_by(CommunityPost.created_at.desc())
+    elif sort == "co_creation":
+        query = query.filter(CommunityPost.is_co_creation == True).order_by(CommunityPost.created_at.desc())
     else:
         query = query.order_by(CommunityPost.created_at.desc())
 
@@ -73,6 +78,12 @@ def list_posts(
             "favorite_count": p.favorite_count,
             "is_featured": p.is_featured,
             "heritage_master_like": p.heritage_master_like,
+            "is_co_creation": bool(p.is_co_creation),
+            "co_creator_name": p.co_creator_name,
+            "co_creator_school": p.co_creator_school,
+            "rural_author_name": p.rural_author_name,
+            "rural_school": p.rural_school,
+            "rural_original_url": p.rural_original_url,
             "created_at": p.created_at.strftime("%Y-%m-%d %H:%M") if p.created_at else "",
             "author": {
                 "id": p.user_id,
@@ -130,6 +141,12 @@ def get_post_detail(
         "is_liked": is_liked,
         "is_featured": post.is_featured,
         "heritage_master_like": post.heritage_master_like,
+        "is_co_creation": getattr(post, "is_co_creation", False),
+        "co_creator_name": getattr(post, "co_creator_name", None),
+        "co_creator_school": getattr(post, "co_creator_school", None),
+        "rural_author_name": getattr(post, "rural_author_name", None),
+        "rural_school": getattr(post, "rural_school", None),
+        "rural_original_url": getattr(post, "rural_original_url", None),
         "created_at": post.created_at.strftime("%Y-%m-%d %H:%M") if post.created_at else "",
         "author": {
             "id": author.id if author else post.user_id,
@@ -282,3 +299,61 @@ def report_post(
     db.add(rep)
     db.commit()
     return success_response(message="举报已提交，运营团队将尽快处理")
+
+class SubmitCoCreateRequest(BaseModel):
+    co_creator_name: str
+    co_creator_school: Optional[str] = "城市美育共创志愿者"
+    colored_cover_url: str
+    co_note: str
+
+@router.post("/posts/{post_id}/co-create")
+def submit_co_creation(
+    post_id: int,
+    req: SubmitCoCreateRequest,
+    current_user: Optional[dict] = Depends(get_current_user_optional),
+    db: Session = Depends(get_db)
+):
+    """
+    城乡手拉手接力共创：对乡村孩子的白模线稿进行二次套色赋能并生成双生共创作品
+    """
+    origin_post = db.query(CommunityPost).filter(CommunityPost.id == post_id).first()
+    if not origin_post:
+        return error_response(code=4040, message="原始乡村作品不存在")
+
+    user_id = current_user["user_id"] if current_user else 1
+
+    # 获取原作者昵称与学校
+    origin_user = db.query(SysUser).filter(SysUser.id == origin_post.user_id).first()
+    rural_author = origin_user.nickname if origin_user else (origin_post.rural_author_name or "乡村小匠人")
+    rural_school = origin_post.rural_school or "乡村非遗美育教学点"
+
+    co_post = CommunityPost(
+        user_id=user_id,
+        title=f"《{origin_post.title}》· 城乡手拉手联名共创",
+        content=f"【乡村原作者·{rural_author}（{rural_school}）】：创作了初始非遗线稿。\n【城市接力赋能·{req.co_creator_name}（{req.co_creator_school}）】：{req.co_note}",
+        category=origin_post.category,
+        cover_url=req.colored_cover_url,
+        rural_original_url=origin_post.rural_original_url or origin_post.cover_url,
+        source_task_id=origin_post.source_task_id,
+        status="APPROVED",
+        is_featured=True,
+        is_pinned=False,
+        is_co_creation=True,
+        co_creator_name=req.co_creator_name,
+        co_creator_school=req.co_creator_school,
+        rural_author_name=rural_author,
+        rural_school=rural_school,
+        like_count=12,
+        comment_count=1
+    )
+    db.add(co_post)
+    db.commit()
+    db.refresh(co_post)
+
+    return success_response({
+        "co_post_id": co_post.id,
+        "title": co_post.title,
+        "cover_url": co_post.cover_url,
+        "co_creator_name": co_post.co_creator_name,
+        "rural_author_name": co_post.rural_author_name
+    }, message="城乡共创作品已成功发布到美育广场！")

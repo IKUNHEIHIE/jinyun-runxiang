@@ -114,8 +114,8 @@ export function resetRouter() {
   resetLoadedPaths();
 }
 
-/** 路由白名单 */
-const whiteList = ["/login"];
+/** 路由白名单（免登录访问） */
+const whiteList = ["/login", "/screen"];
 
 const { VITE_HIDE_HOME } = import.meta.env;
 
@@ -143,9 +143,9 @@ router.beforeEach((to: ToRouteType, _from, next) => {
       else document.title = item.meta.title as string;
     });
   }
-  /** 如果已经登录并存在登录信息后不能跳转到路由白名单，而是继续保持在当前页面 */
+  /** 如果已经登录并存在登录信息后不能跳转到登录页面，而是继续保持在当前页面 */
   function toCorrectRoute() {
-    whiteList.includes(to.fullPath) ? next(_from.fullPath) : next();
+    to.fullPath === "/login" ? next(_from.fullPath || "/") : next();
   }
   if (Cookies.get(multipleTabsKey) && userInfo) {
     // 无权限跳转403页面
