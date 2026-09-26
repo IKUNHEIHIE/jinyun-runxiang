@@ -4,7 +4,7 @@
       <template #header>
         <div class="card-header">
           <span class="header-title">🤖 具身智能设备监控台 (A-07)</span>
-          <el-tag type="success">MQTT 通信总线正常</el-tag>
+          <el-tag type="info">MQTT 网关待接入</el-tag>
         </div>
       </template>
 
@@ -25,26 +25,26 @@
               <el-row :gutter="12">
                 <el-col :span="8">
                   <div style="font-size: 12px; color: #776D65;">电池电量</div>
-                  <div style="font-size: 18px; font-weight: bold; color: #4D8B63;">{{ d.telemetry.battery_pct }}%</div>
+                  <div style="font-size: 18px; font-weight: bold; color: #4D8B63;">{{ d.telemetry?.battery_pct == null ? '暂无数据' : `${d.telemetry.battery_pct}%` }}</div>
                 </el-col>
                 <el-col :span="8">
                   <div style="font-size: 12px; color: #776D65;">无线信号强度</div>
-                  <div style="font-size: 18px; font-weight: bold; color: #2F2925;">{{ d.telemetry.wifi_rssi }} dBm</div>
+                  <div style="font-size: 18px; font-weight: bold; color: #2F2925;">{{ d.telemetry?.wifi_rssi == null ? '暂无数据' : `${d.telemetry.wifi_rssi} dBm` }}</div>
                 </el-col>
                 <el-col :span="8">
                   <div style="font-size: 12px; color: #776D65;">主板温度</div>
-                  <div style="font-size: 18px; font-weight: bold; color: #C4863A;">{{ d.telemetry.cpu_temp_c }} °C</div>
+                  <div style="font-size: 18px; font-weight: bold; color: #C4863A;">{{ d.telemetry?.cpu_temp_c == null ? '暂无数据' : `${d.telemetry.cpu_temp_c} °C` }}</div>
                 </el-col>
               </el-row>
             </div>
 
             <div style="font-size: 13px; color: #2F2925; margin-bottom: 15px;">
-              <strong>当前正在执行动作:</strong> 天津皮影老生肢体走位与三签舞台表演演示
+              <strong>当前正在执行动作:</strong> 暂无设备回报
             </div>
 
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
-              <el-button size="small" @click="sendCommand(d.device_code, 'PERFORM_SHADOW_PLAY')">下发皮影表演</el-button>
-              <el-button size="small" type="primary" style="background-color: #8B4A2F; border-color: #8B4A2F;" @click="sendCommand(d.device_code, 'SPEAK_EXPLANATION')">讲解天津皮影历史</el-button>
+              <el-button size="small" @click="sendCommand(d.device_code, 'PERFORM_SHADOW_PLAY')">登记皮影表演指令</el-button>
+              <el-button size="small" type="primary" style="background-color: #8B4A2F; border-color: #8B4A2F;" @click="sendCommand(d.device_code, 'SPEAK_EXPLANATION')">登记皮影讲解指令</el-button>
             </div>
           </el-card>
         </el-col>
@@ -75,7 +75,7 @@ const sendCommand = async (deviceCode: string, commandType: string) => {
       command_type: commandType,
       payload: { action: commandType, duration_sec: 10 }
     })
-    ElMessage.success(res.message || '指令已成功响应并执行')
+    ElMessage.success(res.message || '指令已记录，等待设备网关回执')
   } catch (e) {
     ElMessage.error('指令下发失败')
   }

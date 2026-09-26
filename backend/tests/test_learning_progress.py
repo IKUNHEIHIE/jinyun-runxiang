@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from app.core.database import get_db
 from app.core.security import create_access_token
 from app.main import app
-from app.models.entities import Course, CourseChapter, GrowthEvent, LearningProgress, UserGrowth
+from app.models.entities import Course, CourseChapter, GrowthEvent, LearningProgress, SysUser, UserGrowth
 
 
 class Query:
@@ -41,6 +41,10 @@ class FakeSession:
             LearningProgress: [],
             GrowthEvent: [],
             UserGrowth: [UserGrowth(user_id=1, energy_value=0, level_code="LV1_APPRENTICE")],
+            SysUser: [
+                SysUser(id=1, username="student", nickname="学生", role_code="STUDENT", status="ACTIVE"),
+                SysUser(id=2, username="admin", nickname="管理员", role_code="ADMIN", status="ACTIVE"),
+            ],
         }
         self.commits = 0
 

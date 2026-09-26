@@ -9,7 +9,7 @@ from app.api import ai_workshop
 from app.core.database import get_db
 from app.core.security import create_access_token
 from app.main import app
-from app.models.entities import AiModel, AiTask
+from app.models.entities import AiModel, AiTask, SysUser
 
 
 class Query:
@@ -41,7 +41,14 @@ class FakeSession:
             id=7, code="demo", name="原模型", task_type="IMAGE", version="1",
             provider="local", config_json={}, prompt_template="", status="ACTIVE", is_default=True
         )
-        self.rows = {AiTask: [self.task], AiModel: [self.model]}
+        self.rows = {
+            AiTask: [self.task], AiModel: [self.model],
+            SysUser: [
+                SysUser(id=1, username="owner", nickname="主人", role_code="STUDENT", status="ACTIVE"),
+                SysUser(id=2, username="other", nickname="其他人", role_code="STUDENT", status="ACTIVE"),
+                SysUser(id=3, username="admin", nickname="管理员", role_code="ADMIN", status="ACTIVE"),
+            ],
+        }
         self.commits = 0
         self.closed = False
 

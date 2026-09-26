@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from app.core.database import get_db
 from app.core.security import create_access_token
 from app.main import app
-from app.models.entities import Assignment, AssignmentSubmission, TeacherClass
+from app.models.entities import Assignment, AssignmentSubmission, SysUser, TeacherClass
 
 
 class Query:
@@ -32,6 +32,7 @@ class FakeSession:
             TeacherClass: [TeacherClass(id=123, teacher_id=2, name="别人的班", grade="小学三年级")],
             Assignment: [Assignment(id=55, class_id=123, teacher_id=2)],
             AssignmentSubmission: [AssignmentSubmission(id=77, assignment_id=55)],
+            SysUser: [SysUser(id=1, username="teacher", nickname="教师", role_code="TEACHER", status="ACTIVE")],
         }
         self.writes = 0
 

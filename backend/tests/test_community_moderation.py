@@ -52,7 +52,10 @@ class FakeSession:
         self.rows = {
             CommunityPost: [],
             ContentReview: [],
-            SysUser: [SysUser(id=1, nickname="学生", role_code="STUDENT")],
+            SysUser: [
+                SysUser(id=1, username="student", nickname="学生", role_code="STUDENT", status="ACTIVE"),
+                SysUser(id=2, username="admin", nickname="管理员", role_code="ADMIN", status="ACTIVE"),
+            ],
         }
 
     def query(self, model):

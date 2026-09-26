@@ -27,11 +27,7 @@ def list_devices(db: Session = Depends(get_db)):
         "firmware_version": d.firmware_version,
         "status": d.status,
         "last_seen_at": d.last_seen_at.strftime("%Y-%m-%d %H:%M:%S") if d.last_seen_at else "",
-        "telemetry": {
-            "battery_pct": 82,
-            "wifi_rssi": -55,
-            "cpu_temp_c": 41.5
-        }
+        "telemetry": {}
     } for d in devices])
 
 @router.get("/{device_code}/status")
@@ -44,9 +40,9 @@ def get_device_status(device_code: str, db: Session = Depends(get_db)):
         "name": d.device_name,
         "status": d.status,
         "is_online": d.status == "ONLINE",
-        "battery": 82,
-        "current_task": "天津皮影经典唱段动作讲解",
-        "fallback_available": True
+        "battery": None,
+        "current_task": None,
+        "fallback_available": False
     })
 
 @router.post("/{device_code}/command")
@@ -67,11 +63,10 @@ def send_device_command(
         device_id=d.id,
         command_type=req.command_type,
         payload_json=req.payload,
-        status="ACKED",
-        sent_at=now,
-        ack_at=now
+        status="PENDING",
+        sent_at=None,
+        ack_at=None
     )
-    d.last_seen_at = now
     db.add(cmd)
     db.commit()
 
@@ -81,8 +76,8 @@ def send_device_command(
         "device_code": device_code,
         "command_type": req.command_type,
         "action_label": action_label,
-        "status": "ACKED",
-        "fallback_virtual_mode": d.status != "ONLINE",
+        "status": "PENDING",
+        "fallback_virtual_mode": False,
         "action_preview_url": "/static/models/tianjin_shadow_puppet.glb",
-        "executed_at": now.strftime("%Y-%m-%d %H:%M:%S")
-    }, message=f"指令【{action_label}】已成功送达具身机器人并执行完毕")
+        "queued_at": now.strftime("%Y-%m-%d %H:%M:%S")
+    }, message=f"指令【{action_label}】已记录，等待设备网关发送和回执")

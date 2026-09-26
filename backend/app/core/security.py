@@ -8,6 +8,8 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from app.core.config import settings
+from app.core.database import get_db
+from app.models.entities import SysUser
 
 security_scheme = HTTPBearer(auto_error=False)
 
@@ -55,15 +57,33 @@ def decode_token(token: str) -> Optional[Dict[str, Any]]:
         return None
 
 def get_current_user_optional(
-    auth: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme)
+    auth: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme),
+    db: Session = Depends(get_db)
 ) -> Optional[Dict[str, Any]]:
     if not auth or not auth.credentials:
         return None
     payload = decode_token(auth.credentials)
-    return payload
+    return _load_active_user(payload, db) if payload else None
+
+
+def _load_active_user(payload: Dict[str, Any], db: Session) -> Optional[Dict[str, Any]]:
+    user_id = payload.get("user_id")
+    if not isinstance(user_id, int):
+        return None
+    user = db.query(SysUser).filter(SysUser.id == user_id).first()
+    if not user or user.status != "ACTIVE":
+        return None
+    return {
+        **payload,
+        "user_id": user.id,
+        "username": user.username,
+        "nickname": user.nickname,
+        "role_code": user.role_code,
+    }
 
 def get_current_user(
-    auth: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme)
+    auth: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme),
+    db: Session = Depends(get_db)
 ) -> Dict[str, Any]:
     if not auth or not auth.credentials:
         raise HTTPException(
@@ -72,13 +92,14 @@ def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
     payload = decode_token(auth.credentials)
-    if not payload:
+    current_user = _load_active_user(payload, db) if payload else None
+    if not current_user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token已失效或格式错误，请重新登录",
+            detail="Token已失效或账号不可用，请重新登录",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    return payload
+    return current_user
 
 def require_roles(*roles: str):
     def role_checker(current_user: Dict[str, Any] = Depends(get_current_user)) -> Dict[str, Any]:
