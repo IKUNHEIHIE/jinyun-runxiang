@@ -105,6 +105,10 @@ def get_post_detail(
     post = db.query(CommunityPost).filter(CommunityPost.id == post_id).first()
     if not post:
         return error_response(code=4040, message="作品不存在")
+    if post.status != "APPROVED" and not (
+        current_user and (current_user["user_id"] == post.user_id or current_user.get("role_code") == "ADMIN")
+    ):
+        return error_response(code=4040, message="作品不存在")
     
     post.view_count += 1
     db.commit()
@@ -174,10 +178,10 @@ def publish_post(
 ):
     user_id = current_user["user_id"]
 
-    # 三级内容风控引擎：敏感词识别与多模态安全审计过滤
+    # 本地词表仅用于风险提示；图片尚未完成自动审核，作品需人工审核后公开。
     sensitive_words = ["暴力", "低俗", "赌博", "违规"]
     has_sensitive = any(w in req.title or w in req.content for w in sensitive_words)
-    initial_status = "PENDING_REVIEW" if has_sensitive else "APPROVED"
+    initial_status = "PENDING_REVIEW"
 
     post = CommunityPost(
         user_id=user_id,
@@ -200,15 +204,15 @@ def publish_post(
         risk_level="HIGH" if has_sensitive else "LOW",
         result=initial_status,
         ai_analysis_json={
-            "ocr_text_risk": "SAFE",
+            "ocr_text_risk": "NOT_CHECKED",
             "sensitive_word_detected": has_sensitive,
-            "image_nsfw_prob": 0.01
+            "image_review_status": "NOT_CHECKED"
         }
     )
     db.add(review)
     db.commit()
 
-    msg = "作品发布成功，已提交人工复审" if has_sensitive else "作品发布成功"
+    msg = "作品已提交审核"
     return success_response({
         "id": post.id,
         "title": post.title,
@@ -225,6 +229,8 @@ def toggle_like(
     post = db.query(CommunityPost).filter(CommunityPost.id == post_id).first()
     if not post:
         return error_response(code=4040, message="作品不存在")
+    if post.status != "APPROVED":
+        return error_response(code=4090, message="作品尚未通过审核")
 
     like = db.query(CommunityLike).filter(
         CommunityLike.post_id == post_id,
@@ -253,6 +259,8 @@ def add_comment(
     post = db.query(CommunityPost).filter(CommunityPost.id == post_id).first()
     if not post:
         return error_response(code=4040, message="作品不存在")
+    if post.status != "APPROVED":
+        return error_response(code=4090, message="作品尚未通过审核")
 
     comment = CommunityComment(
         post_id=post_id,
@@ -310,17 +318,17 @@ class SubmitCoCreateRequest(BaseModel):
 def submit_co_creation(
     post_id: int,
     req: SubmitCoCreateRequest,
-    current_user: Optional[dict] = Depends(get_current_user_optional),
+    current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
     城乡手拉手接力共创：对乡村孩子的白模线稿进行二次套色赋能并生成双生共创作品
     """
     origin_post = db.query(CommunityPost).filter(CommunityPost.id == post_id).first()
-    if not origin_post:
+    if not origin_post or origin_post.status != "APPROVED":
         return error_response(code=4040, message="原始乡村作品不存在")
 
-    user_id = current_user["user_id"] if current_user else 1
+    user_id = current_user["user_id"]
 
     # 获取原作者昵称与学校
     origin_user = db.query(SysUser).filter(SysUser.id == origin_post.user_id).first()
@@ -335,20 +343,29 @@ def submit_co_creation(
         cover_url=req.colored_cover_url,
         rural_original_url=origin_post.rural_original_url or origin_post.cover_url,
         source_task_id=origin_post.source_task_id,
-        status="APPROVED",
-        is_featured=True,
+        status="PENDING_REVIEW",
+        is_featured=False,
         is_pinned=False,
         is_co_creation=True,
         co_creator_name=req.co_creator_name,
         co_creator_school=req.co_creator_school,
         rural_author_name=rural_author,
         rural_school=rural_school,
-        like_count=12,
-        comment_count=1
+        like_count=0,
+        comment_count=0
     )
     db.add(co_post)
     db.commit()
     db.refresh(co_post)
+
+    db.add(ContentReview(
+        target_type="COMMUNITY_POST",
+        target_id=co_post.id,
+        risk_level="LOW",
+        result="PENDING_REVIEW",
+        ai_analysis_json={"image_review_status": "NOT_CHECKED"}
+    ))
+    db.commit()
 
     return success_response({
         "co_post_id": co_post.id,
@@ -356,4 +373,4 @@ def submit_co_creation(
         "cover_url": co_post.cover_url,
         "co_creator_name": co_post.co_creator_name,
         "rural_author_name": co_post.rural_author_name
-    }, message="城乡共创作品已成功发布到美育广场！")
+    }, message="城乡共创作品已提交审核")

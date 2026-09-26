@@ -1,4 +1,6 @@
 import hashlib
+import hmac
+import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any
 import jwt
@@ -10,11 +12,30 @@ from app.core.config import settings
 security_scheme = HTTPBearer(auto_error=False)
 
 def hash_password(password: str) -> str:
-    # SHA256 matches our seed data format
-    return hashlib.sha256(password.encode("utf-8")).hexdigest()
+    salt = secrets.token_bytes(16)
+    digest = hashlib.scrypt(password.encode("utf-8"), salt=salt, n=16384, r=8, p=1)
+    return f"scrypt$16384$8$1${salt.hex()}${digest.hex()}"
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return hash_password(plain_password) == hashed_password
+    if hashed_password.startswith("scrypt$"):
+        try:
+            algorithm, n, r, p, salt, expected = hashed_password.split("$")
+            if (algorithm, n, r, p) != ("scrypt", "16384", "8", "1"):
+                return False
+            actual = hashlib.scrypt(
+                plain_password.encode("utf-8"), salt=bytes.fromhex(salt),
+                n=16384, r=8, p=1
+            )
+            return hmac.compare_digest(actual, bytes.fromhex(expected))
+        except (ValueError, TypeError):
+            return False
+    # Compatibility with accounts created by the original SHA-256 implementation.
+    legacy_digest = hashlib.sha256(plain_password.encode("utf-8")).hexdigest()
+    return len(hashed_password) == 64 and hmac.compare_digest(legacy_digest, hashed_password)
+
+
+def password_needs_rehash(hashed_password: str) -> bool:
+    return not hashed_password.startswith("scrypt$")
 
 def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta] = None) -> str:
     to_encode = data.copy()

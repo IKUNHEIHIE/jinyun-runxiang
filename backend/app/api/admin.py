@@ -5,7 +5,7 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Literal
 
 from app.core.database import get_db
 from app.core.security import require_admin, hash_password
@@ -19,7 +19,7 @@ from app.models.entities import (
 router = APIRouter(prefix="/admin", tags=["运营管理后台"])
 
 class ReviewActionRequest(BaseModel):
-    action: str  # APPROVE, REJECT, OFFLINE, FEATURE
+    action: Literal["APPROVE", "REJECT", "OFFLINE", "FEATURE"]
     comment: Optional[str] = "审核通过"
 
 @router.get("/dashboard")
@@ -103,6 +103,11 @@ def review_post_action(
     post = db.query(CommunityPost).filter(CommunityPost.id == post_id).first()
     if not post:
         return error_response(code=4040, message="作品不存在")
+
+    if req.action in ("APPROVE", "REJECT") and post.status not in ("PENDING_REVIEW", "MANUAL_REVIEW", "REJECTED"):
+        return error_response(code=4090, message="当前作品状态不可执行审核操作")
+    if req.action in ("OFFLINE", "FEATURE") and post.status != "APPROVED":
+        return error_response(code=4090, message="只有已发布作品可执行此操作")
 
     if req.action == "APPROVE":
         post.status = "APPROVED"

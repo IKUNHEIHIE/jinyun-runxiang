@@ -11,7 +11,7 @@ from openai import OpenAI
 from loguru import logger
 
 from app.core.database import get_db, SessionLocal, redis_client
-from app.core.security import get_current_user
+from app.core.security import get_current_user, require_admin, get_current_user_optional
 from app.schemas.common import success_response, error_response
 from app.models.entities import AiTask, AiModel, Asset, GrowthEvent, UserGrowth, SysConfig
 from app.core.asset_generator import (
@@ -82,7 +82,7 @@ def execute_ai_inference(task_id: str, tool_type: str, user_id: int):
     db = SessionLocal()
     try:
         task = db.query(AiTask).filter(AiTask.task_id == task_id).first()
-        if not task:
+        if not task or task.status == "CANCELLED":
             return
         
         task.status = "RUNNING"
@@ -258,6 +258,9 @@ def execute_ai_inference(task_id: str, tool_type: str, user_id: int):
                 "llm_model": None
             }
 
+        db.refresh(task)
+        if task.status == "CANCELLED":
+            return
         task.status = "SUCCESS"
         task.progress = 100
         task.result_summary_json = result
@@ -287,7 +290,7 @@ def execute_ai_inference(task_id: str, tool_type: str, user_id: int):
         db.rollback()
         try:
             err_task = db.query(AiTask).filter(AiTask.task_id == task_id).first()
-            if err_task:
+            if err_task and err_task.status != "CANCELLED":
                 err_task.status = "FAILED"
                 err_task.error_code = "INFERENCE_ERROR"
                 err_task.error_message = str(exc)[:490]
@@ -355,9 +358,13 @@ def get_latest_task(
     })
 
 @router.get("/tasks/{task_id}")
-def get_ai_task(task_id: str, db: Session = Depends(get_db)):
+def get_ai_task(
+    task_id: str,
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     task = db.query(AiTask).filter(AiTask.task_id == task_id).first()
-    if not task:
+    if not task or (task.user_id != current_user["user_id"] and current_user.get("role_code") != "ADMIN"):
         return error_response(code=4040, message="任务不存在")
     
     return success_response({
@@ -373,9 +380,13 @@ def get_ai_task(task_id: str, db: Session = Depends(get_db)):
     })
 
 @router.post("/tasks/{task_id}/cancel")
-def cancel_ai_task(task_id: str, db: Session = Depends(get_db)):
+def cancel_ai_task(
+    task_id: str,
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     task = db.query(AiTask).filter(AiTask.task_id == task_id).first()
-    if not task:
+    if not task or (task.user_id != current_user["user_id"] and current_user.get("role_code") != "ADMIN"):
         return error_response(code=4040, message="任务不存在")
     if task.status in ["SUCCESS", "FAILED"]:
         return error_response(code=4090, message="已完成的任务不可取消")
@@ -392,7 +403,14 @@ class UpdateAiModelRequest(BaseModel):
     config: Optional[dict] = None
 
 @router.get("/models")
-def list_ai_models(task_type: Optional[str] = None, all_status: bool = False, db: Session = Depends(get_db)):
+def list_ai_models(
+    task_type: Optional[str] = None,
+    all_status: bool = False,
+    current_user: Optional[dict] = Depends(get_current_user_optional),
+    db: Session = Depends(get_db)
+):
+    if all_status and (not current_user or current_user.get("role_code") != "ADMIN"):
+        return error_response(code=4030, message="无权查看停用模型")
     query = db.query(AiModel)
     if not all_status:
         query = query.filter(AiModel.status == "ACTIVE")
@@ -413,7 +431,12 @@ def list_ai_models(task_type: Optional[str] = None, all_status: bool = False, db
     } for m in models])
 
 @router.put("/models/{model_id}")
-def update_ai_model(model_id: int, req: UpdateAiModelRequest, db: Session = Depends(get_db)):
+def update_ai_model(
+    model_id: int,
+    req: UpdateAiModelRequest,
+    current_user: dict = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
     m = db.query(AiModel).filter(AiModel.id == model_id).first()
     if not m:
         return error_response(code=4040, message="模型不存在")
@@ -431,7 +454,7 @@ def update_ai_model(model_id: int, req: UpdateAiModelRequest, db: Session = Depe
     return success_response({"id": m.id, "status": m.status, "name": m.name}, message="模型配置已更新")
 
 @router.post("/assets/upload")
-async def upload_asset(file: UploadFile = File(...)):
+async def upload_asset(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
     """真实多模态素材与学生作品文件上传 (含安全白名单校验)"""
     allowed_exts = {".png", ".jpg", ".jpeg", ".svg", ".webp", ".mp4", ".glb"}
     raw_ext = os.path.splitext(file.filename or "")[1].lower()
@@ -462,7 +485,7 @@ async def upload_asset(file: UploadFile = File(...)):
     }, message="文件上传成功")
 
 @router.post("/assets/presign")
-def presign_upload(asset_type: str = "IMAGE"):
+def presign_upload(asset_type: str = "IMAGE", current_user: dict = Depends(get_current_user)):
     """对象存储预签名/直传接口"""
     file_id = uuid.uuid4().hex
     return success_response({

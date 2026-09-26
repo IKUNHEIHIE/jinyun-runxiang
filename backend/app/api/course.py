@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional, List, Any
 from datetime import datetime
 
 from app.core.database import get_db
-from app.core.security import get_current_user, get_current_user_optional
+from app.core.security import get_current_user, get_current_user_optional, require_admin
 from app.schemas.common import success_response, error_response
 from app.models.entities import (
     Course, CourseChapter, LearningProgress, OfflineSyncEvent,
@@ -13,12 +13,13 @@ from app.models.entities import (
 )
 
 router = APIRouter(prefix="/courses", tags=["非遗小课堂"])
+learning_router = APIRouter(prefix="/learning", tags=["学习进度"])
 
 class ProgressReportRequest(BaseModel):
     course_id: int
     chapter_id: int
-    position_seconds: int
-    duration_seconds: int
+    position_seconds: int = Field(ge=0)
+    duration_seconds: int = Field(ge=0)
     completed: bool = False
 
 class OfflineEventItem(BaseModel):
@@ -46,7 +47,7 @@ class CreateCourseRequest(BaseModel):
 @router.post("")
 def create_course(
     req: CreateCourseRequest,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_admin),
     db: Session = Depends(get_db)
 ):
     course = Course(
@@ -69,6 +70,7 @@ def create_course(
 @router.put("/{course_id}/status")
 def toggle_course_status(
     course_id: int,
+    current_user: dict = Depends(require_admin),
     db: Session = Depends(get_db)
 ):
     course = db.query(Course).filter(Course.id == course_id).first()
@@ -87,9 +89,12 @@ def list_courses(
     status: Optional[str] = None,
     page: int = Query(1, ge=1),
     pageSize: int = Query(10, ge=1, le=50),
+    current_user: Optional[dict] = Depends(get_current_user_optional),
     db: Session = Depends(get_db)
 ):
     query = db.query(Course)
+    if status is not None and status != "PUBLISHED" and (not current_user or current_user.get("role_code") != "ADMIN"):
+        return error_response(code=4030, message="无权查看未发布课程")
     if status and status != "ALL":
         query = query.filter(Course.status == status)
     elif status is None:
@@ -129,7 +134,7 @@ def get_course_detail(
     db: Session = Depends(get_db)
 ):
     course = db.query(Course).filter(Course.id == course_id).first()
-    if not course:
+    if not course or (course.status != "PUBLISHED" and (not current_user or current_user.get("role_code") != "ADMIN")):
         return error_response(code=4040, message="课程不存在")
     
     # 增加浏览量
@@ -182,6 +187,55 @@ def get_course_detail(
         "quiz_id": quiz.id if quiz else None
     })
 
+
+@router.get("/{course_id}/chapters")
+def list_course_chapters(
+    course_id: int,
+    current_user: Optional[dict] = Depends(get_current_user_optional),
+    db: Session = Depends(get_db)
+):
+    course = db.query(Course).filter(Course.id == course_id).first()
+    if not course or (course.status != "PUBLISHED" and (not current_user or current_user.get("role_code") != "ADMIN")):
+        return error_response(code=4040, message="课程不存在")
+
+    chapters = db.query(CourseChapter).filter(
+        CourseChapter.course_id == course_id
+    ).order_by(CourseChapter.seq.asc()).all()
+    return success_response([{
+        "id": chapter.id,
+        "course_id": chapter.course_id,
+        "seq": chapter.seq,
+        "title": chapter.title,
+        "video_url": chapter.video_url,
+        "duration_seconds": chapter.duration_seconds,
+        "key_points": chapter.key_points_json or []
+    } for chapter in chapters])
+
+
+@learning_router.get("/progress")
+def list_my_progress(
+    course_id: Optional[int] = None,
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    query = db.query(LearningProgress).filter(
+        LearningProgress.user_id == current_user["user_id"]
+    )
+    if course_id is not None:
+        query = query.filter(LearningProgress.course_id == course_id)
+    records = query.order_by(LearningProgress.last_learned_at.desc()).all()
+    return success_response([{
+        "course_id": record.course_id,
+        "chapter_id": record.chapter_id,
+        "position_seconds": record.position_seconds,
+        "duration_seconds": record.duration_seconds,
+        "completed": record.completed,
+        "completed_at": record.completed_at,
+        "last_learned_at": record.last_learned_at
+    } for record in records])
+
+
+@learning_router.post("/progress")
 @router.post("/progress")
 def report_progress(
     req: ProgressReportRequest,
@@ -189,6 +243,19 @@ def report_progress(
     db: Session = Depends(get_db)
 ):
     user_id = current_user["user_id"]
+    course = db.query(Course).filter(
+        Course.id == req.course_id,
+        Course.status == "PUBLISHED"
+    ).first()
+    if not course:
+        return error_response(code=4040, message="课程不存在或尚未发布")
+    chapter = db.query(CourseChapter).filter(
+        CourseChapter.id == req.chapter_id,
+        CourseChapter.course_id == req.course_id
+    ).first()
+    if not chapter:
+        return error_response(code=4040, message="课程章节不存在或不属于该课程")
+
     progress = db.query(LearningProgress).filter(
         LearningProgress.user_id == user_id,
         LearningProgress.chapter_id == req.chapter_id
@@ -216,8 +283,8 @@ def report_progress(
             newly_completed = True
             progress.completed = True
             progress.completed_at = now
-        progress.position_seconds = req.position_seconds
-        progress.duration_seconds = req.duration_seconds
+        progress.position_seconds = max(progress.position_seconds, req.position_seconds)
+        progress.duration_seconds = max(progress.duration_seconds, req.duration_seconds)
         progress.last_learned_at = now
     
     # 首次学完章节奖励能量
@@ -249,7 +316,7 @@ def report_progress(
 
     return success_response({
         "chapter_id": req.chapter_id,
-        "completed": req.completed,
+        "completed": progress.completed,
         "energy_added": energy_added
     })
 

@@ -10,7 +10,7 @@ from typing import Optional, List, Dict, Any
 from datetime import datetime, timedelta
 
 from app.core.database import get_db
-from app.core.security import require_teacher, get_current_user_optional
+from app.core.security import require_teacher
 from app.schemas.common import success_response, error_response
 from app.models.entities import (
     TeacherClass, ClassMember, Assignment, AssignmentSubmission,
@@ -18,6 +18,13 @@ from app.models.entities import (
 )
 
 router = APIRouter(prefix="/teacher", tags=["教师工作台与AI智能备课"])
+
+
+def get_authorized_class(db: Session, class_id: int, current_user: dict):
+    query = db.query(TeacherClass).filter(TeacherClass.id == class_id)
+    if current_user.get("role_code") != "ADMIN":
+        query = query.filter(TeacherClass.teacher_id == current_user["user_id"])
+    return query.first()
 
 class LessonPlanRequest(BaseModel):
     grade: str  # 小学三年级 / 小学四年级 / 初中
@@ -411,6 +418,8 @@ def list_assignments(
     current_user: dict = Depends(require_teacher),
     db: Session = Depends(get_db)
 ):
+    if not get_authorized_class(db, class_id, current_user):
+        return error_response(code=4040, message="班级不存在或无权访问")
     teacher_id = current_user["user_id"]
     assignments = db.query(Assignment).filter(
         Assignment.class_id == class_id,
@@ -439,6 +448,8 @@ def create_assignment(
     current_user: dict = Depends(require_teacher),
     db: Session = Depends(get_db)
 ):
+    if not get_authorized_class(db, req.class_id, current_user):
+        return error_response(code=4040, message="班级不存在或无权访问")
     teacher_id = current_user["user_id"]
     deadline = datetime.utcnow() + timedelta(days=req.deadline_days)
     
@@ -464,6 +475,9 @@ def list_submissions(
     current_user: dict = Depends(require_teacher),
     db: Session = Depends(get_db)
 ):
+    assignment = db.query(Assignment).filter(Assignment.id == assignment_id).first()
+    if not assignment or not get_authorized_class(db, assignment.class_id, current_user):
+        return error_response(code=4040, message="作业不存在或无权访问")
     submissions = db.query(AssignmentSubmission).filter(
         AssignmentSubmission.assignment_id == assignment_id
     ).all()
@@ -501,6 +515,9 @@ def review_submission(
     sub = db.query(AssignmentSubmission).filter(AssignmentSubmission.id == submission_id).first()
     if not sub:
         return error_response(code=4040, message="提交记录不存在")
+    assignment = db.query(Assignment).filter(Assignment.id == sub.assignment_id).first()
+    if not assignment or not get_authorized_class(db, assignment.class_id, current_user):
+        return error_response(code=4040, message="提交记录不存在或无权访问")
     
     sub.status = "REVIEWED"
 
@@ -528,9 +545,9 @@ def get_class_analytics(
     db: Session = Depends(get_db)
 ):
     # 班级全景学情分析汇总
-    class_obj = db.query(TeacherClass).filter(TeacherClass.id == class_id).first()
+    class_obj = get_authorized_class(db, class_id, current_user)
     if not class_obj:
-        return error_response(code=4040, message="班级不存在")
+        return error_response(code=4040, message="班级不存在或无权访问")
 
     members = db.query(ClassMember).filter(
         ClassMember.class_id == class_id,
@@ -585,19 +602,21 @@ def get_class_analytics(
 @router.get("/classes/{class_id}/exhibition-package")
 def generate_exhibition_package(
     class_id: int,
-    current_user: Optional[dict] = Depends(get_current_user_optional),
+    current_user: dict = Depends(require_teacher),
     db: Session = Depends(get_db)
 ):
     """
     一键生成乡村小学非遗成果走廊实体展册排版数据集 (A4/A3 标准展出画册规格)
     """
-    class_obj = db.query(TeacherClass).filter(TeacherClass.id == class_id).first()
-    class_name = class_obj.name if class_obj else "乡村非遗美育特色示范班"
-    grade = class_obj.grade if class_obj else "小学三年级"
+    class_obj = get_authorized_class(db, class_id, current_user)
+    if not class_obj:
+        return error_response(code=4040, message="班级不存在或无权访问")
+    class_name = class_obj.name
+    grade = class_obj.grade
 
     # 获取班级学生信息与代表性作品
     members = db.query(ClassMember).filter(ClassMember.class_id == class_id, ClassMember.status == "ACTIVE").all()
-    student_ids = [m.student_id for m in members] if members else [2] # 默认回退李小明
+    student_ids = [m.student_id for m in members]
     users = db.query(SysUser).filter(SysUser.id.in_(student_ids)).all() if student_ids else []
     student_map = {u.id: u for u in users}
 

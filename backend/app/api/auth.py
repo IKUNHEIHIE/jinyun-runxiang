@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 
 from app.core.database import get_db
 from app.core.security import (
-    verify_password, hash_password, create_access_token,
+    verify_password, hash_password, password_needs_rehash, create_access_token,
     get_current_user
 )
 from app.schemas.common import success_response, error_response
@@ -24,6 +24,18 @@ class RegisterRequest(BaseModel):
     role_code: Optional[str] = "STUDENT"
     grade: Optional[str] = "小学三年级"
 
+
+class UpdateProfileRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    nickname: Optional[str] = Field(default=None, min_length=1, max_length=32)
+    avatar_url: Optional[str] = Field(default=None, max_length=500)
+    grade: Optional[str] = Field(default=None, max_length=32)
+    school_name: Optional[str] = Field(default=None, max_length=128)
+    district: Optional[str] = Field(default=None, max_length=64)
+    bio: Optional[str] = Field(default=None, max_length=255)
+    avatar_config: Optional[dict] = None
+
 @router.post("/login")
 def login(req: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(SysUser).filter(SysUser.username == req.username).first()
@@ -35,6 +47,10 @@ def login(req: LoginRequest, db: Session = Depends(get_db)):
     
     if user.status != "ACTIVE":
         return error_response(code=4030, message="账号已被禁用，请联系管理员")
+
+    if password_needs_rehash(user.password_hash):
+        user.password_hash = hash_password(req.password)
+        db.commit()
         
     growth = db.query(UserGrowth).filter(UserGrowth.user_id == user.id).first()
     energy = growth.energy_value if growth else 0
@@ -154,3 +170,39 @@ def get_permissions(user_dict: dict = Depends(get_current_user)):
     else:
         perms = ["student:course", "student:ai_workshop", "student:community", "student:profile", "student:checkin"]
     return success_response({"role": role, "permissions": perms})
+
+
+@router.put("/me")
+def update_me(
+    req: UpdateProfileRequest,
+    user_dict: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    user = db.query(SysUser).filter(SysUser.id == user_dict["user_id"]).first()
+    if not user or user.status != "ACTIVE":
+        return error_response(code=4040, message="用户不存在或已停用")
+
+    updates = req.model_dump(exclude_unset=True, exclude_none=True)
+    for field in ("nickname", "avatar_url", "grade"):
+        if field in updates:
+            setattr(user, field, updates[field])
+
+    profile_fields = {"school_name", "district", "bio", "avatar_config"}
+    if profile_fields.intersection(updates):
+        profile = db.query(UserProfile).filter(UserProfile.user_id == user.id).first()
+        if not profile:
+            profile = UserProfile(user_id=user.id)
+            db.add(profile)
+        for field in ("school_name", "district", "bio"):
+            if field in updates:
+                setattr(profile, field, updates[field])
+        if "avatar_config" in updates:
+            profile.avatar_config_json = updates["avatar_config"]
+
+    db.commit()
+    return success_response({
+        "id": user.id,
+        "nickname": user.nickname,
+        "avatar_url": user.avatar_url,
+        "grade": user.grade
+    }, message="个人资料已更新")
