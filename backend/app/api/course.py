@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError
 from typing import Optional, List, Any
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.core.database import get_db
 from app.core.security import get_current_user, get_current_user_optional, require_admin
@@ -23,13 +23,13 @@ class ProgressReportRequest(BaseModel):
     completed: bool = False
 
 class OfflineEventItem(BaseModel):
-    event_id: str
-    event_type: str
+    event_id: str = Field(min_length=1, max_length=64)
+    event_type: str = Field(min_length=1, max_length=32)
     payload: dict
     event_time: str
 
 class OfflineSyncRequest(BaseModel):
-    events: List[OfflineEventItem]
+    events: List[OfflineEventItem] = Field(max_length=100)
 
 class QuizSubmitRequest(BaseModel):
     answers: dict  # {"1": ["B"], "2": ["C"]}
@@ -256,15 +256,35 @@ def report_progress(
     if not chapter:
         return error_response(code=4040, message="课程章节不存在或不属于该课程")
 
-    progress = db.query(LearningProgress).filter(
-        LearningProgress.user_id == user_id,
-        LearningProgress.chapter_id == req.chapter_id
-    ).first()
+    progress, energy_added = _merge_progress(db, user_id, req)
+    db.commit()
+
+    return success_response({
+        "chapter_id": req.chapter_id,
+        "completed": progress.completed,
+        "energy_added": energy_added
+    })
+
+
+def _merge_progress(
+    db: Session,
+    user_id: int,
+    req: ProgressReportRequest,
+    progress_cache: Optional[dict] = None,
+    rewarded_chapters: Optional[set] = None,
+):
+    """Merge one report; callers commit only after the whole operation succeeds."""
+    if progress_cache is not None and req.chapter_id in progress_cache:
+        progress = progress_cache[req.chapter_id]
+    else:
+        progress = db.query(LearningProgress).filter(
+            LearningProgress.user_id == user_id,
+            LearningProgress.chapter_id == req.chapter_id
+        ).first()
 
     now = datetime.utcnow()
-    newly_completed = False
-
-    if not progress:
+    newly_completed = bool(req.completed and not (progress and progress.completed))
+    if progress is None:
         progress = LearningProgress(
             user_id=user_id,
             chapter_id=req.chapter_id,
@@ -276,28 +296,25 @@ def report_progress(
             last_learned_at=now
         )
         db.add(progress)
-        if req.completed:
-            newly_completed = True
     else:
-        if not progress.completed and req.completed:
-            newly_completed = True
+        progress.position_seconds = max(progress.position_seconds or 0, req.position_seconds)
+        progress.duration_seconds = max(progress.duration_seconds or 0, req.duration_seconds)
+        if newly_completed:
             progress.completed = True
             progress.completed_at = now
-        progress.position_seconds = max(progress.position_seconds, req.position_seconds)
-        progress.duration_seconds = max(progress.duration_seconds, req.duration_seconds)
-        progress.last_learned_at = now
-    
-    # 首次学完章节奖励能量
+        progress.last_learned_at = max(progress.last_learned_at or now, now)
+    if progress_cache is not None:
+        progress_cache[req.chapter_id] = progress
+
     energy_added = 0
     if newly_completed:
-        # 幂等检查
         event_ref = f"ch_{req.chapter_id}"
         exist_event = db.query(GrowthEvent).filter(
             GrowthEvent.user_id == user_id,
             GrowthEvent.event_type == "COURSE_FINISH",
             GrowthEvent.ref_id == event_ref
         ).first()
-        if not exist_event:
+        if not exist_event and (rewarded_chapters is None or req.chapter_id not in rewarded_chapters):
             energy_added = 10
             db.add(GrowthEvent(
                 user_id=user_id,
@@ -305,6 +322,8 @@ def report_progress(
                 ref_id=event_ref,
                 value=energy_added
             ))
+            if rewarded_chapters is not None:
+                rewarded_chapters.add(req.chapter_id)
             growth = db.query(UserGrowth).filter(UserGrowth.user_id == user_id).first()
             if growth:
                 growth.energy_value += energy_added
@@ -312,13 +331,8 @@ def report_progress(
                     growth.level_code = "LV3_CRAFTSMAN"
                 elif growth.energy_value >= 500:
                     growth.level_code = "LV2_JOURNEYMAN"
-    db.commit()
+    return progress, energy_added
 
-    return success_response({
-        "chapter_id": req.chapter_id,
-        "completed": progress.completed,
-        "energy_added": energy_added
-    })
 
 @router.post("/sync-offline")
 def sync_offline(
@@ -329,54 +343,71 @@ def sync_offline(
     user_id = current_user["user_id"]
     success_ids = []
     conflict_ids = []
+    seen_ids = set()
+    batch_events = {}
+    conflicting_ids = set()
+    progress_cache = {}
+    rewarded_chapters = set()
 
     for ev in req.events:
-        # 幂等查重
+        signature = (ev.event_type, ev.payload, ev.event_time)
+        if ev.event_id in batch_events and batch_events[ev.event_id] != signature:
+            conflicting_ids.add(ev.event_id)
+        batch_events[ev.event_id] = signature
+
+    for ev in req.events:
+        if ev.event_id in seen_ids:
+            continue
+        seen_ids.add(ev.event_id)
+        if ev.event_id in conflicting_ids:
+            conflict_ids.append(ev.event_id)
+            continue
+        try:
+            event_time = datetime.fromisoformat(ev.event_time.replace("Z", "+00:00"))
+            if event_time.tzinfo is not None:
+                event_time = event_time.astimezone(timezone.utc).replace(tzinfo=None)
+        except ValueError:
+            conflict_ids.append(ev.event_id)
+            continue
         exists = db.query(OfflineSyncEvent).filter(OfflineSyncEvent.event_id == ev.event_id).first()
         if exists:
-            success_ids.append(ev.event_id)
+            if (exists.user_id == user_id and exists.event_type == ev.event_type
+                    and exists.payload_json == ev.payload and exists.event_time == event_time):
+                success_ids.append(ev.event_id)
+            else:
+                conflict_ids.append(ev.event_id)
             continue
-        
-        try:
-            db.add(OfflineSyncEvent(
-                event_id=ev.event_id,
-                user_id=user_id,
-                event_type=ev.event_type,
-                payload_json=ev.payload,
-                event_time=datetime.fromisoformat(ev.event_time) if "T" in ev.event_time else datetime.utcnow()
-            ))
-            
-            # 合并学习进度
-            if ev.event_type == "PROGRESS_UPDATE":
-                ch_id = ev.payload.get("chapter_id")
-                c_id = ev.payload.get("course_id")
-                pos = ev.payload.get("position_seconds", 0)
-                dur = ev.payload.get("duration_seconds", 0)
-                comp = ev.payload.get("completed", False)
 
-                prog = db.query(LearningProgress).filter(
-                    LearningProgress.user_id == user_id,
-                    LearningProgress.chapter_id == ch_id
-                ).first()
-                if not prog:
-                    db.add(LearningProgress(
-                        user_id=user_id,
-                        chapter_id=ch_id,
-                        course_id=c_id,
-                        position_seconds=pos,
-                        duration_seconds=dur,
-                        completed=comp,
-                        last_learned_at=datetime.utcnow()
-                    ))
-                else:
-                    if pos > prog.position_seconds:
-                        prog.position_seconds = pos
-                    if comp and not prog.completed:
-                        prog.completed = True
-            
-            success_ids.append(ev.event_id)
-        except Exception:
+        if ev.event_type != "PROGRESS_UPDATE":
             conflict_ids.append(ev.event_id)
+            continue
+        try:
+            progress_req = ProgressReportRequest.model_validate(ev.payload)
+        except ValidationError:
+            conflict_ids.append(ev.event_id)
+            continue
+
+        course = db.query(Course).filter(
+            Course.id == progress_req.course_id,
+            Course.status == "PUBLISHED"
+        ).first()
+        chapter = db.query(CourseChapter).filter(
+            CourseChapter.id == progress_req.chapter_id,
+            CourseChapter.course_id == progress_req.course_id
+        ).first()
+        if not course or not chapter:
+            conflict_ids.append(ev.event_id)
+            continue
+
+        _merge_progress(db, user_id, progress_req, progress_cache, rewarded_chapters)
+        db.add(OfflineSyncEvent(
+            event_id=ev.event_id,
+            user_id=user_id,
+            event_type=ev.event_type,
+            payload_json=ev.payload,
+            event_time=event_time
+        ))
+        success_ids.append(ev.event_id)
 
     db.commit()
     return success_response({

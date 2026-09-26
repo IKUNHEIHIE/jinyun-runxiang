@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from app.core.database import get_db
 from app.core.security import create_access_token
 from app.main import app
-from app.models.entities import Course, CourseChapter, GrowthEvent, LearningProgress, SysUser, UserGrowth
+from app.models.entities import Course, CourseChapter, GrowthEvent, LearningProgress, OfflineSyncEvent, SysUser, UserGrowth
 
 
 class Query:
@@ -39,6 +39,7 @@ class FakeSession:
             Course: [Course(id=123, title="示例课程", status="PUBLISHED")],
             CourseChapter: [CourseChapter(id=456, course_id=123, seq=1, title="第一章", duration_seconds=60)],
             LearningProgress: [],
+            OfflineSyncEvent: [],
             GrowthEvent: [],
             UserGrowth: [UserGrowth(user_id=1, energy_value=0, level_code="LV1_APPRENTICE")],
             SysUser: [
@@ -134,6 +135,44 @@ class LearningProgressTests(unittest.TestCase):
         response = self.client.post("/api/learning/progress", json=payload, headers=self.headers)
         self.assertEqual(response.json()["code"], 4040)
         self.assertEqual(self.db.commits, 0)
+
+    def test_offline_sync_merges_valid_events_and_reports_conflicts(self):
+        progress = {"course_id": 123, "chapter_id": 456, "position_seconds": 50,
+                    "duration_seconds": 60, "completed": True}
+        def event(event_id, payload, event_time="2026-09-22T12:00:00Z"):
+            return {"event_id": event_id, "event_type": "PROGRESS_UPDATE",
+                    "payload": payload, "event_time": event_time}
+
+        batch = [
+            event("good", progress),
+            event("later", {**progress, "position_seconds": 10, "completed": False}),
+            event("wrong-chapter", {**progress, "chapter_id": 999}),
+            event("bad-date", progress, "not-a-date"),
+            event("negative", {**progress, "position_seconds": -1}),
+            {**event("unsupported", progress), "event_type": "QUIZ_SUBMIT"},
+            event("contradictory", progress),
+            event("contradictory", {**progress, "position_seconds": 2}),
+        ]
+        response = self.client.post("/api/courses/sync-offline", json={"events": batch}, headers=self.headers)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["data"]["success_event_ids"], ["good", "later"])
+        self.assertEqual(response.json()["data"]["conflict_event_ids"],
+                         ["wrong-chapter", "bad-date", "negative", "unsupported", "contradictory"])
+        self.assertEqual(len(self.db.rows[OfflineSyncEvent]), 2)
+        self.assertEqual(len(self.db.rows[LearningProgress]), 1)
+        self.assertEqual(self.db.rows[LearningProgress][0].position_seconds, 50)
+        self.assertTrue(self.db.rows[LearningProgress][0].completed)
+        self.assertEqual(self.db.rows[UserGrowth][0].energy_value, 10)
+        self.assertEqual(len(self.db.rows[GrowthEvent]), 1)
+
+        retry = self.client.post("/api/courses/sync-offline", json={"events": [batch[0], batch[0]]}, headers=self.headers)
+        self.assertEqual(retry.json()["data"]["success_event_ids"], ["good"])
+        self.assertEqual(len(self.db.rows[GrowthEvent]), 1)
+
+        admin_token = create_access_token({"user_id": 2, "role_code": "ADMIN"})
+        other_headers = {"Authorization": f"Bearer {admin_token}"}
+        stolen = self.client.post("/api/courses/sync-offline", json={"events": [batch[0]]}, headers=other_headers)
+        self.assertEqual(stolen.json()["data"]["conflict_event_ids"], ["good"])
 
 
 if __name__ == "__main__":
