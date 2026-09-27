@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 from app.core.database import get_db
 from app.core.security import create_access_token
 from app.main import app
-from app.models.entities import CommunityPost, ContentReview, SysUser
+from app.models.entities import CommunityPost, CommunityComment, CommunityLike, CommunityReport, ContentReview, SysUser
 
 
 class Query:
@@ -51,6 +51,9 @@ class FakeSession:
     def __init__(self):
         self.rows = {
             CommunityPost: [],
+            CommunityComment: [],
+            CommunityLike: [],
+            CommunityReport: [],
             ContentReview: [],
             SysUser: [
                 SysUser(id=1, username="student", nickname="学生", role_code="STUDENT", status="ACTIVE"),
@@ -62,9 +65,10 @@ class FakeSession:
         return Query(self, model)
 
     def add(self, row):
-        if isinstance(row, CommunityPost):
-            row.id = len(self.rows[CommunityPost]) + 1
+        if isinstance(row, (CommunityPost, CommunityComment, CommunityReport)):
+            row.id = len(self.rows[type(row)]) + 1
             row.created_at = datetime.utcnow()
+        if isinstance(row, CommunityPost):
             row.like_count = row.like_count or 0
             row.comment_count = row.comment_count or 0
             row.favorite_count = row.favorite_count or 0
@@ -123,6 +127,51 @@ class CommunityModerationTests(unittest.TestCase):
             "co_creator_name": "同学", "colored_cover_url": "/static/sample.png", "co_note": "着色"
         })
         self.assertEqual(response.status_code, 401)
+
+    def test_comments_and_reports_require_admin_review(self):
+        self.client.post("/api/community/posts", json={
+            "title": "皮影作品", "content": "我的作品", "cover_url": "/static/sample.png"
+        }, headers=self.student)
+        self.client.post("/api/admin/reviews/1/action", json={"action": "APPROVE"}, headers=self.admin)
+
+        comment = self.client.post("/api/community/posts/1/comments", json={
+            "content": "期待下一件作品"
+        }, headers=self.student).json()["data"]
+        self.assertEqual(comment["status"], "PENDING_REVIEW")
+        detail = self.client.get("/api/community/posts/1").json()["data"]
+        self.assertEqual(detail["comments"], [])
+        self.assertEqual(detail["comment_count"], 0)
+        self.assertEqual(self.client.get("/api/admin/comment-reviews", headers=self.student).status_code, 403)
+        self.assertEqual(len(self.client.get("/api/admin/comment-reviews", headers=self.admin).json()["data"]), 1)
+        approval = self.client.post(
+            f"/api/admin/comment-reviews/{comment['id']}/action",
+            json={"action": "APPROVE", "comment": "内容合规"}, headers=self.admin
+        )
+        self.assertEqual(approval.json()["data"]["status"], "APPROVED")
+        self.assertEqual(len(self.client.get("/api/community/posts/1").json()["data"]["comments"]), 1)
+        self.assertEqual(self.client.post(
+            f"/api/admin/comment-reviews/{comment['id']}/action",
+            json={"action": "APPROVE", "comment": "重复操作"}, headers=self.admin
+        ).json()["code"], 4090)
+        self.assertEqual(self.db.rows[CommunityPost][0].comment_count, 1)
+
+        report = self.client.post("/api/community/reports", json={
+            "post_id": 1, "reason": "盗用"
+        }, headers=self.student).json()["data"]
+        again = self.client.post("/api/community/reports", json={
+            "post_id": 1, "reason": "盗用"
+        }, headers=self.student).json()["data"]
+        self.assertEqual(again["id"], report["id"])
+        self.assertEqual(len(self.db.rows[CommunityReport]), 1)
+        self.assertEqual(self.client.get("/api/admin/reports", headers=self.student).status_code, 403)
+        action = self.client.post(f"/api/admin/reports/{report['id']}/action", json={
+            "action": "OFFLINE_POST", "note": "核实盗用"
+        }, headers=self.admin)
+        self.assertEqual(action.json()["data"]["status"], "HANDLED")
+        self.assertEqual(self.client.get("/api/community/posts/1").json()["code"], 4040)
+        self.assertEqual(self.client.post(f"/api/admin/reports/{report['id']}/action", json={
+            "action": "OFFLINE_POST", "note": "再次处理"
+        }, headers=self.admin).json()["code"], 4090)
 
 
 if __name__ == "__main__":

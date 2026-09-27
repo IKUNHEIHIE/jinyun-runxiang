@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
 
@@ -23,13 +23,13 @@ class CreatePostRequest(BaseModel):
     topic_id: Optional[int] = None
 
 class CreateCommentRequest(BaseModel):
-    content: str
+    content: str = Field(min_length=1, max_length=1000)
     reply_to_id: Optional[int] = None
 
 class ReportRequest(BaseModel):
     post_id: int
-    reason: str
-    description: Optional[str] = None
+    reason: str = Field(min_length=1, max_length=64)
+    description: Optional[str] = Field(default=None, max_length=500)
 
 @router.get("/posts")
 def list_posts(
@@ -262,23 +262,41 @@ def add_comment(
     if post.status != "APPROVED":
         return error_response(code=4090, message="作品尚未通过审核")
 
+    if req.reply_to_id is not None:
+        parent = db.query(CommunityComment).filter(
+            CommunityComment.id == req.reply_to_id,
+            CommunityComment.post_id == post_id,
+            CommunityComment.status == "APPROVED"
+        ).first()
+        if not parent:
+            return error_response(code=4040, message="回复的评论不存在")
+
     comment = CommunityComment(
         post_id=post_id,
         user_id=user_id,
         reply_to_id=req.reply_to_id,
         content=req.content,
-        status="APPROVED"
+        status="PENDING_REVIEW"
     )
     db.add(comment)
-    post.comment_count += 1
     db.commit()
     db.refresh(comment)
+
+    db.add(ContentReview(
+        target_type="COMMUNITY_COMMENT",
+        target_id=comment.id,
+        risk_level="LOW",
+        result="PENDING_REVIEW",
+        ai_analysis_json={"text_review_status": "NOT_CHECKED"}
+    ))
+    db.commit()
 
     return success_response({
         "id": comment.id,
         "content": comment.content,
+        "status": comment.status,
         "created_at": comment.created_at.strftime("%Y-%m-%d %H:%M")
-    }, message="评论发表成功")
+    }, message="评论已提交审核")
 
 @router.get("/topics")
 def list_topics(db: Session = Depends(get_db)):
@@ -297,6 +315,19 @@ def report_post(
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    post = db.query(CommunityPost).filter(
+        CommunityPost.id == req.post_id,
+        CommunityPost.status == "APPROVED"
+    ).first()
+    if not post:
+        return error_response(code=4040, message="作品不存在")
+    existing = db.query(CommunityReport).filter(
+        CommunityReport.post_id == req.post_id,
+        CommunityReport.reporter_id == current_user["user_id"],
+        CommunityReport.status == "PENDING"
+    ).first()
+    if existing:
+        return success_response({"id": existing.id, "status": existing.status}, message="举报已提交")
     rep = CommunityReport(
         post_id=req.post_id,
         reporter_id=current_user["user_id"],
@@ -306,7 +337,8 @@ def report_post(
     )
     db.add(rep)
     db.commit()
-    return success_response(message="举报已提交，运营团队将尽快处理")
+    db.refresh(rep)
+    return success_response({"id": rep.id, "status": rep.status}, message="举报已提交，运营团队将尽快处理")
 
 class SubmitCoCreateRequest(BaseModel):
     co_creator_name: str

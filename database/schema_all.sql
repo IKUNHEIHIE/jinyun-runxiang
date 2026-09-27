@@ -1,5 +1,5 @@
 -- =============================================================================
--- 津韵润乡——天津非遗赋能乡村美育智能应用 全表初始化脚本 (61表规范)
+-- 津韵润乡——天津非遗赋能乡村美育智能应用 全表初始化脚本 (64表)
 -- =============================================================================
 
 SET NAMES utf8mb4;
@@ -27,6 +27,17 @@ CREATE TABLE IF NOT EXISTS `sys_user` (
   UNIQUE KEY `uk_username` (`username`),
   KEY `idx_role_status` (`role_code`, `status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='系统用户表';
+
+CREATE TABLE IF NOT EXISTS `auth_session` (
+  `session_id` VARCHAR(36) NOT NULL,
+  `user_id` BIGINT NOT NULL,
+  `refresh_hash` VARCHAR(64) NOT NULL,
+  `expires_at` DATETIME NOT NULL,
+  `revoked_at` DATETIME DEFAULT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`session_id`),
+  KEY `idx_auth_user` (`user_id`, `expires_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户登录会话与刷新令牌';
 
 -- 2. 角色表
 CREATE TABLE IF NOT EXISTS `sys_role` (
@@ -513,6 +524,7 @@ CREATE TABLE IF NOT EXISTS `teacher_class` (
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_teacher_invite_code` (`invite_code`),
   KEY `idx_teacher_status` (`teacher_id`, `status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='教师所属教学班级表';
 
@@ -629,6 +641,7 @@ CREATE TABLE IF NOT EXISTS `activity` (
   `reserved_count` INT NOT NULL DEFAULT 0 COMMENT '已预约人次',
   `badge_id` BIGINT DEFAULT NULL COMMENT '打卡/参与后解锁的限定徽章ID',
   `energy_reward` INT NOT NULL DEFAULT 30 COMMENT '参与奖励能量值',
+  `checkin_code_hash` VARCHAR(255) DEFAULT NULL COMMENT '现场签到码的单向哈希',
   `status` VARCHAR(16) NOT NULL DEFAULT 'PUBLISHED' COMMENT 'DRAFT/PUBLISHED/ONGOING/ENDED/CANCELLED',
   `description` TEXT NOT NULL COMMENT '活动详情说明',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -663,6 +676,16 @@ CREATE TABLE IF NOT EXISTS `activity_checkin` (
   UNIQUE KEY `uk_user_landmark_date` (`user_id`, `landmark_id`),
   KEY `idx_user_checkin` (`user_id`, `checked_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='非遗地标打卡签到记录表';
+
+CREATE TABLE IF NOT EXISTS `activity_attendance` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `activity_id` BIGINT NOT NULL,
+  `user_id` BIGINT NOT NULL,
+  `checked_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_activity_attendee` (`activity_id`, `user_id`),
+  KEY `idx_attendee_checked` (`user_id`, `checked_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='活动现场签到记录';
 
 -- 43. 文创与乡村农特产商品表
 CREATE TABLE IF NOT EXISTS `product` (

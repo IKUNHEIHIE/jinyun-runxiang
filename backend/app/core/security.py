@@ -1,6 +1,7 @@
 import hashlib
 import hmac
 import secrets
+import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any
 import jwt
@@ -9,7 +10,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.database import get_db
-from app.models.entities import SysUser
+from app.models.entities import SysUser, AuthSession
 
 security_scheme = HTTPBearer(auto_error=False)
 
@@ -41,6 +42,8 @@ def password_needs_rehash(hashed_password: str) -> bool:
 
 def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta] = None) -> str:
     to_encode = data.copy()
+    to_encode.setdefault("typ", "access")
+    to_encode.setdefault("jti", str(uuid.uuid4()))
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
@@ -67,12 +70,24 @@ def get_current_user_optional(
 
 
 def _load_active_user(payload: Dict[str, Any], db: Session) -> Optional[Dict[str, Any]]:
+    if payload.get("typ", "access") != "access":
+        return None
     user_id = payload.get("user_id")
     if not isinstance(user_id, int):
         return None
     user = db.query(SysUser).filter(SysUser.id == user_id).first()
     if not user or user.status != "ACTIVE":
         return None
+    session_id = payload.get("sid")
+    if session_id is not None:
+        if not isinstance(session_id, str):
+            return None
+        session = db.query(AuthSession).filter(
+            AuthSession.session_id == session_id,
+            AuthSession.user_id == user_id
+        ).first()
+        if not session or session.revoked_at or session.expires_at <= datetime.utcnow():
+            return None
     return {
         **payload,
         "user_id": user.id,

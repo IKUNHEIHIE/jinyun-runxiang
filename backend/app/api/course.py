@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from pydantic import BaseModel, Field, ValidationError
-from typing import Optional, List, Any
+from pydantic import BaseModel, Field, ValidationError, ConfigDict
+from typing import Optional, List, Any, Literal
 from datetime import datetime, timezone
 
 from app.core.database import get_db
@@ -32,17 +32,94 @@ class OfflineSyncRequest(BaseModel):
     events: List[OfflineEventItem] = Field(max_length=100)
 
 class QuizSubmitRequest(BaseModel):
-    answers: dict  # {"1": ["B"], "2": ["C"]}
+    answers: dict[str, list[str]]  # {"1": ["B"], "2": ["C"]}
 
 class CreateCourseRequest(BaseModel):
-    title: str
+    title: str = Field(min_length=1, max_length=128)
     subtitle: Optional[str] = "传承津沽非遗文化"
     category: str = "SHADOW_PUPPET"
     age_group: str = "小学低段"
-    duration_minutes: int = 45
-    energy_reward: int = 50
+    duration_minutes: int = Field(default=45, ge=0)
+    energy_reward: int = Field(default=50, ge=0)
     cover_url: Optional[str] = None
     description: Optional[str] = "非遗美育专业微课"
+    status: Literal["DRAFT", "PUBLISHED", "OFFLINE"] = "PUBLISHED"
+
+
+class UpdateCourseRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    title: Optional[str] = Field(default=None, min_length=1, max_length=128)
+    subtitle: Optional[str] = Field(default=None, max_length=255)
+    category: Optional[str] = Field(default=None, min_length=1, max_length=32)
+    age_group: Optional[str] = Field(default=None, min_length=1, max_length=32)
+    cover_url: Optional[str] = Field(default=None, max_length=500)
+    description: Optional[str] = None
+    duration_minutes: Optional[int] = Field(default=None, ge=0)
+    energy_reward: Optional[int] = Field(default=None, ge=0)
+    status: Optional[Literal["DRAFT", "PUBLISHED", "OFFLINE"]] = None
+
+
+class CreateChapterRequest(BaseModel):
+    seq: int = Field(ge=1)
+    title: str = Field(min_length=1, max_length=128)
+    video_url: Optional[str] = Field(default=None, max_length=500)
+    duration_seconds: int = Field(default=0, ge=0)
+    key_points: list[str] = Field(default_factory=list)
+
+
+class UpdateChapterRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    seq: Optional[int] = Field(default=None, ge=1)
+    title: Optional[str] = Field(default=None, min_length=1, max_length=128)
+    video_url: Optional[str] = Field(default=None, max_length=500)
+    duration_seconds: Optional[int] = Field(default=None, ge=0)
+    key_points: Optional[list[str]] = None
+
+
+class CreateQuizRequest(BaseModel):
+    title: str = Field(min_length=1, max_length=128)
+    chapter_id: Optional[int] = None
+    pass_score: int = Field(default=60, ge=0)
+    energy_reward: int = Field(default=20, ge=0)
+
+
+class CreateQuestionRequest(BaseModel):
+    seq: int = Field(ge=1)
+    type: Literal["SINGLE", "MULTIPLE", "JUDGE"] = "SINGLE"
+    content: str = Field(min_length=1)
+    options: list[dict[str, str]] = Field(min_length=2)
+    answers: list[str] = Field(min_length=1)
+    explanation: Optional[str] = None
+    score: int = Field(default=10, gt=0)
+
+
+class UpdateQuizRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    title: Optional[str] = Field(default=None, min_length=1, max_length=128)
+    chapter_id: Optional[int] = None
+    pass_score: Optional[int] = Field(default=None, ge=0)
+    energy_reward: Optional[int] = Field(default=None, ge=0)
+
+
+class UpdateQuestionRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    seq: Optional[int] = Field(default=None, ge=1)
+    type: Optional[Literal["SINGLE", "MULTIPLE", "JUDGE"]] = None
+    content: Optional[str] = Field(default=None, min_length=1)
+    options: Optional[list[dict[str, str]]] = Field(default=None, min_length=2)
+    answers: Optional[list[str]] = Field(default=None, min_length=1)
+    explanation: Optional[str] = None
+    score: Optional[int] = Field(default=None, gt=0)
+
+
+def _question_error(req: CreateQuestionRequest):
+    keys = [option.get("key", "") for option in req.options]
+    if (not all(keys) or any(not option.get("text") for option in req.options)
+            or len(set(keys)) != len(keys) or len(set(req.answers)) != len(req.answers)
+            or not set(req.answers).issubset(keys)
+            or (req.type in ("SINGLE", "JUDGE") and len(req.answers) != 1)):
+        return error_response(code=4000, message="题目选项或正确答案无效")
+    return None
 
 @router.post("")
 def create_course(
@@ -59,7 +136,7 @@ def create_course(
         description=req.description,
         duration_minutes=req.duration_minutes,
         energy_reward=req.energy_reward,
-        status="PUBLISHED",
+        status=req.status,
         view_count=0
     )
     db.add(course)
@@ -80,6 +157,196 @@ def toggle_course_status(
     db.commit()
     msg = "课程已上线发布" if course.status == "PUBLISHED" else "课程已下架"
     return success_response({"id": course.id, "status": course.status}, message=msg)
+
+
+@router.put("/{course_id}")
+def update_course(
+    course_id: int,
+    req: UpdateCourseRequest,
+    current_user: dict = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    course = db.query(Course).filter(Course.id == course_id).first()
+    if not course:
+        return error_response(code=4040, message="课程不存在")
+    for field, value in req.model_dump(exclude_unset=True, exclude_none=True).items():
+        setattr(course, field, value)
+    db.commit()
+    return success_response({"id": course.id, "status": course.status}, message="课程已更新")
+
+
+@router.post("/{course_id}/chapters")
+def create_chapter(
+    course_id: int,
+    req: CreateChapterRequest,
+    current_user: dict = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    if not db.query(Course).filter(Course.id == course_id).first():
+        return error_response(code=4040, message="课程不存在")
+    if db.query(CourseChapter).filter(
+        CourseChapter.course_id == course_id, CourseChapter.seq == req.seq
+    ).first():
+        return error_response(code=4090, message="章节序号已存在")
+    chapter = CourseChapter(
+        course_id=course_id, seq=req.seq, title=req.title,
+        video_url=req.video_url, duration_seconds=req.duration_seconds,
+        key_points_json=req.key_points
+    )
+    db.add(chapter)
+    db.commit()
+    db.refresh(chapter)
+    return success_response({"id": chapter.id, "course_id": course_id}, message="章节已创建")
+
+
+@router.put("/{course_id}/chapters/{chapter_id}")
+def update_chapter(
+    course_id: int,
+    chapter_id: int,
+    req: UpdateChapterRequest,
+    current_user: dict = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    chapter = db.query(CourseChapter).filter(
+        CourseChapter.id == chapter_id, CourseChapter.course_id == course_id
+    ).first()
+    if not chapter:
+        return error_response(code=4040, message="章节不存在")
+    updates = req.model_dump(exclude_unset=True, exclude_none=True)
+    if "seq" in updates and updates["seq"] != chapter.seq and db.query(CourseChapter).filter(
+        CourseChapter.course_id == course_id, CourseChapter.seq == updates["seq"]
+    ).first():
+        return error_response(code=4090, message="章节序号已存在")
+    for field, value in updates.items():
+        setattr(chapter, "key_points_json" if field == "key_points" else field, value)
+    db.commit()
+    return success_response({"id": chapter.id, "course_id": course_id}, message="章节已更新")
+
+
+@router.post("/{course_id}/quizzes")
+def create_quiz(
+    course_id: int,
+    req: CreateQuizRequest,
+    current_user: dict = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    if not db.query(Course).filter(Course.id == course_id).first():
+        return error_response(code=4040, message="课程不存在")
+    if req.chapter_id is not None and not db.query(CourseChapter).filter(
+        CourseChapter.id == req.chapter_id, CourseChapter.course_id == course_id
+    ).first():
+        return error_response(code=4040, message="章节不属于该课程")
+    quiz = Quiz(
+        course_id=course_id, chapter_id=req.chapter_id, title=req.title,
+        pass_score=req.pass_score, energy_reward=req.energy_reward
+    )
+    db.add(quiz)
+    db.commit()
+    db.refresh(quiz)
+    return success_response({"id": quiz.id, "course_id": course_id}, message="测验已创建")
+
+
+@router.put("/quiz/{quiz_id}")
+def update_quiz(
+    quiz_id: int,
+    req: UpdateQuizRequest,
+    current_user: dict = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    quiz = db.query(Quiz).filter(Quiz.id == quiz_id).first()
+    if not quiz:
+        return error_response(code=4040, message="测验不存在")
+    updates = req.model_dump(exclude_unset=True)
+    if "chapter_id" in updates and updates["chapter_id"] is not None and not db.query(CourseChapter).filter(
+        CourseChapter.id == updates["chapter_id"], CourseChapter.course_id == quiz.course_id
+    ).first():
+        return error_response(code=4040, message="章节不属于该课程")
+    for field, value in updates.items():
+        setattr(quiz, field, value)
+    db.commit()
+    return success_response({"id": quiz.id}, message="测验已更新")
+
+
+@router.post("/quiz/{quiz_id}/questions")
+def create_quiz_question(
+    quiz_id: int,
+    req: CreateQuestionRequest,
+    current_user: dict = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    quiz = db.query(Quiz).filter(Quiz.id == quiz_id).first()
+    if not quiz:
+        return error_response(code=4040, message="测验不存在")
+    invalid = _question_error(req)
+    if invalid:
+        return invalid
+    if db.query(QuizQuestion).filter(QuizQuestion.quiz_id == quiz_id, QuizQuestion.seq == req.seq).first():
+        return error_response(code=4090, message="题目序号已存在")
+    question = QuizQuestion(
+        quiz_id=quiz_id, seq=req.seq, type=req.type, content=req.content,
+        options_json=req.options, answer_json=req.answers,
+        explanation=req.explanation, score=req.score
+    )
+    db.add(question)
+    db.commit()
+    db.refresh(question)
+    return success_response({"id": question.id, "quiz_id": quiz_id}, message="题目已创建")
+
+
+@router.put("/quiz/{quiz_id}/questions/{question_id}")
+def update_quiz_question(
+    quiz_id: int,
+    question_id: int,
+    req: UpdateQuestionRequest,
+    current_user: dict = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    question = db.query(QuizQuestion).filter(
+        QuizQuestion.id == question_id, QuizQuestion.quiz_id == quiz_id
+    ).first()
+    if not question:
+        return error_response(code=4040, message="题目不存在")
+    updates = req.model_dump(exclude_unset=True, exclude_none=True)
+    merged = CreateQuestionRequest.model_validate({
+        "seq": question.seq,
+        "type": question.type,
+        "content": question.content,
+        "options": question.options_json,
+        "answers": question.answer_json,
+        "explanation": question.explanation,
+        "score": question.score,
+        **updates
+    })
+    invalid = _question_error(merged)
+    if invalid:
+        return invalid
+    if "seq" in updates and updates["seq"] != question.seq and db.query(QuizQuestion).filter(
+        QuizQuestion.quiz_id == quiz_id, QuizQuestion.seq == updates["seq"]
+    ).first():
+        return error_response(code=4090, message="题目序号已存在")
+    for field, value in updates.items():
+        setattr(question, {"options": "options_json", "answers": "answer_json"}.get(field, field), value)
+    db.commit()
+    return success_response({"id": question.id}, message="题目已更新")
+
+
+@router.delete("/quiz/{quiz_id}/questions/{question_id}")
+def delete_quiz_question(
+    quiz_id: int,
+    question_id: int,
+    current_user: dict = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    question = db.query(QuizQuestion).filter(
+        QuizQuestion.id == question_id, QuizQuestion.quiz_id == quiz_id
+    ).first()
+    if not question:
+        return error_response(code=4040, message="题目不存在")
+    if db.query(QuizAttempt).filter(QuizAttempt.quiz_id == quiz_id).first():
+        return error_response(code=4090, message="已有测验记录，不能删除题目")
+    db.delete(question)
+    db.commit()
+    return success_response(message="题目已删除")
 
 @router.get("")
 def list_courses(
@@ -418,9 +685,17 @@ def sync_offline(
     }, message="离线事件同步完成")
 
 @router.get("/quiz/{quiz_id}")
-def get_quiz(quiz_id: int, db: Session = Depends(get_db)):
+def get_quiz(
+    quiz_id: int,
+    current_user: Optional[dict] = Depends(get_current_user_optional),
+    db: Session = Depends(get_db)
+):
     quiz = db.query(Quiz).filter(Quiz.id == quiz_id).first()
     if not quiz:
+        return error_response(code=4040, message="测验不存在")
+    course = db.query(Course).filter(Course.id == quiz.course_id).first()
+    if not course or (course.status != "PUBLISHED" and
+                      (not current_user or current_user.get("role_code") != "ADMIN")):
         return error_response(code=4040, message="测验不存在")
     
     questions = db.query(QuizQuestion).filter(QuizQuestion.quiz_id == quiz_id).order_by(QuizQuestion.seq.asc()).all()
@@ -451,15 +726,23 @@ def submit_quiz(
     quiz = db.query(Quiz).filter(Quiz.id == quiz_id).first()
     if not quiz:
         return error_response(code=4040, message="测验不存在")
+    course = db.query(Course).filter(Course.id == quiz.course_id, Course.status == "PUBLISHED").first()
+    if not course:
+        return error_response(code=4040, message="测验所属课程未发布")
     
     questions = db.query(QuizQuestion).filter(QuizQuestion.quiz_id == quiz_id).all()
+    if not questions:
+        return error_response(code=4090, message="测验尚未配置题目")
+    question_ids = {str(q.id) for q in questions}
+    if set(req.answers) - question_ids:
+        return error_response(code=4000, message="提交了不属于该测验的题目")
     
     total_score = 0
     details = []
     for q in questions:
         user_ans = req.answers.get(str(q.id), [])
         correct_ans = q.answer_json
-        is_correct = sorted(user_ans) == sorted(correct_ans)
+        is_correct = sorted(set(user_ans)) == sorted(correct_ans)
         item_score = q.score if is_correct else 0
         total_score += item_score
         details.append({
