@@ -1,4 +1,7 @@
 import hashlib
+import hmac
+import secrets
+import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any
 import jwt
@@ -6,18 +9,41 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from app.core.config import settings
+from app.core.database import get_db
+from app.models.entities import SysUser, AuthSession
 
 security_scheme = HTTPBearer(auto_error=False)
 
 def hash_password(password: str) -> str:
-    # SHA256 matches our seed data format
-    return hashlib.sha256(password.encode("utf-8")).hexdigest()
+    salt = secrets.token_bytes(16)
+    digest = hashlib.scrypt(password.encode("utf-8"), salt=salt, n=16384, r=8, p=1)
+    return f"scrypt$16384$8$1${salt.hex()}${digest.hex()}"
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return hash_password(plain_password) == hashed_password
+    if hashed_password.startswith("scrypt$"):
+        try:
+            algorithm, n, r, p, salt, expected = hashed_password.split("$")
+            if (algorithm, n, r, p) != ("scrypt", "16384", "8", "1"):
+                return False
+            actual = hashlib.scrypt(
+                plain_password.encode("utf-8"), salt=bytes.fromhex(salt),
+                n=16384, r=8, p=1
+            )
+            return hmac.compare_digest(actual, bytes.fromhex(expected))
+        except (ValueError, TypeError):
+            return False
+    # Compatibility with accounts created by the original SHA-256 implementation.
+    legacy_digest = hashlib.sha256(plain_password.encode("utf-8")).hexdigest()
+    return len(hashed_password) == 64 and hmac.compare_digest(legacy_digest, hashed_password)
+
+
+def password_needs_rehash(hashed_password: str) -> bool:
+    return not hashed_password.startswith("scrypt$")
 
 def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta] = None) -> str:
     to_encode = data.copy()
+    to_encode.setdefault("typ", "access")
+    to_encode.setdefault("jti", str(uuid.uuid4()))
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
@@ -34,15 +60,45 @@ def decode_token(token: str) -> Optional[Dict[str, Any]]:
         return None
 
 def get_current_user_optional(
-    auth: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme)
+    auth: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme),
+    db: Session = Depends(get_db)
 ) -> Optional[Dict[str, Any]]:
     if not auth or not auth.credentials:
         return None
     payload = decode_token(auth.credentials)
-    return payload
+    return _load_active_user(payload, db) if payload else None
+
+
+def _load_active_user(payload: Dict[str, Any], db: Session) -> Optional[Dict[str, Any]]:
+    if payload.get("typ", "access") != "access":
+        return None
+    user_id = payload.get("user_id")
+    if not isinstance(user_id, int):
+        return None
+    user = db.query(SysUser).filter(SysUser.id == user_id).first()
+    if not user or user.status != "ACTIVE":
+        return None
+    session_id = payload.get("sid")
+    if session_id is not None:
+        if not isinstance(session_id, str):
+            return None
+        session = db.query(AuthSession).filter(
+            AuthSession.session_id == session_id,
+            AuthSession.user_id == user_id
+        ).first()
+        if not session or session.revoked_at or session.expires_at <= datetime.utcnow():
+            return None
+    return {
+        **payload,
+        "user_id": user.id,
+        "username": user.username,
+        "nickname": user.nickname,
+        "role_code": user.role_code,
+    }
 
 def get_current_user(
-    auth: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme)
+    auth: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme),
+    db: Session = Depends(get_db)
 ) -> Dict[str, Any]:
     if not auth or not auth.credentials:
         raise HTTPException(
@@ -51,13 +107,14 @@ def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
     payload = decode_token(auth.credentials)
-    if not payload:
+    current_user = _load_active_user(payload, db) if payload else None
+    if not current_user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token已失效或格式错误，请重新登录",
+            detail="Token已失效或账号不可用，请重新登录",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    return payload
+    return current_user
 
 def require_roles(*roles: str):
     def role_checker(current_user: Dict[str, Any] = Depends(get_current_user)) -> Dict[str, Any]:

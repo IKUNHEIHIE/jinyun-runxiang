@@ -1,65 +1,101 @@
 import json
 import time
 import httpx
-from datetime import datetime
+from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
-from typing import Optional, List, Dict, Any
+from sqlalchemy import func
+from pydantic import BaseModel, Field
+from typing import Optional, List, Dict, Any, Literal
 
 from app.core.database import get_db
 from app.core.security import require_admin, hash_password
 from app.schemas.common import success_response, error_response
 from app.models.entities import (
-    OperationStatDaily, CommunityPost, ContentReview,
-    Course, AiModel, SysUser, OrderMain, FundRecord, Device,
+    CommunityPost, CommunityComment, CommunityReport, ContentReview,
+    Course, LearningProgress, AiTask, Activity, ActivityAttendance, SysUser, AuthSession,
     SysConfig, UserProfile, UserGrowth, Badge, UserBadge, PhilanthropySupply
 )
 
 router = APIRouter(prefix="/admin", tags=["运营管理后台"])
 
 class ReviewActionRequest(BaseModel):
-    action: str  # APPROVE, REJECT, OFFLINE, FEATURE
+    action: Literal["APPROVE", "REJECT", "OFFLINE", "FEATURE"]
     comment: Optional[str] = "审核通过"
+
+
+class CommentReviewActionRequest(BaseModel):
+    action: Literal["APPROVE", "REJECT", "OFFLINE"]
+    comment: str = Field(min_length=1, max_length=500)
+
+
+class ReportActionRequest(BaseModel):
+    action: Literal["DISMISS", "RESOLVE", "OFFLINE_POST"]
+    note: str = Field(min_length=1, max_length=255)
 
 @router.get("/dashboard")
 def get_dashboard_data(
     current_user: dict = Depends(require_admin),
     db: Session = Depends(get_db)
 ):
-    # 历史日统计
-    stats = db.query(OperationStatDaily).order_by(OperationStatDaily.stat_date.asc()).all()
-
-    # 实时汇总
+    today = datetime.utcnow().date()
+    first_day = today - timedelta(days=6)
+    first_moment = datetime.combine(first_day, datetime.min.time())
     total_users = db.query(SysUser).count()
     total_courses = db.query(Course).count()
-    total_posts = db.query(CommunityPost).count()
-    total_orders = db.query(OrderMain).count()
-    
-    # 汇总美育基金总额
-    funds = db.query(FundRecord).all()
-    fund_total_cents = sum([f.amount_cents for f in funds])
+    total_posts = db.query(CommunityPost).filter(CommunityPost.status == "APPROVED").count()
+    completed_chapters = db.query(LearningProgress).filter(LearningProgress.completed == True).count()
+    ai_tasks = db.query(AiTask).count()
+    pending_posts = db.query(CommunityPost).filter(CommunityPost.status == "PENDING_REVIEW").count()
+    pending_comments = db.query(CommunityComment).filter(CommunityComment.status == "PENDING_REVIEW").count()
+    pending_reports = db.query(CommunityReport).filter(CommunityReport.status == "PENDING").count()
+    activity_count = db.query(Activity).count()
+    attendance_count = db.query(ActivityAttendance).count()
+
+    course_daily = dict(db.query(
+        func.date(LearningProgress.completed_at), func.count(LearningProgress.id)
+    ).filter(
+        LearningProgress.completed_at >= first_moment
+    ).group_by(func.date(LearningProgress.completed_at)).all())
+    ai_daily = dict(db.query(
+        func.date(AiTask.created_at), func.count(AiTask.task_id)
+    ).filter(
+        AiTask.created_at >= first_moment
+    ).group_by(func.date(AiTask.created_at)).all())
+    course_daily = {str(day): count for day, count in course_daily.items()}
+    ai_daily = {str(day): count for day, count in ai_daily.items()}
+    hot_courses = db.query(Course).filter(Course.status == "PUBLISHED").order_by(
+        Course.view_count.desc()
+    ).limit(5).all()
 
     return success_response({
         "kpi": {
-            "dau": 2420,
-            "mau": 9600,
+            "dau": None,
+            "mau": None,
             "total_users": total_users,
             "total_courses": total_courses,
             "total_posts": total_posts,
-            "total_orders": total_orders,
-            "fund_total_yuan": fund_total_cents / 100.0,
-            "active_devices": 1
+            "completed_chapters": completed_chapters,
+            "ai_tasks": ai_tasks,
+            "pending_reviews": pending_posts + pending_comments + pending_reports,
+            "activities": activity_count,
+            "attendances": attendance_count
         },
+        "pending_reviews": {
+            "posts": pending_posts,
+            "comments": pending_comments,
+            "reports": pending_reports
+        },
+        "hot_courses": [{
+            "id": course.id,
+            "title": course.title,
+            "views": course.view_count or 0
+        } for course in hot_courses],
         "trends": [{
-            "date": s.stat_date.strftime("%m-%d") if hasattr(s.stat_date, "strftime") else str(s.stat_date),
-            "dau": s.dau,
-            "course_learn": s.course_learn_count,
-            "ai_generations": s.ai_generate_count,
-            "posts": s.community_post_count,
-            "gmv_yuan": s.order_gmv_cents / 100.0,
-            "fund_yuan": s.fund_added_cents / 100.0
-        } for s in stats]
+            "date": (first_day + timedelta(days=offset)).strftime("%m-%d"),
+            "course_completed": course_daily.get((first_day + timedelta(days=offset)).isoformat(), 0),
+            "ai_tasks": ai_daily.get((first_day + timedelta(days=offset)).isoformat(), 0)
+        } for offset in range(7)]
     })
 
 @router.get("/reviews")
@@ -87,7 +123,7 @@ def list_pending_reviews(
             "co_creator_name": p.co_creator_name,
             "rural_author_name": p.rural_author_name,
             "is_featured": bool(p.is_featured),
-            "risk_level": rev.risk_level if rev else "LOW",
+            "risk_level": rev.risk_level if rev and rev.ai_analysis_json else None,
             "ai_analysis": rev.ai_analysis_json if rev else {},
             "created_at": p.created_at.strftime("%Y-%m-%d %H:%M") if p.created_at else ""
         })
@@ -103,6 +139,11 @@ def review_post_action(
     post = db.query(CommunityPost).filter(CommunityPost.id == post_id).first()
     if not post:
         return error_response(code=4040, message="作品不存在")
+
+    if req.action in ("APPROVE", "REJECT") and post.status not in ("PENDING_REVIEW", "MANUAL_REVIEW", "REJECTED"):
+        return error_response(code=4090, message="当前作品状态不可执行审核操作")
+    if req.action in ("OFFLINE", "FEATURE") and post.status != "APPROVED":
+        return error_response(code=4090, message="只有已发布作品可执行此操作")
 
     if req.action == "APPROVE":
         post.status = "APPROVED"
@@ -126,6 +167,121 @@ def review_post_action(
 
     db.commit()
     return success_response({"post_id": post_id, "new_status": post.status}, message="审核处置已生效")
+
+
+@router.get("/comment-reviews")
+def list_comment_reviews(
+    status: Literal["PENDING_REVIEW", "APPROVED", "REJECTED", "OFFLINE"] = "PENDING_REVIEW",
+    current_user: dict = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    comments = db.query(CommunityComment).filter(CommunityComment.status == status).all()
+    return success_response([{
+        "id": comment.id,
+        "post_id": comment.post_id,
+        "user_id": comment.user_id,
+        "content": comment.content,
+        "status": comment.status,
+        "created_at": comment.created_at
+    } for comment in comments])
+
+
+@router.post("/comment-reviews/{comment_id}/action")
+def review_comment_action(
+    comment_id: int,
+    req: CommentReviewActionRequest,
+    current_user: dict = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    comment = db.query(CommunityComment).filter(CommunityComment.id == comment_id).first()
+    if not comment:
+        return error_response(code=4040, message="评论不存在")
+    post = db.query(CommunityPost).filter(CommunityPost.id == comment.post_id).first()
+    if not post:
+        return error_response(code=4040, message="作品不存在")
+    if req.action == "APPROVE" and comment.status not in ("PENDING_REVIEW", "REJECTED"):
+        return error_response(code=4090, message="当前评论状态不可通过")
+    if req.action == "REJECT" and comment.status != "PENDING_REVIEW":
+        return error_response(code=4090, message="当前评论状态不可驳回")
+    if req.action == "OFFLINE" and comment.status != "APPROVED":
+        return error_response(code=4090, message="只有已公开评论可下线")
+    if req.action == "APPROVE":
+        comment.status = "APPROVED"
+        post.comment_count = (post.comment_count or 0) + 1
+    elif req.action == "REJECT":
+        comment.status = "REJECTED"
+    else:
+        comment.status = "OFFLINE"
+        post.comment_count = max(0, (post.comment_count or 0) - 1)
+
+    review = db.query(ContentReview).filter(
+        ContentReview.target_type == "COMMUNITY_COMMENT",
+        ContentReview.target_id == comment_id
+    ).first()
+    if not review:
+        review = ContentReview(target_type="COMMUNITY_COMMENT", target_id=comment_id)
+        db.add(review)
+    review.result = comment.status
+    review.reviewer_id = current_user["user_id"]
+    review.review_comment = req.comment
+    review.reviewed_at = datetime.utcnow()
+    db.commit()
+    return success_response({"comment_id": comment_id, "status": comment.status}, message="评论审核已完成")
+
+
+@router.get("/reports")
+def list_community_reports(
+    status: Literal["PENDING", "HANDLED", "REJECTED"] = "PENDING",
+    current_user: dict = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    reports = db.query(CommunityReport).filter(CommunityReport.status == status).all()
+    return success_response([{
+        "id": report.id,
+        "post_id": report.post_id,
+        "reporter_id": report.reporter_id,
+        "reason": report.reason,
+        "description": report.description,
+        "status": report.status,
+        "handled_by": report.handled_by,
+        "handled_note": report.handled_note,
+        "created_at": report.created_at,
+        "handled_at": report.handled_at
+    } for report in reports])
+
+
+@router.post("/reports/{report_id}/action")
+def handle_community_report(
+    report_id: int,
+    req: ReportActionRequest,
+    current_user: dict = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    report = db.query(CommunityReport).filter(CommunityReport.id == report_id).first()
+    if not report:
+        return error_response(code=4040, message="举报不存在")
+    if report.status != "PENDING":
+        return error_response(code=4090, message="举报已处理")
+    post = db.query(CommunityPost).filter(CommunityPost.id == report.post_id).first()
+    if not post:
+        return error_response(code=4040, message="被举报作品不存在")
+    if req.action == "OFFLINE_POST":
+        post.status = "OFFLINE"
+    report.status = "REJECTED" if req.action == "DISMISS" else "HANDLED"
+    report.handled_by = current_user["user_id"]
+    report.handled_note = req.note
+    report.handled_at = datetime.utcnow()
+    db.add(ContentReview(
+        target_type="COMMUNITY_REPORT",
+        target_id=report.id,
+        result=report.status,
+        reviewer_id=current_user["user_id"],
+        review_comment=req.note,
+        reviewed_at=report.handled_at,
+        ai_analysis_json={"action": req.action, "post_id": report.post_id}
+    ))
+    db.commit()
+    return success_response({"report_id": report.id, "status": report.status}, message="举报处理已完成")
 
 # -----------------------------------------------------------------------------
 # 系统设置模块 (A-08)：大模型 API 接入与全站自定义配置
@@ -315,7 +471,7 @@ def test_llm_connection(
 
 class CreateUserDTO(BaseModel):
     username: str
-    password: str = "123456"
+    password: str = Field(min_length=8, max_length=64)
     nickname: str
     phone: Optional[str] = None
     role_code: str = "STUDENT"  # ADMIN, TEACHER, STUDENT
@@ -333,7 +489,7 @@ class StatusDTO(BaseModel):
     status: str  # ACTIVE, DISABLED
 
 class ResetPwdDTO(BaseModel):
-    new_password: str = "123456"
+    new_password: str = Field(min_length=8, max_length=64)
 
 @router.get("/users")
 def list_system_users(
@@ -495,8 +651,11 @@ def reset_user_password(
         return error_response(code=4040, message="用户不存在")
 
     user.password_hash = hash_password(req.new_password)
+    db.query(AuthSession).filter(AuthSession.user_id == user_id).update(
+        {AuthSession.revoked_at: datetime.utcnow()}, synchronize_session=False
+    )
     db.commit()
-    return success_response(message=f"用户【{user.username}】的密码已重置为：{req.new_password}")
+    return success_response(message=f"用户【{user.username}】的密码已重置，现有登录会话已失效")
 
 @router.delete("/users/{user_id}")
 def delete_system_user(

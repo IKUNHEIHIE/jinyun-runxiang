@@ -21,6 +21,16 @@ class SysUser(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+
+class AuthSession(Base):
+    __tablename__ = "auth_session"
+    session_id = Column(String(36), primary_key=True)
+    user_id = Column(BigInteger, nullable=False)
+    refresh_hash = Column(String(64), nullable=False)
+    expires_at = Column(DateTime, nullable=False)
+    revoked_at = Column(DateTime)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
 class UserProfile(Base):
     __tablename__ = "user_profile"
     user_id = Column(BigInteger, primary_key=True)
@@ -356,7 +366,9 @@ class Activity(Base):
     end_at = Column(DateTime, nullable=False)
     capacity = Column(Integer, default=100)
     reserved_count = Column(Integer, default=0)
+    badge_id = Column(BigInteger)
     energy_reward = Column(Integer, default=30)
+    checkin_code_hash = Column(String(255))
     status = Column(String(16), default="PUBLISHED")
     description = Column(Text, nullable=False)
 
@@ -377,6 +389,14 @@ class ActivityCheckin(Base):
     latitude = Column(Numeric(10, 6), nullable=False)
     longitude = Column(Numeric(10, 6), nullable=False)
     distance_meters = Column(Integer, nullable=False)
+    checked_at = Column(DateTime, default=datetime.utcnow)
+
+
+class ActivityAttendance(Base):
+    __tablename__ = "activity_attendance"
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    activity_id = Column(BigInteger, nullable=False)
+    user_id = Column(BigInteger, nullable=False)
     checked_at = Column(DateTime, default=datetime.utcnow)
 
 # 7. 电商助农与基金

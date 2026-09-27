@@ -45,8 +45,11 @@ class OfflineSyncManager {
       );
 
       if (response.statusCode == 200 && response.data['code'] == 0) {
-        _inMemoryQueue.clear();
-        return true;
+        final syncedIds = Set<String>.from(
+          response.data['data']['success_event_ids'] ?? const <String>[],
+        );
+        _inMemoryQueue.removeWhere((event) => syncedIds.contains(event['event_id']));
+        return _inMemoryQueue.isEmpty;
       }
     } catch (e) {
       // 网络仍然不可用，保留在队列中等待下次重试

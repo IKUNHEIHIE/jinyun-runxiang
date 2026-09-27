@@ -1,19 +1,10 @@
 <template>
   <div class="dashboard-container">
-    <!-- 乡村美育科技大屏入口 Banner -->
-    <div class="screen-entry-banner" @click="openScreen">
+    <div class="screen-entry-banner">
       <div class="banner-left">
-        <span class="banner-badge">数字化大屏</span>
-        <span class="banner-title">津脉智韵 · 乡村美育科技数据大屏 (数字孪生 / 遥测监控)</span>
-        <span class="banner-desc">已连接天津市 48 所乡村试点校、3 台具身智能助教机器人及 AI 审美诊断中台</span>
-      </div>
-      <div class="banner-right">
-        <el-button type="primary" size="default" class="screen-launch-btn" @click.stop="openScreen">
-          开启全屏大盘 ↗
-        </el-button>
-        <el-button size="default" class="screen-sub-btn" @click.stop="openScreenNewTab">
-          新标签页打开 ↗
-        </el-button>
+        <span class="banner-badge">运营概览</span>
+        <span class="banner-title">津韵润乡 · 业务数据</span>
+        <span class="banner-desc">以下数量来自课程、创作、活动和审核记录；未建立采集的数据不会显示估算值。</span>
       </div>
     </div>
 
@@ -21,30 +12,30 @@
     <el-row :gutter="16">
       <el-col :span="6">
         <el-card shadow="hover" class="kpi-card">
-          <div class="kpi-title">日活跃学生 / DAU</div>
-          <div class="kpi-value text-primary">{{ kpi.dau || 2420 }}</div>
-          <div class="kpi-sub">较昨日 <span class="trend-up">+12.5%</span> · 覆盖乡村学校 48 所</div>
+          <div class="kpi-title">注册用户</div>
+          <div class="kpi-value text-primary">{{ kpi.total_users ?? '—' }}</div>
+          <div class="kpi-sub">日活跃用户暂未建立可靠采集</div>
         </el-card>
       </el-col>
       <el-col :span="6">
         <el-card shadow="hover" class="kpi-card">
           <div class="kpi-title">非遗课程累计完播</div>
-          <div class="kpi-value text-gold">{{ kpi.total_courses ? kpi.total_courses * 1250 : 7500 }}</div>
-          <div class="kpi-sub">皮影戏与年画门类占比 65%</div>
+          <div class="kpi-value text-gold">{{ kpi.completed_chapters ?? '—' }}</div>
+          <div class="kpi-sub">实际完成的章节记录</div>
         </el-card>
       </el-col>
       <el-col :span="6">
         <el-card shadow="hover" class="kpi-card">
-          <div class="kpi-title">AI工坊创作作品数</div>
-          <div class="kpi-value text-green">{{ kpi.total_posts ? kpi.total_posts * 180 + 1340 : 1340 }}</div>
-          <div class="kpi-sub">今日生成调用 1,340 次</div>
+          <div class="kpi-title">AI工坊任务数</div>
+          <div class="kpi-value text-green">{{ kpi.ai_tasks ?? '—' }}</div>
+          <div class="kpi-sub">累计提交的真实任务</div>
         </el-card>
       </el-col>
       <el-col :span="6">
         <el-card shadow="hover" class="kpi-card">
-          <div class="kpi-title">乡村美育公益基金累积</div>
-          <div class="kpi-value text-red">¥ {{ (kpi.fund_total_yuan || 9540.00).toFixed(2) }}</div>
-          <div class="kpi-sub">来自助农订单 10% 收益注入</div>
+          <div class="kpi-title">待处理审核</div>
+          <div class="kpi-value text-red">{{ kpi.pending_reviews ?? '—' }}</div>
+          <div class="kpi-sub">作品、评论与举报</div>
         </el-card>
       </el-col>
     </el-row>
@@ -55,8 +46,8 @@
         <el-card shadow="never" class="chart-card">
           <template #header>
             <div class="card-header">
-              <span class="header-title">📈 平台活跃度与AI生成调用趋势 (近7日)</span>
-              <el-tag type="info" size="small">每日自动聚合</el-tag>
+              <span class="header-title">📈 章节完成与AI任务趋势（近7日）</span>
+              <el-tag type="info" size="small">来自业务记录</el-tag>
             </div>
           </template>
           <div ref="chartRef" style="height: 320px; width: 100%;"></div>
@@ -72,7 +63,7 @@
           <el-table :data="hotCourses" size="small" style="width: 100%">
             <el-table-column prop="rank" label="排名" width="50" />
             <el-table-column prop="title" label="课程名称" />
-            <el-table-column prop="views" label="播放热度" width="80">
+            <el-table-column prop="views" label="浏览数" width="80">
               <template #default="{ row }">
                 <span style="color: #8B4A2F; font-weight: bold;">{{ row.views }}</span>
               </template>
@@ -88,17 +79,15 @@
         <el-card shadow="never">
           <template #header>
             <div class="card-header">
-              <span>🤖 具身智能机器人状态 (在线演示)</span>
-              <el-tag type="success">1台在线</el-tag>
+              <span>📅 活动参与</span>
+              <el-tag type="info">实际记录</el-tag>
             </div>
           </template>
           <div style="display: flex; align-items: center; justify-content: space-between;">
             <div>
-              <div style="font-weight: bold; font-size: 15px; color: #2F2925;">DEV-SHADOW-BOT-01</div>
-              <div style="font-size: 13px; color: #776D65; margin-top: 4px;">部署位置: 蓟州区下营镇中心小学美育室</div>
-              <div style="font-size: 12px; color: #4D8B63; margin-top: 4px;">电量: 82% · 信号良好 · 正在执行天津皮影讲解与肢体表演</div>
+              <div style="font-weight: bold; font-size: 15px; color: #2F2925;">活动 {{ kpi.activities ?? '—' }} 场</div>
+              <div style="font-size: 13px; color: #776D65; margin-top: 4px;">现场签到 {{ kpi.attendances ?? '—' }} 人次</div>
             </div>
-            <el-button type="primary" size="small" style="background-color: #8B4A2F; border-color: #8B4A2F;">发送测试指令</el-button>
           </div>
         </el-card>
       </el-col>
@@ -112,9 +101,9 @@
             </div>
           </template>
           <div style="font-size: 13px; color: #776D65; line-height: 24px;">
-            <div>• 今日多模态AI预审作品：<strong>168</strong> 件</div>
-            <div>• 疑似敏感词触发待人工复核：<strong style="color: #C4863A;">2</strong> 件</div>
-            <div>• 审核策略：首发文本敏感词初筛 + 图像违规识别 + 人工抽检</div>
+            <div>• 待审作品：<strong>{{ pendingReviews.posts ?? '—' }}</strong> 件</div>
+            <div>• 待审评论：<strong>{{ pendingReviews.comments ?? '—' }}</strong> 件</div>
+            <div>• 待处理举报：<strong>{{ pendingReviews.reports ?? '—' }}</strong> 件</div>
           </div>
         </el-card>
       </el-col>
@@ -124,59 +113,49 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import * as echarts from 'echarts'
 import request from '@/api/request'
 
-const router = useRouter()
 const kpi = ref<any>({})
+const pendingReviews = ref<any>({})
 const chartRef = ref<HTMLElement | null>(null)
-
-const openScreen = () => {
-  router.push('/screen')
-}
-
-const openScreenNewTab = () => {
-  window.open('/#/screen', '_blank')
-}
-
-const hotCourses = ref([
-  { rank: 1, title: '津门皮影戏：光影里的民间传奇', views: '2,840' },
-  { rank: 2, title: '杨柳青木版年画：点染岁时吉祥', views: '2,340' },
-  { rank: 3, title: '青铜神兽饕餮：纹样里的古老密码', views: '1,620' },
-  { rank: 4, title: '泥人张彩塑艺术：捏出指尖百态', views: '1,420' },
-  { rank: 5, title: '津门鼓曲与三弦：韵白流转唱津城', views: '980' }
-])
+const hotCourses = ref<any[]>([])
 
 onMounted(async () => {
   try {
     const res: any = await request.get('/admin/dashboard')
     kpi.value = res.kpi || {}
+    pendingReviews.value = res.pending_reviews || {}
+    hotCourses.value = (res.hot_courses || []).map((course: any, index: number) => ({
+      rank: index + 1,
+      title: course.title,
+      views: course.views
+    }))
 
     if (chartRef.value) {
       const myChart = echarts.init(chartRef.value)
       const dates = (res.trends || []).map((t: any) => t.date)
-      const dauData = (res.trends || []).map((t: any) => t.dau)
-      const aiData = (res.trends || []).map((t: any) => t.ai_generations)
+      const completionData = (res.trends || []).map((t: any) => t.course_completed)
+      const aiData = (res.trends || []).map((t: any) => t.ai_tasks)
 
       myChart.setOption({
         tooltip: { trigger: 'axis' },
-        legend: { data: ['日活跃学生 (DAU)', 'AI创作生成次数'] },
+        legend: { data: ['章节完成数', 'AI任务提交数'] },
         grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-        xAxis: { type: 'category', boundaryGap: false, data: dates.length ? dates : ['09-06','09-07','09-08','09-09','09-10','09-11','09-12'] },
+        xAxis: { type: 'category', boundaryGap: false, data: dates },
         yAxis: { type: 'value' },
         series: [
           {
-            name: '日活跃学生 (DAU)',
+            name: '章节完成数',
             type: 'line',
             smooth: true,
-            data: dauData.length ? dauData : [1240, 1320, 1450, 1580, 1820, 2150, 2420],
+            data: completionData,
             itemStyle: { color: '#8B4A2F' }
           },
           {
-            name: 'AI创作生成次数',
+            name: 'AI任务提交数',
             type: 'bar',
-            data: aiData.length ? aiData : [480, 520, 610, 740, 890, 1120, 1340],
+            data: aiData,
             itemStyle: { color: '#D6A85C' }
           }
         ]

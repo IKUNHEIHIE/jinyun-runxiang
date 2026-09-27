@@ -10,15 +10,6 @@ export default [
       showLink: false
     }
   },
-  {
-    path: "/screen",
-    name: "Screen",
-    component: () => import("@/views/dashboard/ScreenView.vue"),
-    meta: {
-      title: "津脉智韵·乡村美育科技数据大屏",
-      showLink: false
-    }
-  },
   // 全屏403（无权访问）页面
   {
     path: "/access-denied",

@@ -115,7 +115,7 @@ export function resetRouter() {
 }
 
 /** 路由白名单（免登录访问） */
-const whiteList = ["/login", "/screen"];
+const whiteList = ["/login"];
 
 const { VITE_HIDE_HOME } = import.meta.env;
 

@@ -46,7 +46,7 @@
 
 ### 后端 API（`backend`）
 
-- 🔐 **认证与权限**：JWT + RBAC 双重守卫，bcrypt 密码存储，防注册提权
+- 🔐 **认证与权限**：JWT + RBAC 双重守卫，scrypt 加盐密码存储，兼容旧版 SHA-256 登录后升级，防注册提权
 - 🏗️ **泛型仓储层**：`CRUDBase[Model, Create, Update]`（参照 FastAPI 官方生产模板）
 - 🤖 **AI 网关**：官方 OpenAI SDK 统一驱动 DeepSeek，支持流式 SSE 响应与多模态审美诊断
 - 🔒 **安全加固**：文件上传白名单 + 50MB 熔断，随机散列命名防路径遍历，全局异常 TraceId 链路日志
@@ -165,7 +165,7 @@ npm run dev          # 开发模式，端口 :5174
 - **SQLAlchemy 2.0** — ORM（参数化查询，防 SQL 注入）
 - **Pydantic v2** — 数据校验与设置管理（`pydantic-settings`）
 - **PyJWT** — JWT 令牌签发与校验
-- **Bcrypt** — 密码哈希存储
+- **scrypt** — 加盐密码哈希存储
 - **OpenAI SDK** — 统一驱动 DeepSeek 多模态推理
 - **Loguru** — 结构化日志 + TraceId 链路追踪
 

@@ -187,7 +187,7 @@
           <el-input v-model="createForm.username" placeholder="英文、数字或下划线" />
         </el-form-item>
         <el-form-item label="初始密码" prop="password">
-          <el-input v-model="createForm.password" type="password" show-password placeholder="默认 123456" />
+          <el-input v-model="createForm.password" type="password" show-password placeholder="请输入至少 8 位初始密码" />
         </el-form-item>
         <el-form-item label="姓名/昵称" prop="nickname">
           <el-input v-model="createForm.nickname" placeholder="例如：王秀兰老师 或 张小明" />
@@ -330,9 +330,9 @@ const handleOpenResetPwdDialog = (row: any) => {
     {
       confirmButtonText: '确定重置',
       cancelButtonText: '取消',
-      inputValue: '123456',
-      inputPattern: /^.{6,}$/,
-      inputErrorMessage: '密码长度至少6位'
+      inputValue: '',
+      inputPattern: /^.{8,64}$/,
+      inputErrorMessage: '密码长度须为 8 至 64 位'
     }
   ).then(async ({ value }) => {
     try {
@@ -371,7 +371,7 @@ const createSubmitting = ref(false)
 const createFormRef = ref()
 const createForm = reactive({
   username: '',
-  password: 'admin123',
+  password: '',
   nickname: '',
   phone: '',
   role_code: 'STUDENT',
@@ -381,13 +381,13 @@ const createForm = reactive({
 
 const createRules = {
   username: [{ required: true, message: '请输入登录账号', trigger: 'blur' }],
-  password: [{ required: true, message: '请输入初始密码', trigger: 'blur' }],
+  password: [{ required: true, min: 8, max: 64, message: '请输入 8 至 64 位初始密码', trigger: 'blur' }],
   nickname: [{ required: true, message: '请输入姓名或昵称', trigger: 'blur' }]
 }
 
 const handleOpenCreateDialog = () => {
   createForm.username = ''
-  createForm.password = '123456'
+  createForm.password = ''
   createForm.nickname = ''
   createForm.phone = ''
   createForm.role_code = 'STUDENT'
