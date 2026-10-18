@@ -123,4 +123,4 @@ final17 补充（2026-10-18）：非遗详情接口在登录态返回 `collected
 
 final18 补充（2026-10-18）：非遗首页按设计补上 hero 资源统计条（非遗项目 / 教学资源），数字来自已发布非遗条目与已发布课程的真实计数（开发库 5 / 6），草稿与下线内容不计入，不使用设计示例值。`/api/mobile/heritage` 返回 `stats` 并有隔离库断言；实机截图 `.local/design-baselines/app-heritage-stats-final18.png`。final18 全路由冒烟（学生 28 条、教师 9 条）无破图、无未捕获异常、无本地请求失败。
 
-final19 补充（2026-10-18）：青铜画布历史设计支持“原位更新”。`PUT /api/mobile/workshop/designs/{task_id}` 仅允许本人 `user_canvas` 青铜任务更新构图/标题/封面/风格，仍沿用原 task_id；他人任务与 AI 生成任务返回 404。Android 实测从历史 task 恢复 2 个纹样后点击“完成设计”提示“设计已更新”，latest 仍为同一 task_id，未产生重复记录；原始数据已恢复（`.local/android/canvas-update-e2e.txt`）。
+final19 补充（2026-10-18）：青铜画布历史设计支持“原位更新”。`PUT /api/mobile/workshop/designs/{task_id}` 仅允许本人 `user_canvas` 青铜任务更新构图/标题/封面/风格，仍沿用原 task_id；他人任务与 AI 生成任务返回 404。Android 实测从历史 task 恢复 2 个纹样后点击“完成设计”提示“设计已更新”，latest 仍为同一 task_id，未产生重复记录；原始数据已恢复（`.local/android/canvas-update-e2e.txt`）。另在 360dp/411dp 两种宽度下跑完学生 28 条与教师 9 条路由，文档横向溢出、破图、请求失败均为 0；非遗统计条在两种宽度完整显示（截图 `app-heritage-stats-final19-360.png`、`-411.png`）。

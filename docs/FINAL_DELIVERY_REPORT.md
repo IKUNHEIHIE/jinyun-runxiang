@@ -137,6 +137,7 @@ F08B64DC…包实际完成教师开发账号当天签到100→110；重复接口
 - `BronzeCanvas` 首次保存仍走 POST，之后（包括从历史画布设计恢复后）保存走 PUT；实测打开 `task_id=d00e...` 恢复 2 个纹样，点击“完成设计”提示“设计已更新”，随后 `/ai/tasks/latest` 仍返回同一 `task_id`，未产生重复记录；测试后原始构图与封面已恢复，临时上传资产已删除。证据 `.local/android/canvas-update-e2e.txt`。
 - 交付重建包：274,718,826 字节，SHA256 `5a111864c42a3b2b1c590c00cf5b1296336693fa1d7ff880d1e25bb0373d7e0e`，构建日志 `.local/android/build-post-sync.log`；已安装 emulator-5554，设备内 `base.apk` 散列与产物一致（12:09 的 final19 构建产物已被本次交付重建覆盖）。
 - 前端 `vue-tsc --noEmit` 退出码 0（`.local/android/typecheck-final19.log`）；后端全量回归 **133 项通过**（`.local/android/test-final19-full.log`，画布更新测试覆盖同任务更新、任务数不增、跨用户与 AI 任务拒绝）。
+- 多尺寸冒烟：学生 28 条、教师 9 条路由分别在 360dp 与 411dp 下渲染，文档横向溢出 0、破图 0、请求失败 0（教师访问学生专属 `/contests/:id` 的 403 仍为权限预期）；非遗首页统计条在两种宽度均完整显示（`.local/design-baselines/app-heritage-stats-final19-360.png`、`-411.png`；原始结果 `.local/android/route-audit-student-360.json`、`-411.json`、`route-audit-teacher-360.json`、`-411.json`）。
 
 ## 尚未完成的核心工作
 
