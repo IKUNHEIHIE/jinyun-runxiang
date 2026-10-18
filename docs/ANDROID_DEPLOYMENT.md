@@ -2,7 +2,7 @@
 
 本说明对应隔离开发环境；不覆盖已有生产部署。开发数据不会自动清空。正式教学内容、支付、模型服务、远程课堂视频均需要独立配置。
 
-截至2026-10-18，最新开发包为个人中心恢复阶段 `BB4FF6A5…`，完整产物、测试和迁移范围见文末。下列按日期保留的包均为历史记录。
+截至2026-10-18，最新开发包为 final19 `5a111864…`，完整产物、测试和迁移范围见文末。下列按日期保留的包均为历史记录。
 
 ## 当前环境
 
@@ -214,12 +214,12 @@ APK `.local/android/artifacts/jinyun-runxiang-debug.apk` 为274,631,763字节，
 - 对抗赛复用现有作业提交/批改链路；教师端 `POST/GET/PUT /api/teacher/contests...` 与学生端 `GET /api/mobile/me/contests...` 已挂载。运营目录管理接口位于 `/api/admin/catalog/...`，仅管理员可访问。
 - `GET /contests/:id` 深链自动打开详情；手机教师端与教师后台详情均支持截止/公布前编辑参赛名单，已有提交后移出名单、截止或公布后修改返回 409。
 
-最终 Debug APK：`.local/android/artifacts/jinyun-runxiang-debug.apk`，274,763,249 字节，SHA256 `5280ae68767cf1b9d7df0730ce0b18cc92f5dd643bc6775cd105d6b1aaa23e93`。构建日志 `.local/android/build-final18.log` 包含 Vite Android 构建、Capacitor 同步与 Gradle `BUILD SUCCESSFUL`；前端类型检查单独执行 `vue-tsc --noEmit`，日志 `.local/android/typecheck-final18.log`（退出码 0）。Windows 本机构建需设置 `JAVA_HOME=D:\Android\Jdk21\jdk-21.0.12.1+1`；Android Studio 自带 JBR 为 Java 25，不满足 Gradle 的 Java 21 工具链要求。已安装 emulator-5554，设备内 `base.apk` 散列与产物一致；开发 API 映射仍为 `adb -s emulator-5554 reverse tcp:8000 tcp:8000`，API 使用 `http://127.0.0.1:8000/api`。
+最终 Debug APK：`.local/android/artifacts/jinyun-runxiang-debug.apk`，274,718,826 字节，SHA256 `5a111864c42a3b2b1c590c00cf5b1296336693fa1d7ff880d1e25bb0373d7e0e`。构建日志 `.local/android/build-post-sync.log` 包含 Vite Android 构建、Capacitor 同步与 Gradle `BUILD SUCCESSFUL`；前端类型检查单独执行 `vue-tsc --noEmit`，日志 `.local/android/typecheck-final19.log`（退出码 0）。Windows 本机构建需设置 `JAVA_HOME=D:\Android\Jdk21\jdk-21.0.12.1+1`；Android Studio 自带 JBR 为 Java 25，不满足 Gradle 的 Java 21 工具链要求。已安装 emulator-5554，设备内 `base.apk` 散列与产物一致；开发 API 映射仍为 `adb -s emulator-5554 reverse tcp:8000 tcp:8000`，API 使用 `http://127.0.0.1:8000/api`。
 
 Android WebView 的本地源是 `https://localhost`，因此后端 CORS 白名单必须包含 `https://localhost`（本轮已加入 `backend/app/main.py`，同时保留 `http://localhost` 与 `capacitor://localhost`）。本机 HTTP API 调试构建还需允许混合内容：`user-web/capacitor.config.ts` 仅在 `VITE_API_BASE_URL` 以 `http://` 开头时写入 `android.allowMixedContent: true`；使用 HTTPS API 构建时该开关关闭。若修改 CORS 或 Capacitor 配置，需要重启后端并重新执行构建/安装。
 
 设计基准渲染：`python scripts/render_design_baselines.py` 会启动本地静态服务并用无头 Edge 将 `docs/mastergo/*.html` 渲染到 `.local/design-baselines/`（373/375px 画板）；需本机安装 Edge，可用 `--only home` 或 `--force` 控制。地图底图改为 `user-web/public/design/maps/tianjin-districts.svg`，由天津行政区 GeoJSON 生成，页面标注 `DataV.GeoAtlas` 数据来源。
 
-验收证据：后端全量 133 项通过（`.local/android/test-final18-full.log`，含名单增删、重复名单 409、公布后名单锁定、非遗收藏状态回读与首页资源统计）；前端 `vue-tsc --noEmit` 退出码 0；学生深链详情 `.local/android/screenshots/final-student-contest-clean.png`；名单编辑 `.local/android/screenshots/final-roster-editor-final.png`（保存返回“参赛名单已更新”）；课程播放页与答题态 `.local/design-baselines/app-course-player-final9.png`、`app-course-quiz-result-final8b.png`；百科顶部检索 `.local/design-baselines/app-heritage-top-final12.png`（“泥人张”命中《穆桂英挂帅》）与首页资源统计条 `.local/design-baselines/app-heritage-stats-final18.png`（真实计数 5/6）；非遗详情长文与设计长图 `.local/design-baselines/app-heritage-detail-final16.png`、`app-heritage-themes-final14.png`、`app-heritage-origin-final14.png`；收藏后刷新仍为 ★ 的实机画面 `.local/design-baselines/app-heritage-collected-final17.png`；全路由冒烟学生 28 条/教师 9 条均无破图与未捕获异常（`.local/android/route-audit-student.json`、`route-audit-teacher.json`；教师访问学生专属 `/contests/:id` 的 403 属权限预期）；教师后台 `npm run typecheck` 与 `npm run build` 通过。WSL 教师工作区已 rsync 本轮源码并重启 5173，HTTP 200。用于名单编辑验收的临时 OPEN 轮次（0 提交）已从隔离开发库清理。
+验收证据：后端全量 133 项通过（`.local/android/test-final19-full.log`，含名单增删、重复名单 409、公布后名单锁定、非遗收藏状态回读、首页资源统计与画布原位更新）；前端 `vue-tsc --noEmit` 退出码 0；学生深链详情 `.local/android/screenshots/final-student-contest-clean.png`；名单编辑 `.local/android/screenshots/final-roster-editor-final.png`（保存返回“参赛名单已更新”）；课程播放页与答题态 `.local/design-baselines/app-course-player-final9.png`、`app-course-quiz-result-final8b.png`；百科顶部检索 `.local/design-baselines/app-heritage-top-final12.png`（“泥人张”命中《穆桂英挂帅》）与首页资源统计条 `.local/design-baselines/app-heritage-stats-final18.png`（真实计数 5/6）；非遗详情长文与设计长图 `.local/design-baselines/app-heritage-detail-final16.png`、`app-heritage-themes-final14.png`、`app-heritage-origin-final14.png`；收藏后刷新仍为 ★ 的实机画面 `.local/design-baselines/app-heritage-collected-final17.png`；青铜画布历史设计原位更新 E2E 记录 `.local/android/canvas-update-e2e.txt`（同一 task_id，无重复记录）；全路由冒烟学生 28 条/教师 9 条均无破图与未捕获异常（`.local/android/route-audit-student.json`、`route-audit-teacher.json`；教师访问学生专属 `/contests/:id` 的 403 属权限预期）；教师后台 `npm run typecheck` 与 `npm run build` 通过。WSL 教师工作区已 rsync 本轮源码并重启 5173，HTTP 200。用于名单编辑验收的临时 OPEN 轮次（0 提交）已从隔离开发库清理。
 
 此包仍是 Debug 开发产物，使用开发 API 与调试签名；不含正式商店签名、生产服务地址、实体设备/旧 Android/进程回收验证，也不包含作品授权协议、合作社生产、支付或外部生成服务。

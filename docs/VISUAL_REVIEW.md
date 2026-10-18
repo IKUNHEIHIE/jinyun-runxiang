@@ -274,7 +274,7 @@ MasterGo 现有画板未包含对抗赛管理/成绩页。本轮沿用教师页�
 
 Android 实测：教师对抗赛列表显示状态、轮次、两班对阵、提交数与胜者；详情显示班级名次、总分/平均分、学生得分/评语和“成绩已公布，评分与名单已锁定”。学生页显示我方/对手汇总、胜者、本人作品、得分与班内名次。截图为 `.local/android/screenshots/teacher-contests.png`、`teacher-contest-detail.png`、`student-contest.png`、`student-contest-detail.png`。
 
-终验补充（2026-10-18）：`/contests/:id` 深链会直接打开详情弹层，学生实测截图 `.local/android/screenshots/final-student-contest-clean.png`；手机教师端与后台均新增截止/公布前的名单编辑，手机实测保存成功，截图 `.local/android/screenshots/final-roster-editor-final.png`。最终包（final18，含非遗详情设计长图、收藏状态回读及首页资源统计条）274,763,249 字节，SHA256 `5280ae68767cf1b9d7df0730ce0b18cc92f5dd643bc6775cd105d6b1aaa23e93`，构建日志 `.local/android/build-final18.log`。
+终验补充（2026-10-18）：`/contests/:id` 深链会直接打开详情弹层，学生实测截图 `.local/android/screenshots/final-student-contest-clean.png`；手机教师端与后台均新增截止/公布前的名单编辑，手机实测保存成功，截图 `.local/android/screenshots/final-roster-editor-final.png`。最终包（final19，含非遗详情设计长图、收藏状态回读、首页资源统计条及画布原位更新）274,718,826 字节，SHA256 `5a111864c42a3b2b1c590c00cf5b1296336693fa1d7ff880d1e25bb0373d7e0e`，构建日志 `.local/android/build-post-sync.log`。
 
 该页面属于设计稿之外新增的业务入口；其视觉验收只覆盖现有设计 token 的一致性和两种内容状态（进行中/已公布），不纳入原画板逐页像素对照。
 
@@ -293,7 +293,7 @@ Android 实测：教师对抗赛列表显示状态、轮次、两班对阵、提
 | 行走的美育地图 `40-11915` 375×2818 | 统计、地图、基地卡、商品卡结构接近 | 设计底图实为美国地图，现替换为天津行政区 SVG；打卡点按真实经纬度投影；设计营销统计不伪造 |
 | 文创市集 `5-7245` 375×2862 | 横幅、统计、创作者、四步说明、商品卡接近 | 设计导出存在 `@SVGundefined@` 占位；授权/生产者仍无真实数据 |
 | AI 工坊 `40-55029` 375×1866 | 三张工坊卡、入口按钮一致 | 设计导出有占位文本；背景透明度仍待逐层核对 |
-| 青铜工坊 `40-55030` 375×2296 | 纹样库、画布、底部工具栏、生成入口一致 | 效果渲染/文化区已实现；原始位图对照仍待完成 |
+| 青铜工坊 `40-55030` 375×2296 | 纹样库、画布、底部工具栏、生成入口一致 | 效果渲染/文化区已实现；历史画布设计已支持原位更新（同一 task_id 覆盖构图与封面）；原始位图对照仍待完成 |
 | 个人中心 `5-00420` 375×1770 | 红色头图、统计、修习、徽章、收藏结构一致 | 头像/数据/修习项为真实账号状态；设计中的收藏横滑细节仍待核对 |
 | 课程播放 `5-01018` 375×1537 | 顶部进度/评分胶囊、视频卡、讲师卡、鉴赏卡、底部工具条均已还原 | 已按设计重建：高清/时长/播放/进度、讲师头衔、单题翻页选项与正确/错误标记、解析/成绩、下一件瑰宝/继续研习、能量/收藏/AI 工坊底栏；评分为真实平均值，无评分时不伪造星数。原始位图与多尺寸/多状态仍待核对 |
 | 作品详情 `5-5591` 375×2128 | 图集/计数、标题与作者、简介/规格、鉴赏要点、评论、推荐、底部操作栏齐全 | 本轮 1300px 同宽截图结构与设计一致；当前作品无评论/规格/推荐数据，按真实空状态展示，未伪造示例内容 |
@@ -304,4 +304,4 @@ Android 实测：教师对抗赛列表显示状态、轮次、两班对阵、提
 
 设计导出 HTML 是 DSL 重建页而非 MasterGo 导出的原始位图，因此上述结论用于结构/尺寸/层级对照，不等同于逐像素验收；购物/AI 工坊导出中的 `@SVGundefined@` 也说明导出本身存在缺图。当前最终包与截图见 `FINAL_DELIVERY_REPORT.md` 的同日章节。
 
-final18 终验补充（2026-10-18）：课程播放页实际 APK 截图 `.local/design-baselines/app-course-player-final9.png`，答题提交态 `.local/design-baselines/app-course-quiz-result-final8b.png`（选 A 后“鉴赏通过 · 10分”）；教师个人中心 `.local/design-baselines/app-teacher-final9.png`；智能备课 `.local/design-baselines/app-lesson-plan-final9.png`；作品详情 `.local/design-baselines/app-community-detail-final8b.png`；百科顶部检索 `.local/design-baselines/app-heritage-top-final12.png`，首页资源统计条 `.local/design-baselines/app-heritage-stats-final18.png`；非遗详情设计长图与收藏星标 `.local/design-baselines/app-heritage-detail-final16.png`，收藏后刷新仍保持 ★ 的实机画面 `.local/design-baselines/app-heritage-collected-final17.png`。终验包 274,763,249 字节，SHA256 `5280ae68767cf1b9d7df0730ce0b18cc92f5dd643bc6775cd105d6b1aaa23e93`，构建日志 `.local/android/build-final18.log`，设备内散列一致，前端类型检查退出码 0（`.local/android/typecheck-final18.log`），后端 133 项通过（`.local/android/test-final18-full.log`）。同包全路由冒烟（学生 28 条、教师 9 条）无破图、无未捕获异常、无本地请求失败；教师打开学生专属 `/contests/:id` 返回 403 属权限预期（`.local/android/route-audit-student.json`、`route-audit-teacher.json`）。
+final19 终验补充（2026-10-18）：课程播放页实际 APK 截图 `.local/design-baselines/app-course-player-final9.png`，答题提交态 `.local/design-baselines/app-course-quiz-result-final8b.png`（选 A 后“鉴赏通过 · 10分”）；教师个人中心 `.local/design-baselines/app-teacher-final9.png`；智能备课 `.local/design-baselines/app-lesson-plan-final9.png`；作品详情 `.local/design-baselines/app-community-detail-final8b.png`；百科顶部检索 `.local/design-baselines/app-heritage-top-final12.png`，首页资源统计条 `.local/design-baselines/app-heritage-stats-final18.png`；非遗详情设计长图与收藏星标 `.local/design-baselines/app-heritage-detail-final16.png`，收藏后刷新仍保持 ★ 的实机画面 `.local/design-baselines/app-heritage-collected-final17.png`。青铜画布历史设计原位更新已实测：恢复 2 个纹样后保存提示“设计已更新”，latest 仍为同一 task_id，证据 `.local/android/canvas-update-e2e.txt`。终验包 274,718,826 字节，SHA256 `5a111864c42a3b2b1c590c00cf5b1296336693fa1d7ff880d1e25bb0373d7e0e`，构建日志 `.local/android/build-post-sync.log`，设备内散列一致，前端类型检查退出码 0（`.local/android/typecheck-final19.log`），后端 133 项通过（`.local/android/test-final19-full.log`）。final18 全路由冒烟（学生 28 条、教师 9 条）无破图、无未捕获异常、无本地请求失败；教师打开学生专属 `/contests/:id` 返回 403 属权限预期（`.local/android/route-audit-student.json`、`route-audit-teacher.json`）。

@@ -6,10 +6,10 @@
 
 - APK：D:/admin/desktop/codex/school/smxc/jinyun-runxiang/.local/android/artifacts/jinyun-runxiang-debug.apk
 - 包名：com.jinyun.runxiang
-- 大小：274,631,763 字节
-- SHA-256：BB4FF6A572BEAF55B613016986B92486B69F814015E2366EF3A8E381FA0A23A6
+- 大小：274,718,826 字节
+- SHA-256：5a111864c42a3b2b1c590c00cf5b1296336693fa1d7ff880d1e25bb0373d7e0e
 - 已安装到 emulator-5554，设备中 APK 与交付文件的 SHA-256 相同。
-- 构建记录：.local/android/build-profile-recovery-android.log，包含类型检查、Vite、Capacitor 与 Gradle 构建。首页阶段D1101DF4…及备课阶段314D630A…分别另存为 .local/android/artifacts/home-d1101df4-debug.apk、lesson-plan-314d630a-debug.apk。
+- 构建记录：.local/android/build-post-sync.log，包含类型检查、Vite、Capacitor 与 Gradle 构建。final18 及更早的历史包保留在 .local/android/artifacts/。
 - 运行方式与配置见 [Android 部署说明](ANDROID_DEPLOYMENT.md)。该包使用开发 API；正式发布还需服务地址、签名及设备兼容性验证。
 
 ## 八项交付要求的当前证据
@@ -96,7 +96,7 @@ F08B64DC…包实际完成教师开发账号当天签到100→110；重复接口
 - 手机教师端与教师后台均新增“编辑参赛名单”：打开时回填当前名单，保存调用 `PUT /teacher/contests/{id}/entries`；已有学生提交后移出名单、截止或公布后修改均由后端 409 拒绝。手机端复选框布局已按全局表单样式修正。
 - 设计基准不再受“无法导出 PNG”阻塞：`docs/mastergo/*.html` 已可在本地离线渲染。新增 `scripts/render_design_baselines.py`，用无头 Edge 将 18 个有效画板输出到 `.local/design-baselines/`，并在同一 373px 宽度下用实际 APK WebView 截长图对照。
 - 对照后修复的实质视觉问题：非遗百科首页原使用近白装饰图，画作主视觉缺失，现改为设计中的天津非遗画作背景；课程页顶部横幅改为设计稿的全宽无缝版式；首页百科入口改为直角 56px 横幅并收紧分类胶囊；行走地图原设计底图实为美国地图（Newington/Laurel Hill），现替换为本地生成的天津行政区 SVG（DataV.GeoAtlas 数据），打卡点按真实经纬度投影；后母戊鼎封面原指向 341×1 分隔线导致全黑，现改用设计中的 934×1200 器物图，并按设计稿重做深色沉浸式详情；教师实时数据页补上设计中的粉色蒙层，不再直接显示地毯纹理。
-- 该轮终验包（final7，后续已被 final18 取代）：274,131,701 字节，SHA256 `2DC227A74EBFFEA6D0390E7B403BC9C29BD9F88ADDD357EFCB1790C12C0D1CA9`，构建日志 `.local/android/build-final7.log`（类型检查、Vite、Capacitor、Gradle `BUILD SUCCESSFUL`）。
+- 该轮终验包（final7，后续已被 final19 取代）：274,131,701 字节，SHA256 `2DC227A74EBFFEA6D0390E7B403BC9C29BD9F88ADDD357EFCB1790C12C0D1CA9`，构建日志 `.local/android/build-final7.log`（类型检查、Vite、Capacitor、Gradle `BUILD SUCCESSFUL`）。
 - 已在 emulator-5554 安装最终包，设备内 `base.apk` SHA256 与产物一致。截图证据：`.local/android/screenshots/final-student-contest-clean.png`、`final-roster-editor-final.png`，以及 `.local/design-baselines/app-home-top.png`、`app-courses-top.png`、`app-heritage-top.png`、`app-map-view.png`、`app-bronze-editor.png`。
 - 后端全量回归 **132 项通过**（`.local/android/test-final2.log`，含名单增删、重复名单 409 与公布后名单锁定）；教师后台 `npm run typecheck` 与 `npm run build` 通过，WSL 工作区已同步并重启 5173。
 
@@ -128,15 +128,22 @@ F08B64DC…包实际完成教师开发账号当天签到100→110；重复接口
 
 - 按 `40:32437` 设计补上 hero 内“非遗项目 / 教学资源”统计条（30px 数字、金色加号、细分隔线、14px 标签）。数字来自已发布内容的真实计数：已发布非遗条目与已发布课程；开发库当前为 5 / 6，不使用设计示例的 128 / 56，也没有写死。
 - `GET /api/mobile/heritage` 新增 `stats` 字段；后端测试在隔离库中断言已发布条目 2 / 已发布课程 1，草稿与下线内容不计入。
-- 终验包：274,763,249 字节，SHA256 `5280ae68767cf1b9d7df0730ce0b18cc92f5dd643bc6775cd105d6b1aaa23e93`，构建日志 `.local/android/build-final18.log`；已安装 emulator-5554，设备内 `base.apk` 散列与产物一致。
+- final18 构建：274,763,249 字节，SHA256 `5280ae68767cf1b9d7df0730ce0b18cc92f5dd643bc6775cd105d6b1aaa23e93`，构建日志 `.local/android/build-final18.log`；已安装 emulator-5554，设备内 `base.apk` 散列与产物一致（已被 final19 取代）。
 - 前端 `vue-tsc --noEmit` 退出码 0（`.local/android/typecheck-final18.log`）；后端全量回归 **133 项通过**（`.local/android/test-final18-full.log`）。final18 全路由冒烟（学生 28 条、教师 9 条）无破图、无未捕获异常、无本地请求失败；教师访问学生专属 `/contests/:id` 的 403 为权限预期。新增实测截图 `.local/design-baselines/app-heritage-stats-final18.png`。
+
+## 2026-10-18 工坊历史作品原位更新（final19）
+
+- 新增 `PUT /api/mobile/workshop/designs/{task_id}`：仅本人、`BRONZE`、且结果为 `user_canvas` 的设计可更新；替换构图/标题/封面/渲染风格后仍使用原 `task_id`，不新建任务。他人任务、AI 生成任务均按 404 处理。
+- `BronzeCanvas` 首次保存仍走 POST，之后（包括从历史画布设计恢复后）保存走 PUT；实测打开 `task_id=d00e...` 恢复 2 个纹样，点击“完成设计”提示“设计已更新”，随后 `/ai/tasks/latest` 仍返回同一 `task_id`，未产生重复记录；测试后原始构图与封面已恢复，临时上传资产已删除。证据 `.local/android/canvas-update-e2e.txt`。
+- 交付重建包：274,718,826 字节，SHA256 `5a111864c42a3b2b1c590c00cf5b1296336693fa1d7ff880d1e25bb0373d7e0e`，构建日志 `.local/android/build-post-sync.log`；已安装 emulator-5554，设备内 `base.apk` 散列与产物一致（12:09 的 final19 构建产物已被本次交付重建覆盖）。
+- 前端 `vue-tsc --noEmit` 退出码 0（`.local/android/typecheck-final19.log`）；后端全量回归 **133 项通过**（`.local/android/test-final19-full.log`，画布更新测试覆盖同任务更新、任务数不增、跨用户与 AI 任务拒绝）。
 
 ## 尚未完成的核心工作
 
 1. 全部有效设计页、所有状态及多尺寸的逐页验收。当前已能从 `docs/mastergo/*.html` 渲染设计导出基准并完成首页、课程、非遗、地图、市集、AI 工坊、个人中心的重点对照；剩余页面/状态与原始画布位图仍需继续核对。备课原稿的 4px 横向装饰线也未作为已验收项。
 2. 作品许可、设计者/生产者归属、真实授权协议与生产对接；现有说明或标签不代表协议已落地。
 3. 正式教学视频、外部图像/音频生成、LoRA 与草图重绘、三维、支付及远程视频课堂等服务。当前本地模板和演示资源不能代表这些能力已完成。
-4. 工坊历史作品的“原位更新”能力及部分页面的设计细节；顶部悬浮搜索已补齐，课程播放页教师卡片、随堂鉴赏外框与底部工具条已按设计重建，但原始画布位图与多尺寸/多状态逐页对照仍未完成。地图底图已替换为天津行政区示意图，不再使用设计稿中的美国地图。
+4. 部分页面的设计细节；顶部悬浮搜索已补齐，课程播放页教师卡片、随堂鉴赏外框与底部工具条已按设计重建，但原始画布位图与多尺寸/多状态逐页对照仍未完成。地图底图已替换为天津行政区示意图，不再使用设计稿中的美国地图。
 5. 实体设备、旧 Android、进程回收、完整跨账号/离线/跨日及全生命周期回归；Debug 包体积与生产发布配置仍需评估。
 
 设计稿教师学情页出现的“书法/策展/传承”是示例分类，现有课程数据没有对应分类；本轮没有伪造这三类徽章。徽章目录已可在运营后台维护，实际授予规则仍以真实课程与场所数据为准。

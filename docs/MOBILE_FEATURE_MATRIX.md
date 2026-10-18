@@ -12,7 +12,7 @@
 | 测验、评分、课程收藏 | `/courses/quiz/{id}/submit`、`/mobile/courses/{id}/rating`、`/mobile/collections/...` | 浏览器答题实测；奖励幂等与收藏接口测试通过 |
 | 个人中心、历史、关注与专题徽章 | `/mobile/me/summary`、`learning`、`collections`、`follows`、`/mobile/badges` | 学生设计与真实统计已接入；专题徽章整门课程条件、日期去重与归属有接口测试。新增等待内容后恢复返回位置、资料保存/退出账号隔离与专项测试；教师411dp/学生360dp反馈返回一致，学生收藏返回差2物理像素，普通换号/离线重试已实测。完整原图/全生命周期与其他路由竞态仍待验收；V15无法恢复旧版已覆盖日期 |
 | AI 工坊入口 | 本地路由 `/ai-workshop/{bronze,shadow,lacquer}` | 重新核对完整 7 分区，修正间距、原始填充/插画/箭头/渐变；360dp 与约 411dp 卡片、三条原生入口及系统返回通过，背景透明度与原始 PNG 对照仍待完成 |
-| 青铜纹样画布 | `/ai/assets/upload`、`/mobile/workshop/designs`、`/mobile/workshop/bronze` | 已按设计修正分类、4:3 画布、效果预览、文化与作品展示；浏览器和 Android 构图互相恢复，原生拖入/移动/大小/旋转/撤销重做、保存、系统导出与取消、社区发布通过。导出 PNG 与服务器保存图逐字节一致；全部模型能力与历史作品编辑仍未完成 |
+| 青铜纹样画布 | `/ai/assets/upload`、`/mobile/workshop/designs`、`/mobile/workshop/bronze` | 已按设计修正分类、4:3 画布、效果预览、文化与作品展示；浏览器和 Android 构图互相恢复，原生拖入/移动/大小/旋转/撤销重做、保存、系统导出与取消、社区发布通过。导出 PNG 与服务器保存图逐字节一致；历史画布设计已支持原位更新（同一 task_id 覆盖构图与封面），全部外部模型能力仍未接入 |
 | 皮影工坊 | `/ai/tasks`、`/ai/tasks/{id}/favorite`、查询/取消、导出/发布 | 31 分区与 13 个 SVG 已核对；净/丑本地造型、三种脸谱、主色与提示词真实保存。收藏/取消幂等、归属、指定历史任务恢复与三种预览导出接通；360dp/约 411dp 整页及原生发布实测。旧三格式导出和新净角纸样均与服务端一致；外部图像模型、实体纸样/设备切割、三维及原始截图验收未完成 |
 | 漆绣工坊 | `/ai/tasks`、上传/查询/收藏/导出/发布 | 22 分区、348 节点及 4 个原始 SVG 已核对并重构；花鸟/几何/吉祥文字三类本地二维模板、主色、本人上传参考和指定任务恢复已接通。原生两种屏宽、重新创作保留页面位置、账户更新、导出与社区发布有分版本证据；三个导出均与服务器逐字节一致。LoRA/草图重绘/A4纸样未实现，查询已修正历史能力说明且保留原记录；原始 PNG 与完整视觉验收仍待完成 |
 | 社区发布、点赞、评论、关注、举报 | `/community/posts/...`、`/mobile/follows/...` | 已接入图集、规格、鉴赏要点、关联作品、评论分页/引用回复/点赞；浏览器三图发布、收藏和评论持久化通过，Android 读取同一作品、横滑切图及系统分享文件通过。图片审核模型未配置，审核流水明确记录仅关键词筛查 |
@@ -109,7 +109,7 @@ Android 教师端已实测列表、胜者/班级排名/分数/评语与锁定状
 
 `/contests/:id` 现会在加载后自动打开对应详情弹层；Android 实测从作业卡进入后直接显示状态、两班汇总、胜者、本人作品、得分/班内名次与评语（`.local/android/screenshots/final-student-contest-clean.png`）。手机教师端详情新增“编辑参赛名单”，保存调用 `PUT /teacher/contests/{id}/entries`，已有提交/截止/公布后由后端 409 拒绝；实测保存提示“参赛名单已更新”（`.local/android/screenshots/final-roster-editor-final.png`）。教师后台详情同步提供名单编辑对话框。
 
-最终 Debug 包 274,763,249 字节，SHA256 `5280ae68767cf1b9d7df0730ce0b18cc92f5dd643bc6775cd105d6b1aaa23e93`，构建日志 `.local/android/build-final18.log`，已安装 emulator-5554 且设备内散列一致。后端全量回归 133 项通过（`.local/android/test-final18-full.log`，含名单增删/重复/公布后锁定、非遗收藏状态回读及首页资源统计）；前端 `vue-tsc --noEmit` 通过（`.local/android/typecheck-final18.log`）；教师后台类型检查与生产构建通过。设计基准通过 `python scripts/render_design_baselines.py` 从 `docs/mastergo/*.html` 离线渲染到 `.local/design-baselines/`，同宽 WebView 对照修复了非遗主视觉、课程横幅、首页横幅/胶囊、天津地图底图、后母戊鼎封面/深色详情、教师实时数据页粉色蒙层，以及课程播放页、教师中心底栏、备课页印记和百科顶部检索。用于名单编辑验收的临时 OPEN 轮次（0 提交）已从隔离开发库清理。
+最终 Debug 包 274,718,826 字节，SHA256 `5a111864c42a3b2b1c590c00cf5b1296336693fa1d7ff880d1e25bb0373d7e0e`，构建日志 `.local/android/build-post-sync.log`，已安装 emulator-5554 且设备内散列一致。后端全量回归 133 项通过（`.local/android/test-final19-full.log`，含名单增删/重复/公布后锁定、非遗收藏状态回读、首页资源统计与画布原位更新）；前端 `vue-tsc --noEmit` 通过（`.local/android/typecheck-final19.log`）；教师后台类型检查与生产构建通过。设计基准通过 `python scripts/render_design_baselines.py` 从 `docs/mastergo/*.html` 离线渲染到 `.local/design-baselines/`，同宽 WebView 对照修复了非遗主视觉、课程横幅、首页横幅/胶囊、天津地图底图、后母戊鼎封面/深色详情、教师实时数据页粉色蒙层，以及课程播放页、教师中心底栏、备课页印记和百科顶部检索。用于名单编辑验收的临时 OPEN 轮次（0 提交）已从隔离开发库清理。
 
 ## 课程播放页/教师中心/备课页/百科检索/非遗长文终验（2026-10-18，final14）
 
@@ -122,3 +122,5 @@ final16 补充（2026-10-18）：非遗详情主视觉优先使用 `content.hero
 final17 补充（2026-10-18）：非遗详情接口在登录态返回 `collected`，详情页加载时回填收藏星标与底部收藏按钮。实机验证收藏后刷新仍为 ★、取消后刷新仍为 ☆（截图 `.local/design-baselines/app-heritage-collected-final17.png`）。后端新增收藏状态回读测试，全量 133 项通过；final17 设备内散列与产物一致，全路由冒烟结果同 final16。
 
 final18 补充（2026-10-18）：非遗首页按设计补上 hero 资源统计条（非遗项目 / 教学资源），数字来自已发布非遗条目与已发布课程的真实计数（开发库 5 / 6），草稿与下线内容不计入，不使用设计示例值。`/api/mobile/heritage` 返回 `stats` 并有隔离库断言；实机截图 `.local/design-baselines/app-heritage-stats-final18.png`。final18 全路由冒烟（学生 28 条、教师 9 条）无破图、无未捕获异常、无本地请求失败。
+
+final19 补充（2026-10-18）：青铜画布历史设计支持“原位更新”。`PUT /api/mobile/workshop/designs/{task_id}` 仅允许本人 `user_canvas` 青铜任务更新构图/标题/封面/风格，仍沿用原 task_id；他人任务与 AI 生成任务返回 404。Android 实测从历史 task 恢复 2 个纹样后点击“完成设计”提示“设计已更新”，latest 仍为同一 task_id，未产生重复记录；原始数据已恢复（`.local/android/canvas-update-e2e.txt`）。
