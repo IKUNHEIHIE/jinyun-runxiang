@@ -54,7 +54,7 @@ const palette = [
   { name: "泥金", value: "#D4AF37" },
 ];
 const intro =
-  "宁氏漆艺镶嵌与联升斋刺\n绣，均为国家级非物质文化\n遗产。以AI技术赋能传统纹\n样设计，让千年工艺焕发新\n生。";
+  "宁氏漆艺镶嵌与联升斋刺\n绣，均为津门非遗工艺。\n以数字化纹样辅助设计，\n让传统工艺在当下焕发新\n生。";
 function chooseUpload() {
   if (!disabled.value && requireSession()) input.value?.click();
 }
@@ -109,7 +109,7 @@ function generate() {
         >
           <img :src="designIcon(screen, '40:55065')" alt="" />
         </button>
-        <p class="eyebrow">国家级非遗 · 津门传统工艺</p>
+        <p class="eyebrow">津门非遗 · 传统工艺</p>
         <h1>漆绣智绘</h1>
         <img
           class="title-underline"
@@ -139,7 +139,7 @@ function generate() {
         <div class="hero-quote">
           <img :src="designImage(screen, '5:00010')" alt="" />
           <p>一针一线绣乾坤，一漆一镶嵌日月</p>
-          <p>AI赋能传统艺，古今交融谱新篇</p>
+          <p>纹样参考，古今交融谱新篇</p>
         </div>
       </header>
       <section class="intro-section art-section">

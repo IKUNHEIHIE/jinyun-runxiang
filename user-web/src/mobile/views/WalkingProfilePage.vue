@@ -517,13 +517,14 @@ watch(
         <div class="walker-heading">
           <h2>所获徽章</h2>
           <button
+            :disabled="loading || (!badges.length && !!error)"
             @click="
               historyVisible = false;
               activeBadge = { catalog: true };
             "
           >
             {{
-              loading
+              loading || (!badges.length && error)
                 ? "—"
                 : badges.filter((b) => b.unlocked).length +
                   " / " +
@@ -534,6 +535,7 @@ watch(
         </div>
         <AsyncState
           :loading="loading"
+          :error="badges.length ? '' : error"
           :empty="!badges.length"
           empty-text="暂无开放徽章"
           @retry="load"

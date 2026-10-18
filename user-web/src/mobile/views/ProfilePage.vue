@@ -306,18 +306,15 @@ function targetUrl(item: any) {
     :aria-busy="loading"
   >
     <header class="profile-hero">
+      <img
+        class="profile-hero-art"
+        :src="designImage('layer-5-00420', '5:00495')"
+        alt=""
+      />
       <RouterLink to="/" class="profile-back" aria-label="返回首页"
         ><img :src="designIcon('layer-5-00420', '5:00505')" alt=""
       /></RouterLink>
-      <p class="profile-entry-year">
-        {{
-          new Date().toLocaleDateString("zh-CN", {
-            timeZone: "Asia/Shanghai",
-            year: "numeric",
-          })
-        }}
-        · 入馆习艺
-      </p>
+      <p class="profile-entry-year">美育成长档案 · 研学记录</p>
       <button
         class="profile-avatar"
         aria-label="编辑个人资料或登录"
@@ -652,7 +649,16 @@ function targetUrl(item: any) {
   inset: 0 0 auto;
   height: 305px;
   background: #c5aaa1;
+  z-index: -2;
+}
+.profile-hero-art {
+  position: absolute;
+  inset: 0 0 auto;
+  width: 100%;
+  height: 305px;
+  object-fit: cover;
   z-index: -1;
+  pointer-events: none;
 }
 .profile-back {
   position: absolute;
@@ -1053,16 +1059,25 @@ function targetUrl(item: any) {
   text-align: center;
 }
 .collection-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  margin-right: -20px;
+  padding-right: 20px;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+}
+.collection-grid::-webkit-scrollbar {
+  display: none;
 }
 .profile-collections .section-heading {
   margin-bottom: 28px;
 }
 .collection-card {
+  flex: 0 0 158px;
   min-width: 0;
   min-height: 185px;
+  scroll-snap-align: start;
   overflow: hidden;
   border: 1px solid rgba(200, 169, 110, 0.3);
   border-radius: 12px;
@@ -1102,6 +1117,7 @@ function targetUrl(item: any) {
   margin: 4px 8px 12px;
 }
 .empty-inline {
+  flex: 1 0 100%;
   padding: 24px 10px;
   text-align: center;
   grid-column: 1/-1;

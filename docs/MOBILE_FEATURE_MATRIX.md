@@ -1,6 +1,6 @@
 # 手机页面、接口与验收状态
 
-状态截至 2026-10-18，持续更新。以下“已接入”表示有真实代码与数据接口，不等于已经完成 1:1 视觉验收。设计稿中的示例人数、销量、评分、能量和进度均不作为真实数据库统计。按日期记录的历史包与测试仅覆盖各自阶段；最新备课阶段见文末。
+状态截至 2026-10-18，持续更新。以下“已接入”表示有真实代码与数据接口，不等于已经完成 1:1 视觉验收。设计稿中的示例人数、销量、评分、能量和进度均不作为真实数据库统计。按日期记录的历史包与测试仅覆盖各自阶段；最新 final29 阶段见文末。
 
 | 页面/能力 | 主要接口 | 当前状态与证据 |
 |---|---|---|
@@ -24,7 +24,7 @@
 | 教师个人中心、班级实时统计 | `/mobile/teacher/overview`、`/mobile/me/summary` | 40:8834 全8分区、19源SVG重构；有效班级/学生去重、真实出勤/提交/互动与四项当前里程碑。真实MySQL考勤保存后浏览器/API/Android同为100%；教师页360dp/约411dp、三教学入口/系统返回、约411dp未达成弹窗有最终包证据，原始PNG/白色时钟图标与全状态仍待验收 |
 | 教师班级、学情、考勤 | `/teacher/classes`、`/mobile/teacher/classes/...` | 手机/桌面已接入；名册与考勤排除停用/非学生用户并去重，归属和无效成员拒绝测试通过；学情页已按28分区重构，新增近七日与实际徽章统计，原始PNG及全部状态仍待验收 |
 | 作业发布、提交、批改 | `/teacher/assignments`、`/mobile/assignments/.../submit`、`/teacher/submissions/.../review` | 浏览器完整贯通，Android 读取同一批改结果通过 |
-| 智能备课、历史、PPTX | `/mobile/teacher/lesson-plans/...`、`lesson-plan-capabilities` | 10分区/14源SVG重建；手机创建→后台下载、后台创建→手机读取，历史离线/恢复、模板选取、展开及系统分享/取消有分版本原生证据。V19请求幂等、权限、分页、旧记录保留、实际11页可编辑PPTX通过；原始PNG/装饰线/透明度、学段差异化本地模板和真实外部模型待完善 |
+| 智能备课、历史、PPTX | `/mobile/teacher/lesson-plans/...`、`lesson-plan-capabilities` | 10分区/14源SVG重建；手机创建→后台下载、后台创建→手机读取，历史离线/恢复、模板选取、展开及系统分享/取消有分版本原生证据。V19请求幂等、权限、分页、旧记录保留、实际11页可编辑PPTX通过；原始PNG/装饰线/透明度、完整学段课程设计和真实外部模型待完善；本地模板已按小学/初中/高中/大学四档调整实践说明、追问与作业证据要求 |
 | BALLAD 谱面结果 | `/ai/tasks`、`/ai/tasks/{id}` | 当前及历史读取明确为本地固定音符模板，音频为空，不把雨声音效当作生成伴奏，保存的旧结果保留；接口测试通过，自动作曲/演唱/自定义旋律未实现，未做完整原生音频流程验收 |
 | 班级通知 | `/mobile/teacher/classes/.../notices`、`/mobile/classes/.../notices` | 教师发布、学生读取浏览器通过 |
 | 课堂聊天、举手、结束 | `/mobile/classroom/...` | 浏览器师生消息贯通；权限与结束后禁发接口测试通过；远程音视频尚未配置 |
@@ -75,7 +75,7 @@ F2DF5CE5…包验证两种屏宽、空班、条件/未配置说明、完整徽�
 
 当前130项后端回归（86移动+24安全+20备课）通过，3954条既有弃用等提示；两组实际客户端组件/文件助手专项通过。WSL后台类型检查/最终构建通过。实际11页课件逐页渲染检查并保留可编辑文字，最终渲染像素与已检查文件一致。28张原生图中20张B2466C9D…覆盖主要操作，8张314D630A…补检最终追踪标记包；3张浏览器图和全部范围见 `.local/android/lesson-plan-evidence.json`。
 
-未完成：原始画布PNG、4px装饰线/透明度/裁剪与完整状态；本地活动按学段细分；真实外部模型、实体设备/旧Android/进程回收与全生命周期。授权/生产、正式外部资源及其他页面剩余项继续保留；对抗赛与目录管理已完成。整体目标未完成。
+未完成：原始画布PNG、4px装饰线/透明度/裁剪与完整状态；本地活动按学段四档细分已在 final21 补上（仍非完整分学段课程设计）；真实外部模型、实体设备/旧Android/自然进程回收与全生命周期。授权/生产、正式外部资源及其他页面剩余项继续保留；对抗赛与目录管理已完成。整体目标未完成。
 
 ## 首页阶段最新验证（2026-10-18）
 
@@ -109,7 +109,7 @@ Android 教师端已实测列表、胜者/班级排名/分数/评语与锁定状
 
 `/contests/:id` 现会在加载后自动打开对应详情弹层；Android 实测从作业卡进入后直接显示状态、两班汇总、胜者、本人作品、得分/班内名次与评语（`.local/android/screenshots/final-student-contest-clean.png`）。手机教师端详情新增“编辑参赛名单”，保存调用 `PUT /teacher/contests/{id}/entries`，已有提交/截止/公布后由后端 409 拒绝；实测保存提示“参赛名单已更新”（`.local/android/screenshots/final-roster-editor-final.png`）。教师后台详情同步提供名单编辑对话框。
 
-最终 Debug 包 274,718,826 字节，SHA256 `5a111864c42a3b2b1c590c00cf5b1296336693fa1d7ff880d1e25bb0373d7e0e`，构建日志 `.local/android/build-post-sync.log`，已安装 emulator-5554 且设备内散列一致。后端全量回归 133 项通过（`.local/android/test-final19-full.log`，含名单增删/重复/公布后锁定、非遗收藏状态回读、首页资源统计与画布原位更新）；前端 `vue-tsc --noEmit` 通过（`.local/android/typecheck-final19.log`）；教师后台类型检查与生产构建通过。设计基准通过 `python scripts/render_design_baselines.py` 从 `docs/mastergo/*.html` 离线渲染到 `.local/design-baselines/`，同宽 WebView 对照修复了非遗主视觉、课程横幅、首页横幅/胶囊、天津地图底图、后母戊鼎封面/深色详情、教师实时数据页粉色蒙层，以及课程播放页、教师中心底栏、备课页印记和百科顶部检索。用于名单编辑验收的临时 OPEN 轮次（0 提交）已从隔离开发库清理。
+该阶段最终包（final20，已被 final21 取代）274,763,671 字节，SHA256 `8f84c8c27bc417df3de9cffedc596de2d80e6ccb4a0656c3530bf47772cc9662`，构建日志 `.local/android/build-final20.log`，曾安装 emulator-5554 且设备内散列一致。后端全量回归 133 项通过（`.local/android/test-final20-full.log`，含名单增删/重复/公布后锁定、非遗收藏状态回读、首页资源统计与画布原位更新）；前端 `vue-tsc --noEmit` 通过（`.local/android/typecheck-final20.log`）；教师后台类型检查与生产构建通过。12:11 的 post-sync 重建已被 final20 覆盖。设计基准通过 `python scripts/render_design_baselines.py` 从 `docs/mastergo/*.html` 离线渲染到 `.local/design-baselines/`，同宽 WebView 对照修复了非遗主视觉、课程横幅、首页横幅/胶囊、天津地图底图、后母戊鼎封面/深色详情、教师实时数据页粉色蒙层，以及课程播放页、教师中心底栏、备课页印记和百科顶部检索。用于名单编辑验收的临时 OPEN 轮次（0 提交）已从隔离开发库清理。
 
 ## 课程播放页/教师中心/备课页/百科检索/非遗长文终验（2026-10-18，final14）
 
@@ -124,3 +124,21 @@ final17 补充（2026-10-18）：非遗详情接口在登录态返回 `collected
 final18 补充（2026-10-18）：非遗首页按设计补上 hero 资源统计条（非遗项目 / 教学资源），数字来自已发布非遗条目与已发布课程的真实计数（开发库 5 / 6），草稿与下线内容不计入，不使用设计示例值。`/api/mobile/heritage` 返回 `stats` 并有隔离库断言；实机截图 `.local/design-baselines/app-heritage-stats-final18.png`。final18 全路由冒烟（学生 28 条、教师 9 条）无破图、无未捕获异常、无本地请求失败。
 
 final19 补充（2026-10-18）：青铜画布历史设计支持“原位更新”。`PUT /api/mobile/workshop/designs/{task_id}` 仅允许本人 `user_canvas` 青铜任务更新构图/标题/封面/风格，仍沿用原 task_id；他人任务与 AI 生成任务返回 404。Android 实测从历史 task 恢复 2 个纹样后点击“完成设计”提示“设计已更新”，latest 仍为同一 task_id，未产生重复记录；原始数据已恢复（`.local/android/canvas-update-e2e.txt`）。另在 360dp/411dp 两种宽度下跑完学生 28 条与教师 9 条路由，文档横向溢出、破图、请求失败均为 0；非遗统计条在两种宽度完整显示（截图 `app-heritage-stats-final19-360.png`、`-411.png`）。
+
+final20 补充（2026-10-18）：独立评审修复账号切换/任务状态变化后画布保存目标未清空、上传期间目标漂移与百科检索旧响应覆盖新结果三处问题。final20 重测历史画布保存仍提示“设计已更新”，latest 保持同一 task_id；类型检查与 133 项后端回归通过，373dp 全路由（学生 28/教师 9）冒烟无破图、无未捕获异常、无请求失败。生命周期补测：教师→学生切号、教师路由守卫、断网/重试、`am force-stop` 后联网与离线冷启动均通过；离线时显示未知值而非零值，恢复网络后回到 270 能量，资料头由 30 秒重试补齐（`.local/android/lifecycle-final20.txt`）。
+
+final21 补充（2026-10-18）：首页“重试账户状态”改为并行重试 `/auth/me` 与 `/mobile/me/summary`，修复离线恢复后姓名/等级仍需等待 30 秒的问题；按钮加载中显示“重试中…”，重复点击只发一次资料请求。模拟器离线冷启动后单次重试 3.2 秒内恢复林锦/LV.1/270/今日已签到；`scripts/test_home_session.mjs`、`vue-tsc --noEmit` 与 360/373/411dp 学生 28/教师 10 路由冒烟通过。APK 274,718,958 字节，SHA256 `6361ac69ca9ac76d42f9f0b36e1c8caf426edee71b84789a6672bbd1918ec61e`（`.local/android/account-retry-final21.txt`）。同轮后端本地教案已按小学/初中/高中/大学四档调整实践说明、追问与作业证据；Android 教师端高中/杨柳青年画实测展开讲稿显示新追问与“补充两条可查证资料”，后台 HTML 导出也改为同一模板并移除虚构 3D/激光纸样/AI 评分文案（截图 `app-lesson-plan-grade-final21.png`、`app-lesson-export-high-final21.png`），后端 135 项通过。
+
+final22 补充（2026-10-18）：运营后台“乡村美育示范班级”页签不再使用两条写死示例与静态“首批国家级…具身设备”宣称，改为 `GET /api/teacher/classes` 实时数据；接口新增带班教师、学校与真实学完率（在班学生均值，按已开始课程的已发布章节计算，无记录为 `null`）。页面显示 2 个真实班级、带班教师张新、学完率 100%/暂无学习记录；全量后端 135 项通过，后台类型检查与生产构建通过，WSL 5173 已热更新（`.local/android/admin-classes-final22.txt`）。
+
+同轮后台真实性清理：运营大屏改用 `/screen/overview` 真实学校/设备/区县学生数据，无设备与无诊断数据时显示空态，删除 48 所/机器人/时延/各校人数/91.8%/10% 收益；社区风控改为真实关键词初筛与“OCR/图像未接入”，删除色情暴力概率与关联度；设备台明确网关未接入并禁用远程指令；模型页删除 GPU 在线标签；设置页删除“5% 且 100% 实体化”承诺。运行页面 DOM 核对无旧文案（`.local/android/honesty-fixes-final22.txt`）。该轮不改变 Android APK；`user-web/src/views` 遗留桌面页的同类修正不进入当前入口。
+
+final24 补充（2026-10-18）：移动端商城/地图/工坊/课堂的真实性文案清理完成。商城删除购买即捐赠、学生共创/原创、收益注入基金与“创作变现·助学闭环”，统计改为社区创作者/已过审作品，基金改为“公益基金·入账公示”，商品标注“公益计提 X%·以确认入账为准”；地图删除时令/配送/购买暗示并改为“查看农产商品”；AI 工坊卡片删除“AI绘画生成/AI重现/AI重塑/AI赋能”，改为纹样参考与辅助设计，漆绣简介删除“国家级/AI赋能”；“双师课堂”改为“在线课堂”。首页能量进度按 LV1 500 / LV2 1000 / LV3 满级显示。独立复核后统一市集/地图路由标题与页面名称，漆绣卡片恢复“漆绣智绘”，地图“积分”改为“能量”。final24 APK 274,718,830 字节，SHA256 `5078f5500705e67f7967490fd256b0982fa49100b41d21b7889d427696e3d3ea`，已安装 emulator-5554 且设备内 `base.apk` 散列一致；安装包内 13 条核心路由无破图/横向溢出/JS 异常，373dp 完整路由学生 28 条、教师 10 条通过（教师 `/contests/1` 的 2 个 403 为权限预期），学生 28 条在 360dp 复跑通过；后端 135 项通过。证据 `.local/android/final24-apk-verify.txt`、`final24-route-audit.json`、`route-audit-student-final24.json`、`route-audit-teacher-final24.json`、`route-audit-student-final24-360.json`、`final24-*.png`。尚未完成项不变：原始 MasterGo 位图、实体真机/旧 Android/自然进程回收、正式支付/外部模型/远程视频课堂、授权与生产。
+
+final25 补充（2026-10-18）：地图“主题推荐”两卡原会筛选不存在的采摘/农家乐地标，点击必然空列表；现改为跳转 `/mall?category=agri`，文案改为“田园风物/农家风味”。实测点击后进入文创共创市集农产筛选并显示真实商品。final25 APK 274,718,758 字节，SHA256 `b1b92b66ea544a6dcdc4bd56387326843dc7fb2e16676b7b02f66a378e405574`，设备内散列一致；13 条核心路由与学生 28 条（373dp）通过，final24 的 360/411dp、教师 10 条及离线/重启证据继续适用。
+
+final26 补充（2026-10-18）：行走页断网时徽章标题/徽章区曾显示“0 / 0 · 暂无开放徽章”，已改为加载中或无缓存出错时显示“—”、展示真实错误与重试，有缓存时保留徽章。实测断网显示“— ›/暂时无法连接服务”，恢复后重试为“2 / 7 ›”。final26 APK 274,718,814 字节，SHA256 `53d8f10ab931db5d0833ce6a3c3c2b01299d77611dbb8d60787a068513186091`，设备内散列一致；13 条核心路由、学生 28 条（373dp，含行走页）通过。final25 地图入口修复保留。
+
+final28 补充（2026-10-18）：个人中心接入设计头图节点 `5:00495`，收藏区恢复为设计中的横滑卡片（158px、第三张露边），头像/统计/收藏数仍为真实账号数据；教师实时数据断网时班级选择与各空态改为“班级加载失败/暂不可用”，不再声称无学生或无记录，联网实测 2 个真实班级。final28 APK 274,799,157 字节，SHA256 `f9651f31df11b9ad26fe0b495fc7b42da7306552671d419bbb31a14860e6a5d6`，设备内散列一致；学生 28 条在 373dp 与 360dp 通过，个人中心与教师断网截图 `.local/android/final28-profile-top.png`、`final28-profile-collections.png`、`final28-profile-360.png`、`final28-teacher-analytics-offline.png`。另在 Android 11（API 30，WebView 83）AVD `jinyun_api30` 补测同一 APK：学生 28 条与教师 10 条路由无破图/溢出/异常/失败（教师 `/contests/1` 的 2 个 403 为权限预期），证据 `route-audit-student-api30.json`、`route-audit-teacher-api30.json`、`final28-android11-verify.txt`；API 24-28 与实体设备仍未测。
+
+final29 补充（2026-10-18）：将 Vite `build.target` 降为 `es2017`，修复 Android 9（API 28，AOSP WebView 66）空白页。final29 API 274,804,557 字节，SHA256 `abcdcc5ef475f0504b2198a4309cdb90360b578816381633b1325a58e3584d7c`，设备内散列一致；API 28 首页 55 图无破图、非遗详情/个人中心单页正常；快速连跑 28 条路由时旧 WebView 渲染进程崩溃，故 API 28 全量兼容未建立。Android 36 学生 28 条 0 问题（`route-audit-student-final29.json`）。final29 已在 API 30 复跑：学生 28 条、教师 10 条路由 0 破图/溢出/异常/失败（教师 `/contests/1` 的 2 个 403 为权限预期），证据 `route-audit-student-final29-api30.json`、`route-audit-teacher-final29-api30.json`、`final29-api30-home.png`。

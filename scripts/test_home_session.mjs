@@ -6,7 +6,7 @@ const requireApp = createRequire(new URL('../user-web/package.json', import.meta
 const ts = requireApp('typescript'), vue = requireApp('vue');
 const source = fs.readFileSync(new URL('../user-web/src/mobile/views/HomePage.vue', import.meta.url), 'utf8');
 const compiled = ts.transpileModule(source.match(/<script setup lang="ts">([\s\S]*?)<\/script>/)[1] +
-  '\nexport {category,age,courses,heritage,checkedIn,signing,energy,levelLabel,personal,courseLoading,heritageLoading,courseError,heritageError,summaryError,summaryLoading,load,loadSummary,checkin,changeAge,changeCategory};',
+  '\nexport {category,age,courses,heritage,checkedIn,signing,energy,levelLabel,personal,courseLoading,heritageLoading,courseError,heritageError,summaryError,summaryLoading,profileRetrying,load,loadSummary,retryAccount,checkin,changeAge,changeCategory};',
   {compilerOptions: {module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022}}).outputText;
 const wait = async () => { for (let i=0; i<15; i++) await Promise.resolve(); };
 const deferred = () => { let resolve, reject; const promise=new Promise((a,b)=>{resolve=a;reject=b;}); return {promise,resolve,reject}; };
@@ -16,6 +16,7 @@ function environment(options={}) {
   const calls=[], notices=[], hooks=[], cleanup=[], stops=[], events=new Map(), exports={};
   let tick, cleared=false;
   let request=options.request ?? (async path => path.includes('/summary') ? {energy_value:10,checked_in:false} : {list:[{id:1}]});
+  let profileRequest=options.profileRequest ?? (async()=>{session.profile={id:1,energy_value:10};});
   let send=async () => ({energy_value:20,already_checked_in:false,date:day()});
   const doc={visibilityState:'visible',addEventListener:(n,f)=>events.set('doc:'+n,f),removeEventListener:n=>events.delete('doc:'+n)};
   vm.runInNewContext(compiled,{exports,URLSearchParams,Intl,Date,document:doc,
@@ -24,12 +25,12 @@ function environment(options={}) {
     require(name) {
       if(name==='vue') return {...vue,onMounted:fn=>hooks.push(fn),onUnmounted:fn=>cleanup.push(fn),watch(...args){const s=vue.watch(...args);stops.push(s);return s;}};
       if(name==='vue-router') return {useRoute:()=>route,useRouter:()=>({replace:async ({query})=>{route.query=query;},push(){}})};
-      if(name==='../api') return {session,api:path=>{calls.push(path);return request(path);},post:(path,body)=>{calls.push(path);return send(path,body);},requireSession:()=>!!session.token,notify:m=>notices.push(m)};
+      if(name==='../api') return {session,api:path=>{calls.push(path);return request(path);},post:(path,body)=>{calls.push(path);return send(path,body);},loadProfile:()=>{calls.push('/auth/me');return profileRequest();},requireSession:()=>!!session.token,notify:m=>notices.push(m)};
       if(name==='../design') return {categories:[{value:''},{value:'CLAY_FIGURINE'},{value:'KITE'},{value:'NEW_YEAR_PAINTING'}]};
       if(name.endsWith('.vue')) return {};
       throw Error(name);
     }});
-  return {...exports,session,route,calls,notices,events,doc,request:fn=>{request=fn;},send:fn=>{send=fn;},
+  return {...exports,session,route,calls,notices,events,doc,request:fn=>{request=fn;},profile:fn=>{profileRequest=fn;},send:fn=>{send=fn;},
     mount(){hooks.forEach(fn=>fn());},tick(){tick?.();},cleared:()=>cleared,
     destroy(){cleanup.forEach(fn=>fn());stops.forEach(fn=>fn());}};
 }
@@ -54,6 +55,22 @@ function environment(options={}) {
   await e.load(); await e.loadSummary();
   assert.equal(e.heritage.value[0].id,5); assert.equal(e.heritageError.value,'');
   assert.equal(e.courseError.value,'courses offline'); assert.equal(e.checkedIn.value,true); e.destroy();
+}
+{
+  const e=environment({request:async p=>{if(p.includes('/summary')) throw Error('summary offline');return {list:[{id:4}]};}}); await wait();
+  e.session.profile=null;
+  assert.equal(e.levelLabel.value,'等级未知');
+  let profileCalls=0;
+  e.profile(async()=>{profileCalls++;e.session.profile={id:1,nickname:'林锦',level_code:'LV1_APPRENTICE'};});
+  e.request(async p=>p.includes('/summary')?{energy_value:270,checked_in:true}:{list:[{id:4}]});
+  const first=e.retryAccount(), second=e.retryAccount();
+  assert.equal(e.profileRetrying.value,true);
+  await Promise.all([first,second]);
+  assert.equal(profileCalls,1,'Duplicate retry must request the profile once');
+  assert.equal(e.session.profile.nickname,'林锦');
+  assert.equal(e.levelLabel.value,'LV.1');
+  assert.equal(e.energy.value,270); assert.equal(e.checkedIn.value,true);
+  assert.equal(e.summaryError.value,''); assert.equal(e.profileRetrying.value,false); e.destroy();
 }
 {
   const e=environment(); await wait(); const slow=deferred(); e.send(()=>slow.promise);
@@ -90,4 +107,4 @@ function environment(options={}) {
   const loggedOut=e.calls.length;e.tick();assert.equal(e.calls.length,loggedOut,'Guest timers must not request private summary');
   e.destroy();assert.equal(e.events.size,0);assert.equal(e.cleared(),true);
 }
-console.log('PASS: actual home component filters, late requests, independent catalog/account failures, duplicate check-in, account isolation, earlier summary, visibility and unmount cleanup.');
+console.log('PASS: actual home component filters, late requests, independent catalog/account failures, duplicate check-in, account retry profile+summary, account isolation, earlier summary, visibility and unmount cleanup.');

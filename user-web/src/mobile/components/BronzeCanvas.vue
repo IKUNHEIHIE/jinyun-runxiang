@@ -279,8 +279,15 @@ watch(
   [() => props.savedTask?.task_id, () => props.savedTask?.status],
   () => {
     const task = props.savedTask;
-    if (!task || task.task_id === savedHere || task.status !== "SUCCESS")
+    if (!task) {
+      editableTaskId = "";
       return;
+    }
+    if (task.status !== "SUCCESS") {
+      editableTaskId = "";
+      return;
+    }
+    if (task.task_id === savedHere) return;
     if (task.result?.source !== "user_canvas") {
       editableTaskId = "";
       if (elements.value.length) {
@@ -330,6 +337,7 @@ async function save() {
   busy.value = true;
   const state = snapshot();
   const uid = session.profile?.id;
+  const targetTaskId = editableTaskId;
   try {
     const form = new FormData();
     const blob = await render(state);
@@ -349,9 +357,9 @@ async function save() {
         .join(" · ")
         .slice(0, 128),
     };
-    const updating = Boolean(editableTaskId);
+    const updating = Boolean(targetTaskId);
     const task = updating
-      ? await put("/mobile/workshop/designs/" + editableTaskId, payload)
+      ? await put("/mobile/workshop/designs/" + targetTaskId, payload)
       : await post("/mobile/workshop/designs", payload);
     if (uid !== session.profile?.id) return;
     editableTaskId = task.task_id;
@@ -397,6 +405,7 @@ watch(
     past.value = [];
     future.value = [];
     savedHere = "";
+    editableTaskId = "";
   },
 );
 onMounted(loadOverview);
@@ -590,8 +599,8 @@ onUnmounted(() => {
     <div class="bronze-stats">
       <article
         v-for="(stat, i) in [
-          { label: '纹样元素', value: patterns.length },
-          { label: '经典纹样', value: patterns.length },
+          { label: '可选纹样', value: patterns.length },
+          { label: '画布元素', value: elements.length },
           { label: '设计师', value: overview?.designer_count },
           { label: '设计作品', value: overview?.design_count },
         ]"

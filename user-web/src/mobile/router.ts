@@ -79,12 +79,12 @@ const router = createRouter({
     {
       path: "/mall",
       component: () => import("./views/MallPage.vue"),
-      meta: { title: "文创市集", surface: "#c9dbcb" },
+      meta: { title: "文创共创市集", surface: "#c9dbcb" },
     },
     {
       path: "/landmarks",
       component: () => import("./views/MapPage.vue"),
-      meta: { title: "研学地图", surface: "#f5f0e8" },
+      meta: { title: "行走的美育地图", surface: "#f5f0e8" },
     },
     {
       path: "/teacher",
@@ -154,17 +154,17 @@ const router = createRouter({
     {
       path: "/teacher/classroom",
       component: () => import("./views/ClassroomHubPage.vue"),
-      meta: { hideTabs: true, title: "双师课堂", teacher: true },
+      meta: { hideTabs: true, title: "在线课堂", teacher: true },
     },
     {
       path: "/classroom",
       component: () => import("./views/ClassroomHubPage.vue"),
-      meta: { hideTabs: true, title: "双师课堂", requiresAuth: true },
+      meta: { hideTabs: true, title: "在线课堂", requiresAuth: true },
     },
     {
       path: "/classroom/:id",
       component: () => import("./views/ClassroomPage.vue"),
-      meta: { hideTabs: true, title: "双师课堂", requiresAuth: true },
+      meta: { hideTabs: true, title: "在线课堂", requiresAuth: true },
     },
     {
       path: "/me/:section",

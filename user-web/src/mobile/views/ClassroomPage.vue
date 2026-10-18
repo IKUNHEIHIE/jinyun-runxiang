@@ -81,7 +81,7 @@ onUnmounted(() => {
 </script>
 <template>
   <div>
-    <PageHeader :title="room?.title || '双师课堂'" /><video
+    <PageHeader :title="room?.title || '在线课堂'" /><video
       v-if="room?.stream_url"
       class="classroom-video"
       :src="room.stream_url"

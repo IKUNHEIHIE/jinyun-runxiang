@@ -320,7 +320,9 @@ onUnmounted(() => {
             :disabled="busy || !classes.length"
           >
             <option v-if="!classes.length" :value="undefined">
-              暂无班级，请先新建班级
+              {{
+                error ? "班级加载失败，请重试" : "暂无班级，请先新建班级"
+              }}
             </option>
             <option v-for="c in classes" :key="c.id" :value="c.id">
               {{ c.grade }} · {{ c.name }}
@@ -401,7 +403,11 @@ onUnmounted(() => {
           </article>
           <p v-if="!progress.length" class="analytics-empty">
             {{
-              loading ? "正在读取学习记录…" : "当前学生尚无已发布课程的学习记录"
+              error && !students.length
+                ? "学习记录暂不可用"
+                : loading
+                  ? "正在读取学习记录…"
+                  : "当前学生尚无已发布课程的学习记录"
             }}
           </p>
         </div>
@@ -458,7 +464,11 @@ onUnmounted(() => {
             </div>
           </article>
           <p v-if="!accuracy.length" class="analytics-empty">
-            近七日暂无可计算的测验记录
+            {{
+              error && !students.length
+                ? "测验数据暂不可用"
+                : "近七日暂无可计算的测验记录"
+            }}
           </p>
         </div>
       </section>
@@ -483,7 +493,11 @@ onUnmounted(() => {
               ><span>{{ s.nickname }}</span>
             </p>
           </article>
-          <p v-if="!energy.length" class="analytics-empty">暂无班级学生数据</p>
+          <p v-if="!energy.length" class="analytics-empty">
+            {{
+              error && !students.length ? "能量数据暂不可用" : "暂无班级学生数据"
+            }}
+          </p>
         </div>
       </section>
       <section class="analytics-panel badge-panel" data-design-node="5:3927">
@@ -576,7 +590,11 @@ onUnmounted(() => {
             ><small>{{ s.badge_count }} 枚</small>
           </button>
           <p v-if="!wall.length" class="analytics-empty">
-            暂无学生，将邀请码分享给学生即可加入
+            {{
+              error && !students.length
+                ? "学生数据暂不可用"
+                : "暂无学生，将邀请码分享给学生即可加入"
+            }}
           </p>
         </div>
       </section>
@@ -597,7 +615,9 @@ onUnmounted(() => {
             <option value="ABSENT">缺勤</option>
           </select></label
         >
-        <p v-if="!students.length" class="analytics-empty">暂无可记录的学生</p>
+        <p v-if="!students.length" class="analytics-empty">
+          {{ error ? "学生数据暂不可用" : "暂无可记录的学生" }}
+        </p>
         <button
           class="primary-button"
           :disabled="busy || !changedAttendance.length"

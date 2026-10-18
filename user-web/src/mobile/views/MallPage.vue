@@ -85,19 +85,19 @@ const total = computed(() =>
 const stats = computed(() => [
   {
     value: summary.value.creator_count ?? "—",
-    label: "学生创作者",
+    label: "社区创作者",
     image: "5:7739",
     icon: "5:7742",
   },
   {
     value: money(summary.value.fund_total_yuan),
-    label: "助学基金累计",
+    label: "公益基金累计",
     image: "5:7714",
     icon: "5:7719",
   },
   {
     value: summary.value.creative_works ?? "—",
-    label: "创意作品",
+    label: "已过审作品",
     image: "5:7731",
     icon: "5:7736",
   },
@@ -105,14 +105,19 @@ const stats = computed(() => [
 const fundUses = [
   {
     title: "美育基金",
-    caption: "建设艺术教室",
+    caption: "公益计提归集",
     image: "5:7850",
     icon: "5:7855",
   },
-  { title: "奖学金", caption: "奖励优秀作品", image: "5:7829", icon: "5:7834" },
+  {
+    title: "奖学金",
+    caption: "用途以公示为准",
+    image: "5:7829",
+    icon: "5:7834",
+  },
   {
     title: "能量值兑换",
-    caption: "兑换文具画材",
+    caption: "能量兑换物资",
     image: "5:7867",
     icon: "5:7870",
   },
@@ -354,11 +359,11 @@ watch(
         />
       </div>
       <div class="hero-copy">
-        <span class="market-eyebrow"><i />AI非遗工坊 · 学生共创计划</span>
+        <span class="market-eyebrow"><i />非遗文创 · 乡村风物市集</span>
         <h1>稻香非遗</h1>
         <h2>文创共创市集</h2>
         <p>
-          每一件作品，都来自乡村孩子的创意<br />每一次购买，都在点亮美育的希望
+          文创与农产集中展示<br />公益计提以确认入账为准
         </p>
         <button class="market-explore" @click="explore">
           探索市集<img :src="designIcon('layer-5-7245', '5:8263')" alt="" />
@@ -389,8 +394,8 @@ watch(
     <section class="market-creators" aria-labelledby="creators-title">
       <div class="section-heading market-inset" data-design-node="5:7366">
         <div>
-          <h2 id="creators-title">AI工坊 · 学生原创设计</h2>
-          <p>纹样 · 皮影 · 青铜纹饰</p>
+          <h2 id="creators-title">社区创作 · 作品故事</h2>
+          <p>来自社区分享的已过审作品</p>
         </div>
         <RouterLink to="/community"
           >查看全部<img :src="designIcon('layer-5-7245', '5:7387')" alt=""
@@ -445,13 +450,13 @@ watch(
             ><img :src="designIcon('layer-5-7245', '5:7683')" alt=""
           /></span>
           <div>
-            <h3>创意 → 商品 → 助学</h3>
-            <p>学生创作 · 授权与生产流程说明</p>
+            <h3>创意 → 授权 → 生产</h3>
+            <p>流程示意 · 授权与生产暂未开放</p>
           </div>
         </div>
         <div class="co-creation-steps">
           <RouterLink to="/ai-workshop"
-            ><b>1</b><span>学生创作</span></RouterLink
+            ><b>1</b><span>工坊创作</span></RouterLink
           >
           <button @click="showCoCreationInfo = true">
             <b>2</b><span>平台授权</span>
@@ -471,8 +476,8 @@ watch(
     >
       <div class="section-heading" data-design-node="5:8129">
         <div>
-          <h2 id="products-title">非遗文创 · 匠心之作</h2>
-          <p>每一件都承载着孩子的梦想与乡村的温度</p>
+          <h2 id="products-title">非遗文创 · 农产特产</h2>
+          <p>商品信息与计提比例以页面公示为准</p>
         </div>
       </div>
       <div
@@ -542,7 +547,7 @@ watch(
                 <img
                   :src="designIcon('layer-5-7245', '5:8053')"
                   alt=""
-                />收益的{{ product.fund_rate_percent }}%注入美育基金
+                />公益计提 {{ product.fund_rate_percent }}% · 以确认入账为准
               </p>
             </div>
           </article>
@@ -567,10 +572,10 @@ watch(
     >
       <div class="fund-title">
         <span><img :src="designIcon('layer-5-7245', '5:7777')" alt="" /></span>
-        <h2 id="fund-title">创作变现 · 助学闭环</h2>
+        <h2 id="fund-title">公益基金 · 入账公示</h2>
       </div>
       <p class="fund-description">
-        您的每一次购买，都在为乡村孩子创造更美好的艺术教育未来
+        基金累计来自已确认入账的公益计提；目标与用途以平台公示为准
       </p>
       <div class="fund-progress">
         <div>
@@ -683,13 +688,13 @@ watch(
       <div class="thanks-stats">
         <span
           ><strong>{{ summary.creator_count ?? "—" }}</strong
-          >创作者</span
+          >社区创作者</span
         ><span
           ><strong>{{ money(summary.fund_total_yuan) }}</strong
           >累计入账</span
         ><span
           ><strong>{{ summary.creative_works ?? "—" }}</strong
-          >创意作品</span
+          >已过审作品</span
         >
       </div>
     </footer>

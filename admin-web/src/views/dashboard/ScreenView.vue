@@ -6,7 +6,7 @@
         <div class="header-time">{{ currentTime }}</div>
         <div class="header-badge">
           <span class="pulse-dot"></span>
-          <span>天津市美育浸润行动计划 · 48所乡村试点校实时联网</span>
+          <span>天津市美育浸润行动计划 · {{ schoolCount }} 所已登记学校数据接入</span>
         </div>
       </div>
 
@@ -22,9 +22,9 @@
       <div class="header-right">
         <div class="telemetry-pill">
           <span class="dot-online"></span>
-          <span>具身机器人: 3 在线</span>
+          <span>登记设备: {{ robots.length }} 台</span>
           <span class="separator">|</span>
-          <span>网络时延: 16ms</span>
+          <span>在线: {{ onlineDeviceCount }} 台</span>
         </div>
         <button class="screen-btn" @click="toggleFullscreen">
           {{ isFullscreen ? '⛶ 退出全屏' : '⛶ 全屏展示' }}
@@ -63,6 +63,7 @@
           </div>
           <div class="card-body">
             <div ref="pieChartRef" class="chart-container"></div>
+            <div v-if="rawScreenData && !(rawScreenData.pie_chart || []).length" class="chart-empty">暂无已审核作品</div>
           </div>
         </div>
 
@@ -70,11 +71,12 @@
         <div class="tech-card">
           <div class="card-header">
             <span class="card-tag"></span>
-            <span class="card-title">各涉农区县美育学时动态榜</span>
-            <span class="card-sub">学时聚合 (小时)</span>
+            <span class="card-title">各涉农区县注册学子分布</span>
+            <span class="card-sub">学生账号数 (人)</span>
           </div>
           <div class="card-body">
             <div ref="barChartRef" class="chart-container"></div>
+            <div v-if="rawScreenData && !(rawScreenData.bar_chart?.categories || []).length" class="chart-empty">暂无区县学生分布数据</div>
           </div>
         </div>
       </aside>
@@ -85,10 +87,10 @@
         <div class="tech-card center-top-card">
           <div class="card-header">
             <span class="card-tag gold"></span>
-            <span class="card-title">数字孪生 · 天津市乡村美育试点基地网络</span>
+            <span class="card-title">设备接入 · 天津市乡村美育基地网络</span>
             <div class="center-legend">
-              <span class="legend-item"><span class="node-dot active"></span> 活跃基地</span>
-              <span class="legend-item"><span class="node-dot robot"></span> 具身机器人</span>
+              <span class="legend-item"><span class="node-dot active"></span> 已登记设备</span>
+              <span class="legend-item"><span class="node-dot robot"></span> 在线设备</span>
             </div>
           </div>
           <div class="card-body map-container">
@@ -96,60 +98,23 @@
             <div class="map-bg-grid">
               <div class="map-contour"></div>
               
-              <!-- 基地节点1: 蓟州区下营镇中心小学 -->
-              <div class="school-node node-jizhou" style="top: 14%; left: 62%;">
+              <div
+                v-for="(node, i) in mapNodes"
+                :key="node.id"
+                class="school-node"
+                :style="nodePositions[i]"
+              >
                 <div class="radar-pulse"></div>
                 <div class="node-point"></div>
                 <div class="node-card">
-                  <div class="node-name">蓟州区 · 下营镇中心小学</div>
-                  <div class="node-info">学子: 420人 · 在研: 津门皮影戏</div>
-                  <div class="node-tag robot-tag">🤖 DEV-SHADOW-BOT-01 授课中</div>
+                  <div class="node-name">{{ node.location }}</div>
+                  <div class="node-info">设备: {{ node.name }} · {{ node.statusText }}</div>
+                  <div class="node-tag" :class="node.statusText === 'ONLINE' ? 'robot-tag' : 'cert-tag'">
+                    {{ node.statusText === 'ONLINE' ? '● 在线' : '○ 离线' }} · {{ node.task }}
+                  </div>
                 </div>
               </div>
-
-              <!-- 基地节点2: 宝坻区林亭口小学 -->
-              <div class="school-node node-baodi" style="top: 32%; left: 70%;">
-                <div class="radar-pulse"></div>
-                <div class="node-point"></div>
-                <div class="node-card">
-                  <div class="node-name">宝坻区 · 林亭口中心小学</div>
-                  <div class="node-info">学子: 360人 · 在研: 年画套色木版拓印</div>
-                  <div class="node-tag robot-tag">🤖 DEV-PAINT-BOT-02 运行中</div>
-                </div>
-              </div>
-
-              <!-- 基地节点3: 武清区大王古庄美育工坊 -->
-              <div class="school-node node-wuqing" style="top: 36%; left: 30%;">
-                <div class="radar-pulse"></div>
-                <div class="node-point"></div>
-                <div class="node-card">
-                  <div class="node-name">武清区 · 大王古庄乡村美育工坊</div>
-                  <div class="node-info">学子: 290人 · 在研: 泥人张彩塑</div>
-                  <div class="node-tag ai-tag">✦ AI名师审美诊断终端在机</div>
-                </div>
-              </div>
-
-              <!-- 基地节点4: 静海区独流镇第一小学 -->
-              <div class="school-node node-jinghai" style="top: 68%; left: 34%;">
-                <div class="radar-pulse"></div>
-                <div class="node-point"></div>
-                <div class="node-card">
-                  <div class="node-name">静海区 · 独流镇第一小学</div>
-                  <div class="node-info">学子: 310人 · 在研: 汉沽版画与刻纸</div>
-                  <div class="node-tag cert-tag">❖ 已发放爱心画材包 120 套</div>
-                </div>
-              </div>
-
-              <!-- 基地节点5: 宁河区俵口镇美育基地 -->
-              <div class="school-node node-ninghe" style="top: 50%; left: 78%;">
-                <div class="radar-pulse"></div>
-                <div class="node-point"></div>
-                <div class="node-card">
-                  <div class="node-name">宁河区 · 俵口镇七里海美育基地</div>
-                  <div class="node-info">学子: 240人 · 在研: 芦苇编织工艺</div>
-                  <div class="node-tag ai-tag">✦ 智韵双师联堂直播中</div>
-                </div>
-              </div>
+              <div v-if="!mapNodes.length" class="map-empty">暂无设备登记，接入后在此显示真实节点</div>
 
               <!-- 装饰网格线与雷达扫描 -->
               <div class="radar-scanner"></div>
@@ -161,8 +126,8 @@
         <div class="tech-card center-bottom-card">
           <div class="card-header">
             <span class="card-tag red"></span>
-            <span class="card-title">爱心助农 · 乡村美育公益反哺实时流水</span>
-            <span class="card-sub">10%收益自动注入美育基金</span>
+            <span class="card-title">爱心助农 · 乡村美育公益反哺流水</span>
+            <span class="card-sub">按商品公示比例计提，以确认入账为准</span>
           </div>
           <div class="card-body ticker-container">
             <div class="ticker-list" :style="{ transform: `translateY(-${tickerOffset}px)` }">
@@ -172,8 +137,9 @@
                 <span class="t-action">认购</span>
                 <span class="t-item">{{ order.item }}</span>
                 <span class="t-fund">为{{ order.school }}注入美育基金 <strong class="fund-num">¥{{ order.fund }}</strong></span>
-                <span class="t-hash">存证哈希: {{ order.hash }}</span>
+                <span class="t-hash">订单尾号: {{ order.hash }}</span>
               </div>
+              <div v-if="!donationOrders.length" class="ticker-empty">暂无已确认订单流水</div>
             </div>
           </div>
         </div>
@@ -185,24 +151,13 @@
         <div class="tech-card">
           <div class="card-header">
             <span class="card-tag"></span>
-            <span class="card-title">AI多模态非遗审美诊断矩阵</span>
-            <span class="card-sub">千幅作品多维均分</span>
+            <span class="card-title">AI 审美诊断矩阵</span>
+            <span class="card-sub">尚未接入真实诊断聚合</span>
           </div>
           <div class="card-body">
             <div ref="radarChartRef" class="chart-container"></div>
             <div class="radar-meta-row">
-              <div class="meta-item">
-                <span class="label">优良率</span>
-                <span class="val cyan">91.8%</span>
-              </div>
-              <div class="meta-item">
-                <span class="label">最高维</span>
-                <span class="val gold">传统意蕴 (94.1)</span>
-              </div>
-              <div class="meta-item">
-                <span class="label">生成转化</span>
-                <span class="val red">94.2%</span>
-              </div>
+              <span class="muted-note">当前没有可聚合的 AI 审美诊断数据，不展示推测分数。</span>
             </div>
           </div>
         </div>
@@ -250,7 +205,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, nextTick } from "vue";
+import { computed, ref, onMounted, onUnmounted, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import * as echarts from "echarts";
 import request from "@/api/request";
@@ -282,6 +237,21 @@ const donationOrders = ref<any[]>([]);
 
 // 具身机器人状态
 const robots = ref<any[]>([]);
+
+const schoolCount = computed(() =>
+  kpis.value.find((item: any) => item.label === "覆盖学校")?.value || "—"
+);
+const onlineDeviceCount = computed(
+  () => robots.value.filter((item: any) => item.statusText === "ONLINE").length
+);
+const mapNodes = computed(() => robots.value.slice(0, 5));
+const nodePositions = [
+  { top: "14%", left: "62%" },
+  { top: "32%", left: "70%" },
+  { top: "36%", left: "30%" },
+  { top: "68%", left: "34%" },
+  { top: "50%", left: "78%" }
+];
 
 // 更新当前时钟
 const updateClock = () => {
@@ -488,6 +458,12 @@ const initCharts = () => {
         },
         axisLine: { lineStyle: { color: "rgba(0, 242, 254, 0.25)" } },
         splitLine: { lineStyle: { color: "rgba(0, 242, 254, 0.2)" } }
+      },
+      graphic: {
+        type: "text",
+        left: "center",
+        top: "middle",
+        style: { text: "暂无诊断聚合数据", fill: "#94a3b8", fontSize: 13 }
       },
       series: [
         {
@@ -881,6 +857,16 @@ onUnmounted(() => {
   cursor: pointer;
   z-index: 10;
 }
+.map-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
 .node-point {
   width: 12px;
   height: 12px;
@@ -948,6 +934,20 @@ onUnmounted(() => {
   border: 1px solid rgba(255, 75, 43, 0.4);
 }
 
+.chart-empty {
+  margin-top: -8px;
+  text-align: center;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.ticker-empty {
+  padding: 24px 0;
+  text-align: center;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
 /* 中下实时流水 */
 .center-bottom-card {
   height: 180px;
@@ -1005,6 +1005,12 @@ onUnmounted(() => {
   margin-top: 6px;
   padding: 4px 0;
   border-top: 1px dashed rgba(255, 255, 255, 0.1);
+}
+.muted-note {
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 18px;
+  text-align: center;
 }
 .meta-item {
   display: flex;

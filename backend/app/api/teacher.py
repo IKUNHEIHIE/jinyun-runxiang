@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, Query, HTTPException
 from fastapi.responses import HTMLResponse, Response
 from urllib.parse import quote
 from app.services.ppt_generator import generate_lesson_pptx
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field, field_validator
 from typing import Optional, Literal
@@ -10,12 +11,12 @@ from datetime import datetime, timedelta
 
 from app.core.database import get_db
 from app.core.security import require_teacher
-from app.core.lesson_plans import generate_lesson
+from app.core.lesson_plans import generate_lesson, local_lesson
 from app.schemas.common import success_response, error_response
 from app.models.entities import (
     TeacherClass, ClassMember, Assignment, AssignmentSubmission,
     AssignmentReview, LearningProgress, UserGrowth, SysUser, QuizAttempt, CommunityPost,
-    Contest,
+    Contest, Course, CourseChapter, UserProfile,
 )
 
 router = APIRouter(prefix="/teacher", tags=["教师工作台与AI智能备课"])
@@ -61,6 +62,42 @@ class ReviewSubmissionRequest(BaseModel):
     score: int = Field(..., ge=0, le=100)
     comment: str = Field(max_length=5000)
 
+def class_completion_rates(db: Session, class_ids):
+    """按班级统计真实学完率: 学生已完成章节 / 该生已开始课程的已发布章节, 再取学生均值。"""
+    if not class_ids:
+        return {}
+    students_by_class = {}
+    rows = db.query(ClassMember.class_id, ClassMember.student_id).join(
+        SysUser, SysUser.id == ClassMember.student_id).filter(
+        ClassMember.class_id.in_(class_ids), ClassMember.status == "ACTIVE",
+        SysUser.status == "ACTIVE", SysUser.role_code == "STUDENT").distinct().all()
+    for class_id, student_id in rows:
+        students_by_class.setdefault(class_id, set()).add(student_id)
+
+    published = set(db.query(CourseChapter.course_id, CourseChapter.id).join(
+        Course, Course.id == CourseChapter.course_id).filter(Course.status == "PUBLISHED").all())
+    student_ids = set().union(*students_by_class.values()) if students_by_class else set()
+    progress_by_student = {}
+    if student_ids:
+        for record in db.query(LearningProgress).filter(LearningProgress.user_id.in_(student_ids)).all():
+            if (record.course_id, record.chapter_id) in published:
+                progress_by_student.setdefault(record.user_id, []).append(record)
+
+    result = {}
+    for class_id, members in students_by_class.items():
+        rates = []
+        for student_id in members:
+            progress = progress_by_student.get(student_id, [])
+            courses = {record.course_id for record in progress}
+            available = sum(course_id in courses for course_id, _ in published)
+            if not available:
+                continue
+            completed = {(record.course_id, record.chapter_id) for record in progress if record.completed}
+            rates.append(100 * len(completed) / available)
+        result[class_id] = round(sum(rates) / len(rates), 1) if rates else None
+    return result
+
+
 @router.get("/classes")
 def list_teacher_classes(
     current_user: dict = Depends(require_teacher),
@@ -71,15 +108,25 @@ def list_teacher_classes(
     if current_user["role_code"] != "ADMIN":
         query = query.filter(TeacherClass.teacher_id == teacher_id)
     classes = query.all()
+    class_ids = [c.id for c in classes]
+    teacher_ids = {c.teacher_id for c in classes}
+    student_counts = dict(db.query(ClassMember.class_id, func.count(func.distinct(ClassMember.student_id))).join(
+        SysUser, SysUser.id == ClassMember.student_id).filter(
+        ClassMember.class_id.in_(class_ids), ClassMember.status == "ACTIVE",
+        SysUser.status == "ACTIVE", SysUser.role_code == "STUDENT").group_by(ClassMember.class_id).all()) if class_ids else {}
+    teachers = {u.id: u for u in db.query(SysUser).filter(SysUser.id.in_(teacher_ids)).all()} if teacher_ids else {}
+    profiles = {p.user_id: p for p in db.query(UserProfile).filter(UserProfile.user_id.in_(teacher_ids)).all()} if teacher_ids else {}
+    completion_rates = class_completion_rates(db, class_ids)
 
     return success_response([{
         "id": c.id,
         "name": c.name,
         "grade": c.grade,
         "invite_code": c.invite_code,
-        "student_count": db.query(ClassMember.student_id).join(SysUser, SysUser.id == ClassMember.student_id).filter(
-            ClassMember.class_id == c.id, ClassMember.status == "ACTIVE",
-            SysUser.status == "ACTIVE", SysUser.role_code == "STUDENT").distinct().count()
+        "student_count": student_counts.get(c.id, 0),
+        "teacher_name": teachers[c.teacher_id].nickname if c.teacher_id in teachers else "",
+        "school": profiles[c.teacher_id].school_name if c.teacher_id in profiles and profiles[c.teacher_id].school_name else "",
+        "completion": completion_rates.get(c.id),
     } for c in classes])
 
 @router.post("/lesson-plans/generate")
@@ -99,199 +146,109 @@ def export_lesson_plan_html(
 ):
     """导出排版工整的标准非遗美育教案 (支持直接打印与另存为 PDF)"""
     date_str = datetime.utcnow().strftime("%Y年%m月%d日")
-    topic, grade = escape(topic), escape(grade)
-    html_content = f"""<!DOCTYPE html>
+    plan = local_lesson(LessonPlanRequest(grade=grade, topic=topic, duration_minutes=duration_minutes))
+    targets = plan["targets"]
+    points = plan["key_difficult_points"]
+    target_html = "".join(
+        f"<li><strong>【{label}】</strong>：{escape(str(value))}</li>"
+        for label, value in (("审美感知", targets["aesthetic"]), ("艺术表现", targets["skill"]),
+                             ("文化理解", targets["emotion"]))
+    )
+    process_html = "".join(
+        f'<tr><td class="step-name">{escape(str(step["step"]))}</td><td>{escape(str(step["content"]))}</td></tr>'
+        for step in plan["teaching_process"]
+    )
+    question_html = "".join(f"<li>{escape(str(question))}</li>" for question in plan["interactive_questions"])
+    html_content = """<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>天津市乡村中小学非遗美育协同育人教案 · {topic}</title>
+    <title>课堂教案 · {{TOPIC}}</title>
     <style>
-        body {{
-            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-            color: #262626;
-            line-height: 1.6;
-            margin: 0;
-            padding: 40px;
-            background: #FAFAFA;
-        }}
-        .paper {{
-            max-width: 820px;
-            margin: 0 auto;
-            background: #FFF;
-            padding: 50px 60px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid #E8E8E8;
-        }}
-        .header {{
-            text-align: center;
-            border-bottom: 2px solid #8B4A2F;
-            padding-bottom: 16px;
-            margin-bottom: 24px;
-        }}
-        .super-title {{
-            font-size: 13px;
-            color: #8B4A2F;
-            letter-spacing: 2px;
-            font-weight: 700;
-        }}
-        .main-title {{
-            font-size: 24px;
-            font-weight: 900;
-            color: #1F1F1F;
-            margin: 8px 0;
-        }}
-        .meta-table {{
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 24px;
-        }}
-        .meta-table th, .meta-table td {{
-            border: 1px solid #D9D9D9;
-            padding: 8px 12px;
-            font-size: 13px;
-        }}
-        .meta-table th {{
-            background: #FAF3EC;
-            color: #8B4A2F;
-            width: 18%;
-            text-align: right;
-        }}
-        .section-title {{
-            font-size: 16px;
-            font-weight: 800;
-            color: #8B4A2F;
-            border-left: 4px solid #8B4A2F;
-            padding-left: 10px;
-            margin: 24px 0 12px;
-        }}
-        .process-table {{
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }}
-        .process-table th, .process-table td {{
-            border: 1px solid #E8E8E8;
-            padding: 10px 14px;
-            font-size: 13px;
-        }}
-        .process-table th {{
-            background: #F5F5F5;
-            color: #595959;
-            font-weight: 700;
-        }}
-        .step-name {{
-            font-weight: 700;
-            color: #8B4A2F;
-            width: 25%;
-        }}
-        .print-btn {{
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #8B4A2F;
-            color: #FFF;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 700;
-            box-shadow: 0 4px 12px rgba(139, 74, 47, 0.3);
-        }}
-        @media print {{
-            body {{ background: #FFF; padding: 0; }}
-            .paper {{ box-shadow: none; border: none; padding: 0; }}
-            .print-btn {{ display: none; }}
-        }}
+        body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; color: #262626; line-height: 1.7;
+               margin: 0; padding: 40px; background: #FAFAFA; }
+        .paper { max-width: 820px; margin: 0 auto; background: #FFF; padding: 50px 60px;
+                 box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #E8E8E8; }
+        .notice { max-width: 820px; margin: 0 auto 16px; padding: 10px 14px; background: #FFF7E6;
+                  border: 1px solid #FFD591; color: #874D00; font-size: 13px; }
+        .header { text-align: center; border-bottom: 2px solid #8B4A2F; padding-bottom: 16px; margin-bottom: 24px; }
+        .super-title { font-size: 13px; color: #8B4A2F; letter-spacing: 2px; font-weight: 700; }
+        .main-title { font-size: 24px; font-weight: 900; color: #1F1F1F; margin: 8px 0; }
+        .meta-line { font-size: 12px; color: #8C8C8C; }
+        .meta-table, .process-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .meta-table th, .meta-table td, .process-table th, .process-table td {
+            border: 1px solid #D9D9D9; padding: 8px 12px; font-size: 13px; vertical-align: top; }
+        .meta-table th, .process-table th { background: #FAF3EC; color: #8B4A2F; text-align: left; }
+        .meta-table th { width: 16%; }
+        .step-name { width: 24%; font-weight: 700; color: #8B4A2F; }
+        .section-title { font-size: 16px; font-weight: 800; color: #8B4A2F; border-left: 4px solid #8B4A2F;
+                         padding-left: 10px; margin: 24px 0 12px; }
+        ul, ol { margin: 0; padding-left: 24px; font-size: 13px; }
+        li { margin: 6px 0; }
+        .script { white-space: pre-wrap; font-size: 13px; line-height: 1.9; color: #434343;
+                  background: #FCFAF7; border: 1px solid #F0E6DA; padding: 16px; }
+        .footer-note { margin-top: 28px; padding-top: 12px; border-top: 1px dashed #D9D9D9;
+                       font-size: 12px; color: #8C8C8C; }
+        @media print { body { background: #FFF; padding: 0; } .paper { box-shadow: none; border: none; padding: 0; }
+                       .notice { display: none; } }
     </style>
 </head>
 <body>
-    <div class="print-btn">请使用浏览器打印 / 另存为 PDF</div>
+    <div class="notice">本文件由本地课程模板生成，请教师结合学段、材料和课堂实际审核后再使用。</div>
     <div class="paper">
         <div class="header">
-            <div class="super-title">天津市“津韵润乡”乡村中小学非遗美育协同工程 · 标准化微课教案</div>
-            <h1 class="main-title">《津韵润乡·乡土非遗赋能美育微课：{topic}》</h1>
-            <div style="font-size: 12px; color: #8C8C8C;">课程编号：JY-CURR-2026-03 · 归档日期：{date_str}</div>
+            <div class="super-title">天津市“津韵润乡”乡村中小学非遗美育协同工程</div>
+            <h1 class="main-title">{{TOPIC}} · 课堂教案</h1>
+            <div class="meta-line">归档日期：{{DATE}}</div>
         </div>
-
         <table class="meta-table">
-            <tr>
-                <th>适用学段</th>
-                <td>{grade}</td>
-                <th>课时时长</th>
-                <td>{duration_minutes} 分钟 (标准美育1课时)</td>
-            </tr>
-            <tr>
-                <th>非遗门类</th>
-                <td>{topic} (国家级非物质文化遗产项目)</td>
-                <th>主讲/备课人</th>
-                <td>天津美术学院非遗名师工作室 & 乡村骨干美育团队</td>
-            </tr>
-            <tr>
-                <th>数字工具支持</th>
-                <td colspan="3">《津韵润乡》智能美育平台 (AI 多模态工坊、3D 可动模型检视、激光纸样自动排版)</td>
-            </tr>
+            <tr><th>适用学段</th><td>{{GRADE}}</td><th>课时时长</th><td>{{DURATION}} 分钟</td></tr>
+            <tr><th>非遗主题</th><td>{{TOPIC}}</td><th>生成方式</th><td>本地课程模板（教师审核后使用）</td></tr>
         </table>
 
-        <div class="section-title">一、 美育核心素养三维目标</div>
-        <ul style="font-size: 13px; line-height: 1.8; color: #434343;">
-            <li><strong>【审美感知】</strong>：引导乡村学生感知天津传统非遗的线条律动、天然矿物色彩与传统民间造型章法，提升乡村少年对故土民俗美术的鉴赏力。</li>
-            <li><strong>【艺术表现】</strong>：掌握【{topic}】的核心工艺工序原理，能够熟练操作《津韵润乡》AI工坊进行个性化数字创客实验，并结合配套纸样完成实体手工制作。</li>
-            <li><strong>【文化理解】</strong>：在动手造物中体悟老一辈天津非遗手艺人的匠心操守，激发乡村少年热爱家乡、传承乡土文脉的文化自信。</li>
-        </ul>
+        <div class="section-title">一、教学目标</div>
+        <ul>{{TARGETS}}</ul>
 
-        <div class="section-title">二、 教学重难点与物资准备</div>
-        <div style="font-size: 13px; color: #434343; line-height: 1.8;">
-            <p><strong>教学重点</strong>：理解【{topic}】的传统文化渊源，掌握其标志性的造型、色彩与装饰母题特征。</p>
-            <p><strong>教学难点</strong>：如何在现代数字工具辅助下，保留天津地域民俗灵魂的同时融入新时代小工匠的童趣创意。</p>
-            <p><strong>教具与材料准备</strong>：乡村美育教室多媒体大屏、学生平板/一体机端（《津韵润乡》系统）、配套非遗手工耗材包（刻刀、半透皮料/宣纸、矿物色颜料盒、A4激光打印纸样）。</p>
-        </div>
+        <div class="section-title">二、教学重难点</div>
+        <p><strong>重点：</strong>{{KEY}}</p>
+        <p><strong>难点：</strong>{{DIFFICULT}}</p>
 
-        <div class="section-title">三、 四步启发式教学流程设计 (45分钟)</div>
+        <div class="section-title">三、教学过程</div>
         <table class="process-table">
-            <thead>
-                <tr>
-                    <th style="width: 25%;">环节名称与时长</th>
-                    <th>师生活动与数字交互设计</th>
-                    <th style="width: 22%;">设计意图与素养达成</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="step-name">环节一：津韵寻踪<br><span style="font-size: 11px; color: #8C8C8C;">(情境创设 · 8分钟)</span></td>
-                    <td>播放天津老手艺人采风短视频与海河风情纪实，教师出示实物道具，组织“猜猜这是哪道津门老手艺”快问快答。</td>
-                    <td>打破传统说教，调动学生听觉与视觉感官，唤醒乡村少年的乡土文化共鸣。</td>
-                </tr>
-                <tr>
-                    <td class="step-name">环节二：匠心格物<br><span style="font-size: 11px; color: #8C8C8C;">(技法揭秘 · 15分钟)</span></td>
-                    <td>依托《非遗微课堂》分步微课视频，精讲核心制作工序。引导学生在平板上进行【课中非遗知识挑战】，随堂即时反馈答卷与名师解析。</td>
-                    <td>互动答题加深技艺记忆，杜绝走神，量化知识掌握度并奖励美育能量。</td>
-                </tr>
-                <tr>
-                    <td class="step-name">环节三：数字创客<br><span style="font-size: 11px; color: #8C8C8C;">(AI灵感赋能 · 12分钟)</span></td>
-                    <td>学生打开《AI工坊》，输入心仪提示词，选用“津沽传统本色”生成专属非遗线稿与3D模型，一键下载A4打印排版图纸，开展线下组装手工。</td>
-                    <td>实现“数字AI生成 ➔ 实体手工纸样”虚实结合，降低乡村手工门槛。</td>
-                </tr>
-                <tr>
-                    <td class="step-name">环节四：展评升华<br><span style="font-size: 11px; color: #8C8C8C;">(名师诊断 · 10分钟)</span></td>
-                    <td>拍照上传作品，调用“AI多模态审美门诊”获取构图、色彩、线条三维评分卡片；投屏至教室大屏，一键同步发布至美育广场。</td>
-                    <td>形成客观量化的美育评价档案，让每个乡村孩子收获成就感与自信心。</td>
-                </tr>
-            </tbody>
+            <thead><tr><th>环节</th><th>师生活动</th></tr></thead>
+            <tbody>{{PROCESS}}</tbody>
         </table>
 
-        <div class="section-title">四、 课后作业与评价量规</div>
-        <div style="font-size: 13px; color: #434343; line-height: 1.8;">
-            <p><strong>课后作业</strong>：将完成的【{topic}】手工作品带回家向家长讲述一个非遗寓意故事，并在家长协助下打卡津门非遗研学地图中的最近非遗地标。</p>
-            <p><strong>评价量规</strong>：</p>
-            <ul>
-                <li>【卓越 (90-100分)】：造型工整，巧妙融入天津地域纹样，AI 诊断三维指标均达标，能完整表达创作意图。</li>
-                <li>【良好 (75-89分)】：工序完整，能独立操作 AI 工坊与配套纸样，色彩搭配和谐。</li>
-                <li>【合格 (60-74分)】：在教师指导下完成基础拼装，积极参与课中测验与互评。</li>
-            </ul>
+        <div class="section-title">四、互动问题</div>
+        <ol>{{QUESTIONS}}</ol>
+
+        <div class="section-title">五、课后作业</div>
+        <p>{{HOMEWORK}}</p>
+
+        <div class="section-title">六、课堂讲稿</div>
+        <div class="script">{{SCRIPT}}</div>
+
+        <div class="footer-note">
+            本教案由本地课程模板生成，未调用外部模型；不包含未接入的 3D 模型、A4 纸样、实拍视频或自动评分。
+            请教师结合学段、材料和课堂实际审核调整。
         </div>
     </div>
 </body>
 </html>"""
+    for marker, value in {
+        "TOPIC": escape(topic),
+        "GRADE": escape(grade),
+        "DURATION": str(duration_minutes),
+        "DATE": escape(date_str),
+        "TARGETS": target_html,
+        "KEY": escape(str(points["key"])),
+        "DIFFICULT": escape(str(points["difficult"])),
+        "PROCESS": process_html,
+        "QUESTIONS": question_html,
+        "HOMEWORK": escape(str(plan["homework_proposal"])),
+        "SCRIPT": escape(str(plan["teacher_script"])),
+    }.items():
+        html_content = html_content.replace("{{" + marker + "}}", value)
     return HTMLResponse(content=html_content, headers={"Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; script-src 'none'", "X-Content-Type-Options": "nosniff"})
 
 @router.get("/lesson-plans/export-pptx")

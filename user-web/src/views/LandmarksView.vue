@@ -28,9 +28,9 @@
 
           <div class="lm-footer">
             <div class="geofence-info">
-              <span class="distance-text">距离当前：<strong>{{ formatDistance(item) }}</strong></span>
+              <span class="distance-text">距离当前：<strong>{{ locationReady ? formatDistance(item) : '定位不可用' }}</strong></span>
               <span :class="['status-dot', isWithinGeofence(item) ? 'online' : 'cloud-ready']">
-                {{ isWithinGeofence(item) ? '围栏内可打卡' : '支持云端探访' }}
+                {{ locationReady ? (isWithinGeofence(item) ? '围栏内可打卡' : '支持云端探访') : '需允许定位后打卡' }}
               </span>
             </div>
 
@@ -38,6 +38,7 @@
               type="primary" 
               size="small" 
               class="btn-primary"
+              :disabled="!locationReady"
               @click="checkin(item)"
             >
               研学打卡 (+30 能量)
@@ -57,8 +58,11 @@ import request from '../api/request'
 const loading = ref(false)
 const landmarks = ref<any[]>([])
 
-// 默认定位坐标为天津文化中心 (39.0887, 117.2141)
-const userLocation = ref({ latitude: 39.0887, longitude: 117.2141 })
+const userLocation = ref<{ latitude: number; longitude: number; accuracy?: number }>({
+  latitude: 0,
+  longitude: 0
+})
+const locationReady = ref(false)
 
 const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
   const R = 6371e3
@@ -75,13 +79,18 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
 }
 
 const getDistanceMeters = (item: any) => {
-  const lat = item.latitude ? Number(item.latitude) : 39.125
-  const lng = item.longitude ? Number(item.longitude) : 117.200
-  return calculateDistance(userLocation.value.latitude, userLocation.value.longitude, lat, lng)
+  if (!locationReady.value || !item.latitude || !item.longitude) return null
+  return calculateDistance(
+    userLocation.value.latitude,
+    userLocation.value.longitude,
+    Number(item.latitude),
+    Number(item.longitude)
+  )
 }
 
 const formatDistance = (item: any) => {
   const meters = getDistanceMeters(item)
+  if (meters == null) return '定位不可用'
   if (meters < 1000) {
     return `${meters} 米`
   }
@@ -90,8 +99,9 @@ const formatDistance = (item: any) => {
 
 const isWithinGeofence = (item: any) => {
   const meters = getDistanceMeters(item)
+  if (meters == null) return false
   const radius = item.geofence_radius_meters || 1500
-  return meters <= radius
+  return meters + (userLocation.value.accuracy || 0) <= radius
 }
 
 const fetchLandmarks = async () => {
@@ -113,11 +123,16 @@ const handleImgError = (e: Event) => {
 }
 
 const checkin = async (lm: any) => {
+  if (!locationReady.value) {
+    ElMessage.warning('请允许浏览器定位后再打卡')
+    return
+  }
   try {
     const res: any = await request.post('/activities/checkin', {
       landmark_id: lm.id,
       latitude: userLocation.value.latitude,
-      longitude: userLocation.value.longitude
+      longitude: userLocation.value.longitude,
+      accuracy: userLocation.value.accuracy
     })
 
     let tip = `恭喜您成功打卡【${res.landmark_name}】！获得美育能量 +${res.energy_added}`
@@ -140,11 +155,15 @@ onMounted(() => {
       (pos) => {
         userLocation.value = {
           latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude
+          longitude: pos.coords.longitude,
+          accuracy: pos.coords.accuracy
         }
+        locationReady.value = true
       },
-      () => {},
-      { timeout: 3000 }
+      () => {
+        locationReady.value = false
+      },
+      { timeout: 8000 }
     )
   }
   fetchLandmarks()

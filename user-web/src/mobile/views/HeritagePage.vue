@@ -12,20 +12,23 @@ const keyword = ref(""),
   ),
   loading = ref(false),
   error = ref("");
+let searchVersion = 0;
 async function search(value?: string) {
   if (value !== undefined) keyword.value = value;
+  const version = ++searchVersion;
   loading.value = true;
   error.value = "";
   try {
     const result = await api(
       "/mobile/heritage?keyword=" + encodeURIComponent(keyword.value),
     );
+    if (version !== searchVersion) return;
     entries.value = result.list;
     stats.value = result.stats || null;
   } catch (e) {
-    error.value = (e as Error).message;
+    if (version === searchVersion) error.value = (e as Error).message;
   } finally {
-    loading.value = false;
+    if (version === searchVersion) loading.value = false;
   }
 }
 async function quickSearch() {
@@ -68,7 +71,7 @@ onMounted(() => search());
       <p class="eyebrow">TIANJIN HERITAGE</p>
       <h1>津门遗韵<br /><em>美育传承</em></h1>
       <p class="subtle">
-        沉浸式探索天津非物质文化遗产，从青铜器纹样到皮影戏光影，<br />让传统美学融入现代教育，传承津门文化根脉。
+        图文探索天津非物质文化遗产，从青铜器纹样到皮影戏光影，<br />让传统美学融入现代教育，传承津门文化根脉。
       </p>
       <a class="primary-button" href="#heritage-results">开始探索</a
       ><RouterLink class="text-button" to="/teacher/lesson-plan"
@@ -122,7 +125,7 @@ onMounted(() => search());
         </div>
       </section>
       <section id="heritage-results" class="heritage-results">
-        <h2>沉浸式文物浏览</h2>
+        <h2>文物图文浏览</h2>
         <p class="subtle">探索天津非遗瑰宝，感受千年文化脉动</p>
         <AsyncState
           :loading="loading"
@@ -145,7 +148,7 @@ onMounted(() => search());
                 <p class="eyebrow">{{ entry.era }}</p>
                 <h3>{{ entry.title }}</h3>
                 <p class="subtle">{{ entry.summary }}</p>
-                <span class="text-button">进入沉浸模式 ›</span>
+                <span class="text-button">查看图文详情 ›</span>
               </div></RouterLink
             >
           </div></AsyncState

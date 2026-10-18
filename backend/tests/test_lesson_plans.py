@@ -79,6 +79,41 @@ def test_local_mode_never_calls_configured_model_and_capabilities_reveal_no_secr
     assert "ppt_download_url" not in data["content"]
 
 
+def test_local_lesson_activities_follow_grade_band(client):
+    expected = {
+        "小学三年级": ("请老师或家长帮助", "两三句话"),
+        "初中": ("补充一条可查证的资料", "一段文字"),
+        "高中": ("补充两条可查证的资料", "标注所依据"),
+        "大学": ("两条以上可查证资料", "事实、推断"),
+    }
+    contents = {}
+    for grade, (homework_marker, skill_marker) in expected.items():
+        data = create(client, BODY | {"grade": grade, "request_id": None}).json()["data"]
+        content = data["content"]
+        assert homework_marker in content["homework_proposal"], grade
+        assert skill_marker in content["targets"]["skill"], grade
+        assert skill_marker in content["teacher_script"], grade
+        contents[grade] = content
+    assert len({c["homework_proposal"] for c in contents.values()}) == 4
+    assert len({tuple(c["interactive_questions"]) for c in contents.values()}) == 4
+
+
+def test_html_export_uses_grade_aware_local_content(client):
+    params = {"topic": "杨柳青年画", "duration_minutes": 30}
+    html_url = "/api/teacher/lesson-plans/export-html"
+    high = client.get(html_url, params=params | {"grade": "高中"}, headers=auth(2, "TEACHER"))
+    primary = client.get(html_url, params=params | {"grade": "小学三年级"}, headers=auth(2, "TEACHER"))
+    assert high.status_code == primary.status_code == 200
+    assert "30 分钟" in high.text and "30 分钟" in primary.text
+    assert "标注所依据的课堂资料" in high.text
+    assert "补充两条可查证的资料" in high.text
+    assert "两三句话" in primary.text
+    assert "补充一条可查证的资料" in primary.text
+    for unsupported in ["AI 诊断三维指标均达标", "激光纸样自动排版", "AI多模态审美门诊", "3D 可动模型检视"]:
+        assert unsupported not in high.text
+    assert "不包含未接入的 3D 模型" in high.text
+
+
 @pytest.mark.parametrize("kind", ["incomplete","invalid-json","unavailable","invalid-url"])
 def test_configured_model_failures_are_saved_with_honest_fallback_source(client, monkeypatch, kind):
     configure(client)

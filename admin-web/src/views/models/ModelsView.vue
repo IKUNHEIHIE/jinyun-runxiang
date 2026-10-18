@@ -4,7 +4,7 @@
       <template #header>
         <div class="card-header">
           <span class="header-title">🤖 AI模型与LoRA版本管理 (A-03)</span>
-          <el-tag type="success">GPU推理集群在线就绪</el-tag>
+          <el-tag type="info">模型状态来自数据库配置</el-tag>
         </div>
       </template>
 
@@ -22,8 +22,8 @@
             <div style="margin: 15px 0; font-size: 13px; color: #776D65; line-height: 22px;">
               <div>• 适用工坊: <strong>{{ formatTaskType(m.task_type) }}</strong></div>
               <div>• 运行提供方: {{ m.provider }}</div>
-              <div>• 默认提示词模版: <span style="font-style: italic; color: #8B4A2F;">{{ m.prompt_template || '通用津沽非遗Prompt' }}</span></div>
-              <div>• 运行状态: <el-tag size="small" :type="m.status === 'ACTIVE' ? 'success' : 'danger'">{{ m.status === 'ACTIVE' ? '在线就绪' : '已暂停服务' }}</el-tag></div>
+              <div>• 默认提示词模版: <span style="font-style: italic; color: #8B4A2F;">{{ m.prompt_template || '未配置' }}</span></div>
+              <div>• 配置状态: <el-tag size="small" :type="m.status === 'ACTIVE' ? 'success' : 'danger'">{{ m.status === 'ACTIVE' ? '配置启用' : '配置停用' }}</el-tag></div>
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #F0ECE4; padding-top: 10px;">

@@ -155,24 +155,32 @@
         </el-tab-pane>
 
         <!-- Tab 2: 示范班级 -->
-        <el-tab-pane label="乡村美育示范班级 (示范基点)" name="classes">
+        <el-tab-pane label="乡村美育班级（真实数据）" name="classes">
           <div class="class-header">
-            <span class="class-summary">共覆盖 2 个首批国家级非遗美育重点试点示范班，直连乡村智慧终端与具身设备</span>
+            <span class="class-summary">
+              共 {{ classes.length }} 个在班班级 · {{ classStudentTotal }} 在班学生人次；学完率按已开始课程的已发布章节实时统计
+            </span>
+            <el-button size="small" plain :loading="classesLoading" @click="fetchClasses">刷新</el-button>
           </div>
-          <el-table :data="classes" style="width: 100%" stripe border>
+          <el-table :data="classes" v-loading="classesLoading" style="width: 100%" stripe border>
             <el-table-column prop="id" label="班级ID" width="90" align="center" />
-            <el-table-column prop="name" label="示范班级名称" min-width="220" />
-            <el-table-column prop="teacher" label="带班教师" width="140" align="center" />
-            <el-table-column prop="school" label="所属乡村学校" min-width="200" />
-            <el-table-column prop="count" label="实收学生数" width="110" align="center" />
-            <el-table-column prop="completion" label="课程学完率" width="160">
+            <el-table-column prop="name" label="班级名称" min-width="220" />
+            <el-table-column label="带班教师" width="140" align="center">
+              <template #default="{ row }">{{ row.teacher_name || '未登记' }}</template>
+            </el-table-column>
+            <el-table-column label="所属乡村学校" min-width="200">
+              <template #default="{ row }">{{ row.school || '未登记' }}</template>
+            </el-table-column>
+            <el-table-column prop="student_count" label="在班学生数" width="110" align="center" />
+            <el-table-column label="课程学完率" width="180">
               <template #default="{ row }">
-                <el-progress :percentage="row.completion" color="#4D8B63" />
+                <el-progress v-if="typeof row.completion === 'number'" :percentage="row.completion" color="#4D8B63" />
+                <span v-else class="muted-text">暂无学习记录</span>
               </template>
             </el-table-column>
-            <el-table-column label="教学阶段" width="120" align="center">
-              <template #default>
-                <el-tag type="success">秋季进阶阶段</el-tag>
+            <el-table-column label="学段/年级" width="140" align="center">
+              <template #default="{ row }">
+                <el-tag type="success">{{ row.grade || '未设置' }}</el-tag>
               </template>
             </el-table-column>
           </el-table>
@@ -250,7 +258,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { computed, ref, reactive, onMounted } from 'vue'
 import { Plus, Search, Refresh } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/api/request'
@@ -272,10 +280,23 @@ const pagination = reactive({
 })
 
 // 示范班级
-const classes = ref([
-  { id: 1, name: '蓟州非遗美育三年级一班', teacher: '王秀兰', school: '蓟州区下营镇中心小学', count: 42, completion: 84.5 },
-  { id: 2, name: '宝坻评剧与年画特色二班', teacher: '张建军', school: '宝坻区大口屯镇初级中学', count: 38, completion: 78.0 }
-])
+const classes = ref<any[]>([])
+const classesLoading = ref(false)
+const classStudentTotal = computed(() =>
+  classes.value.reduce((sum, item) => sum + (item.student_count || 0), 0)
+)
+
+const fetchClasses = async () => {
+  classesLoading.value = true
+  try {
+    const res: any = await request.get('/teacher/classes')
+    classes.value = Array.isArray(res) ? res : []
+  } catch (err: any) {
+    ElMessage.error('获取班级列表失败: ' + (err.message || '网络异常'))
+  } finally {
+    classesLoading.value = false
+  }
+}
 
 // 加载用户列表
 const fetchUsers = async () => {
@@ -460,6 +481,7 @@ const handleConfirmEdit = async () => {
 
 onMounted(() => {
   fetchUsers()
+  fetchClasses()
 })
 </script>
 
@@ -588,10 +610,19 @@ onMounted(() => {
 
 .class-header {
   margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
 
 .class-summary {
   font-size: 14px;
   color: #5C554E;
+}
+
+.muted-text {
+  font-size: 12px;
+  color: #8C827A;
 }
 </style>

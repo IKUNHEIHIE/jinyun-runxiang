@@ -8,7 +8,7 @@
         </div>
         <h1 class="hero-title font-serif">津韵润乡 · 传承有道</h1>
         <p class="hero-subtitle">
-          以天津皮影、杨柳青木版年画、泥人张、汉沽版画为源，巧借生成式 AI 与具身智能，点亮每一位乡村孩子的乡土美育梦想。
+          以天津皮影、杨柳青木版年画、泥人张、汉沽版画为源，巧借生成式 AI 与数字技术，点亮每一位乡村孩子的乡土美育梦想。
         </p>
 
         <div class="hero-actions">
@@ -27,23 +27,23 @@
         <!-- 核心统计数字条 -->
         <div class="stats-strip">
           <div class="stat-item">
-            <span class="stat-num font-serif">16+</span>
-            <span class="stat-label">天津非遗微课</span>
+            <span class="stat-num font-serif">{{ courseTotal }}</span>
+            <span class="stat-label">已发布非遗微课</span>
           </div>
           <div class="stat-divider"></div>
           <div class="stat-item">
-            <span class="stat-num font-serif">5 大</span>
+            <span class="stat-num font-serif">4 大</span>
             <span class="stat-label">多模态AI非遗工坊</span>
           </div>
           <div class="stat-divider"></div>
           <div class="stat-item">
-            <span class="stat-num font-serif">9 所</span>
-            <span class="stat-label">天津各区结对乡村小学</span>
+            <span class="stat-num font-serif">{{ schoolTotal }}</span>
+            <span class="stat-label">已登记受助乡村学校</span>
           </div>
           <div class="stat-divider"></div>
           <div class="stat-item">
-            <span class="stat-num font-serif">¥{{ (fundTotal).toFixed(2) }}</span>
-            <span class="stat-label">助农美育定向基金</span>
+            <span class="stat-num font-serif">¥{{ fundTotal.toFixed(2) }}</span>
+            <span class="stat-label">已确认助农美育基金</span>
           </div>
         </div>
       </div>
@@ -118,32 +118,43 @@
 
     <!-- 2. 乡村美育学徒成长动态 -->
     <section class="section-apprentice">
-      <div class="paper-card apprentice-card">
+      <div v-if="userProfile.id" class="paper-card apprentice-card">
         <div class="apprentice-left">
           <div class="avatar-box">
-            <el-avatar :size="60" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150" />
-            <div class="badge-tag">LV.2</div>
+            <el-avatar :size="60" :src="userProfile.avatar_url || '/static/images/default_avatar.svg'" />
+            <div class="badge-tag">{{ userProfile.level_code || 'LV.1' }}</div>
           </div>
           <div class="apprentice-info">
             <div class="info-title">
-              <span class="user-name font-serif">{{ userProfile.nickname || '小明同学' }}</span>
-              <span class="school-name">蓟州区下营镇中心小学 · 四年级</span>
+              <span class="user-name font-serif">{{ userProfile.nickname }}</span>
+              <span class="school-name">
+                {{ [userProfile.school_name, userProfile.grade].filter(Boolean).join(' · ') || '未登记学校与年级' }}
+              </span>
             </div>
             <div class="energy-track">
               <div class="track-header">
-                <span>美育工匠修炼度</span>
-                <span class="energy-score">⚡ <strong>{{ userProfile.energy_value || 1330 }}</strong> / 2000 能量</span>
+                <span>美育能量进度</span>
+                <span class="energy-score">⚡ <strong>{{ energyValue }}</strong> / 2000 能量</span>
               </div>
-              <el-progress :percentage="68" :stroke-width="10" color="#8B4A2F" :show-text="false" />
+              <el-progress :percentage="energyPercent" :stroke-width="10" color="#8B4A2F" :show-text="false" />
             </div>
           </div>
         </div>
         <div class="apprentice-badges">
-          <div class="badge-pill active" title="已点亮：初探津门非遗">🏮 初探津门</div>
-          <div class="badge-pill active" title="已点亮：AI巧思匠人">🎨 AI巧思</div>
-          <div class="badge-pill active" title="已点亮：版画小工匠">🪵 版画工匠</div>
-          <div class="badge-pill locked" title="待解锁：乡村美育使者">🗺️ 美育使者</div>
+          <div
+            v-for="badge in (userProfile.badges || []).slice(0, 4)"
+            :key="badge.id"
+            class="badge-pill active"
+            :title="badge.description"
+          >
+            {{ badge.name }}
+          </div>
+          <span v-if="!(userProfile.badges || []).length" class="badge-empty">暂无已点亮徽章</span>
         </div>
+      </div>
+      <div v-else class="paper-card apprentice-card guest-card">
+        <span class="guest-tip">登录后查看你的美育成长档案、能量与已点亮徽章。</span>
+        <router-link to="/login" class="guest-link">去登录 →</router-link>
       </div>
     </section>
 
@@ -152,7 +163,7 @@
       <div class="section-header">
         <div>
           <h2 class="section-title font-serif">乡土美育 · 精品微课</h2>
-          <p class="section-desc">由天津非遗大师亲授，配套视频详解与分龄趣味测验</p>
+          <p class="section-desc">配套课程内容、视频详解与分龄趣味测验</p>
         </div>
         <router-link to="/courses" class="view-all-link">查看全部课程 ({{ courses.length }}) →</router-link>
       </div>
@@ -192,7 +203,7 @@
         <router-link to="/ai-workshop?tool=SHADOW_PUPPET" class="paper-card ai-tool-card">
           <div class="tool-icon shadow-icon">🎭</div>
           <h3 class="font-serif">津派皮影生成</h3>
-          <p>智能提取角色线稿，传统矿物套色，导出 3D 可动骨骼与激光雕镂图纸。</p>
+          <p>智能提取角色线稿，传统矿物套色，生成可下载的矢量图样。</p>
           <span class="tool-action">开始雕镂 →</span>
         </router-link>
 
@@ -206,8 +217,8 @@
         <router-link to="/ai-workshop?tool=BALLAD" class="paper-card ai-tool-card">
           <div class="tool-icon ballad-icon">🥁</div>
           <h3 class="font-serif">骆派大鼓曲牌</h3>
-          <p>古诗词智能五声音阶作曲，融合津门三弦与书场快板鼓点伴奏。</p>
-          <span class="tool-action">试听创作 →</span>
+          <p>整理传统曲牌与唱词，生成简谱文本；伴奏音频尚未接入。</p>
+          <span class="tool-action">进入曲牌工坊 →</span>
         </router-link>
 
         <router-link to="/ai-workshop?tool=LACQUER" class="paper-card ai-tool-card">
@@ -246,15 +257,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import request from '../api/request'
 
 const router = useRouter()
 const courses = ref<any[]>([])
-const fundTotal = ref(137.75)
+const courseTotal = ref(0)
+const fundTotal = ref(0)
+const schoolTotal = ref(0)
 const userProfile = ref<any>({})
 const festivals = ref<any[]>([])
+
+const energyValue = computed(() => Number(userProfile.value.energy_value) || 0)
+const energyPercent = computed(() => Math.min(100, Math.round((energyValue.value / 2000) * 100)))
 
 // -------------------------------------------------------------
 // 津门海河水脉非遗流动画卷数据 (P1)
@@ -349,6 +365,17 @@ const loadData = async () => {
     const resCourses: any = await request.get('/courses?page=1&pageSize=6')
     if (resCourses && resCourses.list) {
       courses.value = resCourses.list
+      courseTotal.value = Number(resCourses.total) || resCourses.list.length
+    }
+  } catch (e) {}
+
+  try {
+    const resFund: any = await request.get('/mall/philanthropy/supplies')
+    if (resFund && resFund.summary) {
+      fundTotal.value = Number(resFund.summary.fund_total_yuan) || 0
+      schoolTotal.value = new Set(
+        (resFund.supplies || []).map((item: any) => item.school_name).filter(Boolean)
+      ).size
     }
   } catch (e) {}
 
@@ -575,6 +602,22 @@ onMounted(() => {
   background: #F0EAE1;
   color: #A0988E;
   border: 1px dashed var(--color-border);
+}
+
+.badge-empty {
+  font-size: 12px;
+  color: #A0988E;
+}
+
+.guest-card {
+  justify-content: center;
+  color: #7D756C;
+  font-size: 14px;
+}
+
+.guest-link {
+  color: var(--color-primary);
+  font-weight: 600;
 }
 
 /* Sections */

@@ -1,7 +1,7 @@
 <template>
   <div class="ai-page">
     <div class="page-header">
-      <div class="tag-gold mb-2">❖ 垂类大模型多模态生成 · 具身智能设计中枢</div>
+      <div class="tag-gold mb-2">❖ 垂类大模型多模态生成 · AI 非遗设计中枢</div>
       <h1 class="page-title font-serif">AI 工坊 · 天津非遗数字创客空间</h1>
       <p class="page-sub">
         让乡村孩子用一句话生成津派皮影造型、商周青铜纹饰与古法大漆配色，感受科技赋能传统手艺的奇妙碰撞
@@ -30,7 +30,7 @@
         <el-step title="1. 选择非遗工艺" description="皮影 / 青铜 / 曲牌 / 漆艺" />
         <el-step title="2. 灵感与提示词" description="自然语言描述角色或器物" />
         <el-step title="3. AI 多模态推理" description="抽取津派特征并生成矢量线稿" />
-        <el-step title="4. 纸样下料与3D检视" description="下载激光纸样与3D骨骼模型" />
+        <el-step title="4. 成果查看与下载" description="查看作品图并下载矢量图样" />
       </el-steps>
     </div>
 
@@ -40,7 +40,7 @@
         <span class="quick-eval-icon">📷</span>
         <div>
           <strong class="eval-banner-title">乡村美育小工匠 · 线下手工作品 AI 审美门诊</strong>
-          <p class="eval-banner-sub">完成非遗剪纸、皮影拼装或年画填色？拍照上传即可获得天津美院专家组与 AI 导师的量化评分与名师寄语！</p>
+          <p class="eval-banner-sub">完成非遗剪纸、皮影拼装或年画填色？拍照上传可获得 AI 图像评分与改进建议，结果非人工名师评审。</p>
         </div>
       </div>
       <el-button type="warning" round class="btn-eval" :loading="evaluating" @click="triggerUploadEval">
@@ -118,19 +118,19 @@
       <!-- 右侧：生成成果展示视窗 -->
       <div class="paper-card panel-right">
         <h3 class="font-serif panel-title">
-          <span>❖ 非遗创作数字资产与 3D 成果</span>
+          <span>❖ 非遗创作数字资产与生成成果</span>
           <span v-if="taskResult" class="status-chip success">生成成功</span>
         </h3>
 
         <div v-if="!taskResult && !generating" class="empty-state">
           <div class="empty-icon">🏮</div>
-          <p>在左侧输入您的非遗灵感，AI 将为您生成专属艺术成果与 3D 打印模型！</p>
+          <p>在左侧输入您的非遗灵感，AI 将为您生成专属艺术成果与可下载的矢量图样。</p>
         </div>
 
         <div v-else-if="generating" class="generating-state">
           <el-icon class="is-loading gen-spinner"><Loading /></el-icon>
           <p class="gen-title font-serif">匠心演算中，正在抽取天津非遗艺术特征...</p>
-          <p class="gen-sub">线稿拓印 ➔ 传统套色渲染 ➔ 3D骨骼拓扑结构搭建</p>
+          <p class="gen-sub">线稿拓印 ➔ 传统套色渲染 ➔ 矢量图样整理</p>
         </div>
 
         <div v-else-if="taskResult" class="result-showcase">
@@ -165,17 +165,18 @@
                 <code class="score-notation">{{ taskResult.sheet_music_text }}</code>
               </div>
 
-              <div class="ballad-audio-controls">
+              <div v-if="taskResult.audio_url" class="ballad-audio-controls">
                 <button class="audio-play-toggle-btn" @click="toggleAudioPlay">
                   <span v-if="isPlaying">⏸ 暂停伴奏</span>
                   <span v-else>▶ 试听鼓板伴奏</span>
                 </button>
                 <div class="rhythm-beat-indicator" :class="{ beating: isPlaying }">
                   <span class="drum-beat-icon">🥁</span>
-                  <span class="beat-text">{{ isPlaying ? '【仓】 嗒 【仓】 嗒 · 板眼流转中' : '点击试听海河书场扁鼓快板原声' }}</span>
+                  <span class="beat-text">{{ isPlaying ? '【仓】 嗒 【仓】 嗒 · 板眼流转中' : '点击试听已生成的伴奏音频' }}</span>
                 </div>
               </div>
-              <audio ref="balladAudioRef" :src="taskResult.audio_url" @ended="isPlaying = false" style="display: none;"></audio>
+              <p v-else class="audio-unavailable">当前仅提供简谱文本，伴奏音频未生成。</p>
+              <audio v-if="taskResult.audio_url" ref="balladAudioRef" :src="taskResult.audio_url" @ended="isPlaying = false" style="display: none;"></audio>
             </div>
 
             <div class="result-desc">
@@ -207,16 +208,10 @@
             </div>
           </div>
 
-          <!-- 3D 模型与激光图纸与音频下载 -->
+          <!-- 矢量图样与音频下载 -->
           <div class="asset-actions">
-            <div v-if="taskResult.mesh_3d_url" class="asset-btn-box">
-              <span class="asset-name">GLTF 3D 可动模型</span>
-              <a :href="taskResult.mesh_3d_url" target="_blank" class="download-btn">
-                查看 3D 预览 ↗
-              </a>
-            </div>
             <div v-if="taskResult.vector_svg_url || taskResult.colored_image_url || taskResult.print_template_url" class="asset-btn-box">
-              <span class="asset-name">{{ currentTool === 'BALLAD' ? '工尺简谱与鼓板手稿' : (currentTool === 'BRONZE' ? '金石拓片/雕模矢量' : 'A4 纸样/激光雕镂模板') }}</span>
+              <span class="asset-name">{{ currentTool === 'BALLAD' ? '工尺简谱文本' : (currentTool === 'BRONZE' ? '金石拓片/雕模矢量' : '矢量图样（下载预览）') }}</span>
               <button class="download-btn" @click="downloadTemplate">
                 下载原生矢量图样 ↓
               </button>
@@ -238,7 +233,7 @@
               🖨️ 生成 A4/A3 走廊展册
             </el-button>
             <el-button type="primary" class="btn-primary" :loading="evaluating" @click="runEvaluation(null)">
-              ✦ 发起 AI 名师审美诊断 (+30 能量)
+              ✦ 发起 AI 图像审美诊断 (+30 能量)
             </el-button>
             <el-button type="success" @click="shareToCommunity">
               发布到美育社区广场
@@ -248,10 +243,10 @@
       </div>
     </div>
 
-    <!-- AI 名师审美诊断评价卡片弹窗 -->
+    <!-- AI 图像审美诊断评价卡片弹窗 -->
     <el-dialog
       v-model="evalModalVisible"
-      title="天津非遗名师 · AI 多模态审美诊断成长档案"
+      title="手工作品 · AI 图像审美诊断报告"
       width="680px"
       custom-class="eval-dialog"
       destroy-on-close
@@ -263,7 +258,7 @@
         </div>
 
         <div class="eval-header-banner">
-          <div class="eval-badge-seal">非遗<br>认证</div>
+          <div class="eval-badge-seal">AI<br>测评</div>
           <div style="flex: 1;">
             <div class="eval-cert-id">档案编号：{{ evalResult.evaluation_id }}</div>
             <h3 class="font-serif eval-work-title">{{ evalResult.title }} · 审美评定报告</h3>
@@ -306,11 +301,11 @@
           </div>
         </div>
 
-        <!-- 名师寄语 -->
+        <!-- AI 测评建议 -->
         <div class="eval-mentor-box">
           <div class="mentor-title">
             <span class="mentor-icon">✒️</span>
-            <span>津派非遗名师评语与进阶指引：</span>
+            <span>AI 测评建议与进阶指引：</span>
           </div>
           <p class="mentor-quote">{{ evalResult.mentor_comment }}</p>
           <div class="mentor-sign">
@@ -320,10 +315,7 @@
         </div>
       </div>
       <template #footer>
-        <el-button @click="evalModalVisible = false">关闭档案</el-button>
-        <el-button type="primary" class="btn-primary" @click="saveEvalReport">
-          保存诊断档案卡
-        </el-button>
+        <el-button @click="evalModalVisible = false">关闭报告</el-button>
       </template>
     </el-dialog>
 
@@ -440,7 +432,7 @@
     <!-- A4/A3 成果走廊实体展册排版弹窗 (P2) -->
     <el-dialog
       v-model="exhibitionModalVisible"
-      title="🖨️ 乡村小学非遗成果走廊实体展册 · A4/A3 标准排版"
+      title="🖨️ 乡村小学非遗成果展册 · A4/A3 排版预览"
       width="820px"
       custom-class="exhibition-dialog"
       destroy-on-close
@@ -451,13 +443,13 @@
             <div class="header-logo-group">
               <span class="sheet-seal">津</span>
               <div>
-                <h2 class="font-serif sheet-main-title">天津市乡村非遗美育成果展 · 示范学堂期末作品册</h2>
-                <p class="sheet-sub">主办：天津市美育振兴协同育人基地 × 乡村美育特色示范班</p>
+                <h2 class="font-serif sheet-main-title">天津市乡村非遗美育成果展 · 作品展册</h2>
+                <p class="sheet-sub">本页为本地排版预览，未接入实体展览认证</p>
               </div>
             </div>
             <div class="sheet-batch-stamp">
-              <span>【实体上墙展样】</span>
-              <span>2026春季期末展</span>
+              <span>【排版预览】</span>
+              <span>打印前请人工核验</span>
             </div>
           </div>
 
@@ -465,45 +457,35 @@
             <!-- 左侧：线稿与激光切割打印纸样 -->
             <div class="sheet-left">
               <div class="laser-cut-card">
-                <div class="laser-badge">激光切割与手工透雕样板 (1:1等比)</div>
+                <div class="laser-badge">作品图样参考 · 未验证激光切割参数</div>
                 <img :src="taskResult?.line_art_url || taskResult?.colored_image_url || '/static/images/shadow_puppet_1.svg'" class="laser-preview-img" />
                 <div class="laser-cut-notice">
-                  <span>✂️ 沿实线剪裁</span>
-                  <span>⭕ 关节打孔穿线</span>
-                  <span>🥢 粘贴竹签控制点</span>
+                  <span>✂️ 沿轮廓剪裁（参考）</span>
+                  <span>⭕ 关节打孔（参考）</span>
+                  <span>🥢 竹签控制点（参考）</span>
                 </div>
               </div>
             </div>
 
             <!-- 右侧：艺术赏析、名师点评与二维码 -->
             <div class="sheet-right">
-              <h3 class="font-serif exhibit-title">{{ taskResult?.title || '《津门文生·秀骨清风》' }}</h3>
-              <div class="author-tag-row">
-                <span class="sheet-tag">小创作者：李小明 (四年级)</span>
-                <span class="sheet-tag">指导老师：王晓华</span>
-                <span class="sheet-tag">校区：蓟州区穿芳峪中心小学</span>
-              </div>
+              <h3 class="font-serif exhibit-title">{{ taskResult?.title || '未命名作品' }}</h3>
 
               <div class="sheet-detail-box">
-                <h4>❖ 非遗文脉渊源：</h4>
-                <p>{{ taskResult?.historical_context || '源自天津国家级非遗津派皮影戏，造型融合北方豪放与宫廷透雕刀工。' }}</p>
+                <template v-if="taskResult?.historical_context">
+                  <h4>❖ 非遗文脉渊源：</h4>
+                  <p>{{ taskResult.historical_context }}</p>
+                </template>
 
-                <h4>❖ 工艺指导要领：</h4>
-                <p>{{ taskResult?.craft_technique || '以驴皮或特种卡纸为料，发刀刻细部、平刀出大形，设色讲求矿物五彩。' }}</p>
+                <template v-if="taskResult?.craft_technique">
+                  <h4>❖ 工艺指导要领：</h4>
+                  <p>{{ taskResult.craft_technique }}</p>
+                </template>
 
-                <h4>❖ 天津美院专家组寄语：</h4>
-                <p style="color: #8B4A2F; font-weight: 500;">{{ taskResult?.description || '造型灵动洗练，既传承了津门乡土文脉，又具当代乡村少年的蓬勃朝气。' }}</p>
-              </div>
-
-              <!-- 防伪与3D交互查验二维码 -->
-              <div class="sheet-qr-box">
-                <div class="qr-code-mock">
-                  <span style="font-size: 26px;">📱</span>
-                </div>
-                <div class="qr-meta">
-                  <strong>扫码查看 3D 旋转模型与学生录音自白</strong>
-                  <p>唯一作品验真码：JY-2026-EXHIBIT-{{ (taskResult?.task_id || '987654').slice(0, 8) }}</p>
-                </div>
+                <template v-if="taskResult?.description">
+                  <h4>❖ 作品解析：</h4>
+                  <p style="color: #8B4A2F; font-weight: 500;">{{ taskResult.description }}</p>
+                </template>
               </div>
             </div>
           </div>
@@ -511,7 +493,7 @@
           <div class="sheet-footer">
             <span>标准规格：A4 (210×297mm) / A3 (297×420mm)</span>
             <span>纸张建议：250g 仿古宣纸卡纸 / 哑光高保真铜版纸</span>
-            <span>津韵润乡美育智能平台认证</span>
+            <span>本地排版预览 · 未接入实体认证</span>
           </div>
         </div>
       </div>
@@ -532,7 +514,7 @@ import { ElMessage } from 'element-plus'
 import request from '../api/request'
 
 const tools = [
-  { key: 'SHADOW_PUPPET', icon: '🎭', name: '津派皮影生成', desc: '三签关节、镂空刀法、3D骨骼' },
+  { key: 'SHADOW_PUPPET', icon: '🎭', name: '津派皮影生成', desc: '三签关节、镂空刀法、矢量图样' },
   { key: 'BRONZE', icon: '🏺', name: '青铜神兽饕餮', desc: '天博礼器、金石拓片、铜绿质感' },
   { key: 'BALLAD', icon: '🥁', name: '骆派曲牌哼唱', desc: '五声音阶、时调鼓韵、三弦配曲' },
   { key: 'LACQUER', icon: '✨', name: '古法大漆螺钿', desc: '天然矿物色系、流线修复、螺钿生辉' }
@@ -560,8 +542,8 @@ const toggleAudioPlay = () => {
     balladAudioRef.value.play().then(() => {
       isPlaying.value = true
     }).catch(() => {
-      ElMessage.info('已开启天津曲艺鼓板伴奏试听')
-      isPlaying.value = true
+      isPlaying.value = false
+      ElMessage.error('伴奏音频加载失败，请稍后重试')
     })
   }
 }
@@ -747,12 +729,16 @@ const downloadTemplate = () => {
 }
 
 const shareToCommunity = async () => {
+  if (!displayImageUrl.value) {
+    ElMessage.warning('请先生成或上传作品图后再发布')
+    return
+  }
   try {
     await request.post('/community/posts', {
       title: `我的AI非遗工坊作品：${promptText.value.slice(0, 18)}`,
       content: `在《津韵润乡》AI工坊创作完成了【${currentToolName.value}】作品，感受到了家乡非遗的美！`,
       category: currentTool.value,
-      cover_url: displayImageUrl.value || 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600'
+      cover_url: displayImageUrl.value
     })
     ElMessage.success('已一键发布到美育社区广场！欢迎同学们交流点评')
   } catch (e) {
@@ -794,9 +780,17 @@ const onPhotoSelected = async (e: Event) => {
 }
 
 const runEvaluation = async (customImg?: string | null, customTitle?: string) => {
+  const targetImg = customImg || displayImageUrl.value
+  if (!targetImg) {
+    ElMessage.warning('请先生成或上传作品图后再诊断')
+    return
+  }
+  if (!customImg && !/\.(png|jpe?g|webp)(\?|$)/i.test(targetImg)) {
+    ElMessage.warning('当前作品是 SVG/矢量图，AI 图像测评仅支持 PNG/JPEG/WebP；请上传作品照片')
+    return
+  }
   evaluating.value = true
   try {
-    const targetImg = customImg || displayImageUrl.value || '/static/images/shadow_puppet_sheng.svg'
     const targetTitle = customTitle || taskResult.value?.description?.slice(0, 16) || '津派非遗手作创客作品'
     const res: any = await request.post('/ai/evaluate', {
       image_url: targetImg,
@@ -805,17 +799,12 @@ const runEvaluation = async (customImg?: string | null, customTitle?: string) =>
     })
     evalResult.value = res
     evalModalVisible.value = true
-    ElMessage.success('非遗 AI 名师审美诊断完成！美育能量 +30 点已汇入！')
+    ElMessage.success(res.energy_reward ? `AI 图像审美诊断完成，美育能量 +${res.energy_reward}` : 'AI 图像审美诊断完成')
   } catch (e) {
     ElMessage.error('审美诊断失败，请重试')
   } finally {
     evaluating.value = false
   }
-}
-
-const saveEvalReport = () => {
-  ElMessage.success('审美诊断成长档案已保存至个人中心！')
-  evalModalVisible.value = false
 }
 
 // 🎭 P2: 津派皮影三签联动操纵台逻辑
@@ -1231,6 +1220,12 @@ const triggerBrowserPrint = () => {
   display: flex;
   align-items: center;
   gap: 14px;
+}
+
+.audio-unavailable {
+  margin: 0;
+  font-size: 12px;
+  color: #8C827A;
 }
 
 .audio-play-toggle-btn {

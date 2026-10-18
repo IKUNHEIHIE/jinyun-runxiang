@@ -6,18 +6,18 @@
         <el-avatar :size="80" :src="userInfo.avatar_url || '/static/images/default_avatar.svg'" />
         <div class="user-meta">
           <div class="name-row">
-            <h2 class="font-serif user-title">{{ userInfo.nickname || '小明同学' }}</h2>
-            <span class="role-tag">{{ isTeacher ? '乡村美育骨干教师' : '乡村非遗学徒' }}</span>
+            <h2 class="font-serif user-title">{{ userInfo.nickname || '未登录用户' }}</h2>
+            <span class="role-tag">{{ roleLabel }}</span>
           </div>
           <p class="user-school">
-            🏫 {{ userInfo.school_name || (isTeacher ? '蓟州区下营中心校美育教研组' : '蓟州区下营镇中心小学 · 四年级') }}
+            🏫 {{ [userInfo.school_name, userInfo.grade].filter(Boolean).join(' · ') || '未登记学校与年级' }}
           </p>
         </div>
       </div>
 
       <div class="hero-right">
         <!-- 角色模式切换 -->
-        <div class="switch-box">
+        <div v-if="canSwitchRole" class="switch-box">
           <span class="switch-label">身份视图：</span>
           <el-radio-group v-model="activeRoleTab" size="small" @change="onRoleTabChange">
             <el-radio-button label="STUDENT">🎒 乡村学徒视图</el-radio-button>
@@ -37,14 +37,12 @@
         </div>
         <div class="level-progress-box">
           <div class="progress-labels">
-            <span>LV.1 新晋学徒 (0)</span>
-            <span>LV.2 熟练巧匠 (500)</span>
-            <span>LV.3 乡村工匠 (1000)</span>
-            <span>LV.4 非遗能手 (2000)</span>
+            <span>当前美育能量：{{ currentEnergy }}</span>
+            <span>进度展示目标：2000</span>
           </div>
           <el-progress :percentage="energyPercent" :stroke-width="12" color="#8B4A2F" :show-text="false" />
           <div class="current-energy-tip">
-            当前美育能量：<strong>{{ currentEnergy }}</strong> 点（离下一等级还需 {{ Math.max(0, 2000 - currentEnergy) }} 能量）
+            等级与能量以平台记录为准，进度条仅用于展示距离 2000 的完成度。
           </div>
         </div>
       </div>
@@ -52,33 +50,14 @@
       <!-- 徽章墙 -->
       <div class="paper-card section-card">
         <h3 class="font-serif section-heading">🏮 天津非遗学徒荣誉徽章</h3>
-        <div class="badges-grid">
-          <div class="badge-card unlocked">
+        <div v-if="(userInfo.badges || []).length" class="badges-grid">
+          <div v-for="badge in userInfo.badges" :key="badge.id" class="badge-card unlocked">
             <span class="badge-icon">🏮</span>
-            <h4>初探津门非遗</h4>
-            <p>首次完成一节非遗微课点播打卡</p>
-          </div>
-          <div class="badge-card unlocked">
-            <span class="badge-icon">🎨</span>
-            <h4>AI巧思匠人</h4>
-            <p>在AI工坊生成并导出首个皮影/纹样资产</p>
-          </div>
-          <div class="badge-card unlocked">
-            <span class="badge-icon">🪵</span>
-            <h4>汉沽版画小工匠</h4>
-            <p>完成滨海盐滩黑白版画技艺微课</p>
-          </div>
-          <div class="badge-card unlocked">
-            <span class="badge-icon">🗺️</span>
-            <h4>乡村美育使者</h4>
-            <p>完成至少1处天津历史文化地标研学打卡</p>
-          </div>
-          <div class="badge-card locked">
-            <span class="badge-icon">🌟</span>
-            <h4>非遗大师传人</h4>
-            <p>在社区广场发布作品并获得大师点赞</p>
+            <h4>{{ badge.name }}</h4>
+            <p>{{ badge.description }}</p>
           </div>
         </div>
+        <div v-else class="empty-tip">暂无已点亮徽章，完成课程或研学后可获得。</div>
       </div>
 
       <!-- 我的助农文创订单 -->
@@ -94,7 +73,7 @@
             <div class="order-right">
               <span class="order-amount">实付 ¥{{ o.total_amount_yuan }}</span>
               <span class="order-fund">♥ 美育基金贡献 ¥{{ o.fund_contributed_yuan }}</span>
-              <el-tag size="small" type="success">已支付</el-tag>
+              <el-tag size="small" :type="orderStatusType(o.status)">{{ orderStatusText(o.status) }}</el-tag>
             </div>
           </div>
         </div>
@@ -204,9 +183,16 @@ import { ElMessage } from 'element-plus'
 import request from '../api/request'
 
 const userInfo = ref<any>({})
-const currentEnergy = ref(1330)
+const currentEnergy = ref(0)
 const isTeacher = ref(false)
 const activeRoleTab = ref('STUDENT')
+
+const roleLabel = computed(() => {
+  if (userInfo.value.role_code === 'ADMIN') return '平台管理员'
+  if (userInfo.value.role_code === 'TEACHER') return '乡村美育教师'
+  return '乡村非遗学徒'
+})
+const canSwitchRole = computed(() => ['TEACHER', 'ADMIN'].includes(userInfo.value.role_code))
 
 const orders = ref<any[]>([])
 const teacherClasses = ref<any[]>([])
@@ -220,22 +206,43 @@ const generatingPlan = ref(false)
 const generatedPlan = ref<any>(null)
 
 const levelName = computed(() => {
-  if (currentEnergy.value >= 2000) return 'LV.4 非遗能手'
-  if (currentEnergy.value >= 1000) return 'LV.3 乡村工匠'
-  if (currentEnergy.value >= 500) return 'LV.2 熟练巧匠'
-  return 'LV.1 新晋学徒'
+  const code = userInfo.value.level_code
+  const names: Record<string, string> = {
+    LV1_APPRENTICE: 'LV.1 新晋学徒',
+    LV2_JOURNEYMAN: 'LV.2 熟练巧匠',
+    LV3_CRAFTSMAN: 'LV.3 乡村工匠',
+    LV4_MASTER: 'LV.4 非遗能手'
+  }
+  return names[code] || code || '未评级'
 })
 
 const energyPercent = computed(() => {
   return Math.min(100, Math.round((currentEnergy.value / 2000) * 100))
 })
 
+const orderStatusText = (status: string) => {
+  const names: Record<string, string> = {
+    CREATED: '待支付',
+    PAID: '已支付',
+    SHIPPED: '已发货',
+    COMPLETED: '已完成',
+    CANCELLED: '已取消'
+  }
+  return names[status] || status || '未知'
+}
+
+const orderStatusType = (status: string): 'success' | 'info' | 'warning' => {
+  if (['PAID', 'SHIPPED', 'COMPLETED'].includes(status)) return 'success'
+  if (status === 'CANCELLED') return 'info'
+  return 'warning'
+}
+
 const loadProfile = async () => {
   try {
     const res: any = await request.get('/auth/me')
     userInfo.value = res
-    currentEnergy.value = res.energy_value || 1330
-    isTeacher.value = res.role_code === 'TEACHER'
+    currentEnergy.value = Number(res.energy_value) || 0
+    isTeacher.value = ['TEACHER', 'ADMIN'].includes(res.role_code)
     if (isTeacher.value) {
       activeRoleTab.value = 'TEACHER'
     }
@@ -254,7 +261,8 @@ const loadProfile = async () => {
 
 const onRoleTabChange = (val: any) => {
   if (val === 'TEACHER' && !isTeacher.value) {
-    ElMessage.info('正在为您加载教师工作台数据演示...')
+    ElMessage.warning('当前账号没有教师工作台权限')
+    activeRoleTab.value = 'STUDENT'
   }
 }
 

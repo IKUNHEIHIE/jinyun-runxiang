@@ -33,14 +33,8 @@ const currentDetail = computed(() =>
     (detail: any) => detail.question_id === currentQuestion.value?.id,
   ),
 );
-const teacherTitle = computed(() =>
-  course.value?.category
-    ? categoryName(course.value.category) + "技艺传承人"
-    : "非遗技艺传承人",
-);
-const teacherBio = computed(
-  () => course.value?.subtitle || "传承非遗技艺，守护匠心文脉",
-);
+const teacherTitle = computed(() => "平台课程");
+const teacherBio = computed(() => course.value?.subtitle || "课程简介待补充");
 const quizImage = computed(
   () =>
     mediaUrl(course.value?.cover_url) ||
@@ -309,7 +303,7 @@ onUnmounted(() => {
               />
               <p>该章节暂未上传视频</p>
             </div>
-            <span class="video-hd">高清</span>
+            <span v-if="currentChapter?.video_url" class="video-hd">视频</span>
             <span v-if="durationLabel" class="video-duration">{{
               durationLabel
             }}</span>
@@ -355,12 +349,12 @@ onUnmounted(() => {
             <div class="teacher-row">
               <img
                 class="teacher-avatar"
-                :src="designImage('layer-5-01018', '5:01157')"
-                alt=""
+                :src="mediaUrl(course.cover_url) || designImage('layer-5-01018', '5:01157')"
+                :alt="course.title"
               />
               <div class="teacher-meta">
                 <div class="teacher-line">
-                  <b>润乡非遗课堂</b>
+                  <b>{{ course.title }}</b>
                   <span class="teacher-badge">{{ teacherTitle }}</span>
                 </div>
                 <p>{{ teacherBio }}</p>

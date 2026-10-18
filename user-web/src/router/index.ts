@@ -41,7 +41,7 @@ const routes = [
     path: '/profile',
     name: 'Profile',
     component: () => import('../views/ProfileView.vue'),
-    meta: { title: '个人中心 · 教师双师工作台' }
+    meta: { title: '个人中心 · 教师工作台' }
   }
 ]
 

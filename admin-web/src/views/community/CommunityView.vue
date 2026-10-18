@@ -52,9 +52,10 @@
         </el-table-column>
         <el-table-column label="风控风险评级" width="120">
           <template #default="{ row }">
-            <el-tag v-if="row.risk_level === 'HIGH'" type="danger" effect="dark">高风险拦截</el-tag>
+            <el-tag v-if="!hasScreening(row)" type="info">无初筛记录 · 需人工复核</el-tag>
+            <el-tag v-else-if="row.risk_level === 'HIGH'" type="danger" effect="dark">命中敏感词 · 需人工复核</el-tag>
             <el-tag v-else-if="row.risk_level === 'MEDIUM'" type="warning">疑似涉敏</el-tag>
-            <el-tag v-else type="success">安全绿色</el-tag>
+            <el-tag v-else type="success">关键词初筛未命中</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="created_at" label="提交时间" width="160" />
@@ -70,21 +71,27 @@
     </el-card>
 
     <!-- 右侧审阅抽屉 -->
-    <el-drawer v-model="drawerVisible" title="作品多模态风控详细核验" size="480px">
+    <el-drawer v-model="drawerVisible" title="作品内容审核详情" size="480px">
       <div v-if="currentRow" class="drawer-body">
         <el-image :src="currentRow.cover_url" fit="contain" style="width: 100%; max-height: 280px; border-radius: 8px; background: #000;" />
         <h3 style="margin-top: 15px; color: #2F2925;">{{ currentRow.title }}</h3>
         <p style="color: #776D65; font-size: 14px; line-height: 22px;">{{ currentRow.content }}</p>
 
-        <el-divider>AI 多模态预审判定</el-divider>
+        <el-divider>平台初筛结果</el-divider>
         <el-descriptions :column="1" border size="small">
           <el-descriptions-item v-if="currentRow.is_co_creation" label="🤝 城乡共创属性">
             <span style="color: #C1272D; font-weight: 600;">城乡手拉手双生共创</span>
             （乡村: {{ currentRow.rural_author_name }} × 城市: {{ currentRow.co_creator_name }}）
           </el-descriptions-item>
-          <el-descriptions-item label="OCR文字检测">未发现涉政与违法违禁词</el-descriptions-item>
-          <el-descriptions-item label="多模态图像风险">色情概率 0.01% · 暴力倾向 0.00%</el-descriptions-item>
-          <el-descriptions-item label="非遗元素关联度">98% (命中天津皮影/青铜雕纹样式特征)</el-descriptions-item>
+          <el-descriptions-item label="初筛方式">
+            {{ hasScreening(currentRow) ? '关键词规则（未接入 OCR 与图像模型）' : '无初筛记录（历史数据）' }}
+          </el-descriptions-item>
+          <el-descriptions-item label="敏感词检测">
+            {{ hasScreening(currentRow) ? (currentRow.ai_analysis?.sensitive_word_detected ? '命中敏感词，需人工复核' : '未命中预设敏感词') : '未执行，需人工核验' }}
+          </el-descriptions-item>
+          <el-descriptions-item label="图像/OCR 审核">
+            {{ hasScreening(currentRow) ? '未接入，需人工查看图片与正文后决定' : '未执行，需人工查看图片与正文后决定' }}
+          </el-descriptions-item>
         </el-descriptions>
 
         <div style="margin-top: 30px; display: flex; gap: 12px; justify-content: flex-end;">
@@ -106,6 +113,8 @@ const posts = ref<any[]>([])
 const loading = ref(false)
 const drawerVisible = ref(false)
 const currentRow = ref<any>(null)
+
+const hasScreening = (row: any) => !!row?.ai_analysis && Object.keys(row.ai_analysis).length > 0
 
 const formatCategory = (cat: string) => {
   const map: Record<string, string> = {

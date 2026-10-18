@@ -58,7 +58,7 @@ onMounted(load);
 </script>
 <template>
   <div>
-    <PageHeader title="双师课堂" subtitle="联动授课 · 实时互动答疑" />
+    <PageHeader title="在线课堂" subtitle="课堂讨论 · 举手互动答疑" />
     <div class="page-padding">
       <label
         >选择班级<select v-model="classId" @change="load">
@@ -120,7 +120,7 @@ onMounted(load);
           >
             ×
           </button>
-          <h2 id="start-class-title">开启双师课堂</h2>
+          <h2 id="start-class-title">开启在线课堂</h2>
           <form @submit.prevent="create">
             <label
               >课堂名称<input

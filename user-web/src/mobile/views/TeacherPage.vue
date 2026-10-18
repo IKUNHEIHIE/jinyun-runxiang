@@ -35,11 +35,7 @@ const activeAchievement = computed(() =>
     (item: any) => item.code === selectedAchievement.value,
   ),
 );
-const yearLabel = computed(() =>
-  stats.value.day
-    ? stats.value.day.slice(0, 4) + "年 · 入馆习艺"
-    : "入馆习艺 · 传承匠心",
-);
+const yearLabel = computed(() => "教学档案 · 乡土美育");
 const metricRows = computed(() => [
   {
     label: "今日到课率",
@@ -345,8 +341,12 @@ watch(
             /></span>
             <div>
               <h3>
-                双师课堂<small>{{
-                  stats.active_session_count ? "进行中" : "待开课"
+                在线课堂<small>{{
+                  stats.day
+                    ? stats.active_session_count
+                      ? "进行中"
+                      : "暂无进行中课堂"
+                    : "状态未知"
                 }}</small>
               </h3>
               <p>文字课堂 · 举手互动与实时讨论</p>

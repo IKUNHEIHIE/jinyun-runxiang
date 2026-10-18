@@ -41,5 +41,6 @@ def get_screen_overview(db: Session = Depends(get_db)):
         "donation_orders": donations,
         "robots": [{"id": d.device_code, "name": d.device_name, "location": d.school_id or "未登记",
                     "task": "等待设备回执", "battery": None, "temp": None, "latency": None,
-                    "statusText": d.status, "statusClass": "idle", "is_twin_mode": False} for d in devices],
+                    "statusText": {"ONLINE": "在线", "OFFLINE": "离线"}.get(d.status, d.status),
+                    "statusClass": "running" if d.status == "ONLINE" else "idle", "is_twin_mode": False} for d in devices],
         "updated_at": datetime.utcnow().isoformat(), "data_source": "database"})

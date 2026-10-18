@@ -163,6 +163,9 @@ function chooseCategory(value: string, scroll = false) {
   if (scroll)
     mapSection.value?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
+function openAgriMarket() {
+  router.push({ path: "/mall", query: { category: "agri" } });
+}
 function meters(l: Landmark) {
   return position.value
     ? distanceMeters(
@@ -240,7 +243,7 @@ const districts = [
   {
     name: "蓟州",
     title: "皮影工坊 × 山野珍味",
-    subtitle: "打卡皮影基地，带走大山馈赠",
+    subtitle: "打卡皮影基地，了解山野农产",
     photo: "5:03110",
     names: ["蓟州薄皮核桃", "燕山板栗"],
     plus: ["5:03139", "5:03164"],
@@ -258,7 +261,7 @@ const districts = [
   {
     name: "武清",
     title: "青铜铸造 × 农家时蔬",
-    subtitle: "千年青铜技艺，当季新鲜直达",
+    subtitle: "千年青铜技艺，了解农家时蔬",
     photo: "5:03401",
     names: ["武清农家蔬菜礼盒", "散养土鸡蛋30枚"],
     plus: ["5:03410", "5:03435"],
@@ -365,7 +368,7 @@ onUnmounted(() => {
         <strong>{{
           summary ? Number(summary.student_count).toLocaleString() : "—"
         }}</strong
-        ><span>参与学生</span>
+        ><span>在册学生</span>
       </article>
     </div>
     <AsyncState :loading="loading" :error="error" @retry="load">
@@ -445,7 +448,7 @@ onUnmounted(() => {
         <article v-if="selected" class="selected-landmark">
           <img :src="mediaUrl(selected.cover_url)" :alt="selected.name" />
           <div class="selected-content">
-            <h3>{{ selected.name }} <span>非遗</span></h3>
+            <h3>{{ selected.name }} <span>{{ selected.category }}</span></h3>
             <p class="landmark-description">{{ selected.description }}</p>
             <p class="landmark-address">
               {{ selected.district }} ·
@@ -459,14 +462,14 @@ onUnmounted(() => {
                   path: '/mall',
                   query: { district: selected.district, category: 'agri' },
                 }"
-                >买特产</RouterLink
+                >查看特产</RouterLink
               >
             </div>
           </div>
         </article>
       </section>
       <section class="district-section">
-        <p class="district-intro">打卡非遗基地，一键购买地道农产</p>
+        <p class="district-intro">打卡非遗基地，查看地道农产</p>
         <article
           v-for="district in districts"
           :key="district.name"
@@ -497,7 +500,7 @@ onUnmounted(() => {
                   >
                 </div>
                 <button
-                  :aria-label="'购买' + product.name"
+                  :aria-label="'查看' + product.name"
                   @click="buy(product)"
                 >
                   <img :src="icon(district.plus[index])" alt="" />
@@ -516,7 +519,7 @@ onUnmounted(() => {
                 path: '/mall',
                 query: { district: district.name + '区', category: 'agri' },
               }"
-              ><img :src="icon(district.buy)" alt="" />一键购买</RouterLink
+              ><img :src="icon(district.buy)" alt="" />查看农产商品</RouterLink
             >
           </div>
         </article>
@@ -589,7 +592,7 @@ onUnmounted(() => {
             </article>
             <article>
               <strong>{{ personal(session.profile?.energy_value) }}</strong
-              ><span>积分</span>
+              ><span>能量</span>
             </article>
           </div>
           <nav class="footprint-links" aria-label="足迹成就">
@@ -612,26 +615,26 @@ onUnmounted(() => {
       </section>
       <section class="season-section">
         <div class="map-heading">
-          <h2>时令推荐</h2>
-          <button @click="chooseCategory('全部', true)">查看更多 ›</button>
+          <h2>主题推荐</h2>
+          <button @click="openAgriMarket">查看更多 ›</button>
         </div>
         <div class="season-cards">
-          <button @click="chooseCategory('采摘', true)">
+          <button @click="openAgriMarket">
             <div>
-              <img :src="img('5:03205')" alt="春日采摘文化示意图" /><span
-                >春季</span
+              <img :src="img('5:03205')" alt="田园风物示意图" /><span
+                >田园</span
               >
             </div>
-            <h3>春日采摘园</h3>
-            <p>草莓、樱桃正当季，带上家人体验田园乐趣</p></button
-          ><button @click="chooseCategory('农家乐', true)">
+            <h3>田园风物</h3>
+            <p>查看乡村农产商品</p></button
+          ><button @click="openAgriMarket">
             <div>
-              <img :src="img('5:03210')" alt="夏日农家乐文化示意图" /><span
-                >夏季</span
+              <img :src="img('5:03210')" alt="农家风味示意图" /><span
+                >农家</span
               >
             </div>
-            <h3>避暑农家乐</h3>
-            <p>山间清凉，农家美食，远离城市喧嚣</p>
+            <h3>农家风味</h3>
+            <p>查看农家米面、时蔬与山货</p>
           </button>
         </div>
       </section>
@@ -639,7 +642,7 @@ onUnmounted(() => {
         <img :src="icon('5:02918')" alt="" />
         <h2>感谢您的每一份支持</h2>
         <p>
-          您的每一次打卡、每一次购买，都是对非遗传承的支持，对乡村美育的助力。让我们携手同行，让传统文化在新时代绽放光彩。
+          您的每一次打卡、每一次浏览，都是对非遗文化的关注与传播。让我们携手同行，让传统文化被更多人看见。
         </p>
       </footer>
     </AsyncState>

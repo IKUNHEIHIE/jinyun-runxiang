@@ -68,9 +68,9 @@ onMounted(() => {
           ')',
       }"
     >
-      <p>国家级传承人</p>
-      <h2>中国泥人艺术展</h2>
-      <span>感受指尖上的千年技艺</span>
+      <p>非遗美育课程</p>
+      <h2>津门非遗 · 线上小课</h2>
+      <span>按学段选课，观看视频并完成随堂鉴赏</span>
     </section>
     <div ref="categoryTabs" class="category-tabs" aria-label="课程分类">
       <button

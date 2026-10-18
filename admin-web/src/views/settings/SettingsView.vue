@@ -120,7 +120,7 @@
                   <el-tag :type="testResult.success ? 'success' : 'danger'" size="large" effect="dark">
                     {{ testResult.success ? 'ONLINE 连通正常' : 'OFFLINE 连接失败' }}
                   </el-tag>
-                  <span v-if="testResult.success" class="res-latency">
+                  <span v-if="testResult.success && testResult.latency_ms != null" class="res-latency">
                     响应延迟: <strong>{{ testResult.latency_ms }} ms</strong>
                   </span>
                 </div>
@@ -273,7 +273,7 @@
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <div>
               <h3 style="margin: 0; color: #2F2925; font-size: 16px;">🌱 乡村小学美育耗材定向调拨实体流向</h3>
-              <p style="margin: 4px 0 0; color: #776D65; font-size: 13px;">每笔助农文创销售收益提取的 5% 专项基金，均 100% 实体化转化为对应乡村学校的非遗材料包与教具</p>
+              <p style="margin: 4px 0 0; color: #776D65; font-size: 13px;">基金比例按站点配置逐笔计提；物资流向以已登记的调拨批次为准，不承诺全部转化</p>
             </div>
             <el-button type="primary" style="background-color: #8B4A2F; border-color: #8B4A2F;" @click="supplyDialogVisible = true">
               + 登记新增调拨批次
@@ -411,7 +411,7 @@ const siteForm = ref({
 interface TestResult {
   success: boolean
   message: string
-  latency_ms?: number
+  latency_ms?: number | null
   reply_preview?: string
 }
 
@@ -477,9 +477,9 @@ const handleTestLlm = async () => {
 
     testResult.value = {
       success: true,
-      message: '大模型 API 连通性测试通过！非遗美育多模态推理网关响应正常。',
-      latency_ms: res.latency_ms || 142,
-      reply_preview: res.reply_preview || '推理网关握手成功'
+      message: res.is_real_call ? '服务商接口真实调用成功' : '连通性测试通过',
+      latency_ms: res.latency_ms ?? null,
+      reply_preview: res.reply_preview || ''
     }
     ElMessage.success('大模型 API 连通探测正常！')
   } catch (err: any) {

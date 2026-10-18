@@ -50,7 +50,7 @@ watch(() => route.params.id, load, { immediate: true });
     <header v-if="entry?.category === 'BRONZE'" class="bronze-header">
       <button aria-label="返回上一页" @click="back">‹</button>
       <h1>{{ entry.title }}</h1>
-      <p>{{ entry.era }} · 青铜器 · 国宝级文物</p>
+      <p>{{ entry.era }} · 青铜器</p>
     </header>
     <PageHeader v-else :title="entry?.title || '非遗典藏'">
       <span v-if="entry && !loading && !error" class="heritage-header-actions">

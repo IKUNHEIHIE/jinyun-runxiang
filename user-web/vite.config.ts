@@ -25,6 +25,7 @@ export default defineConfig(({mode}) => ({
     }
   },
   build: {
+    target: 'es2017',
     copyPublicDir: mode !== 'android',
     chunkSizeWarningLimit: 1000,
     rollupOptions: {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { api, post, session, requireSession, notify, mediaUrl } from "../api";
+import { api, post, session, requireSession, notify, mediaUrl, loadProfile } from "../api";
 import { designImage, designIcon, categories, categoryName } from "../design";
 import AsyncState from "../components/AsyncState.vue";
 import CourseCard from "../components/CourseCard.vue";
@@ -21,6 +21,7 @@ const courseLoading = ref(true),
   heritageError = ref(""),
   summaryError = ref(""),
   summaryLoading = ref(false),
+  profileRetrying = ref(false),
   personal = ref<any>({});
 const courses = ref<any[]>([]),
   heritage = ref<any[]>([]),
@@ -29,6 +30,17 @@ const courses = ref<any[]>([]),
 const energy = computed(() =>
   session.token ? (personal.value.energy_value ?? null) : 0,
 );
+const levelCode = computed(() => session.profile?.level_code || "");
+const nextLevelTarget = computed(() => {
+  if (levelCode.value === "LV1_APPRENTICE") return 500;
+  if (levelCode.value === "LV2_JOURNEYMAN") return 1000;
+  return null;
+});
+const energyPercent = computed(() => {
+  if (!session.token || energy.value == null) return 0;
+  if (!nextLevelTarget.value) return levelCode.value === "LV3_CRAFTSMAN" ? 100 : 0;
+  return Math.min(100, (energy.value / nextLevelTarget.value) * 100);
+});
 const levelLabel = computed(() =>
   session.profile?.level_code
     ? session.profile.level_code.split("_")[0].replace("LV", "LV.")
@@ -106,6 +118,18 @@ async function loadSummary(force = false) {
     if (current()) summaryError.value = (e as Error).message;
   } finally {
     if (current()) summaryLoading.value = false;
+  }
+}
+async function retryAccount() {
+  if (summaryLoading.value || profileRetrying.value) return;
+  profileRetrying.value = true;
+  const profile = session.token && !session.profile
+    ? loadProfile().catch(() => {})
+    : Promise.resolve();
+  try {
+    await Promise.all([profile, loadSummary(true)]);
+  } finally {
+    profileRetrying.value = false;
   }
 }
 async function checkin() {
@@ -272,16 +296,17 @@ onUnmounted(() => {
           </div>
         </div>
         <div class="progress-track">
-          <i
-            :style="{
-              width: Math.min(100, ((energy || 0) / 2000) * 100) + '%',
-            }"
-          />
+          <i :style="{ width: energyPercent + '%' }" />
         </div>
         <p class="energy-caption">
           当前能量值
           {{ energy == null ? "—" : energy.toLocaleString() }}
-          / 2,000
+          <template v-if="nextLevelTarget">
+            / {{ nextLevelTarget.toLocaleString() }}
+          </template>
+          <template v-else-if="levelCode === 'LV3_CRAFTSMAN'">
+            · 已达最高等级
+          </template>
         </p>
         <div class="growth-actions">
           <button
@@ -312,10 +337,10 @@ onUnmounted(() => {
           <p>账户状态暂未更新：{{ summaryError }}</p>
           <button
             class="text-button"
-            :disabled="summaryLoading"
-            @click="loadSummary(true)"
+            :disabled="summaryLoading || profileRetrying"
+            @click="retryAccount"
           >
-            重试账户状态
+            {{ summaryLoading || profileRetrying ? "重试中…" : "重试账户状态" }}
           </button>
         </div>
       </section>

@@ -57,8 +57,38 @@ def model_configuration(db):
         return None
 
 
+def grade_guidance(grade):
+    """Concrete expression and evidence expectations for each supported band."""
+    if "小学" in grade or "低段" in grade:
+        return {
+            "expression": "用两三句话说明自己最喜欢的细节和原因",
+            "question": "今天的材料中，你最喜欢哪一个细节？为什么？",
+            "homework": "请老师或家长帮助补充一条可查证的资料，并用一句话说说它改变了你哪个想法。",
+        }
+    if "初中" in grade:
+        return {
+            "expression": "用一段文字说明自己的设计或聆听依据",
+            "question": "比较两份材料，它们在造型、色彩、声音或节奏上的相同和不同是什么？",
+            "homework": "补充一条可查证的资料，说明它如何影响你的理解或修改。",
+        }
+    if "高中" in grade:
+        return {
+            "expression": "标注所依据的课堂资料，并说明仍待查证的问题",
+            "question": "这些形式选择可能与材料、用途或观念有什么关系？哪些说法需要进一步查证？",
+            "homework": "补充两条可查证的资料，比较它们的说法，并说明证据如何支持你的判断。",
+        }
+    if "大学" in grade:
+        return {
+            "expression": "形成一页观察、分析或设计提案，区分事实、推断与个人判断",
+            "question": "从材料、工艺与社会使用的角度，如何解释这种形式选择？现有资料的证据边界在哪里？",
+            "homework": "补充两条以上可查证资料，区分事实、推断与价值判断，并提出一个仍待研究的问题。",
+        }
+    return None
+
+
 def local_lesson(req):
     topic, grade = req.topic, req.grade
+    guidance = grade_guidance(grade)
     focus = "线条、色彩、造型与纹样"
     practice = "完成一张观察记录和一幅手绘设计草图"
     materials = "教师准备的实物、图片或已发布课程资料，以及纸笔"
@@ -78,6 +108,13 @@ def local_lesson(req):
     elif "景泰蓝" in topic:
         focus = "掐丝线条、填色分区、色彩与纹样"
         practice = "在纸上设计分区纹样，并说明线条与色彩的关系"
+    expression = guidance["expression"] if guidance else "用两三句话解释你的选择"
+    questions = [f"在{topic}的课堂材料中，你最关注哪个细节？依据是什么？",
+                 "如果改变其中一种线条、色彩、形态或节奏，表达效果会怎样变化？"]
+    if guidance:
+        questions.append(guidance["question"])
+    homework = (f"整理本课关于{topic}的观察记录或草图，" + guidance["homework"]) if guidance else \
+        f"整理本课关于{topic}的观察记录或草图，补充一条可查证的资料，并说明它如何影响你的理解或修改。"
     minutes = [max(1, round(req.duration_minutes * ratio)) for ratio in (8/45, 15/45, 12/45)]
     minutes.append(req.duration_minutes-sum(minutes))
     stages = [
@@ -88,7 +125,7 @@ def local_lesson(req):
     ]
     return {
         "targets": {"aesthetic": f"观察{topic}的{focus}，用具体例子表达自己的感受。",
-                    "skill": practice + "，用观察或课堂资料解释设计选择。",
+                    "skill": practice + f"，{expression}。",
                     "emotion": req.objectives or "认识传统技艺与生活的联系，形成尊重文化多样性和继续了解相关技艺的意愿。"},
         "key_difficult_points": {"key": f"以{focus}为线索，建立观察、比较和表达的方法。",
                                  "difficult": "区分自己的感受与可查证的知识，把观察所得转化为有依据的设计说明。"},
@@ -98,12 +135,11 @@ def local_lesson(req):
             f"【导入】\n同学们，今天我们一起了解{topic}。请先观察或聆听老师准备的材料，写下你最先注意到的一个细节。\n\n"
             f"【比较与讨论】\n我们从{focus}进行比较。你发现了哪些相同或不同之处？请指出材料中的具体位置，说明自己的判断依据。"
             "涉及历史、地域和工艺知识时，我们共同查阅课堂资料，暂时不能确认的内容先记录为问题。\n\n"
-            f"【实践】\n接下来，请{practice}。先想清楚要表达什么，再选择适合的形式。完成后用两三句话解释你的选择。\n\n"
+            f"【实践】\n接下来，请{practice}。先想清楚要表达什么，再选择适合的形式。完成后{expression}。\n\n"
             "【交流与总结】\n请同伴说出作品中表达清楚的一点，再提出一个具体问题。根据反馈修改，并记录今天的新发现和下一次想了解的内容。"
         ),
-        "interactive_questions": [f"在{topic}的课堂材料中，你最关注哪个细节？依据是什么？",
-                                  "如果改变其中一种线条、色彩、形态或节奏，表达效果会怎样变化？"],
-        "homework_proposal": f"整理本课关于{topic}的观察记录或草图，补充一条可查证的资料，并说明它如何影响你的理解或修改。",
+        "interactive_questions": questions,
+        "homework_proposal": homework,
     }
 
 

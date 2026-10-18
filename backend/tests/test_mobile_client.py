@@ -901,7 +901,7 @@ def test_notices_respect_class_ownership_and_student_membership(client):
 def test_teacher_analytics_valid_progress_recent_quizzes_badges_and_scope(client, monkeypatch):
     from datetime import timezone, date
     from app.api import mobile_teacher
-    from app.models.entities import CourseChapter, LearningProgress, Quiz, QuizQuestion, QuizAttempt, Badge, UserBadge
+    from app.models.entities import CourseChapter, LearningProgress, Quiz, QuizQuestion, QuizAttempt, Badge, UserBadge, UserProfile
     from app.models.mobile import LearningDay
     class Clock(datetime):
         @classmethod
@@ -914,6 +914,7 @@ def test_teacher_analytics_valid_progress_recent_quizzes_badges_and_scope(client
         db.add_all([
             SysUser(id=6, username="disabled-analytics", nickname="停用学生", password_hash="unused", role_code="STUDENT", status="DISABLED"),
             SysUser(id=7, username="other-analytics", nickname="其他班学生", password_hash="unused", role_code="STUDENT"),
+            UserProfile(user_id=2, school_name="蓟州区下营镇中心小学"),
             TeacherClass(id=2, teacher_id=5, name="其他教师", grade="初中", invite_code="OTHER777"),
             *[ClassMember(class_id=1, student_id=uid) for uid in (3, 3, 4, 2, 6)],
             ClassMember(class_id=2, student_id=7),
@@ -956,7 +957,13 @@ def test_teacher_analytics_valid_progress_recent_quizzes_badges_and_scope(client
     assert student["badge_count"] == 1 and [b["id"] for b in student["badges"]] == [1]
     assert [b["student_count"] for b in data["badge_catalog"]] == [1,0]
     assert data["learning_days_total"] == 3 and student["learning_days"] == 2
-    assert client.get("/api/teacher/classes", headers=auth(2,"TEACHER")).json()["data"][0]["student_count"] == 2
+    classes = client.get("/api/teacher/classes", headers=auth(2,"TEACHER")).json()["data"]
+    assert len(classes) == 1 and classes[0]["student_count"] == 2
+    assert classes[0]["teacher_name"] == "name-2" and classes[0]["school"] == "蓟州区下营镇中心小学"
+    assert classes[0]["completion"] == 50
+    admin_classes = {c["id"]: c for c in client.get("/api/teacher/classes", headers=auth(1,"ADMIN")).json()["data"]}
+    assert admin_classes[2]["teacher_name"] == "name-5" and admin_classes[2]["student_count"] == 1
+    assert admin_classes[2]["school"] == "" and admin_classes[2]["completion"] is None
     assert client.get(endpoint, headers=auth()).status_code == 403
     assert client.get(endpoint, headers=auth(5,"TEACHER")).status_code == 404
     assert client.get("/api/mobile/teacher/classes/2/analytics", headers=auth(2,"TEACHER")).status_code == 404
