@@ -10,6 +10,7 @@
 - SHA-256：abcdcc5ef475f0504b2198a4309cdb90360b578816381633b1325a58e3584d7c
 - 已安装到 emulator-5554，设备中 APK 与交付文件的 SHA-256 相同。
 - 构建记录：.local/android/build-apk-final29.log，包含 vue-tsc、Vite、Capacitor 与 Gradle 构建。final29 在 final28 基础上把构建目标降到 ES2017，修复 Android 9（WebView 66）空白页；保留 final28 的个人中心头图/收藏横滑与教师断网空态修复。final29 取代 final28/final27/final26/final25/final24/final23/final21；final22 只改后台与遗留页，未重建 APK。
+- GitHub Release：`v1.0.0-beta.2`，标签提交 `002a5f3`，https://github.com/IKUNHEIHIE/jinyun-runxiang/releases/tag/v1.0.0-beta.2
 - 运行方式与配置见 [Android 部署说明](ANDROID_DEPLOYMENT.md)。该包使用开发 API；正式发布还需服务地址、签名及设备兼容性验证。
 
 ## 八项交付要求的当前证据
@@ -154,7 +155,7 @@ F08B64DC…包实际完成教师开发账号当天签到100→110；重复接口
 - final21 包 274,718,958 字节，SHA256 `6361ac69ca9ac76d42f9f0b36e1c8caf426edee71b84789a6672bbd1918ec61e`，构建日志 `.local/android/build-final21.log`；类型检查退出码 0（`.local/android/typecheck-final21.log`）；`node scripts/test_home_session.mjs` 通过，新增重试/重复点击断言。
 - 同一轮后端补齐本地教案的学段差异：`grade_guidance` 按小学/初中/高中/大学调整实践说明、追加提问与作业证据要求（小学用两三句话，高中标注资料依据，大学区分事实/推断/价值判断）；未知学段保持原中性模板。真实接口实测小学三年级与高中返回不同 skill/homework/问题；Android 教师端选择高中/杨柳青年画生成后，展开讲稿可看到新增追问与“补充两条可查证资料”的作业，截图 `.local/design-baselines/app-lesson-plan-grade-final21.png`。全量后端回归 **135 项通过**（`.local/android/test-final21-backend.log`），WSL 开发 API 已重启并返回 200；UI 测试记录已删除并恢复学生会话。教师后台 HTML 导出改为复用同一学段模板，包含实际目标/重难点/过程/互动问题/作业/讲稿，并移除了未接入的“3D 可动模型/激光纸样/AI 三维评分”等表述；30 分钟导出实测显示 5/10/8/7 分钟环节，截图 `.local/design-baselines/app-lesson-export-high-final21.png`。此改为服务端内容，不改变 final21 APK 散列。
 - 学生 28 条、教师 10 条（9 个唯一路由）在 360/373/411dp 冒烟：横向溢出 0、破图 0、异常 0、失败请求 0、控制台错误 0；教师访问学生专属 `/contests/:id` 的两个 403 为权限预期（`.local/android/route-audit-student-final21.json`、`route-audit-teacher-final21.json` 及 `-360.json`、`-411.json` 四组）。
-- 新增 `scripts/prune_orphan_assets.py` 处理历史画布保存留下的未引用上传：默认 dry-run、24 小时阈值，删除前检查 URL/资产 ID/JSON 引用并限制文件目录；合成资产自测只删除未引用项。开发库 dry-run 发现 2 个未引用瓷器参考图（资产 2/3），为防误删已保留待人工确认（`.local/android/asset-prune-dryrun.log`）。
+- 新增 `scripts/prune_orphan_assets.py` 处理历史画布保存留下的未引用上传：默认 dry-run、24 小时阈值，删除前检查 URL/资产 ID/JSON 引用并限制文件目录；合成资产自测只删除未引用项。开发库 dry-run 曾把资产 2/3 列为未引用；完整库检查确认社区作品 1 的 `gallery_json` 引用它们，已保留并给脚本补上 `gallery_json` 检查。
 
 ## 2026-10-18 后台示范班级真实数据修正（final22）
 
@@ -212,6 +213,12 @@ F08B64DC…包实际完成教师开发账号当天签到100→110；重复接口
 - 边界：在无窗口 API 28 模拟器上快速连跑 28 条路由时，旧 WebView 渲染进程崩溃（`FATAL:aw_browser_terminator.cc`），应用进程随之中止；改用 3GB 内存重试仍复现渲染进程 code 4，说明是 WebView 66 的稳定边界而非模拟器内存不足。单页可运行不等于全量路由兼容，API 28 全量兼容性仍未建立。
 - final29 APK 274,804,557 字节，SHA256 `abcdcc5ef475f0504b2198a4309cdb90360b578816381633b1325a58e3584d7c`，构建日志 `.local/android/build-apk-final29.log`；设备内 base.apk 散列一致，lastUpdateTime=2026-10-18 07:48:04。Android 36（emulator-5554）学生 28 条路由 0 破图/溢出/异常/失败（`route-audit-student-final29.json`），首页截图 `.local/android/final29-home.png`。API 28 证据 `.local/android/final29-apk-verify.txt`、`.local/android/final29-api28-profile.png`。final29 已在 API 30 复跑：学生 28 条、教师 10 条路由 0 破图/溢出/未捕获异常/失败请求（教师 `/contests/1` 的 2 个 403 为权限预期），证据 `.local/android/route-audit-student-final29-api30.json`、`route-audit-teacher-final29-api30.json`、`.local/android/final29-api30-home.png`、`final29-api30-native.png`。
 - 未改后端，135 项后端回归仍为最新通过记录。原始 MasterGo 位图通道、实体真机/API 24-27/自然内存压力/跨日、外部支付/模型/音视频/远程课堂及授权生产仍未完成。
+
+## 2026-10-18 GitHub Release beta.2 与上传清理
+
+- 已发布 prerelease `v1.0.0-beta.2`（tag 提交 `002a5f3`）：https://github.com/IKUNHEIHIE/jinyun-runxiang/releases/tag/v1.0.0-beta.2。资产包括 final29 APK（274,804,557 字节，SHA256 `abcdcc5e…`）、教师后台 dist zip（1,249,388 字节）、后端源码包（73,443,717 字节）和 `SHA256SUMS-beta.2.txt`；`gh release view` 确认 4 个资产均为 `uploaded`。
+- 清理上传：删除 3 个 79 字节、数据库中完全无引用的 SVG；备份与记录在 `.local/release/deleted-uploads-20261018/`。此前被列为“未引用”的资产 2/3 实际被 `community_post_detail` 作品 1 的 `gallery_json` 引用，已保留；`scripts/prune_orphan_assets.py` 已补上该 JSON 检查，避免后续误删。
+- 按用户决定，API 24-27、实体真机、自然内存压力/跨日等其余兼容性测试暂缓，列为已知限制；不因此宣称这些环境已通过。
 
 ## 尚未完成的核心工作
 

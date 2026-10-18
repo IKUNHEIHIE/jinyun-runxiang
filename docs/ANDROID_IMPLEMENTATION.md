@@ -178,7 +178,7 @@ PPTX从保存内容生成可编辑文本框，完整长讲稿和教学活动分�
 
 首页“重试账户状态”原先只重试账户统计，姓名/等级需等 30 秒。final21 在资料缺失时并行请求 `/auth/me` 与 summary，重复点击只发一次资料请求；模拟器离线冷启动后单次重试 3.2 秒内恢复林锦/LV.1/270/今日已签到。APK 274,718,958 字节，SHA256 `6361ac69…ec61e`，类型检查、首页专项与 373dp 学生 28/教师 10 路由冒烟通过。
 
-`backend/app/core/lesson_plans.py` 新增 `grade_guidance`：小学、初中、高中、大学四档分别调整实践后的表达要求、追加追问和作业证据要求；未知学段沿用原中性模板。教师后台 HTML 导出复用同一 `local_lesson` 内容，移除虚构 3D/激光纸样/AI 三维评分，30 分钟高中导出实测为 5/10/8/7 分钟环节（`.local/design-baselines/app-lesson-export-high-final21.png`）。后端全量 135 项通过（新增学段差异与 HTML 导出测试），真实开发 API 重启后小学三年级与高中返回不同内容；Android 教师端高中/杨柳青年画生成后，展开讲稿显示新增追问与“补充两条可查证资料”的作业（`.local/design-baselines/app-lesson-plan-grade-final21.png`），测试记录已从开发库清理并恢复学生会话。该改动不影响 final21 APK，真实外部模型与完整分学段课程设计仍未接入。另新增 `scripts/prune_orphan_assets.py`：默认 dry-run，检查 URL/asset_id/JSON 引用与上传目录边界；合成资产自测通过，开发库发现资产 2/3 两张未引用瓷器参考图，保留待人工确认。保存流程未接入自动删除，避免误删社区引用。
+`backend/app/core/lesson_plans.py` 新增 `grade_guidance`：小学、初中、高中、大学四档分别调整实践后的表达要求、追加追问和作业证据要求；未知学段沿用原中性模板。教师后台 HTML 导出复用同一 `local_lesson` 内容，移除虚构 3D/激光纸样/AI 三维评分，30 分钟高中导出实测为 5/10/8/7 分钟环节（`.local/design-baselines/app-lesson-export-high-final21.png`）。后端全量 135 项通过（新增学段差异与 HTML 导出测试），真实开发 API 重启后小学三年级与高中返回不同内容；Android 教师端高中/杨柳青年画生成后，展开讲稿显示新增追问与“补充两条可查证资料”的作业（`.local/design-baselines/app-lesson-plan-grade-final21.png`），测试记录已从开发库清理并恢复学生会话。该改动不影响 final21 APK，真实外部模型与完整分学段课程设计仍未接入。另新增 `scripts/prune_orphan_assets.py`：默认 dry-run，检查 URL/asset_id/JSON 引用与上传目录边界；合成资产自测通过，完整库检查发现资产 2/3 被社区作品 1 图集引用，已保留并补上 gallery_json 检查。保存流程未接入自动删除，避免误删社区引用。
 
 ## final22 后台示范班级真实数据（2026-10-18）
 
