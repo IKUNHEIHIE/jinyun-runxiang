@@ -7,10 +7,10 @@
 - APK：D:/admin/desktop/codex/school/smxc/jinyun-runxiang/.local/android/artifacts/jinyun-runxiang-debug.apk
 - 包名：com.jinyun.runxiang
 - 大小：278,116,613 字节
-- SHA-256：721763b6683424b10bb7ce437ad234a3fd2856cb7f06fb7f352fc98c275e5ab0
-- 已安装到 emulator-5554，设备中 APK 与交付文件的 SHA-256 相同。
-- 构建记录：.local/android/build-apk-final30.log，包含 vue-tsc、Vite、Capacitor 与 Gradle 构建。final30 在 final29 基础上增加首页地图/市集入口、页面切换与滚动动效，并把 8 张 51–160px 低清封面替换为 800px 高清图。final30 取代 final29/final28/final27/final26/final25/final24/final23/final21；final22 只改后台与遗留页，未重建 APK。
-- GitHub Release：`v1.0.0-beta.2`，标签提交 `002a5f3`，https://github.com/IKUNHEIHIE/jinyun-runxiang/releases/tag/v1.0.0-beta.2
+- SHA-256：2beec6f21ffbfcd70ff41457dbf49abf146b17c9b42027f94294e408e3cdc55d
+- 已安装到 emulator-5554，连接云端 API `https://admin.wentian.org/api` 验证。
+- 构建记录：.local/deploy/build-apk-final31.log，包含 vue-tsc、Vite、Capacitor 与 Gradle 构建。final31 在 final30 基础上把 API 地址切到云端 admin 域名，并保留首页入口、页面动效与高清封面。final31 取代 final30/final29/final28/final27/final26/final25/final24/final23/final21。
+- GitHub Release：`v1.0.0-beta.3`，标签提交 `bf576c1`，https://github.com/IKUNHEIHIE/jinyun-runxiang/releases/tag/v1.0.0-beta.3
 - 运行方式与配置见 [Android 部署说明](ANDROID_DEPLOYMENT.md)。该包使用开发 API；正式发布还需服务地址、签名及设备兼容性验证。
 
 ## 八项交付要求的当前证据
@@ -219,6 +219,16 @@ F08B64DC…包实际完成教师开发账号当天签到100→110；重复接口
 - 已发布 prerelease `v1.0.0-beta.2`（tag 提交 `002a5f3`）：https://github.com/IKUNHEIHIE/jinyun-runxiang/releases/tag/v1.0.0-beta.2。资产包括 final29 APK（274,804,557 字节，SHA256 `abcdcc5e…`）、教师后台 dist zip（1,249,388 字节）、后端源码包（73,443,717 字节）和 `SHA256SUMS-beta.2.txt`；`gh release view` 确认 4 个资产均为 `uploaded`。
 - 清理上传：删除 3 个 79 字节、数据库中完全无引用的 SVG；备份与记录在 `.local/release/deleted-uploads-20261018/`。此前被列为“未引用”的资产 2/3 实际被 `community_post_detail` 作品 1 的 `gallery_json` 引用，已保留；`scripts/prune_orphan_assets.py` 已补上该 JSON 检查，避免后续误删。
 - 按用户决定，API 24-27、实体真机、自然内存压力/跨日等其余兼容性测试暂缓，列为已知限制；不因此宣称这些环境已通过。
+
+## 2026-10-18 云服务器部署（Azure / Debian 12）
+
+- 后端：https://core.wentian.org ，FastAPI systemd + MariaDB（仅 127.0.0.1）+ Redis（仅 127.0.0.1），Nginx 反代到 `127.0.0.1:8000`。
+- 教师/运营后台：https://admin.wentian.org ，根路径静态 SPA；`/api/` 与 `/static/design|uploads|generated|images` 反代后端。
+- TLS：Let’s Encrypt 覆盖两个域名，certbot.timer 自动续期；HTTP 已跳转 HTTPS。
+- App：`user-web/.env.android` 的 `VITE_API_BASE_URL=https://admin.wentian.org/api`；构建脚本自动读取，换域名只改这一行。final31 已安装并实测首页 5 条非遗推荐、封面来自 admin 域名的 800px 资源，无本地 API 请求。
+- 账号：admin/student_demo/teacher_demo 已用随机密码创建，凭据仅保存在 `.local/deploy/credentials.txt`；云端登录均返回 200。教师后台用无头浏览器登录进入运营大盘。
+- 数据库：schema + seed + V17 + 本地 `heritage_entry` 5 条内容已导入；当前为隔离演示数据，正式运营前需替换。
+- 详细步骤与配置副本见 [CLOUD_DEPLOYMENT.md](CLOUD_DEPLOYMENT.md)、[deploy/nginx/jinyun.conf](../deploy/nginx/jinyun.conf)、[deploy/systemd/jinyun-backend.service](../deploy/systemd/jinyun-backend.service)。
 
 ## 2026-10-18 首页入口、动效与高清封面（final30）
 

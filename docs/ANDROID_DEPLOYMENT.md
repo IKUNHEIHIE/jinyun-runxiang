@@ -2,7 +2,7 @@
 
 本说明对应隔离开发环境；不覆盖已有生产部署。开发数据不会自动清空。正式教学内容、支付、模型服务、远程课堂视频均需要独立配置。
 
-截至2026-10-18，最新开发包为 final30 `721763b6…`，完整产物、测试和迁移范围见文末。下列按日期保留的包均为历史记录。
+截至2026-10-18，最新开发包为 final31 `2beec6f2…`（云端 API），完整产物、测试和迁移范围见文末。下列按日期保留的包均为历史记录。云端部署与域名切换见 [CLOUD_DEPLOYMENT.md](CLOUD_DEPLOYMENT.md)。
 
 ## 当前环境
 
@@ -238,6 +238,6 @@ Android WebView 的本地源是 `https://localhost`，因此后端 CORS 白名�
 
 Android 9/WebView 66 兼容修复与 final29（2026-10-18）：final28 在 API 28 AOSP WebView 66 上为空白页（ES2020 语法无法解析）。将 `user-web/vite.config.ts` 的 `build.target` 设为 `es2017` 后，final29 在 API 28 上首页正常渲染（55 图、破图 0、393 无溢出），非遗详情与个人中心单页可打开，个人中心头图/收藏横滑正常。快速连跑 28 条路由时旧 WebView 渲染进程崩溃（`aw_browser_terminator`），改用 3GB 内存重试仍复现 code 4，所以 API 28 全量兼容仍未建立（属 WebView 66 稳定边界，不是内存不足）。final29 APK 274,804,557 字节，SHA256 `abcdcc5ef475f0504b2198a4309cdb90360b578816381633b1325a58e3584d7c`，构建日志 `.local/android/build-apk-final29.log`，设备内 base.apk 散列一致，lastUpdateTime=2026-10-18 07:48:04；Android 36 学生 28 条路由 0 问题（`route-audit-student-final29.json`）。final29 已在 API 30 复跑：学生 28 条、教师 10 条路由 0 破图/溢出/异常/失败（教师 `/contests/1` 的 2 个 403 为权限预期），证据 `route-audit-student-final29-api30.json`、`route-audit-teacher-final29-api30.json`、`final29-api30-home.png`。final28 的视觉与断网修复保留。已发布 GitHub prerelease `v1.0.0-beta.2`（tag `002a5f3`）：https://github.com/IKUNHEIHIE/jinyun-runxiang/releases/tag/v1.0.0-beta.2 。上传清理删除 3 个无引用 SVG；资产 2/3 因社区作品 1 图集引用而保留，`prune_orphan_assets.py` 已补 gallery_json 检查。
 
-首页入口/动效/高清封面与 final30（2026-10-18）：首页新增 `/landmarks` 与 `/mall` 两个图片入口；页面切换加入 fade/push/pop 过渡，横向滚动启用平滑/惯性与 scroll-snap，并支持 reduced-motion；8 张 51–160px 封面替换为 800px 高清图（7 张 Wikimedia Commons + 1 张仓库高清图，许可见 `docs/IMAGE_CREDITS.md`），`mediaUrl` 对 `/static/design/` 自动加 `?v=hd1`。final30 APK 278,116,613 字节，SHA256 `721763b6683424b10bb7ce437ad234a3fd2856cb7f06fb7f352fc98c275e5ab0`，构建日志 `.local/release/build-apk-final30.log`；学生 28 条 373dp 无破图/溢出/异常/失败（`route-audit-student-final30.json`）。
+首页入口/动效/高清封面与 final30（2026-10-18）：首页新增 `/landmarks` 与 `/mall` 两个图片入口；页面切换加入 fade/push/pop 过渡，横向滚动启用平滑/惯性与 scroll-snap，并支持 reduced-motion；8 张 51–160px 封面替换为 800px 高清图（7 张 Wikimedia Commons + 1 张仓库高清图，许可见 `docs/IMAGE_CREDITS.md`），`mediaUrl` 对 `/static/design/` 自动加 `?v=hd1`。final30 APK 278,116,613 字节，SHA256 `721763b6683424b10bb7ce437ad234a3fd2856cb7f06fb7f352fc98c275e5ab0`，构建日志 `.local/release/build-apk-final30.log`；学生 28 条 373dp 无破图/溢出/异常/失败（`route-audit-student-final30.json`）。GitHub prerelease `v1.0.0-beta.3`（tag `bf576c1`）已发布：https://github.com/IKUNHEIHIE/jinyun-runxiang/releases/tag/v1.0.0-beta.3 。
 
 此包仍是 Debug 开发产物，使用开发 API 与调试签名；不含正式商店签名、生产服务地址、实体设备/API 24-28、系统内存压力下的自然进程回收或跨日验证，也不包含作品授权协议、合作社生产、支付或外部生成服务。API 30（Android 11，WebView 83）已用 final28 补测学生 28 条与教师 10 条路由。

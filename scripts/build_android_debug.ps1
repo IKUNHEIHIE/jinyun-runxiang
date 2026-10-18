@@ -1,7 +1,15 @@
-param([string]$ApiUrl = 'http://127.0.0.1:8000/api')
+param([string]$ApiUrl = '')
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $appRoot = Join-Path $repoRoot 'user-web'
+if (!$ApiUrl) {
+  $envFile = Join-Path $appRoot '.env.android'
+  if (Test-Path -LiteralPath $envFile) {
+    $line = Get-Content -LiteralPath $envFile | Where-Object { $_ -match '^\s*VITE_API_BASE_URL\s*=' } | Select-Object -First 1
+    if ($line) { $ApiUrl = ($line -replace '^\s*VITE_API_BASE_URL\s*=\s*', '').Trim().Trim('"').Trim("'") }
+  }
+}
+if (!$ApiUrl) { throw 'Set VITE_API_BASE_URL in user-web/.env.android or pass -ApiUrl.' }
 $apiUri = [Uri]$ApiUrl
 if (!$apiUri.IsAbsoluteUri -or $apiUri.Scheme -notin @('http','https')) { throw 'API URL must be absolute HTTP(S).' }
 if ($apiUri.Scheme -eq 'http' -and $apiUri.Host -notin @('127.0.0.1','localhost','10.0.2.2')) { throw 'Non-local servers must use HTTPS.' }
@@ -50,7 +58,11 @@ try {
   Copy-Item -LiteralPath (Join-Path $appRoot 'android\app\build\outputs\apk\debug\app-debug.apk') -Destination $artifact -Force
   Get-FileHash -LiteralPath $artifact -Algorithm SHA256
   Write-Output "APK: $artifact"
-  Write-Output 'Loopback development: adb -s emulator-5554 reverse tcp:8000 tcp:8000 before launch.'
+  if ($ApiUrl -match '127\.0\.0\.1|localhost') {
+    Write-Output 'Loopback development: adb -s emulator-5554 reverse tcp:8000 tcp:8000 before launch.'
+  } else {
+    Write-Output "API endpoint: $ApiUrl"
+  }
 } finally {
   Set-Location $previousLocation
   $env:JAVA_HOME = $previousJava; $env:ANDROID_HOME = $previousAndroid; $env:VITE_API_BASE_URL = $previousApi
