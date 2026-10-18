@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from "vue";
-import { api, post, mediaUrl, requireSession, notify, session } from "../api";
+import {
+  api,
+  post,
+  put,
+  mediaUrl,
+  requireSession,
+  notify,
+  session,
+} from "../api";
 import { designImage, designIcon } from "../design";
 import { saveBlob, saveAsset } from "../files";
 const props = defineProps<{ savedTask?: any; publishing?: boolean }>();
@@ -245,6 +253,7 @@ async function render(state = snapshot()): Promise<Blob> {
   );
 }
 let savedHere = "",
+  editableTaskId = "",
   alive = true,
   previewVersion = 0;
 let previewTimer: ReturnType<typeof setTimeout> | undefined;
@@ -273,6 +282,7 @@ watch(
     if (!task || task.task_id === savedHere || task.status !== "SUCCESS")
       return;
     if (task.result?.source !== "user_canvas") {
+      editableTaskId = "";
       if (elements.value.length) {
         checkpoint();
         elements.value = [];
@@ -281,6 +291,7 @@ watch(
       return;
     }
     if (!Array.isArray(task.input?.composition)) return;
+    editableTaskId = task.task_id;
     const restored: Element[] = task.input.composition.flatMap((item: any) => {
       const pattern = patterns.find((p) => p.label === item.label);
       if (
@@ -329,7 +340,7 @@ async function save() {
       body: form,
     });
     if (uid !== session.profile?.id) return;
-    const task = await post("/mobile/workshop/designs", {
+    const payload = {
       cover_url: asset.file_url,
       composition: state.elements,
       render_style: state.style,
@@ -337,11 +348,16 @@ async function save() {
         .map((e) => e.label)
         .join(" · ")
         .slice(0, 128),
-    });
+    };
+    const updating = Boolean(editableTaskId);
+    const task = updating
+      ? await put("/mobile/workshop/designs/" + editableTaskId, payload)
+      : await post("/mobile/workshop/designs", payload);
     if (uid !== session.profile?.id) return;
+    editableTaskId = task.task_id;
     savedHere = task.task_id;
     emit("saved", task);
-    notify("设计已保存到你的创作记录");
+    notify(updating ? "设计已更新" : "设计已保存到你的创作记录");
     return task;
   } catch (e) {
     notify((e as Error).message);

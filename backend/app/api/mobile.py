@@ -43,6 +43,11 @@ class SavedDesignInput(BaseModel):
     render_style: Literal["青铜氧化", "鎏金拓印", "彩色渲染"] = "青铜氧化"
 
 
+def canvas_design_payload(task: AiTask):
+    return {"task_id": task.task_id, "status": task.status, "input": task.input_json,
+            "result": task.result_summary_json}
+
+
 @router.post("/workshop/designs")
 def save_canvas_design(req: SavedDesignInput, user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
     asset = db.query(Asset).filter_by(file_url=req.cover_url, created_by=user["user_id"], asset_type="IMAGE").first()
@@ -55,8 +60,27 @@ def save_canvas_design(req: SavedDesignInput, user: dict = Depends(get_current_u
                                        "colored_image_url": asset.file_url, "source": "user_canvas", "llm_generated": False})
     db.add(task)
     db.commit()
-    return success_response({"task_id": task.task_id, "status": task.status, "input": task.input_json,
-                             "result": task.result_summary_json})
+    return success_response(canvas_design_payload(task))
+
+
+@router.put("/workshop/designs/{task_id}")
+def update_canvas_design(task_id: str, req: SavedDesignInput, user: dict = Depends(get_current_user),
+                         db: Session = Depends(get_db)):
+    task = db.query(AiTask).filter_by(task_id=task_id, user_id=user["user_id"]).first()
+    if not task or task.tool_type != "BRONZE" or \
+            (task.result_summary_json or {}).get("source") != "user_canvas":
+        raise HTTPException(404, "设计不存在或不可编辑")
+    asset = db.query(Asset).filter_by(file_url=req.cover_url, created_by=user["user_id"], asset_type="IMAGE").first()
+    if not asset:
+        raise HTTPException(404, "设计图片不存在或不属于当前用户")
+    task.input_json = {"title": req.title, "composition": [e.model_dump() for e in req.composition],
+                       "render_style": req.render_style}
+    task.result_summary_json = {"title": req.title, "rendered_image_url": asset.file_url,
+                                "colored_image_url": asset.file_url, "source": "user_canvas", "llm_generated": False}
+    task.status = "SUCCESS"
+    task.progress = 100
+    db.commit()
+    return success_response(canvas_design_payload(task))
 
 
 @router.get("/workshop/bronze")

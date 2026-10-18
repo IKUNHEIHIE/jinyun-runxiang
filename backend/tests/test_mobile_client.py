@@ -18,7 +18,7 @@ from app.core.database import Base, get_db
 from app.core.security import create_access_token, hash_password
 from app.models.entities import (
     SysUser, UserGrowth, Course, CommunityPost, TeacherClass, Assignment, Asset,
-    ClassMember, GrowthEvent, AssignmentSubmission, AssignmentReview,
+    ClassMember, GrowthEvent, AssignmentSubmission, AssignmentReview, AiTask,
 )
 from app.models.mobile import HeritageEntry, UserCollection, UserFollow, CourseRating, UserFeedback
 from app.models.mobile import ExchangeItem, EnergyExchange, WalkSession
@@ -710,6 +710,28 @@ def test_canvas_design_requires_owned_image_and_persists_composition(client):
     assert restored["render_style"] == request["render_style"]
     assert result["input"] == restored
     assert client.get('/api/ai/tasks/' + result["task_id"], headers=auth(4)).json()["code"] == 4040
+    with client.sessions() as db:
+        db.add(Asset(asset_type="IMAGE", object_key="uploads/owned2.png", mime_type="image/png",
+                     file_url="/static/uploads/owned2.png", created_by=3))
+        db.add(AiTask(task_id="f" * 32, user_id=3, tool_type="BRONZE", status="SUCCESS",
+                      input_json={"title": "AI 纹样"}, result_summary_json={"source": "bronze_template"}))
+        db.commit()
+        before = db.query(AiTask).filter_by(user_id=3, tool_type="BRONZE").count()
+    update = request | {"cover_url": "/static/uploads/owned2.png", "title": "更新后的纹样",
+                        "render_style": "青铜氧化"}
+    updated = client.put('/api/mobile/workshop/designs/' + result["task_id"], headers=auth(), json=update)
+    assert updated.status_code == 200
+    updated = updated.json()["data"]
+    assert updated["task_id"] == result["task_id"]
+    assert updated["input"]["title"] == "更新后的纹样"
+    assert updated["input"]["render_style"] == "青铜氧化"
+    assert updated["result"]["rendered_image_url"] == "/static/uploads/owned2.png"
+    with client.sessions() as db:
+        assert db.query(AiTask).filter_by(user_id=3, tool_type="BRONZE").count() == before
+    assert client.put('/api/mobile/workshop/designs/' + result["task_id"], headers=auth(4),
+                      json=update).status_code == 404
+    assert client.put('/api/mobile/workshop/designs/' + "f" * 32, headers=auth(),
+                      json=update).status_code == 404
     for field, value in [("x", -1), ("y", 2), ("scale", 3), ("rotation", 181)]:
         invalid = request | {"composition": [request["composition"][0] | {field: value}]}
         assert client.post("/api/mobile/workshop/designs", headers=auth(), json=invalid).status_code == 422
