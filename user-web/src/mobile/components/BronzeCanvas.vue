@@ -11,11 +11,12 @@ import {
 } from "../api";
 import { designImage, designIcon } from "../design";
 import { saveBlob, saveAsset } from "../files";
-const props = defineProps<{ savedTask?: any; publishing?: boolean }>();
+const props = defineProps<{ savedTask?: any; publishing?: boolean; favoriteBusy?: boolean }>();
 const emit = defineEmits<{
   saved: [task: any];
   generate: [style: string, pattern: string];
   publish: [];
+  favorite: [];
 }>();
 const patterns = [
   { label: "兽面纹", node: "5:5103", group: "饕餮纹" },
@@ -380,7 +381,7 @@ async function download() {
     else if (resultUrl.value)
       await saveAsset(
         resultUrl.value,
-        "青铜纹样设计" + (resultUrl.value.endsWith(".svg") ? ".svg" : ".png"),
+        "青铜纹样设计" + (resultUrl.value.match(/\.(svg|png|jpe?g|webp)$/i)?.[0] || ".png"),
       );
   } catch (e) {
     notify((e as Error).message);
@@ -579,14 +580,16 @@ onUnmounted(() => {
         v-if="
           readyResult &&
           readyResult.source !== 'user_canvas' &&
-          !readyResult.llm_generated
+          !readyResult.llm_generated && readyResult.generation_method !== 'ai_image'
         "
         class="local-generation-note"
       >
         当前结果由本地工艺规则生成；外部模型尚未配置。
       </p>
+      <p v-if="readyResult?.generation_method === 'ai_image'" class="local-generation-note">{{ readyResult.description }}</p>
       <div v-if="elements.length || readyResult" class="result-actions">
         <button class="outline-button" @click="download">导出设计图</button
+        ><button v-if="!elements.length && readyResult?.generation_method === 'ai_image'" class="outline-button" :disabled="favoriteBusy" :aria-pressed="!!savedTask.collected" @click="emit('favorite')">{{ savedTask.collected ? '取消收藏' : '收藏创作' }}</button
         ><button
           class="primary-button"
           :disabled="busy || publishing"

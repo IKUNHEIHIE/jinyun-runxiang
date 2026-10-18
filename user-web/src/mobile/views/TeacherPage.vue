@@ -182,7 +182,7 @@ watch(
         class="teacher-hero-background"
         :style="{
           backgroundImage:
-            'linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.04)),url(/design/images/fd2936b89e6516c3c5218314d553e049.png),url(' +
+            'linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.04)),url(/design/images/fd2936b89e6516c3c5218314d553e049.webp),url(' +
             designImage('layer-40-8834', '40:8836') +
             ')',
         }"

@@ -205,4 +205,31 @@ assert.equal(lacquer.error.value,"");
 request = async () => ({...lacquerTask(),status:"FAILED",result:null,error_message:"生成失败，请重试"});
 await lacquer.restore();
 assert.equal(lacquer.error.value,"生成失败，请重试","A restored failed job is visible instead of appearing as an empty example");
-console.log("PASS: selected exports, saved controls, task links, and stale restore/poll/create/favorite/publish/collection responses stay with their authentication context.");
+route.params.tool = "bronze";
+route.path = "/ai-workshop/bronze";
+route.query = {};
+const imagePosts = [];
+const imageTask = { task_id:A,tool_type:"BRONZE",status:"SUCCESS",input:{prompt:"青铜设计原描述",_generation_mode:"AI",style:"彩色渲染",pattern_type:"云雷纹"},result:{generation_method:"ai_image",colored_image_url:"/static/generated/ai.png"} };
+request = async path => path === "/ai/capabilities" ? {image_generation:true,image_edit:true} : imageTask;
+const imageEditor = component("WorkshopEditorPage", ["restore","create","prompt","task","generationMode","selectedResult","error"], {
+  "vue-router":{useRoute:()=>route,useRouter:()=>({replace(){},push(){},back(){}})},
+  "../api":{session,api:(...args)=>request(...args),post:async(path,body)=>{imagePosts.push(body);return send(path,body);},mediaUrl:url=>url,requireSession:()=>true,notify(){},loadProfile:async()=>{}},
+  "../design":{},"../files":{saveAsset:async()=>{}},
+});
+await imageEditor.restore();
+assert.equal(imageEditor.generationMode.value,"AI");
+assert.equal(imageEditor.prompt.value,"青铜设计原描述");
+assert.equal(imageEditor.selectedResult.value,"colored_image_url");
+send = async () => { throw new Error("网络中断"); };
+await imageEditor.create();
+assert.equal(imageEditor.error.value,"网络中断");
+send = async () => ({task_id:A,status:"QUEUED"});
+await imageEditor.create();
+assert.equal(imagePosts[0].request_id,imagePosts[1].request_id,"Retry after an unknown HTTP result keeps the request identity");
+assert.equal(imagePosts[0].generation_mode,"AI");
+assert.equal(imagePosts[0].input_payload.style,"彩色渲染");
+imageEditor.generationMode.value = "LOCAL";
+await imageEditor.create();
+assert.notEqual(imagePosts[1].request_id,imagePosts[2].request_id);
+assert.equal(imagePosts[2].generation_mode,"LOCAL");
+console.log("PASS: workshop account isolation, real-image mode/history, selected exports, and idempotent retry after an unknown HTTP result.");

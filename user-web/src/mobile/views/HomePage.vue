@@ -249,7 +249,7 @@ onUnmounted(() => {
       <div class="home-hubs">
         <RouterLink to="/landmarks" class="home-hub home-hub-map">
           <img
-            src="/design/images/562642870bc0dbb9f77e661a544aed0e.png"
+            src="/design/images/562642870bc0dbb9f77e661a544aed0e.webp"
             alt=""
             loading="lazy"
             decoding="async"
@@ -261,7 +261,7 @@ onUnmounted(() => {
         </RouterLink>
         <RouterLink to="/mall" class="home-hub home-hub-mall">
           <img
-            src="/design/images/5014bb9cd66ab39383dcfab1e6326c39.png"
+            src="/design/images/5014bb9cd66ab39383dcfab1e6326c39.webp"
             alt=""
             loading="lazy"
             decoding="async"

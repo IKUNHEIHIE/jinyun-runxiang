@@ -3,6 +3,7 @@ import { computed, ref } from "vue";
 import { designImage, designIcon } from "../design";
 import { mediaUrl, notify } from "../api";
 const props = defineProps<{
+  generationMode: string;
   task?: any;
   working: boolean;
   loading: boolean;
@@ -114,6 +115,7 @@ function exportResult() {
 }
 function printResult() {
   if (!hasResult.value) return notify("请先生成皮影角色");
+  if (!props.task.result.print_template_url) return notify("此 AI 图像没有切割纸样，可导出图片作为创作参考");
   selectedResult.value = "print_template_url";
   emit("export");
 }
@@ -199,9 +201,9 @@ function publish() {
                 aria-label="预览内容"
                 :disabled="!hasResult"
               >
-                <option value="line_art_url">镂空轮廓图</option>
+                <option v-if="!hasResult || task.result.line_art_url" value="line_art_url">镂空轮廓图</option>
                 <option value="colored_image_url">彩色皮影</option>
-                <option value="print_template_url">线稿纸样</option>
+                <option v-if="!hasResult || task.result.print_template_url" value="print_template_url">线稿纸样</option>
               </select>
               <div>
                 <button
@@ -292,9 +294,10 @@ function publish() {
           </section>
         </div>
       </div>
+      <slot name="generation-mode" />
       <button class="generate-button" :disabled="working || loading">
         <img :src="designIcon(screen, '5:3663')" alt="" />{{
-          working ? "正在创作…" : "生成皮影角色"
+          working ? "正在创作…" : generationMode === 'AI' ? "AI 生成皮影" : "生成本地皮影"
         }}
       </button>
       <div v-if="working" class="generation-status" role="status">
@@ -315,7 +318,7 @@ function publish() {
       <details v-if="hasResult" class="result-information">
         <summary>
           {{
-            task.result.llm_generated
+            task.result.generation_method === 'ai_image' ? "AI 图像创作 · 查看说明" : task.result.llm_generated
               ? "文字分析由模型辅助，图片使用本地模板"
               : "本地工艺辅助 · 查看创作说明"
           }}

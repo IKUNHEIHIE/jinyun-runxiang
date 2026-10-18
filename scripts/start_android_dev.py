@@ -134,13 +134,13 @@ def bootstrap():
                     "items": [
                         {"badge": "最受欢迎", "title": "娃娃类题材", "subtitle": "连年有余 · 五谷丰登 · 麒麟送子",
                          "body": "胖娃娃是杨柳青年画最具代表性的题材。娃娃或怀抱鲤鱼寓意“连年有余”，或手捧谷穗象征“五谷丰登”。",
-                         "image_url": "/design/images/4e56134e7d2a8d417862b43ca1ba1161.png"},
+                         "image_url": "/design/images/4e56134e7d2a8d417862b43ca1ba1161.webp"},
                         {"title": "戏曲故事", "subtitle": "京剧 · 评剧",
                          "body": "取材于京剧、评剧等经典剧目，如《白蛇传》《西游记》《三国演义》等，人物形象生动，情节引人入胜。",
-                         "image_url": "/design/images/6c315b81dd6dfeb3b254b58c6798c9b5.png"},
+                         "image_url": "/design/images/6c315b81dd6dfeb3b254b58c6798c9b5.webp"},
                         {"title": "风景花卉", "subtitle": "四时花卉 · 文人画",
                          "body": "四时花卉与山水风景，梅、兰、竹、菊寓意高洁品格，配以诗词题跋，兼具文人意趣。",
-                         "image_url": "/design/images/0b40a6c09937d62155b834be8bb295bb.png"},
+                         "image_url": "/design/images/0b40a6c09937d62155b834be8bb295bb.webp"},
                     ],
                 },
                 {
@@ -156,7 +156,7 @@ def bootstrap():
                 {
                     "eyebrow": "ORIGIN & HISTORY", "title": "源起",
                     "body": "杨柳青年画发源于明代崇祯年间，盛于清代乾隆嘉庆时期，因产于天津杨柳青镇而得名。",
-                    "image_url": "/design/images/dfb7e1bc3c668957a1b76b3f2be77948.png",
+                    "image_url": "/design/images/dfb7e1bc3c668957a1b76b3f2be77948.webp",
                     "timeline": [
                         {"era": "明", "date": "崇祯年间", "title": "起源", "body": "杨柳青年画发源于明代崇祯年间，在津西杨柳青镇形成作坊式生产。"},
                         {"era": "清", "date": "乾隆嘉庆", "title": "鼎盛", "body": "清代乾隆、嘉庆时期进入鼎盛，画坊林立，作品远销各地。"},

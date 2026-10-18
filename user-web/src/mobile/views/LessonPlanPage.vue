@@ -662,7 +662,7 @@ onUnmounted(() => {
   --plan-muted: #8b7b7b;
   --plan-rose: #c45c5c;
   color: var(--plan-ink);
-  background: #fff9f9 url("/design/images/5576fb521ca134e55c7ca0d481dcc303.png")
+  background: #fff9f9 url("/design/images/5576fb521ca134e55c7ca0d481dcc303.webp")
     center/cover;
   padding-top: 9px;
   min-height: 100dvh;
@@ -804,7 +804,7 @@ onUnmounted(() => {
   border: 1px solid #e8d0d0;
   border-radius: 12px;
   background: #fffafa;
-  background-image: url('/design/images/1300b6d5aa58073b885a353487d01eb4.png');
+  background-image: url('/design/images/1300b6d5aa58073b885a353487d01eb4.webp');
   background-repeat: no-repeat;
   background-size: 16px 14px;
   background-position: right 12px center;

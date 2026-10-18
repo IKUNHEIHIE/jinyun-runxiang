@@ -6,7 +6,7 @@
         <p class="subtitle">集中配置多模态大语言模型 API 引擎、站点基础元数据、乡村美育运营规则及敏感词过滤风控策略</p>
       </div>
       <div class="header-actions">
-        <el-button type="primary" :loading="saving" @click="handleSaveAll" class="save-btn">
+        <el-button type="primary" :loading="saving" :disabled="loading" @click="handleSaveAll" class="save-btn">
           <el-icon><Check /></el-icon> 保存全部系统设置
         </el-button>
       </div>
@@ -53,7 +53,7 @@
               placeholder="请输入服务商提供的 API Key 凭据"
               clearable
             />
-            <div class="form-tip">系统加密持久化存储，调用非遗鉴赏与伴学 Agent 时自动附带</div>
+            <div class="form-tip">密钥只在服务端保存，回读仅显示掩码；保留掩码表示不更换，清空表示移除</div>
           </el-form-item>
 
           <el-divider />
@@ -101,6 +101,64 @@
             <el-switch v-model="llmForm.enable_proxy" active-text="开启加速代理网关" inactive-text="直连官方节点" />
           </el-form-item>
 
+          <el-divider />
+          <div class="section-title"><span class="indicator"></span><span>AI 工坊 · 生图与参考图编辑</span></div>
+          <el-form-item label="启用真实生图">
+            <el-switch v-model="llmForm.image_generation.enabled" />
+            <div class="form-tip">用于青铜纹样、皮影与漆绣。图片理解模型名称不会自动作为生图模型使用。</div>
+          </el-form-item>
+          <el-form-item label="配置预设">
+            <el-button @click="useSenseNova">填入 SenseNova U1.5 Lite 参数</el-button>
+            <div class="form-tip">预设只填写接口参数，密钥需单独填写后保存。</div>
+          </el-form-item>
+          <el-form-item label="复用文本连接">
+            <el-switch v-model="llmForm.image_generation.use_text_connection" />
+            <div class="form-tip">开启时使用上方文本服务的地址与密钥，生图模型名仍需单独填写。</div>
+          </el-form-item>
+          <template v-if="!llmForm.image_generation.use_text_connection">
+            <el-form-item label="生图 API Base">
+              <el-input v-model="llmForm.image_generation.api_base" placeholder="https://token.sensenova.cn/v1" />
+              <div class="form-tip">填写基础地址；生成请求自动追加 /images/generations。</div>
+            </el-form-item>
+            <el-form-item label="生图 API Key">
+              <el-input v-model="llmForm.image_generation.api_key" type="password" show-password autocomplete="new-password" placeholder="填写生图服务密钥；已保存的密钥显示为掩码" />
+            </el-form-item>
+          </template>
+          <el-form-item label="生图模型 ID">
+            <el-input v-model="llmForm.image_generation.model_name" placeholder="例如 sensenova-u1.5-lite" />
+          </el-form-item>
+          <el-form-item label="支持参考图编辑">
+            <el-switch v-model="llmForm.image_generation.supports_edit" />
+            <div class="form-tip">确认模型支持图片编辑后开启；草图通过服务端发送，手机端不会接触密钥。</div>
+          </el-form-item>
+          <el-form-item v-if="llmForm.image_generation.supports_edit" label="编辑请求格式">
+            <el-select v-model="llmForm.image_generation.edit_transport">
+              <el-option label="OpenAI 标准文件上传（multipart）" value="multipart" />
+              <el-option label="SenseNova 图片数组（JSON images）" value="json_images" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="图片尺寸">
+            <el-select v-model="llmForm.image_generation.size">
+              <el-option v-for="size in ['1024x1024', '1536x1024', '1024x1536', '512x512', 'auto']" :key="size" :label="size" :value="size" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="图片返回方式">
+            <el-select v-model="llmForm.image_generation.response_format">
+              <el-option label="服务默认" value="auto" />
+              <el-option label="Base64 图片（推荐）" value="b64_json" />
+              <el-option label="图片链接（服务端转存）" value="url" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="生图超时（秒）">
+            <el-input-number v-model="llmForm.image_generation.timeout_seconds" :min="30" :max="180" />
+            <div class="form-tip">超时不会自动重复调用模型。重新生成可能产生新的服务调用。</div>
+          </el-form-item>
+          <el-form-item label="模型访问检查">
+            <el-button :loading="testingImage" @click="handleTestImage">检查配置与模型访问</el-button>
+            <div class="form-tip">只查询模型，不生成图片。部分兼容服务未提供模型查询，实际能力请在工坊试生成。</div>
+            <div v-if="imageTestResult" role="status">{{ imageTestResult }}</div>
+          </el-form-item>
+
           <!-- 连通性探测卡片 -->
           <div class="test-connectivity-card">
             <div class="test-header">
@@ -134,7 +192,7 @@
           </div>
 
           <div class="form-footer">
-            <el-button type="primary" :loading="saving" @click="handleSaveAll">
+            <el-button type="primary" :loading="saving" :disabled="loading" @click="handleSaveAll">
               保存大模型接入配置
             </el-button>
           </div>
@@ -365,6 +423,8 @@ const activeTab = ref('llm')
 const loading = ref(false)
 const saving = ref(false)
 const testingLlm = ref(false)
+const testingImage = ref(false)
+const imageTestResult = ref('')
 
 const predefineColors = [
   '#8B4A2F', // 津派赤褐
@@ -391,8 +451,35 @@ const llmForm = ref({
   vision_model_name: 'deepseek-vl',
   temperature: 0.7,
   max_tokens: 4096,
-  enable_proxy: false
+  enable_proxy: false,
+  image_generation: {
+    enabled: false, use_text_connection: true, api_base: '', api_key: '', model_name: '',
+    supports_edit: false, edit_transport: 'multipart', size: '1024x1024', response_format: 'auto', timeout_seconds: 120
+  }
 })
+
+function useSenseNova() {
+  Object.assign(llmForm.value.image_generation, {
+    use_text_connection: false, api_base: 'https://token.sensenova.cn/v1',
+    model_name: 'sensenova-u1.5-lite', supports_edit: true,
+    edit_transport: 'json_images', size: '1024x1024', response_format: 'b64_json'
+  })
+  imageTestResult.value = ''
+}
+
+async function handleTestImage() {
+  if (testingImage.value || loading.value) return
+  testingImage.value = true
+  imageTestResult.value = ''
+  try {
+    const result: any = await request.post('/admin/settings/test-image', llmForm.value)
+    imageTestResult.value = result.message
+  } catch (error: any) {
+    imageTestResult.value = error.response?.data?.message || error.message || '模型访问检查失败'
+  } finally {
+    testingImage.value = false
+  }
+}
 
 const siteForm = ref({
   site_name: '津韵润乡——天津非遗赋能乡村美育智能应用',
@@ -494,6 +581,7 @@ const handleTestLlm = async () => {
 
 // 保存全部配置
 const handleSaveAll = async () => {
+  if (saving.value || loading.value) return
   saving.value = true
   try {
     await request.post('/admin/settings', {

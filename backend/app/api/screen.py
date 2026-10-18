@@ -27,6 +27,28 @@ def get_screen_overview(db: Session = Depends(get_db)):
     districts = db.query(UserProfile.district, func.count(UserProfile.user_id)).join(
         SysUser, SysUser.id == UserProfile.user_id).filter(SysUser.role_code == "STUDENT",
         UserProfile.district.isnot(None)).group_by(UserProfile.district).all()
+    aesthetic_keys = ["composition", "color", "linework", "heritage", "innovation"]
+    aesthetic_values = {key: [] for key in aesthetic_keys}
+    aesthetic_sample_count = 0
+    for task in db.query(AiTask).filter(AiTask.status == "SUCCESS").all():
+        summary = task.result_summary_json or {}
+        scores = summary.get("aesthetic_scores") if isinstance(summary, dict) else None
+        if not isinstance(scores, dict):
+            continue
+        usable = {key: scores.get(key) for key in aesthetic_keys
+                  if isinstance(scores.get(key), (int, float))}
+        if len(usable) != len(aesthetic_keys):
+            continue
+        aesthetic_sample_count += 1
+        for key, value in usable.items():
+            aesthetic_values[key].append(float(value))
+    aesthetic_matrix = {
+        "sample_count": aesthetic_sample_count,
+        "scores": {
+            key: round(sum(values) / len(values), 1) if values else None
+            for key, values in aesthetic_values.items()
+        },
+    }
     orders = db.query(OrderMain).filter(OrderMain.status.in_(["PAID", "SHIPPED", "COMPLETED"])).order_by(OrderMain.created_at.desc()).limit(15).all()
     donations = []
     for order in orders:
@@ -38,6 +60,7 @@ def get_screen_overview(db: Session = Depends(get_db)):
     return success_response({"kpis": kpis,
         "pie_chart": [{"name": category, "value": count} for category, count in categories],
         "bar_chart": {"categories": [d for d, _ in districts], "values": [c for _, c in districts]},
+        "aesthetic_matrix": aesthetic_matrix,
         "donation_orders": donations,
         "robots": [{"id": d.device_code, "name": d.device_name, "location": d.school_id or "未登记",
                     "task": "等待设备回执", "battery": None, "temp": None, "latency": None,

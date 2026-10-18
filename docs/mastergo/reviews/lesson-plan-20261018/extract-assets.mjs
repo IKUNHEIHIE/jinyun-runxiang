@@ -15,6 +15,6 @@ if (Object.keys(icons).length!==14) throw Error('Expected 14 source SVGs');
 const manifestPath = path.join(repo,'user-web/src/mobile/design-assets.json');
 const manifest = JSON.parse(fs.readFileSync(manifestPath,'utf8'));
 Object.assign(manifest['layer-5-02348'].icons, icons);
-manifest['layer-5-02348'].images['5:02348'] = '/design/images/5576fb521ca134e55c7ca0d481dcc303.png';
+manifest['layer-5-02348'].images['5:02348'] = '/design/images/5576fb521ca134e55c7ca0d481dcc303.webp';
 fs.writeFileSync(manifestPath,JSON.stringify(manifest,null,2)+'\n');
 console.log(JSON.stringify({sourceSvgCount:Object.keys(icons).length}));

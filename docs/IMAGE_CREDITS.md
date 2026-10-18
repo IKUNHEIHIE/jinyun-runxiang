@@ -16,6 +16,19 @@
 
 CC BY-SA 图片的署名与相同方式共享要求适用于对应图片及其裁切版本；发布或再分发时请保留本页与许可链接。
 
+## 社区补充封面（2026-10-18）
+
+为避免社区作品重复用同一张图，新增以下 Wikimedia Commons 图片，存放在 `/static/uploads/community/`：
+
+| 文件 | 来源页 | 许可 |
+|---|---|---|
+| `shadow-2.jpg` | [Shadow Puppetry in Tangshan Museum 2](https://commons.wikimedia.org/wiki/File:Shadow_Puppetry_in_Tangshan_Museum_2.jpg) | CC0 |
+| `kite-2.jpg` | [Dalian Liaoning China Flying-a-kite-01](https://commons.wikimedia.org/wiki/File:Dalian_Liaoning_China_Flying-a-kite-01.jpg) | CC BY-SA 3.0 |
+| `newyear-2.jpg` | [Nianhua / New Year pictures (MET DP-17327-122)](https://commons.wikimedia.org/wiki/File:One_hundred_thirty-five_woodblock_prints_including_New_Year%27s_pictures_(nianhua),_door_gods,_historical_figures_and_Taoist_deities_MET_DP-17327-122.jpg) | CC0 |
+| `shadow-3.jpg` | [Shadow Puppetry in Tangshan Museum 3](https://commons.wikimedia.org/wiki/File:Shadow_Puppetry_in_Tangshan_Museum_3.jpg) | CC0 |
+| `porcelain-2.jpg` | [Blue and White Porcelain Vase with Garlic Shaped Mouth](https://commons.wikimedia.org/wiki/File:20240817_Blue_and_White_Porcelain_Vase_with_Garlic_Shaped_Mouth_and_Qianlong_Reign_Mark,_Qing.jpg) | CC BY-SA 4.0 |
+| `bronze-2.jpg` | [Ding (vessel)](https://commons.wikimedia.org/wiki/File:Ding_(vessel).jpg) | CC BY-SA 4.0 |
+
 ## 演示视频外链
 
 - [MDN flower sample](https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4)：CC0，用于部分课程章节。

@@ -21,7 +21,7 @@ def task_collected(db: Session, task: AiTask) -> bool:
 
 
 def owned_task_for_asset(db: Session, asset: Asset, user_id: int):
-    match = re.fullmatch(r"generated/([0-9a-f]{32})_[a-z_]+\.svg", asset.object_key or "")
+    match = re.fullmatch(r"generated/([0-9a-f]{32})_[a-z_]+\.(?:svg|png|jpg|webp)", asset.object_key or "")
     task = db.get(AiTask, match.group(1)) if match else None
     if (asset.created_by != user_id or not task or task.user_id != user_id or
             task.status != "SUCCESS" or task.tool_type not in {"SHADOW_PUPPET","BRONZE","EMBROIDERY","LACQUER"} or

@@ -15,7 +15,12 @@ const px = value => typeof value === 'number' ? `${value}px` : value;
 const css = value => Object.entries(value).filter(([, v]) => v != null && !String(v).includes('NaN'))
   .map(([k, v]) => `${k}:${v}`).join(';');
 const values = ref => styles[ref]?.value ?? [];
-const localImage = url => `http://127.0.0.1:5174/design/images/${url.split('/').pop()}`;
+const localImage = url => {
+  const filename = url.split('/').pop();
+  const webp = filename.replace(/\.png$/, '.webp');
+  const bundled = fs.existsSync(path.join(repo, 'user-web/public/design/images', filename)) ? filename : webp;
+  return `http://127.0.0.1:5174/design/images/${bundled}`;
+};
 const tokenName = id => `--mg-${id.replace(/[^a-z0-9]/gi, '-')}`;
 const tokens = Object.entries(styles).flatMap(([id, style]) => {
   if (!id.startsWith('paint_')) return [];

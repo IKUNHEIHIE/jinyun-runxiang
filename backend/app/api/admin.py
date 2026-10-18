@@ -9,6 +9,7 @@ from typing import Optional
 
 from app.core.database import get_db
 from app.core.security import require_admin, hash_password
+from app.core import image_generation as image_service
 from app.schemas.common import success_response, error_response
 from app.models.entities import (
     OperationStatDaily, CommunityPost, ContentReview,
@@ -137,12 +138,13 @@ def review_post_action(
 class LlmSettingsDTO(BaseModel):
     provider: str = "DeepSeek"
     api_base: str = "https://api.deepseek.com/v1"
-    api_key: str
+    api_key: Optional[str] = None
     model_name: str = "deepseek-chat"
     vision_model_name: Optional[str] = "deepseek-vl"
     temperature: float = 0.7
     max_tokens: int = 4096
     enable_proxy: bool = False
+    image_generation: Optional[image_service.ImageSettings] = None
 
 class SiteSettingsDTO(BaseModel):
     site_name: str = "津韵润乡——天津非遗赋能乡村美育智能应用"
@@ -167,6 +169,29 @@ class TestLlmRequest(BaseModel):
     api_key: str
     model_name: str
 
+
+def merge_llm_settings(saved: dict, incoming: LlmSettingsDTO) -> dict:
+    values = incoming.model_dump(exclude_unset=True)
+    image_values = values.pop("image_generation", None)
+    merged = LlmSettingsDTO().model_dump(exclude={"image_generation"}) | saved | values
+    if values.get("api_key") is None or values.get("api_key") == image_service.KEY_MASK:
+        merged["api_key"] = saved.get("api_key") or ""
+    if "*" in (merged.get("api_key") or ""):
+        raise HTTPException(422, "请重新输入有效密钥，或保留已保存的密钥")
+    old_image = saved.get("image_generation") or {}
+    new_image = image_service.ImageSettings().model_dump() | old_image | (image_values or {})
+    if new_image.get("api_key") is None or new_image.get("api_key") == image_service.KEY_MASK:
+        new_image["api_key"] = old_image.get("api_key") or ""
+    if "*" in (new_image.get("api_key") or ""):
+        raise HTTPException(422, "请重新输入有效生图密钥，或保留已保存的密钥")
+    merged["image_generation"] = new_image
+    if new_image["enabled"]:
+        try:
+            image_service.resolve_connection(merged)
+        except image_service.ImageGenerationError as exc:
+            raise HTTPException(422, str(exc)) from None
+    return merged
+
 @router.get("/settings")
 def get_system_settings(
     current_user: dict = Depends(require_admin),
@@ -179,7 +204,7 @@ def get_system_settings(
     default_llm = {
         "provider": "DeepSeek",
         "api_base": "https://api.deepseek.com/v1",
-        "api_key": "sk-d7a8********************9b2c",
+        "api_key": "",
         "model_name": "deepseek-chat",
         "vision_model_name": "deepseek-vl",
         "temperature": 0.7,
@@ -202,6 +227,11 @@ def get_system_settings(
     }
 
     llm_data = json.loads(llm_cfg.config_value) if llm_cfg else default_llm
+    llm_data = default_llm | llm_data
+    llm_data["api_key"] = image_service.KEY_MASK if llm_data.get("api_key") and "*" not in llm_data["api_key"] else ""
+    image_data = image_service.ImageSettings().model_dump() | (llm_data.get("image_generation") or {})
+    image_data["api_key"] = image_service.KEY_MASK if image_data.get("api_key") else ""
+    llm_data["image_generation"] = image_data
     site_data = json.loads(site_cfg.config_value) if site_cfg else default_site
 
     return success_response({
@@ -226,7 +256,7 @@ def save_system_settings(
     """保存大模型接入配置与全站自定义设置"""
     # 1. 保存大模型配置
     llm_cfg = db.query(SysConfig).filter(SysConfig.config_key == "llm_settings").first()
-    llm_val = json.dumps(req.llm_settings.dict(), ensure_ascii=False)
+    llm_val = json.dumps(merge_llm_settings(image_service.read_settings(db), req.llm_settings), ensure_ascii=False)
     if not llm_cfg:
         llm_cfg = SysConfig(config_key="llm_settings", config_value=llm_val, description="大模型及多模态API接入配置")
         db.add(llm_cfg)
@@ -244,6 +274,26 @@ def save_system_settings(
 
     db.commit()
     return success_response(message="系统配置与大模型参数保存成功！")
+
+
+@router.post("/settings/test-image")
+def test_image_connection(req: LlmSettingsDTO, current_user: dict = Depends(require_admin),
+                          db: Session = Depends(get_db)):
+    """Inspect model access without requesting a potentially paid image."""
+    config = merge_llm_settings(image_service.read_settings(db), req)
+    try:
+        cfg = image_service.resolve_connection(config)
+        start = time.monotonic()
+        with image_service.OpenAI(api_key=cfg["api_key"], base_url=cfg["api_base"], timeout=10, max_retries=0) as client:
+            client.models.retrieve(cfg["model_name"])
+        return success_response({"latency_ms": round((time.monotonic() - start) * 1000),
+            "model_access_verified": True, "verified_generation": False,
+            "message": "配置与模型访问检查通过；未生成图片。实际生成与编辑能力需在工坊试用验证"})
+    except image_service.ImageGenerationError as exc:
+        raise HTTPException(422, str(exc)) from None
+    except Exception:
+        return success_response({"model_access_verified": False, "verified_generation": False,
+            "message": "未能通过模型查询确认访问权限；部分生图网关未提供该查询接口。这不代表生图不可用，请在工坊实际试生成；若生成失败，再检查地址、密钥和模型权限"})
 
 @router.post("/settings/test-llm")
 def test_llm_connection(

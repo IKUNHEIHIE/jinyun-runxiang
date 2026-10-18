@@ -152,12 +152,13 @@
           <div class="card-header">
             <span class="card-tag"></span>
             <span class="card-title">AI 审美诊断矩阵</span>
-            <span class="card-sub">尚未接入真实诊断聚合</span>
+            <span class="card-sub">{{ aestheticSummary }}</span>
           </div>
           <div class="card-body">
             <div ref="radarChartRef" class="chart-container"></div>
             <div class="radar-meta-row">
-              <span class="muted-note">当前没有可聚合的 AI 审美诊断数据，不展示推测分数。</span>
+              <span v-if="!aestheticHasData" class="muted-note">当前没有可聚合的 AI 审美诊断数据，不展示推测分数。</span>
+              <span v-else class="muted-note">基于 {{ aestheticSampleCount }} 件已完成 AI 创作任务的五个维度均分。</span>
             </div>
           </div>
         </div>
@@ -227,6 +228,28 @@ let clockTimer: any = null;
 let tickerTimer: any = null;
 let dataPollTimer: any = null;
 const rawScreenData = ref<any>(null);
+
+const aestheticSampleCount = computed(() =>
+  Number(rawScreenData.value?.aesthetic_matrix?.sample_count || 0)
+);
+const aestheticHasData = computed(() => aestheticSampleCount.value > 0);
+const aestheticSummary = computed(() =>
+  aestheticHasData.value
+    ? `已聚合 ${aestheticSampleCount.value} 件作品`
+    : "尚未接入真实诊断聚合"
+);
+const radarSeriesData = (matrix: any) => {
+  const keys = ["composition", "color", "linework", "heritage", "innovation"];
+  const values = keys.map((key) => Number(matrix?.scores?.[key]));
+  if (!values.every((value) => Number.isFinite(value))) return [];
+  return [{ value: values, name: "AI 审美诊断维度均分" }];
+};
+const refreshRadarChart = () => {
+  if (!radarChart) return;
+  radarChart.setOption({
+    series: [{ data: radarSeriesData(rawScreenData.value?.aesthetic_matrix) }]
+  });
+};
 
 // KPI Counters
 const kpis = ref<any[]>([]);
@@ -308,6 +331,7 @@ const fetchScreenData = async () => {
         series: [{ data: data.bar_chart.values }]
       });
     }
+    refreshRadarChart();
   } catch (e) {
     console.error("Failed to load screen overview data:", e);
   }
@@ -459,17 +483,11 @@ const initCharts = () => {
         axisLine: { lineStyle: { color: "rgba(0, 242, 254, 0.25)" } },
         splitLine: { lineStyle: { color: "rgba(0, 242, 254, 0.2)" } }
       },
-      graphic: {
-        type: "text",
-        left: "center",
-        top: "middle",
-        style: { text: "暂无诊断聚合数据", fill: "#94a3b8", fontSize: 13 }
-      },
       series: [
         {
           name: "AI 审美诊断维度均分",
           type: "radar",
-          data: []
+          data: radarSeriesData(rawScreenData.value?.aesthetic_matrix)
         }
       ]
     });

@@ -15,6 +15,7 @@ import { saveAsset } from "../files";
 import BronzeCanvas from "../components/BronzeCanvas.vue";
 import ShadowWorkshop from "../components/ShadowWorkshop.vue";
 import LacquerWorkshop from "../components/LacquerWorkshop.vue";
+import WorkshopGenerationMode from "../components/WorkshopGenerationMode.vue";
 const route = useRoute(),
   router = useRouter(),
   type = computed(() => String(route.params.tool));
@@ -47,6 +48,9 @@ const sketch = ref(""),
   localPattern = ref("FLORAL"),
   selectedResult = ref("colored_image_url");
 const bronzeGenerating = ref(false);
+const generationMode = ref("LOCAL");
+const imageCapabilities = ref({ image_generation: false, image_edit: false });
+let pendingCreate: { signature: string; requestId: string } | undefined;
 const bronzeRenderStyle = ref("青铜氧化"),
   bronzePattern = ref("饕餮纹");
 function openBronzeGenerator(renderStyle: string, pattern: string) {
@@ -88,11 +92,13 @@ async function poll() {
   if (!alive || !task.value?.task_id) return;
   const id = task.value.task_id;
   const c = context();
+  clearTimeout(pollTimer);
   try {
     const result = await api("/ai/tasks/" + id);
     if (!current(c) || task.value?.task_id !== id) return;
     task.value = result;
     if (result.status === "SUCCESS") {
+      if (!result.result?.[selectedResult.value]) selectedResult.value = "colored_image_url";
       bronzeGenerating.value = false;
       try {
         await loadProfile();
@@ -120,8 +126,9 @@ async function create() {
   clearTimeout(pollTimer);
   const c = context();
   try {
-    const result = await post("/ai/tasks", {
+    const body = {
       tool_type: toolType.value,
+      generation_mode: generationMode.value,
       input_payload: {
         prompt: prompt.value,
         role_type: role.value + "角",
@@ -136,8 +143,18 @@ async function create() {
         sketch_url: sketch.value || undefined,
         style: type.value === "bronze" ? bronzeRenderStyle.value : undefined,
       },
-    });
+    };
+    if (generationMode.value === "AI" && sketch.value && !imageCapabilities.value.image_edit) {
+      throw new Error("当前模型未启用参考图编辑，请移除参考图后重试");
+    }
+    const signature = JSON.stringify(body);
+    if (!pendingCreate || pendingCreate.signature !== signature) {
+      pendingCreate = { signature, requestId: typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID() : "create-" + Date.now().toString(36) + Math.random().toString(36).slice(2) };
+    }
+    const result = await post("/ai/tasks", { ...body, request_id: pendingCreate.requestId });
     if (!current(c)) return;
+    pendingCreate = undefined;
     task.value = result;
     if (route.query.task_id) {
       const query = { ...route.query };
@@ -222,7 +239,7 @@ async function download() {
     if (url)
       await saveAsset(
         url,
-        "津韵润乡-" + type.value + (url.endsWith(".svg") ? ".svg" : ".png"),
+        "津韵润乡-" + type.value + (url.match(/\.(svg|png|jpe?g|webp)$/i)?.[0] || ".png"),
       );
   } catch (e) {
     notify((e as Error).message);
@@ -281,6 +298,9 @@ async function restore() {
   uploading.value = false;
   publishing.value = false;
   favoriteBusy.value = false;
+  pendingCreate = undefined;
+  imageCapabilities.value = { image_generation: false, image_edit: false };
+  generationMode.value = "LOCAL";
   restoring.value = false;
   role.value = "生";
   faceStyle.value = "CLASSIC";
@@ -302,11 +322,11 @@ async function restore() {
       (typeof requested !== "string" || !/^[0-9a-f]{32}$/.test(requested))
     )
       throw new Error("创作链接无效");
-    const result = await api(
+    const [abilities, result] = await Promise.all([api("/ai/capabilities").catch(() => null), api(
       requested
         ? "/ai/tasks/" + requested
         : "/ai/tasks/latest?tool_type=" + toolType.value,
-    );
+    )]);
     if (
       !alive ||
       version !== restoreVersion ||
@@ -317,6 +337,15 @@ async function restore() {
     if (result && result.tool_type !== toolType.value)
       throw new Error("作品不属于当前工坊");
     task.value = result;
+    imageCapabilities.value = { image_generation: abilities?.image_generation === true, image_edit: abilities?.image_edit === true };
+    generationMode.value = result ? (result.input?._generation_mode === "AI" ? "AI" : "LOCAL")
+      : imageCapabilities.value.image_generation ? "AI" : "LOCAL";
+    if (result?.result?.generation_method === "ai_image") selectedResult.value = "colored_image_url";
+    if (type.value === "bronze" && result?.input) {
+      prompt.value = typeof result.input.prompt === "string" ? result.input.prompt : "";
+      bronzeRenderStyle.value = typeof result.input.style === "string" ? result.input.style : "青铜氧化";
+      bronzePattern.value = typeof result.input.pattern_type === "string" ? result.input.pattern_type : "饕餮纹";
+    }
     if (type.value === "shadow" && result?.input) {
       prompt.value =
         typeof result.input.prompt === "string" ? result.input.prompt : "";
@@ -398,6 +427,7 @@ onUnmounted(() => {
     :error="error"
     :publishing="publishing"
     :favorite-busy="favoriteBusy"
+    :generation-mode="generationMode"
     @back="backToWorkshop"
     @generate="create"
     @cancel="cancel"
@@ -405,7 +435,9 @@ onUnmounted(() => {
     @export="download"
     @favorite="favorite"
     @publish="publish"
-  />
+  >
+    <template #generation-mode><WorkshopGenerationMode v-model="generationMode" :available="imageCapabilities.image_generation" :editable="imageCapabilities.image_edit" :disabled="working || restoring" /></template>
+  </ShadowWorkshop>
   <LacquerWorkshop
     v-else-if="type === 'lacquer'"
     v-model:prompt="prompt"
@@ -420,6 +452,7 @@ onUnmounted(() => {
     :error="error"
     :publishing="publishing"
     :favorite-busy="favoriteBusy"
+    :generation-mode="generationMode"
     @back="backToWorkshop"
     @upload="upload"
     @generate="create"
@@ -428,7 +461,9 @@ onUnmounted(() => {
     @export="download"
     @favorite="favorite"
     @publish="publish"
-  />
+  >
+    <template #generation-mode><WorkshopGenerationMode v-model="generationMode" :available="imageCapabilities.image_generation" :editable="imageCapabilities.image_edit" :disabled="working || restoring || uploading" /></template>
+  </LacquerWorkshop>
   <div v-else class="editor-page bronze" data-design-node="40:55030">
     <button class="bronze-back" aria-label="返回上一页" @click="backToWorkshop">
       <img :src="designIcon('layer-40-55030', '40:55060')" alt="" />
@@ -445,8 +480,10 @@ onUnmounted(() => {
     <div class="page-padding">
       <BronzeCanvas
         :saved-task="task"
+        :favorite-busy="favoriteBusy"
         :publishing="publishing"
         @saved="saved"
+        @favorite="favorite"
         @generate="openBronzeGenerator"
         @publish="publish"
       />
@@ -466,6 +503,7 @@ onUnmounted(() => {
           </button>
           <h2>AI生成纹样</h2>
           <form @submit.prevent="create">
+            <WorkshopGenerationMode v-model="generationMode" :available="imageCapabilities.image_generation" :editable="imageCapabilities.image_edit" :disabled="working || restoring" />
             <label
               >文字描述<textarea
                 v-model.trim="prompt"
@@ -476,7 +514,7 @@ onUnmounted(() => {
             </label>
             <p v-if="error" class="form-error" role="alert">{{ error }}</p>
             <button class="primary-button" :disabled="working">
-              {{ working ? "正在创作…" : "AI生成纹样" }}
+              {{ working ? "正在创作…" : generationMode === 'AI' ? "AI 生成纹样" : "生成本地纹样" }}
             </button>
           </form>
           <div v-if="working" class="task-progress" role="status">

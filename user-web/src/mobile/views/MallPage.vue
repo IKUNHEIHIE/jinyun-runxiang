@@ -1270,7 +1270,7 @@ watch(
   left: 16px;
   right: 16px;
   top: 20px;
-  background-image: url("/design/images/ce43aec2b92e5d0d60b773b3f1fad5f0.png");
+  background-image: url("/design/images/ce43aec2b92e5d0d60b773b3f1fad5f0.webp");
   background-size: 100% 2px;
 }
 .co-creation-steps > * {

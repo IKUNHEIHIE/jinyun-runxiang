@@ -5,6 +5,7 @@ import { mediaUrl, notify, requireSession, session } from "../api";
 
 const screen = "layer-40-55031";
 const props = defineProps<{
+  generationMode: string;
   task?: any;
   resultUrl?: string;
   working: boolean;
@@ -299,8 +300,7 @@ function generate() {
       <div class="workbench-grid">
         <div class="workbench-description">
           <p>
-            以丝为墨，以针为笔。上传草图作为创作参考，选择本地纹样与配色。草图重绘与
-            LoRA 尚未接入。
+            以丝为墨，以针为笔。选择纹样与配色，通过本地模板或 AI 图像生成创作；支持的模型可按草图重绘。LoRA 尚未接入。
           </p>
           <div class="model-options" aria-label="未接入的模型风格">
             <button
@@ -346,7 +346,7 @@ function generate() {
               :src="
                 hasResult ? mediaUrl(resultUrl) : designImage(screen, '5:00086')
               "
-              :alt="hasResult ? '当前本地纹样结果' : '设计中的工艺参考示例'"
+              :alt="hasResult ? '当前纹样创作结果' : '设计中的工艺参考示例'"
             /><img
               v-if="!hasResult"
               class="preview-frame"
@@ -360,7 +360,7 @@ function generate() {
                   : working
                     ? "提交中…"
                     : hasResult
-                      ? "本地纹样"
+                      ? task.result.generation_method === 'ai_image' ? 'AI 图像' : "本地纹样"
                       : "参考示例"
             }}</span>
           </button>
@@ -412,7 +412,7 @@ function generate() {
       </div>
       <div class="workbench-actions">
         <button class="create-button" :disabled="disabled" @click="edit">
-          {{ hasResult ? "调整参数重新创作" : "开始本地创作" }}</button
+          {{ hasResult ? "调整参数重新创作" : "开始创作" }}</button
         ><template v-if="hasResult"
           ><button @click="emit('export')">导出设计图</button
           ><button
@@ -431,7 +431,7 @@ function generate() {
         <p>{{ task.result.description }}</p>
       </details>
       <p class="capability-note">
-        配色为固定传统色板参考，非实物材料色号。上传图片不会被自动重绘。
+        配色仅供参考，非实物材料色号。本地模板不会重绘草图；AI 模式需开启图片编辑能力。
       </p>
     </section>
     <footer class="lacquer-footer">
@@ -470,15 +470,17 @@ function generate() {
           >
             关闭
           </button>
-          <h2>本地纹样创作</h2>
+          <h2>纹样创作</h2>
           <p>
-            根据文字和配色生成二维纹样参考。草图仅供你对照查看，尚未接入自动重绘。
+            根据文字和配色生成二维纹样参考；AI 模式可用已启用图片编辑的模型重绘参考草图。
           </p>
           <figure v-if="hasResult" class="editor-result">
-            <img :src="mediaUrl(resultUrl)" alt="当前本地生成的纹样参考" />
-            <figcaption>当前本地纹样参考</figcaption>
+            <img :src="mediaUrl(resultUrl)" alt="当前生成的纹样参考" />
+            <figcaption>{{ task.result.generation_method === 'ai_image' ? 'AI 图像创作' : '本地纹样参考' }}</figcaption>
+            <p>{{ task.result.description }}</p>
           </figure>
           <form @submit.prevent="generate">
+            <slot name="generation-mode" />
             <label
               >纹样类型<select v-model="pattern" :disabled="disabled">
                 <option value="FLORAL">花鸟纹样</option>
@@ -506,7 +508,7 @@ function generate() {
             />
             <p v-if="error" class="workbench-error" role="alert">{{ error }}</p>
             <button class="create-button" :disabled="disabled">
-              {{ working ? "正在创作…" : "生成本地纹样参考" }}
+              {{ working ? "正在创作…" : generationMode === 'AI' ? "AI 生成纹样" : "生成本地纹样参考" }}
             </button>
           </form>
         </section>

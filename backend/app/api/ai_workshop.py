@@ -5,7 +5,7 @@ import base64
 import hashlib
 import re
 from app.core.files import resolve_static_file, sanitize_svg
-from datetime import datetime
+from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, BackgroundTasks, HTTPException, File, UploadFile
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
@@ -19,6 +19,7 @@ from app.core.task_assets import task_collected, task_image_asset, owned_task_fo
 from app.schemas.common import success_response, error_response
 from app.models.entities import AiTask, AiModel, Asset, GrowthEvent, UserGrowth, SysConfig, SysUser
 from app.models.mobile import UserCollection
+from app.core import image_generation
 from app.core.asset_generator import (
     generate_shadow_puppet_svg,
     generate_shadow_puppet_template_svg,
@@ -39,6 +40,80 @@ class CreateTaskRequest(BaseModel):
     tool_type: Literal["SHADOW_PUPPET", "BRONZE", "BALLAD", "LACQUER", "EMBROIDERY", "MESH_3D"]
     input_payload: Dict[str, Any]
     model_id: Optional[int] = None
+    generation_mode: Literal["LOCAL", "AI"] = "LOCAL"
+    request_id: Optional[str] = Field(default=None, pattern=r"^[A-Za-z0-9_-]{16,64}$")
+
+
+@router.get("/capabilities")
+def image_capabilities(db: Session = Depends(get_db)):
+    return success_response(image_generation.capabilities(db))
+
+
+def execute_image_task(db: Session, task: AiTask):
+    """Keep remote image bytes locally; publish results/rewards only if still running."""
+    cfg = image_generation.resolve_connection(image_generation.read_settings(db))
+    reference = (image_generation.owned_reference(db, task.input_json["sketch_url"], task.user_id)
+                 if task.input_json.get("sketch_url") else None)
+    # Release read transactions during a potentially long provider request.
+    task_id, user_id, tool, payload = task.task_id, task.user_id, task.tool_type, dict(task.input_json)
+    db.commit()
+    data = image_generation.generate_image(cfg, image_generation.build_prompt(tool, payload), reference)
+    extension, mime = image_generation.validate_image(data)
+    image_generation.GENERATED_DIR.mkdir(parents=True, exist_ok=True)
+    path = image_generation.GENERATED_DIR / f"{task_id}_image.{extension}"
+    path.write_bytes(data)
+    url = f"/static/generated/{path.name}"
+    result = {
+        "title": payload["prompt"].strip()[:80], "colored_image_url": url, "rendered_image_url": url,
+        "line_art_url": None, "vector_svg_url": None, "print_template_url": None, "mesh_3d_url": None,
+        "model_available": False, "generation_method": "ai_image", "image_model": cfg["model_name"],
+        "reference_sketch_url": payload.get("sketch_url") or None,
+        "completed_sketch_url": url if reference else None, "sketch_redraw_available": bool(reference),
+        "lora_available": False, "lora_applied": False, "color_palette": payload.get("color_palette") or [],
+        "description": ("已根据参考草图和文字要求完成 AI 图像编辑。" if reference else "已根据文字与设计参数生成 AI 图像。")
+                       + "结果为二维创意参考，不是可编辑矢量、切割纸样或三维模型。",
+    }
+    try:
+        user = db.query(SysUser).filter_by(id=user_id).with_for_update().first()
+        if not user or user.status != "ACTIVE":
+            raise image_generation.ImageGenerationError("账号状态已变化，任务未保存")
+        finished = db.query(AiTask).filter_by(task_id=task_id, status="RUNNING").update(
+            {"status": "SUCCESS", "progress": 100, "result_summary_json": result,
+             "model_version": cfg["model_name"]}, synchronize_session=False)
+        if not finished:
+            db.rollback()
+            path.unlink(missing_ok=True)
+            return
+        db.add(Asset(asset_type="IMAGE", object_key=f"generated/{path.name}", file_url=url,
+                     mime_type=mime, created_by=user_id))
+        event_ref = f"ai_{task_id}"
+        if not db.query(GrowthEvent).filter_by(user_id=user_id, event_type="AI_CREATE", ref_id=event_ref).first():
+            db.add(GrowthEvent(user_id=user_id, event_type="AI_CREATE", ref_id=event_ref, value=20))
+            growth = db.query(UserGrowth).filter_by(user_id=user_id).with_for_update().first()
+            if growth:
+                growth.energy_value += 20
+        db.commit()
+    except Exception:
+        db.rollback()
+        path.unlink(missing_ok=True)
+        raise
+
+
+def expire_image_tasks(db: Session, user_id: int):
+    # A killed web worker cannot resume an Images API request safely. Never retry it automatically.
+    stale = db.query(AiTask).filter(AiTask.user_id == user_id, AiTask.status.in_(["QUEUED", "RUNNING"]),
+                                   AiTask.updated_at < datetime.utcnow() - timedelta(minutes=10)).all()
+    changed = False
+    for row in stale:
+        if isinstance(row.input_json, dict) and row.input_json.get("_generation_mode") == "AI":
+            updated = db.query(AiTask).filter(AiTask.task_id == row.task_id,
+                AiTask.status.in_(["QUEUED", "RUNNING"]),
+                AiTask.updated_at < datetime.utcnow() - timedelta(minutes=10)).update({
+                    "status": "FAILED", "error_code": "TASK_INTERRUPTED",
+                    "error_message": "生成任务已中断或超时，未自动重试。可重新发起创作"}, synchronize_session="fetch")
+            changed = changed or bool(updated)
+    if changed:
+        db.commit()
 
 def get_llm_client_and_config(db: Session):
     """提取运营后台配置的真实大模型接入参数与 OpenAI 客户端"""
@@ -95,8 +170,13 @@ def execute_ai_inference(task_id: str, tool_type: str, user_id: int):
         if not started:
             return
 
+        if isinstance(task.input_json, dict) and task.input_json.get("_generation_mode") == "AI":
+            execute_image_task(db, task)
+            return
+
         # 尝试调用真实大模型发起非遗结构化推理
-        client, cfg = get_llm_client_and_config(db)
+        client, cfg = ((None, None) if task.input_json.get("_generation_mode") == "LOCAL"
+                       else get_llm_client_and_config(db))
         llm_analysis = None
         model_name = cfg.get("model_name", "step-3.7-flash") if cfg else None
         user_prompt = task.input_json.get("prompt", "") if isinstance(task.input_json, dict) else ""
@@ -295,15 +375,13 @@ def execute_ai_inference(task_id: str, tool_type: str, user_id: int):
         db.commit()
 
     except Exception as exc:
-        logger.exception(f"[AI Workshop] Task {task_id} execution failed: {exc}")
+        logger.warning("[AI Workshop] Task {} failed ({})", task_id, type(exc).__name__)
         db.rollback()
         try:
-            err_task = db.query(AiTask).filter(AiTask.task_id == task_id).first()
-            if err_task and err_task.status != "CANCELLED":
-                err_task.status = "FAILED"
-                err_task.error_code = "INFERENCE_ERROR"
-                err_task.error_message = "生成失败，请重试或联系管理员"
-                db.commit()
+            message = str(exc) if isinstance(exc, image_generation.ImageGenerationError) else "生成失败，请重试或联系管理员"
+            db.query(AiTask).filter(AiTask.task_id == task_id, AiTask.status.in_(["QUEUED", "RUNNING"])).update(
+                {"status": "FAILED", "error_code": "INFERENCE_ERROR", "error_message": message}, synchronize_session=False)
+            db.commit()
         except Exception as inner_e:
             logger.error(f"[AI Workshop] Failed to mark task as FAILED: {inner_e}")
     finally:
@@ -318,6 +396,12 @@ def create_ai_task(
 ):
     if req.tool_type == "MESH_3D":
         raise HTTPException(503, "三维生成服务尚未配置")
+    if req.generation_mode == "AI" and req.tool_type not in {"BRONZE", "SHADOW_PUPPET", "LACQUER", "EMBROIDERY"}:
+        raise HTTPException(422, "此工坊暂不支持图像生成")
+    prompt = req.input_payload.get("prompt")
+    if req.tool_type == "BRONZE" or req.generation_mode == "AI":
+        if not isinstance(prompt, str) or not 1 <= len(prompt.strip()) <= 1000:
+            raise HTTPException(422, "请输入 1–1000 字的创作描述")
     if req.tool_type == "SHADOW_PUPPET":
         face = req.input_payload.get("face_style", "CLASSIC")
         prompt = req.input_payload.get("prompt")
@@ -348,7 +432,36 @@ def create_ai_task(
                 raise HTTPException(404, "草图资源不存在")
             resolve_static_file(sketch)
     user_id = current_user["user_id"]
-    task_uuid = uuid.uuid4().hex
+    payload = dict(req.input_payload)
+    payload.pop("_generation_mode", None)
+    if req.generation_mode == "AI":
+        payload["_generation_mode"] = "AI"
+    elif "generation_mode" in req.model_fields_set:
+        payload["_generation_mode"] = "LOCAL"
+    task_uuid = (hashlib.sha256(f"workshop:{user_id}:{req.request_id}".encode()).hexdigest()[:32]
+                 if req.request_id else uuid.uuid4().hex)
+    expire_image_tasks(db, user_id)
+    db.query(SysUser).filter_by(id=user_id).with_for_update().first()
+    existing = db.get(AiTask, task_uuid)
+    if existing:
+        if existing.user_id != user_id or existing.tool_type != req.tool_type or existing.input_json != payload or existing.model_id != req.model_id:
+            raise HTTPException(409, "同一创作请求的内容发生变化，请重新提交")
+        return success_response({"task_id": existing.task_id, "tool_type": existing.tool_type,
+                                 "status": existing.status, "progress": existing.progress})
+    if req.generation_mode == "AI":
+        try:
+            cfg = image_generation.resolve_connection(image_generation.read_settings(db))
+            sketch = payload.get("sketch_url")
+            if sketch:
+                if not isinstance(sketch, str):
+                    raise HTTPException(422, "参考图地址无效")
+                if not cfg["supports_edit"]:
+                    raise HTTPException(422, "当前模型未启用图片编辑，请移除参考图或联系管理员")
+                image_generation.owned_reference(db, sketch, user_id)
+        except image_generation.ImageGenerationError as exc:
+            raise HTTPException(503, str(exc)) from None
+        if db.query(AiTask).filter(AiTask.user_id == user_id, AiTask.status.in_(["QUEUED", "RUNNING"])).first():
+            raise HTTPException(409, "已有创作正在进行，请等待完成或取消后再提交")
 
     new_task = AiTask(
         task_id=task_uuid,
@@ -358,7 +471,7 @@ def create_ai_task(
         progress=10,
         model_id=req.model_id,
         model_version="1.0.0",
-        input_json=req.input_payload,
+        input_json=payload,
         trace_id=f"trace_{task_uuid[:8]}"
     )
     db.add(new_task)
@@ -398,6 +511,8 @@ def task_result_for_client(task: AiTask):
     if not isinstance(task.result_summary_json, dict):
         return task.result_summary_json
     result = dict(task.result_summary_json)
+    if result.get("generation_method") == "ai_image":
+        return result
     if task.tool_type == "SHADOW_PUPPET":
         result.update(mesh_3d_url=None, model_available=False, generation_method="local_template",
                       description=shadow_template_description(result.get("role_type") or "皮影角色"))
@@ -425,6 +540,7 @@ def get_latest_task(
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    expire_image_tasks(db, current_user["user_id"])
     query = db.query(AiTask).filter(AiTask.user_id == current_user["user_id"])
     if tool_type:
         query = query.filter(AiTask.tool_type == tool_type)
@@ -439,11 +555,13 @@ def get_latest_task(
         "input": task.input_json,
         "result": task_result_for_client(task),
         "collected": task_collected(db, task),
+        "error_message": task.error_message,
         "created_at": task.created_at.isoformat() if task.created_at else None
     })
 
 @router.get("/tasks/{task_id}")
 def get_ai_task(task_id: str, current_user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
+    expire_image_tasks(db, current_user["user_id"])
     task = db.query(AiTask).filter(AiTask.task_id == task_id, AiTask.user_id == current_user["user_id"]).first()
     if not task:
         return error_response(code=4040, message="任务不存在")
@@ -497,7 +615,8 @@ def cancel_ai_task(task_id: str, current_user: dict = Depends(get_current_user),
     
     task.status = "CANCELLED"
     db.commit()
-    return success_response({"task_id": task_id, "status": "CANCELLED"}, message="任务已取消")
+    message = ("任务已取消；已发出的模型请求可能仍会执行" if task.input_json.get("_generation_mode") == "AI" else "任务已取消")
+    return success_response({"task_id": task_id, "status": "CANCELLED"}, message=message)
 
 class UpdateAiModelRequest(BaseModel):
     name: Optional[str] = None

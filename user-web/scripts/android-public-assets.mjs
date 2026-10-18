@@ -4,10 +4,10 @@ import path from 'node:path';
 // Package the original assets used by the implemented mobile screens.
 // Full design downloads stay intact in public/ for design inspection and future pages.
 const HERITAGE_ARTICLE_ASSETS = [
-  '/design/images/6c315b81dd6dfeb3b254b58c6798c9b5.png',
-  '/design/images/ba12a3b2e432326ea765587195b54a2d.png',
-  '/design/images/5cf22302a02d1b6a59b17ba9fdd26219.png',
-  '/design/images/2e521aeae97258549215ecf8a09efd08.png',
+  '/design/images/6c315b81dd6dfeb3b254b58c6798c9b5.webp',
+  '/design/images/ba12a3b2e432326ea765587195b54a2d.webp',
+  '/design/images/5cf22302a02d1b6a59b17ba9fdd26219.webp',
+  '/design/images/2e521aeae97258549215ecf8a09efd08.webp',
   '/design/images/1d096953210d426fc2ef3300764b80a3.webp',
 ];
 export function androidPublicAssets() {

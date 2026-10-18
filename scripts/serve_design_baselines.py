@@ -5,6 +5,14 @@ from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def bundled_image(url):
+    filename = Path(url).name
+    images = ROOT / "user-web" / "public" / "design" / "images"
+    if not (images / filename).exists() and (images / filename).with_suffix(".webp").exists():
+        filename = Path(filename).with_suffix(".webp").name
+    return "/user-web/public/design/images/" + filename
+
+
 class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(ROOT), **kwargs)
@@ -18,7 +26,7 @@ class Handler(SimpleHTTPRequestHandler):
                 return
             html = file.read_text(encoding="utf-8")
             html = re.sub(r"https://image-resource\.mastergo\.com/[^\s\"')<>]+",
-                          lambda m: "/user-web/public/design/images/" + m.group().split("/")[-1], html)
+                          lambda m: bundled_image(m.group()), html)
             fonts = '<style>@font-face{font-family:"Noto Sans SC";src:url("/user-web/public/design/fonts/NotoSansSC.ttf");font-weight:100 900}@font-face{font-family:"Noto Serif SC";src:url("/user-web/public/design/fonts/NotoSerifSC.ttf");font-weight:100 900}</style>'
             fonts += '<style>@font-face{font-family:"Ma Shan Zheng";src:url("/user-web/public/design/fonts/MaShanZheng.ttf")}</style>'
             body = html.replace("</head>", fonts + "</head>").encode()
