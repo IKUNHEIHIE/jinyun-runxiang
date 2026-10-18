@@ -1,0 +1,56 @@
+{
+  "sectionIndex": 9,
+  "section": {
+    "id": "5:02353",
+    "name": "组 5252",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2155px",
+    "background": {
+      "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/5576fb521ca134e55c7ca0d481dcc303.png"
+    },
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "paint_5:02354": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/a2aef60c7c74fe0b299c150a0b28d1a9.webp"
+          }
+        ]
+      },
+      "paint_5:02356": {
+        "value": [
+          "#000000"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:02353",
+        "name": "组 5252",
+        "layoutStyle": {
+          "width": 375,
+          "height": 4,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "fill": "paint_5:02354",
+        "strokeColor": "paint_5:02356",
+        "strokeType": "solid",
+        "strokeAlign": "inside",
+        "children": []
+      }
+    ],
+    "components": []
+  },
+  "nodeCount": 1,
+  "componentDocumentLinks": [],
+  "fetchProgress": "ALL 10 sections fetched. You can now generate the complete HTML."
+}

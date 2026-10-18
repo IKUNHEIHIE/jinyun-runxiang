@@ -1,0 +1,33 @@
+[
+  {
+    "id": "5:02198",
+    "type": "TEXT",
+    "depth": 0,
+    "name": "文本 23",
+    "layout": {
+      "width": 135.66000366210938,
+      "height": 25,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "fill": [
+      "#3D2314"
+    ],
+    "text": [
+      {
+        "text": "非遗典藏 · 小课",
+        "font": "font_5:02014"
+      }
+    ],
+    "font": {
+      "family": "Noto Serif SC",
+      "size": 17,
+      "style": "SemiBold",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "25.5",
+      "letterSpacing": "auto",
+      "weight": "600"
+    }
+  }
+]

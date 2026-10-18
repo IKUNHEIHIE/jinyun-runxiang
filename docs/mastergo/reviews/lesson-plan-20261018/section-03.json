@@ -1,0 +1,175 @@
+{
+  "sectionIndex": 3,
+  "section": {
+    "id": "5:02563",
+    "name": "组 5212",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2155px",
+    "background": {
+      "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/5576fb521ca134e55c7ca0d481dcc303.png"
+    },
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "effect_5:02564": {
+        "value": [
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+          "box-shadow: 0px 2px 12px 0px rgba(196, 92, 92, 0.12);",
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);"
+        ]
+      },
+      "font_5:02572": {
+        "value": {
+          "family": "Noto Sans SC",
+          "size": 14,
+          "style": "Medium",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "20",
+          "letterSpacing": "-0.6700000166893005px",
+          "weight": "500"
+        }
+      },
+      "paint_5:4780": {
+        "value": [
+          "#FFFFFF"
+        ]
+      },
+      "paint_5:8659": {
+        "value": [
+          "#C45C5C"
+        ]
+      },
+      "paint_5:8667": {
+        "value": [
+          "#C45C5C"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:02563",
+        "name": "组 5212",
+        "layoutStyle": {
+          "width": 327,
+          "height": 48,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "fill": "paint_5:4780",
+        "_color": "#FFFFFF",
+        "strokeColor": "paint_5:8667",
+        "strokeType": "solid",
+        "strokeAlign": "inside",
+        "strokeWidth": "2px",
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:02574",
+            "name": "组 5213",
+            "layoutStyle": {
+              "width": 18,
+              "height": 18,
+              "relativeX": 109.34500122070312,
+              "relativeY": 15
+            },
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:02575",
+                "name": "图标 6",
+                "layoutStyle": {
+                  "width": 18,
+                  "height": 18,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "_mergedVector": true,
+                "svgKey": "S3:组 5213|5:02575",
+                "svgShortKey": "S3#0",
+                "svgName": "组 5213"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "id": "5:02568",
+            "name": "容器 11",
+            "layoutStyle": {
+              "width": 82.30999755859375,
+              "height": 48,
+              "relativeX": 135.34500122070312,
+              "relativeY": 0
+            },
+            "children": [
+              {
+                "type": "TEXT",
+                "id": "5:02569",
+                "name": "文本 15",
+                "layoutStyle": {
+                  "width": 82.30000305175781,
+                  "height": 20,
+                  "relativeX": 0,
+                  "relativeY": 5
+                },
+                "fill": "paint_5:8667",
+                "_color": "#C45C5C",
+                "text": [
+                  {
+                    "text": "导出PPT课件",
+                    "font": "font_5:02572"
+                  }
+                ],
+                "textColor": [
+                  {
+                    "start": 0,
+                    "end": 7,
+                    "color": "paint_5:8667"
+                  }
+                ],
+                "textAlign": "left",
+                "textMode": "single-line"
+              }
+            ],
+            "flexContainerInfo": {
+              "flexDirection": "row",
+              "mainSizing": "fixed",
+              "crossSizing": "fixed",
+              "padding": "5px 0px 23px"
+            }
+          }
+        ],
+        "effect": "effect_5:02564",
+        "flexContainerInfo": {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "alignItems": "center",
+          "mainSizing": "fixed",
+          "crossSizing": "fixed",
+          "gap": "8px 8px"
+        },
+        "borderRadius": "14px"
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "导出PPT课件",
+        "parentType": "FRAME",
+        "parentName": "容器 11"
+      }
+    ]
+  },
+  "nodeCount": 5,
+  "svgNodeCount": 1,
+  "hasStrippedSvgs": true,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 4/10. MISSING 6 sections: [4,5,6,7,8,9]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

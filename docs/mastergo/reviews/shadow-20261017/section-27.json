@@ -1,0 +1,274 @@
+{
+  "sectionIndex": 27,
+  "section": {
+    "id": "5:3532",
+    "name": "组 7653",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "446px",
+    "minHeight": "2325px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_5:3213": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 12,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "16",
+          "letterSpacing": "auto",
+          "weight": "400"
+        }
+      },
+      "font_5:3427": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 14,
+          "style": "Bold",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "20",
+          "letterSpacing": "2.240000009536743px",
+          "weight": "700"
+        }
+      },
+      "font_5:3548": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 10,
+          "style": "Bold",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "15",
+          "letterSpacing": "2.240000009536743px",
+          "weight": "700"
+        }
+      },
+      "paint_5:3206": {
+        "value": [
+          "#F5EDE0"
+        ]
+      },
+      "paint_5:3215": {
+        "value": [
+          "#2C1810"
+        ]
+      },
+      "paint_5:3224": {
+        "value": [
+          "#C9A84C"
+        ]
+      },
+      "paint_5:3236": {
+        "value": [
+          "rgba(201, 168, 76, 0.4)"
+        ]
+      },
+      "paint_5:3274": {
+        "value": [
+          "#5C4A3A"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:3532",
+        "name": "组 7653",
+        "layoutStyle": {
+          "width": 312.46636962890625,
+          "height": 57,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:3544",
+            "name": "组 7655",
+            "layoutStyle": {
+              "width": 32,
+              "height": 32,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:3206",
+            "_color": "#F5EDE0",
+            "strokeColor": "paint_5:3236",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "1px",
+            "children": [
+              {
+                "type": "TEXT",
+                "id": "5:3545",
+                "name": "文本 58",
+                "layoutStyle": {
+                  "width": 10.25,
+                  "height": 15,
+                  "relativeX": 10.875,
+                  "relativeY": 8.5
+                },
+                "fill": "paint_5:3224",
+                "_color": "#C9A84C",
+                "text": [
+                  {
+                    "text": "唐",
+                    "font": "font_5:3548"
+                  }
+                ],
+                "textColor": [
+                  {
+                    "start": 0,
+                    "end": 1,
+                    "color": "paint_5:3224"
+                  }
+                ],
+                "textAlign": "left",
+                "textMode": "single-line"
+              }
+            ],
+            "flexContainerInfo": {
+              "flexDirection": "row",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "mainSizing": "fixed",
+              "crossSizing": "fixed"
+            },
+            "borderRadius": "9999px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:3533",
+            "name": "组 7654",
+            "layoutStyle": {
+              "width": 268.46636962890625,
+              "height": 57,
+              "relativeX": 44,
+              "relativeY": 0
+            },
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:3535",
+                "name": "容器 18",
+                "layoutStyle": {
+                  "width": 291,
+                  "height": 20,
+                  "relativeX": 0,
+                  "relativeY": 18.5
+                },
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "id": "5:3540",
+                    "name": "文本 59",
+                    "layoutStyle": {
+                      "width": 305,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": -15.5
+                    },
+                    "fill": "paint_5:3215",
+                    "_color": "#2C1810",
+                    "text": [
+                      {
+                        "text": "唐⁠代⁠兴⁠盛",
+                        "font": "font_5:3427"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 7,
+                        "color": "paint_5:3215"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:3536",
+                    "name": "文本 60",
+                    "layoutStyle": {
+                      "width": 299,
+                      "height": 16,
+                      "relativeX": 0,
+                      "relativeY": 7.5
+                    },
+                    "fill": "paint_5:3274",
+                    "_color": "#5C4A3A",
+                    "text": [
+                      {
+                        "text": "盛于唐宋，宫廷民间皆盛行，技艺日臻成熟，流派纷呈",
+                        "font": "font_5:3213"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 24,
+                        "color": "paint_5:3274"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:3534",
+                "name": "容器 19",
+                "layoutStyle": {
+                  "width": 291,
+                  "height": 16,
+                  "relativeX": 0,
+                  "relativeY": 39
+                },
+                "children": []
+              }
+            ]
+          }
+        ],
+        "flexContainerInfo": {
+          "flexDirection": "row",
+          "mainSizing": "fixed",
+          "crossSizing": "fixed",
+          "gap": "12px 12px"
+        }
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "唐",
+        "parentType": "FRAME",
+        "parentName": "组 7655"
+      },
+      {
+        "text": "唐⁠代⁠兴⁠盛",
+        "parentType": "FRAME",
+        "parentName": "容器 18"
+      },
+      {
+        "text": "盛于唐宋，宫廷民间皆盛行，技艺日臻成熟，流派纷呈",
+        "parentType": "FRAME",
+        "parentName": "容器 18"
+      }
+    ]
+  },
+  "nodeCount": 8,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 28/31. MISSING 3 sections: [28,29,30]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

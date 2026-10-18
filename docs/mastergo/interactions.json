@@ -1,0 +1,88 @@
+[
+  {
+    "screen": "home.json",
+    "node": "5:02246",
+    "name": "组 2255",
+    "interaction": [
+      {
+        "type": "navigation",
+        "targetLayerId": "5:05234"
+      }
+    ],
+    "ancestors": [
+      "组 2250"
+    ]
+  },
+  {
+    "screen": "layer-40-07198.json",
+    "node": "40:12043",
+    "name": "组 2255",
+    "interaction": [
+      {
+        "type": "navigation",
+        "targetLayerId": "5:05234"
+      }
+    ],
+    "ancestors": [
+      "组 2252"
+    ]
+  },
+  {
+    "screen": "layer-40-32392.json",
+    "node": "5:05249",
+    "name": "组 2255",
+    "interaction": [
+      {
+        "type": "navigation",
+        "targetLayerId": "5:05234"
+      }
+    ],
+    "ancestors": [
+      "组 2251"
+    ]
+  },
+  {
+    "screen": "layer-40-55029.json",
+    "node": "40:54953",
+    "name": "组 2255",
+    "interaction": [
+      {
+        "type": "navigation",
+        "targetLayerId": "5:05234"
+      }
+    ],
+    "ancestors": [
+      "组 2251"
+    ]
+  },
+  {
+    "screen": "layer-40-8834.json",
+    "node": "40:55239",
+    "name": "组 2255",
+    "interaction": [
+      {
+        "type": "navigation",
+        "targetLayerId": "5:05234"
+      }
+    ],
+    "ancestors": [
+      "组 12176"
+    ]
+  },
+  {
+    "screen": "layer-5-00420.json",
+    "node": "40:55342",
+    "name": "组 2255",
+    "interaction": [
+      {
+        "type": "navigation",
+        "targetLayerId": "5:05234"
+      }
+    ],
+    "ancestors": [
+      "组 3460",
+      "图片 1",
+      "组 12177"
+    ]
+  }
+]

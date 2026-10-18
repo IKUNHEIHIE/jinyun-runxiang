@@ -1,0 +1,80 @@
+[
+  {
+    "id": "5:02563",
+    "type": "FRAME",
+    "depth": 0,
+    "l": {
+      "width": 327,
+      "height": 48,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "paint": [
+      "#FFFFFF"
+    ],
+    "stroke": [
+      "#C45C5C"
+    ],
+    "sw": "2px",
+    "radius": "14px"
+  },
+  {
+    "id": "5:02574",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 18,
+      "height": 18,
+      "relativeX": 109.34500122070312,
+      "relativeY": 15
+    }
+  },
+  {
+    "id": "5:02575",
+    "type": "FRAME",
+    "depth": 2,
+    "l": {
+      "width": 18,
+      "height": 18,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "svg": "S3#0"
+  },
+  {
+    "id": "5:02568",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 82.30999755859375,
+      "height": 48,
+      "relativeX": 135.34500122070312,
+      "relativeY": 0
+    }
+  },
+  {
+    "id": "5:02569",
+    "type": "TEXT",
+    "depth": 2,
+    "l": {
+      "width": 82.30000305175781,
+      "height": 20,
+      "relativeX": 0,
+      "relativeY": 5
+    },
+    "paint": [
+      "#C45C5C"
+    ],
+    "text": "导出PPT课件",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Medium",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "-0.6700000166893005px",
+      "weight": "500"
+    }
+  }
+]

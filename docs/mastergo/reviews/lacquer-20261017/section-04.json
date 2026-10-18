@@ -1,0 +1,271 @@
+{
+  "sectionIndex": 4,
+  "section": {
+    "id": "5:00025",
+    "name": "组 7756",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2372px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "effect_5:4717": {
+        "value": [
+          "backdrop-filter: blur(4px);"
+        ]
+      },
+      "font_5:00036": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 12,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "16",
+          "letterSpacing": "3px",
+          "weight": "400"
+        }
+      },
+      "paint_5:00027": {
+        "value": [
+          "rgba(247, 244, 237, 0.8)"
+        ]
+      },
+      "paint_5:8370": {
+        "value": [
+          "#2D4A3E"
+        ]
+      },
+      "paint_5:9705": {
+        "value": [
+          "#B8A67A"
+        ]
+      },
+      "paint_5:9930": {
+        "value": [
+          "rgba(184, 166, 122, 0.4)"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:00025",
+        "name": "组 7756",
+        "layoutStyle": {
+          "width": 375,
+          "height": 66,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:00026",
+            "name": "组 7757",
+            "layoutStyle": {
+              "width": 226.0800018310547,
+              "height": 42,
+              "relativeX": 74.46000671386719,
+              "relativeY": 24
+            },
+            "flexShrink": 1,
+            "fill": "paint_5:00027",
+            "_color": "rgba(247, 244, 237, 0.8)",
+            "strokeColor": "paint_5:9705",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "1px",
+            "children": [
+              {
+                "type": "TEXT",
+                "id": "5:00033",
+                "name": "文本 1",
+                "layoutStyle": {
+                  "width": 196.07000732421875,
+                  "height": 17,
+                  "relativeX": 15,
+                  "relativeY": 13.5
+                },
+                "fill": "paint_5:8370",
+                "_color": "#2D4A3E",
+                "text": [
+                  {
+                    "text": "国家级非遗 · 津门传统工艺",
+                    "font": "font_5:00036"
+                  }
+                ],
+                "textColor": [
+                  {
+                    "start": 0,
+                    "end": 14,
+                    "color": "paint_5:8370"
+                  }
+                ],
+                "textAlign": "center",
+                "textMode": "single-line"
+              },
+              {
+                "type": "FRAME",
+                "id": "5:00031",
+                "name": "组 7759",
+                "layoutStyle": {
+                  "width": 32,
+                  "height": 32,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "strokeColor": "paint_5:9705",
+                "strokeType": "solid",
+                "strokeAlign": "inside",
+                "strokeWidth": "2px 0px 0px 2px",
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:00032",
+                    "name": "组 2",
+                    "layoutStyle": {
+                      "width": 20,
+                      "height": 20,
+                      "relativeX": 4,
+                      "relativeY": 4
+                    },
+                    "strokeColor": "paint_5:9930",
+                    "strokeType": "solid",
+                    "strokeAlign": "inside",
+                    "strokeWidth": "1px 0px 0px 1px",
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:00040",
+                "name": "组 7761",
+                "layoutStyle": {
+                  "width": 32,
+                  "height": 32,
+                  "relativeX": 194.0800018310547,
+                  "relativeY": 0
+                },
+                "strokeColor": "paint_5:9705",
+                "strokeType": "solid",
+                "strokeAlign": "inside",
+                "strokeWidth": "2px 2px 0px 0px",
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:00041",
+                    "name": "组 3",
+                    "layoutStyle": {
+                      "width": 20,
+                      "height": 20,
+                      "relativeX": 6,
+                      "relativeY": 4
+                    },
+                    "strokeColor": "paint_5:9930",
+                    "strokeType": "solid",
+                    "strokeAlign": "inside",
+                    "strokeWidth": "1px 1px 0px 0px",
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:00029",
+                "name": "组 7763",
+                "layoutStyle": {
+                  "width": 32,
+                  "height": 32,
+                  "relativeX": 0,
+                  "relativeY": 10
+                },
+                "strokeColor": "paint_5:9705",
+                "strokeType": "solid",
+                "strokeAlign": "inside",
+                "strokeWidth": "0px 0px 2px 2px",
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:00030",
+                    "name": "组 4",
+                    "layoutStyle": {
+                      "width": 20,
+                      "height": 20,
+                      "relativeX": 4,
+                      "relativeY": 6
+                    },
+                    "strokeColor": "paint_5:9930",
+                    "strokeType": "solid",
+                    "strokeAlign": "inside",
+                    "strokeWidth": "0px 0px 1px 1px",
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:00038",
+                "name": "组 7765",
+                "layoutStyle": {
+                  "width": 32,
+                  "height": 32,
+                  "relativeX": 194.0800018310547,
+                  "relativeY": 10
+                },
+                "strokeColor": "paint_5:9705",
+                "strokeType": "solid",
+                "strokeAlign": "inside",
+                "strokeWidth": "0px 2px 2px 0px",
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:00039",
+                    "name": "组 5",
+                    "layoutStyle": {
+                      "width": 20,
+                      "height": 20,
+                      "relativeX": 6,
+                      "relativeY": 6
+                    },
+                    "strokeColor": "paint_5:9930",
+                    "strokeType": "solid",
+                    "strokeAlign": "inside",
+                    "strokeWidth": "0px 1px 1px 0px",
+                    "children": []
+                  }
+                ]
+              }
+            ],
+            "effect": "effect_5:4717"
+          }
+        ],
+        "flexContainerInfo": {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "mainSizing": "fixed",
+          "crossSizing": "fixed",
+          "padding": "24px 20px 0px"
+        }
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "国家级非遗 · 津门传统工艺",
+        "parentType": "FRAME",
+        "parentName": "组 7757"
+      }
+    ]
+  },
+  "nodeCount": 11,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 5/22. MISSING 17 sections: [5,6,7,8,9,10,11,12,13,14... +7 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

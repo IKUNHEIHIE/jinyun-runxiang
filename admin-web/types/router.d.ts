@@ -98,6 +98,8 @@ declare global {
       showLink?: boolean;
       /** 菜单升序排序，值越高排的越后（只针对顶级路由）`可选` */
       rank?: number;
+      /** Roles allowed to see this top-level menu. */
+      roles?: Array<string>;
     };
     /** 子路由配置项 */
     children?: Array<RouteChildrenConfigsTable>;

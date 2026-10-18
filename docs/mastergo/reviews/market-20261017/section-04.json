@@ -1,0 +1,152 @@
+{
+  "sectionIndex": 4,
+  "section": {
+    "id": "5:8271",
+    "name": "组 10290",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2862px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "paint_5:8276": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/410ee3eb74a8ee70decfbb16a5a8f30b.png"
+          }
+        ]
+      },
+      "paint_5:8281": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/bf405bb560198ed2c3d63393630b2310.png"
+          }
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:8271",
+        "name": "组 10290",
+        "layoutStyle": {
+          "width": 116,
+          "height": 64,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:8272",
+            "name": "组 10291",
+            "layoutStyle": {
+              "width": 117.01000213623047,
+              "height": 65.8499984741211,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:8273",
+                "name": "组 10292",
+                "layoutStyle": {
+                  "width": 57.02000045776367,
+                  "height": 64.88999938964844,
+                  "relativeX": 0,
+                  "relativeY": 0.9599990844726562
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:8274",
+                    "name": "组 10293",
+                    "layoutStyle": {
+                      "width": 57.02000045776367,
+                      "height": 64.88999938964844,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "id": "5:8275",
+                        "name": "图片 2",
+                        "layoutStyle": {
+                          "width": 57.02000045776367,
+                          "height": 64.88999938964844,
+                          "relativeX": 0,
+                          "relativeY": 0
+                        },
+                        "fill": "paint_5:8276",
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:8278",
+                "name": "组 10295",
+                "layoutStyle": {
+                  "width": 48.88999938964844,
+                  "height": 56.7599983215332,
+                  "relativeX": 69.02000427246094,
+                  "relativeY": 9.090003967285156
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:8279",
+                    "name": "组 10296",
+                    "layoutStyle": {
+                      "width": 48.88999938964844,
+                      "height": 56.7599983215332,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "id": "5:8280",
+                        "name": "图片 3",
+                        "layoutStyle": {
+                          "width": 48.88999938964844,
+                          "height": 56.7599983215332,
+                          "relativeX": 0,
+                          "relativeY": 0
+                        },
+                        "fill": "paint_5:8281",
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "flexContainerInfo": {
+              "flexDirection": "row",
+              "alignItems": "flex-end",
+              "mainSizing": "fixed",
+              "crossSizing": "fixed",
+              "gap": "12px 12px",
+              "padding": "0px 0.12999999523162842px 0px 0px"
+            }
+          }
+        ]
+      }
+    ],
+    "components": []
+  },
+  "nodeCount": 8,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 5/20. MISSING 15 sections: [5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

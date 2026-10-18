@@ -1,0 +1,76 @@
+{
+  "sectionIndex": 20,
+  "section": {
+    "id": "5:03181",
+    "name": "文本 182",
+    "type": "TEXT"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2818px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_5:7406": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 10,
+          "style": "Medium",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "15",
+          "letterSpacing": "auto",
+          "weight": "500"
+        }
+      },
+      "paint_5:8357": {
+        "value": [
+          "#4A7C59"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "TEXT",
+        "id": "5:03181",
+        "name": "文本 182",
+        "layoutStyle": {
+          "width": 32,
+          "height": 12.165166854858398,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "fill": "paint_5:8357",
+        "_color": "#4A7C59",
+        "text": [
+          {
+            "text": "首页",
+            "font": "font_5:7406"
+          }
+        ],
+        "textColor": [
+          {
+            "start": 0,
+            "end": 2,
+            "color": "paint_5:8357"
+          }
+        ],
+        "textAlign": "center",
+        "textMode": "single-line"
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "首页"
+      }
+    ]
+  },
+  "nodeCount": 1,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 21/22. MISSING 1 sections: [21]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

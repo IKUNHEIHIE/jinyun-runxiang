@@ -1,0 +1,160 @@
+{
+  "sectionIndex": 3,
+  "section": {
+    "id": "5:3402",
+    "name": "组 7466",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "446px",
+    "minHeight": "2325px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_5:3407": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 12,
+          "style": "Bold",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "35",
+          "letterSpacing": "2.240000009536743px",
+          "weight": "700"
+        }
+      },
+      "paint_5:3409": {
+        "value": [
+          "#785223"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:3402",
+        "name": "组 7466",
+        "layoutStyle": {
+          "width": 33.57847595214844,
+          "height": 63.560001373291016,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:3411",
+            "name": "组 7467",
+            "layoutStyle": {
+              "width": 16,
+              "height": 63.560001373291016,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "flexShrink": 1,
+            "opacity": 0.6000000238418579,
+            "children": [
+              {
+                "type": "TEXT",
+                "id": "5:3412",
+                "name": "文本 3",
+                "layoutStyle": {
+                  "width": 12,
+                  "height": 63.54999923706055,
+                  "relativeX": 2,
+                  "relativeY": 0
+                },
+                "fill": "paint_5:3409",
+                "_color": "#785223",
+                "text": [
+                  {
+                    "text": "非遗传承",
+                    "font": "font_5:3407"
+                  }
+                ],
+                "textColor": [
+                  {
+                    "start": 0,
+                    "end": 4,
+                    "color": "paint_5:3409"
+                  }
+                ],
+                "textAlign": "left",
+                "textMode": "single-line"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "id": "5:3403",
+            "name": "组 7468",
+            "layoutStyle": {
+              "width": 16,
+              "height": 63.560001373291016,
+              "relativeX": 20,
+              "relativeY": 0
+            },
+            "flexShrink": 1,
+            "opacity": 0.6000000238418579,
+            "children": [
+              {
+                "type": "TEXT",
+                "id": "5:3404",
+                "name": "文本 4",
+                "layoutStyle": {
+                  "width": 12,
+                  "height": 63.54999923706055,
+                  "relativeX": 2,
+                  "relativeY": 0
+                },
+                "fill": "paint_5:3409",
+                "_color": "#785223",
+                "text": [
+                  {
+                    "text": "匠心独具",
+                    "font": "font_5:3407"
+                  }
+                ],
+                "textColor": [
+                  {
+                    "start": 0,
+                    "end": 4,
+                    "color": "paint_5:3409"
+                  }
+                ],
+                "textAlign": "left",
+                "textMode": "single-line"
+              }
+            ]
+          }
+        ],
+        "flexContainerInfo": {
+          "flexDirection": "row",
+          "mainSizing": "fixed",
+          "crossSizing": "fixed",
+          "gap": "4px 4px"
+        }
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "非遗传承",
+        "parentType": "FRAME",
+        "parentName": "组 7467"
+      },
+      {
+        "text": "匠心独具",
+        "parentType": "FRAME",
+        "parentName": "组 7468"
+      }
+    ]
+  },
+  "nodeCount": 5,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 4/31. MISSING 27 sections: [4,5,6,7,8,9,10,11,12,13... +17 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

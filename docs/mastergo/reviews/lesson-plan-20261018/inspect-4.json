@@ -1,0 +1,251 @@
+[
+  {
+    "id": "5:02360",
+    "type": "FRAME",
+    "depth": 0,
+    "l": {
+      "width": 335,
+      "height": 213,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "paint": [
+      "#FFFFFF"
+    ],
+    "stroke": [
+      "rgba(232, 208, 208, 0.5)"
+    ],
+    "sw": "1px 0px 0px"
+  },
+  {
+    "id": "5:02389",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 295,
+      "height": 20,
+      "relativeX": 20,
+      "relativeY": 17
+    }
+  },
+  {
+    "id": "5:02392",
+    "type": "PATH",
+    "depth": 4,
+    "l": {
+      "width": 13.333333969116211,
+      "height": 12.680000305175781,
+      "relativeX": 1.3333333730697632,
+      "relativeY": 1.3333333730697632
+    },
+    "svg": "S4#0"
+  },
+  {
+    "id": "5:02393",
+    "type": "TEXT",
+    "depth": 2,
+    "l": {
+      "width": 56,
+      "height": 20,
+      "relativeX": 24,
+      "relativeY": 0
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "教⁠学⁠目⁠标",
+    "font": {
+      "family": "Noto Serif SC",
+      "size": 14,
+      "style": "SemiBold",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "600"
+    }
+  },
+  {
+    "id": "5:02363",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 295,
+      "height": 44,
+      "relativeX": 20,
+      "relativeY": 49
+    }
+  },
+  {
+    "id": "5:02373",
+    "type": "TEXT",
+    "depth": 4,
+    "l": {
+      "width": 6.840000152587891,
+      "height": 16,
+      "relativeX": 6.579999923706055,
+      "relativeY": 2
+    },
+    "paint": [
+      "#C45C5C"
+    ],
+    "text": "1",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 12,
+      "style": "Medium",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "16",
+      "letterSpacing": "auto",
+      "weight": "500"
+    }
+  },
+  {
+    "id": "5:02364",
+    "type": "TEXT",
+    "depth": 2,
+    "l": {
+      "width": 267,
+      "height": 44,
+      "relativeX": 28,
+      "relativeY": 0
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "了解景泰蓝的历史渊源与发展脉络，认识其\n在中华传统工艺中的重要地位",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "22.75",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02397",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 295,
+      "height": 44,
+      "relativeX": 20,
+      "relativeY": 101
+    }
+  },
+  {
+    "id": "5:02400",
+    "type": "TEXT",
+    "depth": 4,
+    "l": {
+      "width": 6.840000152587891,
+      "height": 16,
+      "relativeX": 6.579999923706055,
+      "relativeY": 2
+    },
+    "paint": [
+      "#C45C5C"
+    ],
+    "text": "2",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 12,
+      "style": "Medium",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "16",
+      "letterSpacing": "auto",
+      "weight": "500"
+    }
+  },
+  {
+    "id": "5:02405",
+    "type": "TEXT",
+    "depth": 2,
+    "l": {
+      "width": 267,
+      "height": 44,
+      "relativeX": 28,
+      "relativeY": 0
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "掌握景泰蓝\"掐丝、点蓝、烧蓝、磨光、镀金\"五大核心工艺技法",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "22.75",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02377",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 295,
+      "height": 44,
+      "relativeX": 20,
+      "relativeY": 153
+    }
+  },
+  {
+    "id": "5:02384",
+    "type": "TEXT",
+    "depth": 4,
+    "l": {
+      "width": 6.840000152587891,
+      "height": 16,
+      "relativeX": 6.579999923706055,
+      "relativeY": 2
+    },
+    "paint": [
+      "#C45C5C"
+    ],
+    "text": "3",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 12,
+      "style": "Medium",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "16",
+      "letterSpacing": "auto",
+      "weight": "500"
+    }
+  },
+  {
+    "id": "5:02378",
+    "type": "TEXT",
+    "depth": 2,
+    "l": {
+      "width": 267,
+      "height": 44,
+      "relativeX": 28,
+      "relativeY": 0
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "培养学生的审美鉴赏能力，激发对非物质文化遗产的保护与传承意识",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "22.75",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  }
+]

@@ -5,15 +5,15 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
-from typing import Optional, List, Dict, Any
+from typing import Optional
 
 from app.core.database import get_db
 from app.core.security import require_admin, hash_password
 from app.schemas.common import success_response, error_response
 from app.models.entities import (
     OperationStatDaily, CommunityPost, ContentReview,
-    Course, AiModel, SysUser, OrderMain, FundRecord, Device,
-    SysConfig, UserProfile, UserGrowth, Badge, UserBadge, PhilanthropySupply
+    Course, AiTask, SysUser, OrderMain, FundRecord, Device,
+    SysConfig, UserProfile, UserGrowth, PhilanthropySupply
 )
 
 router = APIRouter(prefix="/admin", tags=["运营管理后台"])
@@ -42,15 +42,18 @@ def get_dashboard_data(
 
     return success_response({
         "kpi": {
-            "dau": 2420,
-            "mau": 9600,
+            "dau": stats[-1].dau if stats else None,
+            "mau": stats[-1].mau if stats else None,
             "total_users": total_users,
             "total_courses": total_courses,
             "total_posts": total_posts,
             "total_orders": total_orders,
+            "total_ai_tasks": db.query(AiTask).filter(AiTask.status == "SUCCESS").count(),
+            "pending_reviews": db.query(CommunityPost).filter(CommunityPost.status == "PENDING_REVIEW").count(),
             "fund_total_yuan": fund_total_cents / 100.0,
-            "active_devices": 1
+            "active_devices": db.query(Device).filter(Device.status == "ONLINE").count()
         },
+        "hot_courses": [{"rank": i + 1, "title": c.title, "views": c.view_count} for i, c in enumerate(db.query(Course).filter(Course.status == "PUBLISHED").order_by(Course.view_count.desc()).limit(5).all())],
         "trends": [{
             "date": s.stat_date.strftime("%m-%d") if hasattr(s.stat_date, "strftime") else str(s.stat_date),
             "dau": s.dau,
@@ -401,6 +404,8 @@ def create_system_user(
     if exist:
         return error_response(code=4090, message=f"用户名【{req.username}】已存在")
 
+    if req.role_code not in {"ADMIN", "TEACHER", "STUDENT", "TOURIST"} or not 8 <= len(req.password) <= 128:
+        raise HTTPException(422, "角色或密码长度无效")
     new_user = SysUser(
         username=req.username,
         password_hash=hash_password(req.password),
@@ -412,8 +417,7 @@ def create_system_user(
         avatar_url="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"
     )
     db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
+    db.flush()
 
     # 建立档案与成长
     db.add(UserProfile(
@@ -439,7 +443,7 @@ def update_system_user(
     db: Session = Depends(get_db)
 ):
     """更新用户信息"""
-    user = db.query(SysUser).filter(SysUser.id == user_id).first()
+    user = db.query(SysUser).filter(SysUser.id == user_id).with_for_update().populate_existing().first()
     if not user:
         return error_response(code=4040, message="用户不存在")
 
@@ -448,6 +452,10 @@ def update_system_user(
     if req.phone is not None:
         user.phone = req.phone
     if req.role_code is not None:
+        if req.role_code not in {"ADMIN", "TEACHER", "STUDENT", "TOURIST"}:
+            raise HTTPException(422, "角色无效")
+        if user.role_code != req.role_code:
+            user.token_version += 1
         user.role_code = req.role_code
     if req.grade is not None:
         user.grade = req.grade
@@ -471,12 +479,15 @@ def toggle_user_status(
     db: Session = Depends(get_db)
 ):
     """启用或停用用户账号"""
-    user = db.query(SysUser).filter(SysUser.id == user_id).first()
+    user = db.query(SysUser).filter(SysUser.id == user_id).with_for_update().populate_existing().first()
     if not user:
         return error_response(code=4040, message="用户不存在")
     if user.id == current_user["user_id"]:
         return error_response(code=4003, message="不能禁用当前正在操作的管理员账户自身")
 
+    if req.status not in {"ACTIVE", "DISABLED"}:
+        raise HTTPException(422, "用户状态无效")
+    user.token_version += 1
     user.status = req.status
     db.commit()
     msg = "账号已启用" if req.status == "ACTIVE" else "账号已停用，用户将无法登录"
@@ -490,13 +501,16 @@ def reset_user_password(
     db: Session = Depends(get_db)
 ):
     """重置用户密码"""
-    user = db.query(SysUser).filter(SysUser.id == user_id).first()
+    user = db.query(SysUser).filter(SysUser.id == user_id).with_for_update().populate_existing().first()
     if not user:
         return error_response(code=4040, message="用户不存在")
 
+    if not 8 <= len(req.new_password) <= 128:
+        raise HTTPException(422, "密码长度须为8至128位")
     user.password_hash = hash_password(req.new_password)
+    user.token_version += 1
     db.commit()
-    return success_response(message=f"用户【{user.username}】的密码已重置为：{req.new_password}")
+    return success_response(message=f"用户【{user.username}】的密码已重置")
 
 @router.delete("/users/{user_id}")
 def delete_system_user(
@@ -505,7 +519,7 @@ def delete_system_user(
     db: Session = Depends(get_db)
 ):
     """删除或注销用户"""
-    user = db.query(SysUser).filter(SysUser.id == user_id).first()
+    user = db.query(SysUser).filter(SysUser.id == user_id).with_for_update().populate_existing().first()
     if not user:
         return error_response(code=4040, message="用户不存在")
     if user.id == current_user["user_id"]:

@@ -1,0 +1,429 @@
+[
+  {
+    "id": "5:02303",
+    "type": "FRAME",
+    "depth": 0,
+    "name": "组 2190",
+    "layout": {
+      "width": 335,
+      "height": 104,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "fill": [
+      "#FAF5F0"
+    ],
+    "effect": [
+      "box-shadow: 0px 1px 4px 0px rgba(61, 35, 20, 0.04);",
+      "box-shadow: 0px 4px 16px 0px rgba(61, 35, 20, 0.08);"
+    ],
+    "borderRadius": "14px"
+  },
+  {
+    "id": "5:02325",
+    "type": "FRAME",
+    "depth": 1,
+    "name": "组 2191",
+    "layout": {
+      "width": 14,
+      "height": 14,
+      "relativeX": -1,
+      "relativeY": -1
+    },
+    "strokeColor": [
+      "#C9A84C"
+    ]
+  },
+  {
+    "id": "5:02315",
+    "type": "FRAME",
+    "depth": 1,
+    "name": "组 2192",
+    "layout": {
+      "width": 14,
+      "height": 14,
+      "relativeX": 322,
+      "relativeY": -1
+    },
+    "strokeColor": [
+      "#C9A84C"
+    ]
+  },
+  {
+    "id": "5:02326",
+    "type": "FRAME",
+    "depth": 1,
+    "name": "组 2193",
+    "layout": {
+      "width": 14,
+      "height": 14,
+      "relativeX": -1,
+      "relativeY": 91
+    },
+    "strokeColor": [
+      "#C9A84C"
+    ]
+  },
+  {
+    "id": "5:02337",
+    "type": "FRAME",
+    "depth": 1,
+    "name": "组 2194",
+    "layout": {
+      "width": 14,
+      "height": 14,
+      "relativeX": 322,
+      "relativeY": 91
+    },
+    "strokeColor": [
+      "#C9A84C"
+    ]
+  },
+  {
+    "id": "5:02304",
+    "type": "FRAME",
+    "depth": 1,
+    "name": "组 2195",
+    "layout": {
+      "width": 72,
+      "height": 72,
+      "relativeX": 16,
+      "relativeY": 16
+    },
+    "strokeColor": [
+      "#E8D9A8"
+    ],
+    "borderRadius": "10px"
+  },
+  {
+    "id": "5:02305",
+    "type": "FRAME",
+    "depth": 2,
+    "name": "组 2196",
+    "layout": {
+      "width": 70,
+      "height": 70,
+      "relativeX": 1,
+      "relativeY": 1
+    }
+  },
+  {
+    "id": "5:02306",
+    "type": "FRAME",
+    "depth": 3,
+    "name": "图片 4",
+    "layout": {
+      "width": 70,
+      "height": 70,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "fill": [
+      {
+        "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/656e84b4a6e3d43d62daf835c4272f9e.png"
+      }
+    ]
+  },
+  {
+    "id": "5:02338",
+    "type": "TEXT",
+    "depth": 1,
+    "name": "文本 26",
+    "layout": {
+      "width": 110,
+      "height": 22,
+      "relativeX": 104,
+      "relativeY": 16
+    },
+    "fill": [
+      "#3D2314"
+    ],
+    "text": [
+      {
+        "text": "皮影艺术入门",
+        "font": "font_5:02058"
+      }
+    ],
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 15,
+      "style": "SemiBold",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "22.5",
+      "letterSpacing": "auto",
+      "weight": "600"
+    }
+  },
+  {
+    "id": "5:02327",
+    "type": "FRAME",
+    "depth": 1,
+    "name": "组 2198",
+    "layout": {
+      "width": 20,
+      "height": 15,
+      "relativeX": 299,
+      "relativeY": 16
+    }
+  },
+  {
+    "id": "5:02328",
+    "type": "TEXT",
+    "depth": 2,
+    "name": "文本 27",
+    "layout": {
+      "width": 33.5,
+      "height": 15,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "fill": [
+      "#6C0A0A"
+    ],
+    "text": [
+      {
+        "text": "小课",
+        "font": "font_5:01959"
+      }
+    ],
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 10,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "15",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02332",
+    "type": "FRAME",
+    "depth": 1,
+    "name": "组 2199",
+    "layout": {
+      "width": 25.559999465942383,
+      "height": 15,
+      "relativeX": 293.44000244140625,
+      "relativeY": 31
+    }
+  },
+  {
+    "id": "5:02333",
+    "type": "TEXT",
+    "depth": 2,
+    "name": "文本 28",
+    "layout": {
+      "width": 39.060001373291016,
+      "height": 15,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "fill": [
+      "#6C0A0A"
+    ],
+    "text": [
+      {
+        "text": "1小时",
+        "font": "font_5:01959"
+      }
+    ],
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 10,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "15",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02312",
+    "type": "FRAME",
+    "depth": 1,
+    "name": "组 2200",
+    "layout": {
+      "width": 11,
+      "height": 11,
+      "relativeX": 104,
+      "relativeY": 50
+    }
+  },
+  {
+    "id": "5:02313",
+    "type": "FRAME",
+    "depth": 2,
+    "name": "图标 2",
+    "layout": {
+      "width": 11.0024995803833,
+      "height": 9.779999732971191,
+      "relativeX": 0,
+      "relativeY": 0.6100000143051147
+    }
+  },
+  {
+    "id": "5:02314",
+    "type": "PATH",
+    "depth": 3,
+    "name": "组 5",
+    "layout": {
+      "width": 10.509122848510742,
+      "height": 10.039837837219238,
+      "relativeX": 0.246795654296875,
+      "relativeY": -0.6112060546875
+    },
+    "svgShortKey": "S11#0"
+  },
+  {
+    "id": "5:02309",
+    "type": "FRAME",
+    "depth": 1,
+    "name": "组 2201",
+    "layout": {
+      "width": 11,
+      "height": 11,
+      "relativeX": 119,
+      "relativeY": 50
+    }
+  },
+  {
+    "id": "5:02310",
+    "type": "FRAME",
+    "depth": 2,
+    "name": "图标 3",
+    "layout": {
+      "width": 11.0024995803833,
+      "height": 9.779999732971191,
+      "relativeX": 0,
+      "relativeY": 0.6100000143051147
+    }
+  },
+  {
+    "id": "5:02311",
+    "type": "PATH",
+    "depth": 3,
+    "name": "组 6",
+    "layout": {
+      "width": 10.509122848510742,
+      "height": 10.039837837219238,
+      "relativeX": 0.246795654296875,
+      "relativeY": -0.6112060546875
+    },
+    "svgShortKey": "S11#1"
+  },
+  {
+    "id": "5:02319",
+    "type": "FRAME",
+    "depth": 1,
+    "name": "组 2202",
+    "layout": {
+      "width": 11,
+      "height": 11,
+      "relativeX": 134,
+      "relativeY": 50
+    }
+  },
+  {
+    "id": "5:02320",
+    "type": "FRAME",
+    "depth": 2,
+    "name": "图标 4",
+    "layout": {
+      "width": 11.0024995803833,
+      "height": 9.779999732971191,
+      "relativeX": 0,
+      "relativeY": 0.6100000143051147
+    }
+  },
+  {
+    "id": "5:02321",
+    "type": "PATH",
+    "depth": 3,
+    "name": "组 7",
+    "layout": {
+      "width": 10.509122848510742,
+      "height": 10.039837837219238,
+      "relativeX": 0.246795654296875,
+      "relativeY": -0.6112060546875
+    },
+    "svgShortKey": "S11#2"
+  },
+  {
+    "id": "5:02322",
+    "type": "FRAME",
+    "depth": 1,
+    "name": "组 2203",
+    "layout": {
+      "width": 11,
+      "height": 11,
+      "relativeX": 149,
+      "relativeY": 50
+    }
+  },
+  {
+    "id": "5:02323",
+    "type": "FRAME",
+    "depth": 2,
+    "name": "图标 5",
+    "layout": {
+      "width": 11.0024995803833,
+      "height": 9.779999732971191,
+      "relativeX": 0,
+      "relativeY": 0.6100000143051147
+    }
+  },
+  {
+    "id": "5:02324",
+    "type": "PATH",
+    "depth": 3,
+    "name": "组 8",
+    "layout": {
+      "width": 10.509122848510742,
+      "height": 10.039837837219238,
+      "relativeX": 0.246795654296875,
+      "relativeY": -0.6112060546875
+    },
+    "svgShortKey": "S11#3"
+  },
+  {
+    "id": "5:02316",
+    "type": "FRAME",
+    "depth": 1,
+    "name": "组 2204",
+    "layout": {
+      "width": 11,
+      "height": 11,
+      "relativeX": 164,
+      "relativeY": 50
+    }
+  },
+  {
+    "id": "5:02317",
+    "type": "FRAME",
+    "depth": 2,
+    "name": "图标 6",
+    "layout": {
+      "width": 11.0024995803833,
+      "height": 9.779999732971191,
+      "relativeX": 0,
+      "relativeY": 0.6100000143051147
+    }
+  },
+  {
+    "id": "5:02318",
+    "type": "PATH",
+    "depth": 3,
+    "name": "组 9",
+    "layout": {
+      "width": 10.509122848510742,
+      "height": 10.039837837219238,
+      "relativeX": 0.246795654296875,
+      "relativeY": -0.6112060546875
+    },
+    "svgShortKey": "S11#4"
+  }
+]

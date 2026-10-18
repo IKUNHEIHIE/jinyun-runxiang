@@ -15,16 +15,13 @@ INSERT INTO `sys_role` (`id`, `code`, `name`, `description`, `status`) VALUES
 (4, 'TOURIST', '社会游客', '非遗文化浏览与文创助农支持', 'ACTIVE')
 ON DUPLICATE KEY UPDATE `name`=VALUES(`name`);
 
--- 2. 初始账号 (密码哈希均对应明文+salt的SHA256或bcrypt，开发测试内置默认密码：admin123, teacher123, student123)
--- SHA256 of 'admin123': 240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa82280f1a82e3eb0
--- SHA256 of 'teacher123': ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f
--- SHA256 of 'student123': 60e9094fe5b706c9b466faaa0ba9db3f5da1e4a778e8fbab12a326ff73634027
+-- 2. 演示账号：仅供隔离演示环境，默认部署不会自动导入。
 INSERT INTO `sys_user` (`id`, `username`, `password_hash`, `nickname`, `avatar_url`, `role_code`, `grade`, `status`, `phone`) VALUES
-(1, 'admin', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa82280f1a82e3eb0', '津韵总管', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', 'ADMIN', '成人', 'ACTIVE', '13800000001'),
-(2, 'teacher_wang', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', '王秀兰老师', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150', 'TEACHER', '教师', 'ACTIVE', '13800000002'),
-(3, 'student_ming', '60e9094fe5b706c9b466faaa0ba9db3f5da1e4a778e8fbab12a326ff73634027', '李小明', 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150', 'STUDENT', '小学三年级', 'ACTIVE', '13800000003'),
-(4, 'student_hua', '60e9094fe5b706c9b466faaa0ba9db3f5da1e4a778e8fbab12a326ff73634027', '张小华', 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150', 'STUDENT', '小学四年级', 'ACTIVE', '13800000004'),
-(5, 'tourist_tianjin', '60e9094fe5b706c9b466faaa0ba9db3f5da1e4a778e8fbab12a326ff73634027', '津门漫步客', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', 'TOURIST', '游客', 'ACTIVE', '13800000005')
+(1, 'admin', 'pbkdf2_sha256$600000$caaf6f5358b760c5f7b7fb2da47eb885$b63b49e35ccfbce9132ec5ce417e2f9aa4e67aa95715aa81eaa536da7bdf1d1a', '津韵总管', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', 'ADMIN', '成人', 'ACTIVE', '13800000001'),
+(2, 'teacher_wang', 'pbkdf2_sha256$600000$d377735e471d313df6a6a1c409abb57a$8775c07e755efb2cc640fdb52bc45d2e3fe9180a60f08df78279c6ad2c7ffac5', '王秀兰老师', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150', 'TEACHER', '教师', 'ACTIVE', '13800000002'),
+(3, 'student_ming', 'pbkdf2_sha256$600000$664dd2c4e9cbaaf609025efa06b670ac$2ac80ab1d85ca3d7a198184a2843caa81c2f20e3f61499a86bf85e49a82960fa', '李小明', 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150', 'STUDENT', '小学三年级', 'ACTIVE', '13800000003'),
+(4, 'student_hua', 'pbkdf2_sha256$600000$da1ce97b2a007dc47d88ec5958ee164c$8f25fce672694e4594fe2d9f269035972580b190c6e2a6fabc598fe6f87d53ce', '张小华', 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150', 'STUDENT', '小学四年级', 'ACTIVE', '13800000004'),
+(5, 'tourist_tianjin', 'pbkdf2_sha256$600000$4e8db0ebaf237393ddb8bd2537cdd77b$4dae7f317f0224e6b5f7170227b76889a8780ee50d11aab224c59255e800fd96', '津门漫步客', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', 'TOURIST', '游客', 'ACTIVE', '13800000005')
 ON DUPLICATE KEY UPDATE `nickname`=VALUES(`nickname`);
 
 -- 3. 用户画像与教师档案

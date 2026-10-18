@@ -284,6 +284,7 @@
 </template>
 
 <script setup lang="ts">
+import { getToken } from "@/utils/auth"
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import request from '@/api/request'
@@ -363,14 +364,30 @@ const handleToggleStatus = async (row: any) => {
   }
 }
 
-const exportLessonPlan = (row: any) => {
-  const url = `http://localhost:8000/api/v1/teacher/lesson-plans/export-html?topic=${encodeURIComponent(row.title)}&grade=${encodeURIComponent(row.age_group || '小学三年级')}`
-  window.open(url, '_blank')
+const exportLessonPlan = async (row: any) => {
+  const url = `/api/v1/teacher/lesson-plans/export-html?topic=${encodeURIComponent(row.title)}&grade=${encodeURIComponent(row.age_group || '小学三年级')}`
+  const token = getToken()?.accessToken
+  const response = await fetch(url, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  if (!response.ok) { ElMessage.error('导出失败，请重新登录后重试'); return }
+  const blobUrl = URL.createObjectURL(await response.blob())
+  const link = document.createElement('a')
+  link.href = blobUrl
+  link.download = `${row.title}.${url.includes('export-pptx') ? 'pptx' : 'html'}`
+  link.click()
+  setTimeout(() => URL.revokeObjectURL(blobUrl), 1000)
 }
 
-const exportLessonPPT = (row: any) => {
-  const url = `http://localhost:8000/api/v1/teacher/lesson-plans/export-pptx?topic=${encodeURIComponent(row.title)}&grade=${encodeURIComponent(row.age_group || '小学三年级')}`
-  window.open(url, '_blank')
+const exportLessonPPT = async (row: any) => {
+  const url = `/api/v1/teacher/lesson-plans/export-pptx?topic=${encodeURIComponent(row.title)}&grade=${encodeURIComponent(row.age_group || '小学三年级')}`
+  const token = getToken()?.accessToken
+  const response = await fetch(url, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  if (!response.ok) { ElMessage.error('导出失败，请重新登录后重试'); return }
+  const blobUrl = URL.createObjectURL(await response.blob())
+  const link = document.createElement('a')
+  link.href = blobUrl
+  link.download = `${row.title}.${url.includes('export-pptx') ? 'pptx' : 'html'}`
+  link.click()
+  setTimeout(() => URL.revokeObjectURL(blobUrl), 1000)
 }
 
 const viewChapters = async (row: any) => {

@@ -1,0 +1,234 @@
+[
+  {
+    "id": "5:02785",
+    "type": "FRAME",
+    "depth": 0,
+    "l": {
+      "width": 335,
+      "height": 219,
+      "relativeX": 0,
+      "relativeY": 0
+    }
+  },
+  {
+    "id": "5:02831",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 335,
+      "height": 24,
+      "relativeX": 0,
+      "relativeY": 0
+    }
+  },
+  {
+    "id": "5:02833",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 64,
+      "height": 24,
+      "relativeX": 12,
+      "relativeY": 0
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "推荐模板",
+    "font": {
+      "family": "Noto Serif SC",
+      "size": 16,
+      "style": "SemiBold",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "24",
+      "letterSpacing": "auto",
+      "weight": "600"
+    }
+  },
+  {
+    "id": "5:02786",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 375,
+      "height": 155,
+      "relativeX": -20,
+      "relativeY": 40
+    }
+  },
+  {
+    "id": "5:02803",
+    "type": "FRAME",
+    "depth": 5,
+    "l": {
+      "width": 32,
+      "height": 32,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "svg": "S8#0"
+  },
+  {
+    "id": "5:02807",
+    "type": "TEXT",
+    "depth": 4,
+    "l": {
+      "width": 128,
+      "height": 16,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "古琴鉴赏",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 12,
+      "style": "Medium",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "16",
+      "letterSpacing": "auto",
+      "weight": "500"
+    }
+  },
+  {
+    "id": "5:02812",
+    "type": "TEXT",
+    "depth": 4,
+    "l": {
+      "width": 128,
+      "height": 15,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "paint": [
+      "#8B7B7B"
+    ],
+    "text": "大学 · 音乐系",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 10,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "15",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02820",
+    "type": "PATH",
+    "depth": 6,
+    "l": {
+      "width": 26.66666603088379,
+      "height": 26.66666603088379,
+      "relativeX": 2.6666667461395264,
+      "relativeY": 2.6666667461395264
+    },
+    "svg": "S8#1"
+  },
+  {
+    "id": "5:02827",
+    "type": "TEXT",
+    "depth": 4,
+    "l": {
+      "width": 128,
+      "height": 16,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "陶瓷文化",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 12,
+      "style": "Medium",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "16",
+      "letterSpacing": "auto",
+      "weight": "500"
+    }
+  },
+  {
+    "id": "5:02822",
+    "type": "TEXT",
+    "depth": 4,
+    "l": {
+      "width": 128,
+      "height": 15,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "paint": [
+      "#8B7B7B"
+    ],
+    "text": "高中 · 美术",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 10,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "15",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02796",
+    "type": "TEXT",
+    "depth": 4,
+    "l": {
+      "width": 128,
+      "height": 16,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "京剧脸谱",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 12,
+      "style": "Medium",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "16",
+      "letterSpacing": "auto",
+      "weight": "500"
+    }
+  },
+  {
+    "id": "5:02791",
+    "type": "TEXT",
+    "depth": 4,
+    "l": {
+      "width": 128,
+      "height": 15,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "paint": [
+      "#8B7B7B"
+    ],
+    "text": "小学 · 综合实践",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 10,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "15",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  }
+]

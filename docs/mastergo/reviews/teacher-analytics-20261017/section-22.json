@@ -1,0 +1,131 @@
+{
+  "sectionIndex": 22,
+  "section": {
+    "id": "5:3938",
+    "name": "组 4278",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2665px",
+    "background": "rgba(128, 24, 24, 0.2)",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 3,
+  "dsl": {
+    "styles": {
+      "font_5:3933": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 12,
+          "style": "Medium",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "16",
+          "letterSpacing": "auto",
+          "weight": "500"
+        }
+      },
+      "paint_5:3878": {
+        "value": [
+          "#8B6B6B"
+        ]
+      },
+      "paint_5:3894": {
+        "value": [
+          "#C85050"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:3938",
+        "name": "组 4278",
+        "layoutStyle": {
+          "width": 293,
+          "height": 16,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:3944",
+            "name": "组 4279",
+            "layoutStyle": {
+              "width": 6,
+              "height": 6,
+              "relativeX": 0,
+              "relativeY": 5
+            },
+            "fill": "paint_5:3894",
+            "_color": "#C85050",
+            "children": [],
+            "borderRadius": "9999px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:3939",
+            "name": "容器 21",
+            "layoutStyle": {
+              "width": 48,
+              "height": 16,
+              "relativeX": 14,
+              "relativeY": 0
+            },
+            "children": [
+              {
+                "type": "TEXT",
+                "id": "5:3940",
+                "name": "文本 59",
+                "layoutStyle": {
+                  "width": 60,
+                  "height": 17,
+                  "relativeX": -6,
+                  "relativeY": 0
+                },
+                "fill": "paint_5:3878",
+                "_color": "#8B6B6B",
+                "text": [
+                  {
+                    "text": "学识修养",
+                    "font": "font_5:3933"
+                  }
+                ],
+                "textColor": [
+                  {
+                    "start": 0,
+                    "end": 4,
+                    "color": "paint_5:3878"
+                  }
+                ],
+                "textAlign": "center",
+                "textMode": "single-line"
+              }
+            ]
+          }
+        ],
+        "flexContainerInfo": {
+          "flexDirection": "row",
+          "alignItems": "center",
+          "mainSizing": "fixed",
+          "crossSizing": "fixed",
+          "gap": "8px 8px"
+        }
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "学识修养",
+        "parentType": "FRAME",
+        "parentName": "容器 21"
+      }
+    ]
+  },
+  "nodeCount": 4,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 23/28. MISSING 5 sections: [23,24,25,26,27]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

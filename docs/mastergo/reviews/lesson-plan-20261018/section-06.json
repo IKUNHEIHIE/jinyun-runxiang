@@ -1,0 +1,1109 @@
+{
+  "sectionIndex": 6,
+  "section": {
+    "id": "5:02409",
+    "name": "组 5197",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2155px",
+    "background": {
+      "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/5576fb521ca134e55c7ca0d481dcc303.png"
+    },
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "effect_5:3192": {
+        "value": []
+      },
+      "effect_5:8673": {
+        "value": [
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+          "box-shadow: 0px 4px 20px 0px rgba(196, 92, 92, 0.08);"
+        ]
+      },
+      "font_5:02439": {
+        "value": {
+          "family": "Noto Sans SC",
+          "size": 14,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "20",
+          "letterSpacing": "auto",
+          "weight": "400"
+        }
+      },
+      "font_5:02445": {
+        "value": {
+          "family": "Noto Sans SC",
+          "size": 14,
+          "style": "Bold",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "20",
+          "letterSpacing": "auto",
+          "weight": "700"
+        }
+      },
+      "font_5:4244": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 14,
+          "style": "SemiBold",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "20",
+          "letterSpacing": "auto",
+          "weight": "600"
+        }
+      },
+      "font_5:4907": {
+        "value": {
+          "family": "Noto Sans SC",
+          "size": 12,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "16",
+          "letterSpacing": "auto",
+          "weight": "400"
+        }
+      },
+      "paint_5:02361": {
+        "value": [
+          "rgba(232, 208, 208, 0.5)"
+        ]
+      },
+      "paint_5:02368": {
+        "value": [
+          "#4A3A3A"
+        ]
+      },
+      "paint_5:02416": {
+        "value": [
+          "#8B7B7B"
+        ]
+      },
+      "paint_5:02419": {
+        "value": [
+          "rgba(232, 208, 208, 0.3)"
+        ]
+      },
+      "paint_5:02424": {
+        "value": [
+          "#8B7B7B"
+        ]
+      },
+      "paint_5:4780": {
+        "value": [
+          "#FFFFFF"
+        ]
+      },
+      "paint_5:8667": {
+        "value": [
+          "#C45C5C"
+        ]
+      },
+      "paint_5:8798": {
+        "value": [
+          "#D4A574"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:02409",
+        "name": "组 5197",
+        "layoutStyle": {
+          "width": 335,
+          "height": 386,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "fill": "paint_5:4780",
+        "_color": "#FFFFFF",
+        "strokeColor": "paint_5:02361",
+        "strokeType": "solid",
+        "strokeAlign": "inside",
+        "strokeWidth": "1px 0px 0px",
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:02426",
+            "name": "组 5198",
+            "layoutStyle": {
+              "width": 295,
+              "height": 20,
+              "relativeX": 20,
+              "relativeY": 17
+            },
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:02427",
+                "name": "组 5199",
+                "layoutStyle": {
+                  "width": 16,
+                  "height": 16,
+                  "relativeX": 0,
+                  "relativeY": 2
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:02428",
+                    "name": "图标 9",
+                    "layoutStyle": {
+                      "width": 16,
+                      "height": 16,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "children": [
+                      {
+                        "type": "PATH",
+                        "id": "5:02429",
+                        "name": "组 26",
+                        "layoutStyle": {
+                          "width": 12,
+                          "height": 12,
+                          "relativeX": 1.999999761581421,
+                          "relativeY": 1.9999998807907104
+                        },
+                        "svgKey": "S6:图标 9|5:02429",
+                        "svgShortKey": "S6#0",
+                        "svgName": "图标 9"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "TEXT",
+                "id": "5:02430",
+                "name": "文本 28",
+                "layoutStyle": {
+                  "width": 56,
+                  "height": 20,
+                  "relativeX": 24,
+                  "relativeY": 0
+                },
+                "fill": "paint_5:02368",
+                "_color": "#4A3A3A",
+                "text": [
+                  {
+                    "text": "课⁠堂⁠讲⁠稿",
+                    "font": "font_5:4244"
+                  }
+                ],
+                "textColor": [
+                  {
+                    "start": 0,
+                    "end": 7,
+                    "color": "paint_5:02368"
+                  }
+                ],
+                "textAlign": "left",
+                "textMode": "single-line"
+              }
+            ],
+            "flexContainerInfo": {
+              "flexDirection": "row",
+              "alignItems": "center",
+              "mainSizing": "fixed",
+              "crossSizing": "fixed",
+              "gap": "8px 8px"
+            }
+          },
+          {
+            "type": "FRAME",
+            "id": "5:02434",
+            "name": "组 5200",
+            "layoutStyle": {
+              "width": 295,
+              "height": 280,
+              "relativeX": 20,
+              "relativeY": 49
+            },
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:02435",
+                "name": "组 5201",
+                "layoutStyle": {
+                  "width": 291,
+                  "height": 80,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:02441",
+                    "name": "组 5202",
+                    "layoutStyle": {
+                      "width": 56,
+                      "height": 20,
+                      "relativeX": 28,
+                      "relativeY": 0
+                    },
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "id": "5:02442",
+                        "name": "文本 29",
+                        "layoutStyle": {
+                          "width": 56,
+                          "height": 20,
+                          "relativeX": 0,
+                          "relativeY": -9
+                        },
+                        "fill": "paint_5:8667",
+                        "_color": "#C45C5C",
+                        "text": [
+                          {
+                            "text": "【导入】",
+                            "font": "font_5:02445"
+                          }
+                        ],
+                        "textColor": [
+                          {
+                            "start": 0,
+                            "end": 4,
+                            "color": "paint_5:8667"
+                          }
+                        ],
+                        "textAlign": "left",
+                        "textMode": "single-line"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:02455",
+                    "name": "文本 30",
+                    "layoutStyle": {
+                      "width": 207,
+                      "height": 20,
+                      "relativeX": 84,
+                      "relativeY": -9
+                    },
+                    "fill": "paint_5:02368",
+                    "_color": "#4A3A3A",
+                    "text": [
+                      {
+                        "text": "同学们，今天我们要走进一项被",
+                        "font": "font_5:02439"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 14,
+                        "color": "paint_5:02368"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:02447",
+                    "name": "文本 31",
+                    "layoutStyle": {
+                      "width": 291,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 11
+                    },
+                    "fill": "paint_5:02368",
+                    "_color": "#4A3A3A",
+                    "text": [
+                      {
+                        "text": "誉为\"东方艺术珍宝\"的传统工艺——景泰蓝。",
+                        "font": "font_5:02439"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 21,
+                        "color": "paint_5:02368"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:02451",
+                    "name": "文本 32",
+                    "layoutStyle": {
+                      "width": 291,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 31
+                    },
+                    "fill": "paint_5:02368",
+                    "_color": "#4A3A3A",
+                    "text": [
+                      {
+                        "text": "请大家先看这件国宝级文物：明代的\"景泰蓝缠",
+                        "font": "font_5:02439"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 21,
+                        "color": "paint_5:02368"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:02436",
+                    "name": "文本 33",
+                    "layoutStyle": {
+                      "width": 127.04000091552734,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 51
+                    },
+                    "fill": "paint_5:02368",
+                    "_color": "#4A3A3A",
+                    "text": [
+                      {
+                        "text": "枝莲纹出戟觚\"。",
+                        "font": "font_5:02439"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 8,
+                        "color": "paint_5:02368"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:02477",
+                "name": "组 5203",
+                "layoutStyle": {
+                  "width": 291,
+                  "height": 100,
+                  "relativeX": 0,
+                  "relativeY": 92
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:02478",
+                    "name": "组 5204",
+                    "layoutStyle": {
+                      "width": 84,
+                      "height": 20,
+                      "relativeX": 28,
+                      "relativeY": 0
+                    },
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "id": "5:02479",
+                        "name": "文本 34",
+                        "layoutStyle": {
+                          "width": 84,
+                          "height": 20,
+                          "relativeX": 0,
+                          "relativeY": -9
+                        },
+                        "fill": "paint_5:8667",
+                        "_color": "#C45C5C",
+                        "text": [
+                          {
+                            "text": "【新课讲授】",
+                            "font": "font_5:02445"
+                          }
+                        ],
+                        "textColor": [
+                          {
+                            "start": 0,
+                            "end": 6,
+                            "color": "paint_5:8667"
+                          }
+                        ],
+                        "textAlign": "left",
+                        "textMode": "single-line"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:02499",
+                    "name": "文本 35",
+                    "layoutStyle": {
+                      "width": 179,
+                      "height": 20,
+                      "relativeX": 112,
+                      "relativeY": -9
+                    },
+                    "fill": "paint_5:02368",
+                    "_color": "#4A3A3A",
+                    "text": [
+                      {
+                        "text": "景泰蓝，学名\"铜胎掐丝珐",
+                        "font": "font_5:02439"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 12,
+                        "color": "paint_5:02368"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:02491",
+                    "name": "文本 36",
+                    "layoutStyle": {
+                      "width": 291,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 11
+                    },
+                    "fill": "paint_5:02368",
+                    "_color": "#4A3A3A",
+                    "text": [
+                      {
+                        "text": "琅\"，起源于元代，盛于明代景泰年间，因以蓝",
+                        "font": "font_5:02439"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 21,
+                        "color": "paint_5:02368"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:02495",
+                    "name": "文本 37",
+                    "layoutStyle": {
+                      "width": 291,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 31
+                    },
+                    "fill": "paint_5:02368",
+                    "_color": "#4A3A3A",
+                    "text": [
+                      {
+                        "text": "色釉料为主而得名。它的制作工艺极为繁复，",
+                        "font": "font_5:02439"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 20,
+                        "color": "paint_5:02368"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:02487",
+                    "name": "文本 38",
+                    "layoutStyle": {
+                      "width": 291,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 51
+                    },
+                    "fill": "paint_5:02368",
+                    "_color": "#4A3A3A",
+                    "text": [
+                      {
+                        "text": "需经过制胎、掐丝、点蓝、烧蓝、磨光、镀金",
+                        "font": "font_5:02439"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 20,
+                        "color": "paint_5:02368"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:02483",
+                    "name": "文本 39",
+                    "layoutStyle": {
+                      "width": 92.4000015258789,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 71
+                    },
+                    "fill": "paint_5:02368",
+                    "_color": "#4A3A3A",
+                    "text": [
+                      {
+                        "text": "六道工序。",
+                        "font": "font_5:02439"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 5,
+                        "color": "paint_5:02368"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:02503",
+                "name": "组 5205",
+                "layoutStyle": {
+                  "width": 291,
+                  "height": 60,
+                  "relativeX": 0,
+                  "relativeY": 204
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:02516",
+                    "name": "组 5206",
+                    "layoutStyle": {
+                      "width": 84,
+                      "height": 20,
+                      "relativeX": 28,
+                      "relativeY": 0
+                    },
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "id": "5:02517",
+                        "name": "文本 40",
+                        "layoutStyle": {
+                          "width": 84,
+                          "height": 20,
+                          "relativeX": 0,
+                          "relativeY": -9
+                        },
+                        "fill": "paint_5:8667",
+                        "_color": "#C45C5C",
+                        "text": [
+                          {
+                            "text": "【互动环节】",
+                            "font": "font_5:02445"
+                          }
+                        ],
+                        "textColor": [
+                          {
+                            "start": 0,
+                            "end": 6,
+                            "color": "paint_5:8667"
+                          }
+                        ],
+                        "textAlign": "left",
+                        "textMode": "single-line"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:02508",
+                    "name": "文本 41",
+                    "layoutStyle": {
+                      "width": 179,
+                      "height": 20,
+                      "relativeX": 112,
+                      "relativeY": -9
+                    },
+                    "fill": "paint_5:02368",
+                    "_color": "#4A3A3A",
+                    "text": [
+                      {
+                        "text": "请同学们观察手中的景泰蓝",
+                        "font": "font_5:02439"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 12,
+                        "color": "paint_5:02368"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:02504",
+                    "name": "文本 42",
+                    "layoutStyle": {
+                      "width": 291,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 11
+                    },
+                    "fill": "paint_5:02368",
+                    "_color": "#4A3A3A",
+                    "text": [
+                      {
+                        "text": "纹样样本，思考：这些缠枝莲纹、回纹、云纹",
+                        "font": "font_5:02439"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 20,
+                        "color": "paint_5:02368"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:02512",
+                    "name": "文本 43",
+                    "layoutStyle": {
+                      "width": 162.39999389648438,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 31
+                    },
+                    "fill": "paint_5:02368",
+                    "_color": "#4A3A3A",
+                    "text": [
+                      {
+                        "text": "分别有什么吉祥寓意？",
+                        "font": "font_5:02439"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 10,
+                        "color": "paint_5:02368"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:02459",
+                "name": "组 5207",
+                "layoutStyle": {
+                  "width": 291,
+                  "height": 60,
+                  "relativeX": 0,
+                  "relativeY": 276
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:02472",
+                    "name": "组 5208",
+                    "layoutStyle": {
+                      "width": 56,
+                      "height": 20,
+                      "relativeX": 28,
+                      "relativeY": 0
+                    },
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "id": "5:02473",
+                        "name": "文本 44",
+                        "layoutStyle": {
+                          "width": 56,
+                          "height": 20,
+                          "relativeX": 0,
+                          "relativeY": -9
+                        },
+                        "fill": "paint_5:8667",
+                        "_color": "#C45C5C",
+                        "text": [
+                          {
+                            "text": "【总结】",
+                            "font": "font_5:02445"
+                          }
+                        ],
+                        "textColor": [
+                          {
+                            "start": 0,
+                            "end": 4,
+                            "color": "paint_5:8667"
+                          }
+                        ],
+                        "textAlign": "left",
+                        "textMode": "single-line"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:02464",
+                    "name": "文本 45",
+                    "layoutStyle": {
+                      "width": 207,
+                      "height": 20,
+                      "relativeX": 84,
+                      "relativeY": -9
+                    },
+                    "fill": "paint_5:02368",
+                    "_color": "#4A3A3A",
+                    "text": [
+                      {
+                        "text": "景泰蓝不仅是一件工艺品，更是",
+                        "font": "font_5:02439"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 14,
+                        "color": "paint_5:02368"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:02460",
+                    "name": "文本 46",
+                    "layoutStyle": {
+                      "width": 291,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 11
+                    },
+                    "fill": "paint_5:02368",
+                    "_color": "#4A3A3A",
+                    "text": [
+                      {
+                        "text": "中华文明智慧的结晶。2006年，景泰蓝制作技",
+                        "font": "font_5:02439"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 22,
+                        "color": "paint_5:02368"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:02468",
+                    "name": "文本 47",
+                    "layoutStyle": {
+                      "width": 282.79998779296875,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 31
+                    },
+                    "fill": "paint_5:02368",
+                    "_color": "#4A3A3A",
+                    "text": [
+                      {
+                        "text": "艺被列入首批国家级非物质文化遗产名录。",
+                        "font": "font_5:02439"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 19,
+                        "color": "paint_5:02368"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "id": "5:02410",
+            "name": "组 5209",
+            "layoutStyle": {
+              "width": 295,
+              "height": 29,
+              "relativeX": 20,
+              "relativeY": 341
+            },
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:02411",
+                "name": "容器 18",
+                "layoutStyle": {
+                  "width": 72,
+                  "height": 16,
+                  "relativeX": 102.5,
+                  "relativeY": 12.5
+                },
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "id": "5:02412",
+                    "name": "文本 48",
+                    "layoutStyle": {
+                      "width": 84,
+                      "height": 17,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "fill": "paint_5:02416",
+                    "_color": "#8B7B7B",
+                    "text": [
+                      {
+                        "text": "展⁠开⁠完⁠整⁠讲⁠稿",
+                        "font": "font_5:4907"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 11,
+                        "color": "paint_5:02416"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:02421",
+                "name": "组 5211",
+                "layoutStyle": {
+                  "width": 14,
+                  "height": 14,
+                  "relativeX": 178.5,
+                  "relativeY": 13.5
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:02422",
+                    "name": "图标 10",
+                    "layoutStyle": {
+                      "width": 14,
+                      "height": 14,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "children": [
+                      {
+                        "type": "PATH",
+                        "id": "5:02423",
+                        "name": "组 27",
+                        "layoutStyle": {
+                          "width": 7,
+                          "height": 3.5,
+                          "relativeX": 3.5,
+                          "relativeY": 5.25
+                        },
+                        "svgKey": "S6:图标 10|5:02423",
+                        "svgShortKey": "S6#1",
+                        "svgName": "图标 10"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "LAYER",
+                "id": "5:02418",
+                "name": "矩形 1",
+                "layoutStyle": {
+                  "width": 295,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "fill": "paint_5:02419",
+                "_color": "rgba(232, 208, 208, 0.3)",
+                "effect": "effect_5:3192"
+              }
+            ],
+            "flexContainerInfo": {
+              "flexDirection": "row",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "mainSizing": "fixed",
+              "crossSizing": "fixed",
+              "gap": "4px 4px",
+              "padding": "12px 0px 0px"
+            }
+          }
+        ],
+        "effect": "effect_5:8673",
+        "borderRadius": "0px 0px 16px 16px"
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "课⁠堂⁠讲⁠稿",
+        "parentType": "FRAME",
+        "parentName": "组 5198"
+      },
+      {
+        "text": "【导入】",
+        "parentType": "FRAME",
+        "parentName": "组 5202"
+      },
+      {
+        "text": "同学们，今天我们要走进一项被",
+        "parentType": "FRAME",
+        "parentName": "组 5201"
+      },
+      {
+        "text": "誉为\"东方艺术珍宝\"的传统工艺——景泰蓝。",
+        "parentType": "FRAME",
+        "parentName": "组 5201"
+      },
+      {
+        "text": "请大家先看这件国宝级文物：明代的\"景泰蓝缠",
+        "parentType": "FRAME",
+        "parentName": "组 5201"
+      },
+      {
+        "text": "枝莲纹出戟觚\"。",
+        "parentType": "FRAME",
+        "parentName": "组 5201"
+      },
+      {
+        "text": "【新课讲授】",
+        "parentType": "FRAME",
+        "parentName": "组 5204"
+      },
+      {
+        "text": "景泰蓝，学名\"铜胎掐丝珐",
+        "parentType": "FRAME",
+        "parentName": "组 5203"
+      },
+      {
+        "text": "琅\"，起源于元代，盛于明代景泰年间，因以蓝",
+        "parentType": "FRAME",
+        "parentName": "组 5203"
+      },
+      {
+        "text": "色釉料为主而得名。它的制作工艺极为繁复，",
+        "parentType": "FRAME",
+        "parentName": "组 5203"
+      },
+      {
+        "text": "需经过制胎、掐丝、点蓝、烧蓝、磨光、镀金",
+        "parentType": "FRAME",
+        "parentName": "组 5203"
+      },
+      {
+        "text": "六道工序。",
+        "parentType": "FRAME",
+        "parentName": "组 5203"
+      },
+      {
+        "text": "【互动环节】",
+        "parentType": "FRAME",
+        "parentName": "组 5206"
+      },
+      {
+        "text": "请同学们观察手中的景泰蓝",
+        "parentType": "FRAME",
+        "parentName": "组 5205"
+      },
+      {
+        "text": "纹样样本，思考：这些缠枝莲纹、回纹、云纹",
+        "parentType": "FRAME",
+        "parentName": "组 5205"
+      },
+      {
+        "text": "分别有什么吉祥寓意？",
+        "parentType": "FRAME",
+        "parentName": "组 5205"
+      },
+      {
+        "text": "【总结】",
+        "parentType": "FRAME",
+        "parentName": "组 5208"
+      },
+      {
+        "text": "景泰蓝不仅是一件工艺品，更是",
+        "parentType": "FRAME",
+        "parentName": "组 5207"
+      },
+      {
+        "text": "中华文明智慧的结晶。2006年，景泰蓝制作技",
+        "parentType": "FRAME",
+        "parentName": "组 5207"
+      },
+      {
+        "text": "艺被列入首批国家级非物质文化遗产名录。",
+        "parentType": "FRAME",
+        "parentName": "组 5207"
+      },
+      {
+        "text": "展⁠开⁠完⁠整⁠讲⁠稿",
+        "parentType": "FRAME",
+        "parentName": "容器 18"
+      }
+    ]
+  },
+  "nodeCount": 41,
+  "svgNodeCount": 2,
+  "hasStrippedSvgs": true,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 7/10. MISSING 3 sections: [7,8,9]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

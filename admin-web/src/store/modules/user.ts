@@ -11,7 +11,8 @@ import {
   type UserResult,
   type RefreshTokenResult,
   getLogin,
-  refreshTokenApi
+  refreshTokenApi,
+  getLoginLogout
 } from "@/api/user";
 import { useMultiTagsStoreHook } from "./multiTags";
 import { type DataInfo, setToken, removeToken, userKey } from "@/utils/auth";
@@ -70,6 +71,10 @@ export const useUserStore = defineStore("pure-user", {
           .then((res: any) => {
             if (res?.code === 0 && res?.data) {
               const u = res.data.user || {};
+              if (!["ADMIN", "TEACHER"].includes(u.role_code)) {
+                reject(new Error("此账号没有管理后台权限"));
+                return;
+              }
               const tokenData: any = {
                 accessToken: res.data.token,
                 refreshToken: res.data.token,
@@ -78,7 +83,8 @@ export const useUserStore = defineStore("pure-user", {
                 nickname: u.nickname || "系统超级管理员",
                 avatar: u.avatar_url || "/static/images/default_avatar.svg",
                 roles: [u.role_code || "admin"],
-                permissions: ["*:*:*"]
+                permissions:
+                  u.role_code === "ADMIN" ? ["*:*:*"] : ["teacher:workspace"]
               };
               setToken(tokenData);
               this.SET_USERNAME(tokenData.username);
@@ -97,7 +103,12 @@ export const useUserStore = defineStore("pure-user", {
       });
     },
     /** 前端登出（不调用接口） */
-    logOut() {
+    async logOut() {
+      try {
+        await getLoginLogout();
+      } catch {
+        /* Clear local state even when already expired. */
+      }
       this.username = "";
       this.roles = [];
       this.permissions = [];

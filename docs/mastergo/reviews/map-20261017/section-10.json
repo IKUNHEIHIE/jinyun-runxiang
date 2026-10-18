@@ -1,0 +1,49 @@
+{
+  "sectionIndex": 10,
+  "section": {
+    "id": "5:02921",
+    "name": "组 45",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2818px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "paint_5:8427": {
+        "value": [
+          "#C4A882"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:02921",
+        "name": "组 45",
+        "layoutStyle": {
+          "width": 335,
+          "height": 214.10693359375,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "opacity": 0.4000000059604645,
+        "strokeColor": "paint_5:8427",
+        "strokeType": "solid",
+        "strokeAlign": "inside",
+        "strokeWidth": "1px",
+        "children": [],
+        "borderRadius": "16px"
+      }
+    ],
+    "components": []
+  },
+  "nodeCount": 1,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 11/22. MISSING 11 sections: [11,12,13,14,15,16,17,18,19,20,21]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

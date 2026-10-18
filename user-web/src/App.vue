@@ -32,9 +32,11 @@
           </div>
 
           <!-- 角色指示与切换 -->
-          <el-button size="small" round @click="toggleRole" class="role-btn">
-            {{ currentRole === 'STUDENT' ? '🎒 乡村学徒端' : '🎓 美育名师端' }}
+          <el-button size="small" round @click="loginVisible = true" class="role-btn">
+            {{ currentUserName || '登录 / 注册' }}
           </el-button>
+
+          <el-button v-if="currentUserName" size="small" @click="logout">退出</el-button>
 
           <!-- 乡村大屏护眼高对比模式 (P1) -->
           <button
@@ -48,7 +50,7 @@
           </button>
 
           <!-- 快速跳转后台管理系统 -->
-          <a href="http://localhost:5173" target="_blank" class="admin-portal-link" title="前往运营管理中台">
+          <a href="/admin/" target="_blank" class="admin-portal-link" title="前往运营管理中台">
             <span>后台管理 ↗</span>
           </a>
         </div>
@@ -137,62 +139,62 @@
         </div>
       </div>
     </div>
+    <el-dialog v-model="loginVisible" :title="isRegistering ? '注册学员账号' : '登录个人账号'" width="360px">
+      <el-form @submit.prevent="signIn" label-position="top">
+        <el-form-item label="用户名"><el-input v-model="credentials.username" autocomplete="username" /></el-form-item>
+        <el-form-item v-if="isRegistering" label="昵称"><el-input v-model="credentials.nickname" /></el-form-item>
+        <el-form-item label="密码"><el-input v-model="credentials.password" type="password" show-password :autocomplete="isRegistering ? 'new-password' : 'current-password'" /></el-form-item>
+        <el-button type="primary" native-type="submit" :loading="signingIn">{{ isRegistering ? '注册' : '登录' }}</el-button>
+        <el-button link @click="isRegistering = !isRegistering">{{ isRegistering ? '已有账号，登录' : '注册学员账号' }}</el-button>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import request from './api/request'
 
 const currentRole = ref<'STUDENT' | 'TEACHER'>('STUDENT')
-const currentEnergy = ref(1330)
+const currentEnergy = ref(0)
+const currentUserName = ref('')
+const loginVisible = ref(false)
+const isRegistering = ref(false)
+const signingIn = ref(false)
+const credentials = ref({ username: '', password: '', nickname: '' })
 
 const fetchProfile = async () => {
+  if (!localStorage.getItem('jinyun_user_token')) return
   try {
     const res: any = await request.get('/auth/me')
-    if (res && res.energy_value !== undefined) {
-      currentEnergy.value = res.energy_value
-      currentRole.value = res.role_code === 'TEACHER' ? 'TEACHER' : 'STUDENT'
-    }
-  } catch (e) {
-    // default
+    currentEnergy.value = res.energy_value
+    currentUserName.value = res.nickname
+    currentRole.value = res.role_code === 'TEACHER' ? 'TEACHER' : 'STUDENT'
+  } catch { currentUserName.value = ''; currentEnergy.value = 0 }
+}
+const signIn = async () => {
+  if (!credentials.value.username || !credentials.value.password) return
+  signingIn.value = true
+  try {
+    const res: any = await request.post(isRegistering.value ? '/auth/register' : '/auth/login', credentials.value)
+    localStorage.setItem('jinyun_user_token', res.token)
+    localStorage.setItem('jinyun_user_info', JSON.stringify(res.user))
+    credentials.value.password = ''
+    loginVisible.value = false
+    window.location.reload()
+  } catch { /* The request interceptor displays the error. */ } finally { signingIn.value = false }
+}
+const logout = async () => {
+  try { await request.post('/auth/logout') } finally {
+    localStorage.removeItem('jinyun_user_token')
+    localStorage.removeItem('jinyun_user_info')
+    window.location.reload()
   }
 }
-
-const toggleRole = async () => {
-  if (currentRole.value === 'STUDENT') {
-    // 切换到教师端
-    try {
-      const res: any = await request.post('/auth/login', {
-        username: 'teacher_wang',
-        password: 'teacher123'
-      })
-      localStorage.setItem('jinyun_user_token', res.token)
-      localStorage.setItem('jinyun_user_info', JSON.stringify(res.user))
-      currentRole.value = 'TEACHER'
-      ElMessage.success('已切换为【美育名师模式】，解锁AI智能备课与班级学情看板！')
-      window.location.reload()
-    } catch (e) {
-      ElMessage.error('切换教师失败')
-    }
-  } else {
-    // 切换回学生端
-    try {
-      const res: any = await request.post('/auth/login', {
-        username: 'student_ming',
-        password: 'student123'
-      })
-      localStorage.setItem('jinyun_user_token', res.token)
-      localStorage.setItem('jinyun_user_info', JSON.stringify(res.user))
-      currentRole.value = 'STUDENT'
-      ElMessage.success('已切换为【乡村学徒模式】，享受微课打卡与AI创作！')
-      window.location.reload()
-    } catch (e) {
-      ElMessage.error('切换学生失败')
-    }
-  }
-}
+const requireLogin = () => { currentUserName.value = ''; currentEnergy.value = 0; loginVisible.value = true }
+onMounted(() => window.addEventListener('auth-required', requireLogin))
+onUnmounted(() => window.removeEventListener('auth-required', requireLogin))
 
 const isClassroomMode = ref(false)
 const toggleClassroomMode = () => {

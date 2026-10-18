@@ -1,35 +1,103 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
-from typing import Optional, List
-from datetime import datetime
+from pydantic import BaseModel, Field, ConfigDict
+from typing import Optional, Annotated
+from urllib.parse import urlsplit
 
 from app.core.database import get_db
 from app.core.security import get_current_user, get_current_user_optional
 from app.schemas.common import success_response, error_response
 from app.models.entities import (
     CommunityPost, CommunityComment, CommunityLike, CommunityTopic,
-    CommunityReport, ContentReview, SysUser
+    CommunityReport, ContentReview, SysUser, Asset, AiTask
 )
+from app.models.mobile import CommunityPostDetail, CommunityCommentLike, UserCollection, UserFollow
 
 router = APIRouter(prefix="/community", tags=["社区广场与内容风控"])
 
+class ArtworkSpecification(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+    label: str = Field(min_length=1, max_length=64)
+    value: str = Field(min_length=1, max_length=128)
+
+
+class AppreciationPoint(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+    title: str = Field(min_length=1, max_length=64)
+    body: str = Field(min_length=1, max_length=2000)
+
+
 class CreatePostRequest(BaseModel):
-    title: str
-    content: str
-    category: str = "SHADOW_PUPPET"
-    cover_url: str
-    source_task_id: Optional[str] = None
-    topic_id: Optional[int] = None
+    model_config = ConfigDict(str_strip_whitespace=True)
+    title: str = Field(min_length=1, max_length=128)
+    content: str = Field(min_length=1, max_length=10000)
+    category: str = Field("SHADOW_PUPPET", min_length=1, max_length=32)
+    cover_url: str = Field(min_length=1, max_length=500)
+    source_task_id: Optional[str] = Field(None, max_length=32)
+    topic_id: Optional[int] = Field(None, gt=0)
+    gallery: list[Annotated[str, Field(min_length=1, max_length=500)]] = Field(default_factory=list, max_length=10)
+    specifications: list[ArtworkSpecification] = Field(default_factory=list, max_length=12)
+    appreciation: list[AppreciationPoint] = Field(default_factory=list, max_length=10)
 
 class CreateCommentRequest(BaseModel):
-    content: str
-    reply_to_id: Optional[int] = None
+    model_config = ConfigDict(str_strip_whitespace=True)
+    content: str = Field(min_length=1, max_length=1000)
+    reply_to_id: Optional[int] = Field(None, gt=0)
 
 class ReportRequest(BaseModel):
-    post_id: int
-    reason: str
-    description: Optional[str] = None
+    model_config = ConfigDict(str_strip_whitespace=True)
+    post_id: int = Field(gt=0)
+    reason: str = Field(min_length=1, max_length=64)
+    description: Optional[str] = Field(None, max_length=500)
+
+
+def visible_post(db, post_id, user=None, public_only=False, lock=False):
+    query = db.query(CommunityPost).filter_by(id=post_id)
+    record = (query.with_for_update() if lock else query).first()
+    if not record or (record.status != "APPROVED" and (public_only or not user or
+            (user["user_id"] != record.user_id and user["role_code"] != "ADMIN"))):
+        raise HTTPException(404, "作品不存在")
+    return record
+
+
+def comment_records(db, rows, user=None):
+    user_ids = {c.user_id for c in rows}
+    parents = {p.id: p for p in db.query(CommunityComment).filter(
+        CommunityComment.id.in_([c.reply_to_id for c in rows if c.reply_to_id]),
+        CommunityComment.status == "APPROVED").all()}
+    user_ids.update(p.user_id for p in parents.values())
+    authors = {u.id:u for u in db.query(SysUser).filter(SysUser.id.in_(user_ids)).all()}
+    liked = {r.comment_id for r in db.query(CommunityCommentLike).filter(
+        CommunityCommentLike.user_id == user["user_id"], CommunityCommentLike.comment_id.in_([c.id for c in rows])).all()} if user else set()
+    def nickname(uid):
+        return authors[uid].nickname if uid in authors else "同学"
+    result = []
+    for c in rows:
+        parent = parents.get(c.reply_to_id)
+        result.append({"id": c.id, "content": c.content, "created_at": c.created_at.isoformat() if c.created_at else "",
+            "like_count": c.like_count, "is_liked": c.id in liked,
+            "reply_to": {"id":parent.id,"nickname":nickname(parent.user_id),"content":parent.content[:200]} if parent and parent.post_id == c.post_id else None,
+            "user":{"id":c.user_id,"nickname":nickname(c.user_id),"avatar_url":authors[c.user_id].avatar_url if c.user_id in authors else ""}})
+    return result
+
+
+@router.get("/posts/{post_id}/comments")
+def comments(post_id: int, page: int = Query(1, ge=1), pageSize: int = Query(20, ge=1, le=50),
+             current_user: dict = Depends(get_current_user_optional), db: Session = Depends(get_db)):
+    visible_post(db, post_id, current_user)
+    query = db.query(CommunityComment).filter_by(post_id=post_id, status="APPROVED")
+    total = query.count()
+    rows = query.order_by(CommunityComment.id.desc()).offset((page-1)*pageSize).limit(pageSize).all()
+    return success_response({"list":comment_records(db, rows, current_user),"total":total,"page":page,"pageSize":pageSize})
+
+
+@router.get("/posts/{post_id}/related")
+def related(post_id: int, db: Session = Depends(get_db)):
+    original = visible_post(db, post_id, public_only=True)
+    rows = db.query(CommunityPost, SysUser).join(SysUser, SysUser.id == CommunityPost.user_id).filter(
+        CommunityPost.status == "APPROVED", CommunityPost.id != post_id,
+        CommunityPost.category == original.category).order_by(CommunityPost.like_count.desc(), CommunityPost.id.desc()).limit(6).all()
+    return success_response([{"id":p.id,"title":p.title,"cover_url":p.cover_url,"author":u.nickname} for p,u in rows])
 
 @router.get("/posts")
 def list_posts(
@@ -102,9 +170,7 @@ def get_post_detail(
     current_user: dict = Depends(get_current_user_optional),
     db: Session = Depends(get_db)
 ):
-    post = db.query(CommunityPost).filter(CommunityPost.id == post_id).first()
-    if not post:
-        return error_response(code=4040, message="作品不存在")
+    post = visible_post(db, post_id, current_user, lock=True)
     
     post.view_count += 1
     db.commit()
@@ -113,7 +179,7 @@ def get_post_detail(
     comments = db.query(CommunityComment).filter(
         CommunityComment.post_id == post_id,
         CommunityComment.status == "APPROVED"
-    ).order_by(CommunityComment.created_at.desc()).limit(20).all()
+    ).order_by(CommunityComment.id.desc()).limit(20).all()
 
     # 查评论者
     c_user_ids = [c.user_id for c in comments]
@@ -128,17 +194,25 @@ def get_post_detail(
         ).first()
         is_liked = exist_like is not None
 
+    details = db.get(CommunityPostDetail, post_id)
+    gallery = list(dict.fromkeys([post.cover_url] + (details.gallery_json if details else [])))
     return success_response({
         "id": post.id,
         "title": post.title,
         "content": post.content,
         "category": post.category,
         "cover_url": post.cover_url,
+        "status": post.status,
+        "gallery": [url for url in gallery if url],
+        "specifications": details.specifications_json if details else [],
+        "appreciation": details.appreciation_json if details else [],
         "like_count": post.like_count,
-        "comment_count": post.comment_count,
+        "comment_count": db.query(CommunityComment).filter_by(post_id=post_id, status="APPROVED").count(),
         "favorite_count": post.favorite_count,
         "view_count": post.view_count,
         "is_liked": is_liked,
+        "is_collected": bool(current_user and db.get(UserCollection, (current_user["user_id"], "POST", post_id))),
+        "is_following": bool(current_user and db.get(UserFollow, (current_user["user_id"], post.user_id))),
         "is_featured": post.is_featured,
         "heritage_master_like": post.heritage_master_like,
         "is_co_creation": getattr(post, "is_co_creation", False),
@@ -154,16 +228,7 @@ def get_post_detail(
             "avatar_url": author.avatar_url if author else "",
             "role_code": author.role_code if author else "STUDENT"
         },
-        "comments": [{
-            "id": c.id,
-            "content": c.content,
-            "created_at": c.created_at.strftime("%Y-%m-%d %H:%M") if c.created_at else "",
-            "user": {
-                "id": c.user_id,
-                "nickname": c_user_map[c.user_id].nickname if c.user_id in c_user_map else "同学",
-                "avatar_url": c_user_map[c.user_id].avatar_url if c.user_id in c_user_map else ""
-            }
-        } for c in comments]
+        "comments": comment_records(db, comments, current_user)
     })
 
 @router.post("/posts")
@@ -174,9 +239,30 @@ def publish_post(
 ):
     user_id = current_user["user_id"]
 
-    # 三级内容风控引擎：敏感词识别与多模态安全审计过滤
+    db.query(SysUser).filter_by(id=user_id).with_for_update().one()
+    task = db.query(AiTask).filter_by(task_id=req.source_task_id, user_id=user_id, status="SUCCESS").first() if req.source_task_id else None
+    if req.source_task_id and not task:
+        raise HTTPException(404, "创作任务不存在或不属于当前用户")
+    task_urls = {v for k,v in (task.result_summary_json or {}).items() if k.endswith("_url") and isinstance(v, str)} if task else set()
+    gallery = list(dict.fromkeys([req.cover_url] + req.gallery))
+    if len(gallery) > 10:
+        raise HTTPException(422, "作品图集最多包含10张图片")
+    for url in gallery:
+        parsed = urlsplit(url)
+        if url in task_urls:
+            continue
+        if url.startswith("/static/"):
+            if not db.query(Asset).filter_by(file_url=url, created_by=user_id, asset_type="IMAGE").first():
+                raise HTTPException(404, "图片不存在或不属于当前用户")
+        elif parsed.scheme != "https" or not parsed.netloc or parsed.username or parsed.password:
+            raise HTTPException(422, "作品图片必须为本人上传的资源或HTTPS图片地址")
+    if req.topic_id and not db.query(CommunityTopic).filter_by(id=req.topic_id, status="ACTIVE").first():
+        raise HTTPException(404, "话题不存在")
+
+    # Keyword screening only. No image model has been configured here.
     sensitive_words = ["暴力", "低俗", "赌博", "违规"]
-    has_sensitive = any(w in req.title or w in req.content for w in sensitive_words)
+    submitted_text = req.title + req.content + " ".join(s.label+s.value for s in req.specifications) + " ".join(p.title+p.body for p in req.appreciation)
+    has_sensitive = any(w in submitted_text for w in sensitive_words)
     initial_status = "PENDING_REVIEW" if has_sensitive else "APPROVED"
 
     post = CommunityPost(
@@ -190,8 +276,10 @@ def publish_post(
         status=initial_status
     )
     db.add(post)
-    db.commit()
-    db.refresh(post)
+    db.flush()
+    db.add(CommunityPostDetail(post_id=post.id, gallery_json=gallery,
+        specifications_json=[s.model_dump() for s in req.specifications],
+        appreciation_json=[p.model_dump() for p in req.appreciation]))
 
     # 记录多模态审核流水
     review = ContentReview(
@@ -200,9 +288,10 @@ def publish_post(
         risk_level="HIGH" if has_sensitive else "LOW",
         result=initial_status,
         ai_analysis_json={
-            "ocr_text_risk": "SAFE",
             "sensitive_word_detected": has_sensitive,
-            "image_nsfw_prob": 0.01
+            "screening_method": "keyword_rules",
+            "ocr_status": "NOT_CONFIGURED",
+            "image_review_status": "NOT_CONFIGURED"
         }
     )
     db.add(review)
@@ -222,9 +311,8 @@ def toggle_like(
     db: Session = Depends(get_db)
 ):
     user_id = current_user["user_id"]
-    post = db.query(CommunityPost).filter(CommunityPost.id == post_id).first()
-    if not post:
-        return error_response(code=4040, message="作品不存在")
+    db.query(SysUser).filter_by(id=user_id).with_for_update().one()
+    post = visible_post(db, post_id, public_only=True, lock=True)
 
     like = db.query(CommunityLike).filter(
         CommunityLike.post_id == post_id,
@@ -250,9 +338,11 @@ def add_comment(
     db: Session = Depends(get_db)
 ):
     user_id = current_user["user_id"]
-    post = db.query(CommunityPost).filter(CommunityPost.id == post_id).first()
-    if not post:
-        return error_response(code=4040, message="作品不存在")
+    db.query(SysUser).filter_by(id=user_id).with_for_update().one()
+    post = visible_post(db, post_id, public_only=True, lock=True)
+    if req.reply_to_id and not db.query(CommunityComment).filter_by(
+            id=req.reply_to_id, post_id=post_id, status="APPROVED").first():
+        raise HTTPException(422, "回复的评论不存在或不属于该作品")
 
     comment = CommunityComment(
         post_id=post_id,
@@ -269,8 +359,25 @@ def add_comment(
     return success_response({
         "id": comment.id,
         "content": comment.content,
-        "created_at": comment.created_at.strftime("%Y-%m-%d %H:%M")
+        "created_at": comment.created_at.isoformat()
     }, message="评论发表成功")
+
+
+@router.post("/comments/{comment_id}/like")
+def like_comment(comment_id: int, current_user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
+    db.query(SysUser).filter_by(id=current_user["user_id"]).with_for_update().one()
+    comment = db.query(CommunityComment).filter_by(id=comment_id, status="APPROVED").with_for_update().first()
+    if not comment:
+        raise HTTPException(404, "评论不存在")
+    visible_post(db, comment.post_id, public_only=True)
+    like = db.get(CommunityCommentLike, (comment_id, current_user["user_id"]))
+    if like:
+        db.delete(like); comment.like_count = max(0, comment.like_count - 1)
+    else:
+        db.add(CommunityCommentLike(comment_id=comment_id, user_id=current_user["user_id"]))
+        comment.like_count += 1
+    db.commit()
+    return success_response({"is_liked":not bool(like),"like_count":comment.like_count})
 
 @router.get("/topics")
 def list_topics(db: Session = Depends(get_db)):
@@ -289,6 +396,7 @@ def report_post(
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    visible_post(db, req.post_id, public_only=True)
     rep = CommunityReport(
         post_id=req.post_id,
         reporter_id=current_user["user_id"],
@@ -310,17 +418,17 @@ class SubmitCoCreateRequest(BaseModel):
 def submit_co_creation(
     post_id: int,
     req: SubmitCoCreateRequest,
-    current_user: Optional[dict] = Depends(get_current_user_optional),
+    current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
     城乡手拉手接力共创：对乡村孩子的白模线稿进行二次套色赋能并生成双生共创作品
     """
     origin_post = db.query(CommunityPost).filter(CommunityPost.id == post_id).first()
-    if not origin_post:
-        return error_response(code=4040, message="原始乡村作品不存在")
+    if not origin_post or origin_post.status != "APPROVED":
+        raise HTTPException(404, "原始公开作品不存在")
 
-    user_id = current_user["user_id"] if current_user else 1
+    user_id = current_user["user_id"]
 
     # 获取原作者昵称与学校
     origin_user = db.query(SysUser).filter(SysUser.id == origin_post.user_id).first()
@@ -335,16 +443,16 @@ def submit_co_creation(
         cover_url=req.colored_cover_url,
         rural_original_url=origin_post.rural_original_url or origin_post.cover_url,
         source_task_id=origin_post.source_task_id,
-        status="APPROVED",
-        is_featured=True,
+        status="PENDING_REVIEW",
+        is_featured=False,
         is_pinned=False,
         is_co_creation=True,
         co_creator_name=req.co_creator_name,
         co_creator_school=req.co_creator_school,
         rural_author_name=rural_author,
         rural_school=rural_school,
-        like_count=12,
-        comment_count=1
+        like_count=0,
+        comment_count=0
     )
     db.add(co_post)
     db.commit()
@@ -356,4 +464,4 @@ def submit_co_creation(
         "cover_url": co_post.cover_url,
         "co_creator_name": co_post.co_creator_name,
         "rural_author_name": co_post.rural_author_name
-    }, message="城乡共创作品已成功发布到美育广场！")
+    }, message="共创作品已提交审核")

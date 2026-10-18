@@ -37,8 +37,8 @@ dataThemeChange(overallStyle.value);
 const { title } = useNav();
 
 const ruleForm = reactive({
-  username: "admin",
-  password: "admin123"
+  username: "",
+  password: ""
 });
 
 const onLogin = async (formEl: FormInstance | undefined) => {
@@ -57,7 +57,11 @@ const onLogin = async (formEl: FormInstance | undefined) => {
             return initRouter().then(() => {
               disabled.value = true;
               router
-                .push(getTopMenu(true).path)
+                .push(
+                  useUserStoreHook().roles.includes("TEACHER")
+                    ? "/teacher/workspace"
+                    : getTopMenu(true).path
+                )
                 .then(() => {
                   message("登录成功", { type: "success" });
                 })

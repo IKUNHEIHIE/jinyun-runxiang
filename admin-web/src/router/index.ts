@@ -52,7 +52,12 @@ const modules: Record<string, any> = import.meta.glob(
 const routes = [];
 
 Object.keys(modules).forEach(key => {
-  routes.push(modules[key].default);
+  const restrict = (route: any) => {
+    route.meta = { ...route.meta, roles: route.meta?.roles || ["ADMIN"] };
+    route.children?.forEach(restrict);
+    return route;
+  };
+  routes.push(restrict(modules[key].default));
 });
 
 /** 导出处理后的静态路由（三级及以上的路由全部拍成二级） */
@@ -148,13 +153,26 @@ router.beforeEach((to: ToRouteType, _from, next) => {
     to.fullPath === "/login" ? next(_from.fullPath || "/") : next();
   }
   if (Cookies.get(multipleTabsKey) && userInfo) {
+    if (
+      userInfo.roles?.includes("TEACHER") &&
+      !userInfo.roles.includes("ADMIN") &&
+      ![
+        "/teacher",
+        "/teacher/workspace",
+        "/login",
+        "/access-denied",
+        "/server-error"
+      ].includes(to.path)
+    ) {
+      return next({ path: "/teacher/workspace" });
+    }
     // 无权限跳转403页面
     if (to.meta?.roles && !isOneOfArray(to.meta?.roles, userInfo?.roles)) {
-      next({ path: "/error/403" });
+      return next({ path: "/access-denied" });
     }
     // 开启隐藏首页后在浏览器地址栏手动输入首页welcome路由则跳转到404页面
     if (VITE_HIDE_HOME === "true" && to.fullPath === "/welcome") {
-      next({ path: "/error/404" });
+      return next({ path: "/access-denied" });
     }
     if (_from?.name) {
       // name为超链接

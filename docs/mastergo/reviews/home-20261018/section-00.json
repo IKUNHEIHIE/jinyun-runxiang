@@ -1,0 +1,295 @@
+{
+  "sectionIndex": 0,
+  "section": {
+    "id": "5:02088",
+    "name": "组 2119",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "373px",
+    "minHeight": "1394px",
+    "background": "#FFFFFF",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_5:02093": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 28,
+          "style": "Bold",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "42",
+          "letterSpacing": "4.199999809265137px",
+          "weight": "700"
+        }
+      },
+      "font_5:02107": {
+        "value": {
+          "family": "Noto Sans SC",
+          "size": 11,
+          "style": "Medium",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "16.5",
+          "letterSpacing": "3.299999952316284px",
+          "weight": "500"
+        }
+      },
+      "paint_5:01947": {
+        "value": [
+          "#3D2314"
+        ]
+      },
+      "paint_5:01961": {
+        "value": [
+          "#6C0A0A"
+        ]
+      },
+      "paint_5:02084": {
+        "value": [
+          "linear-gradient(90deg, #C9A84C 3%, #E8D9A8 30%, #C9A84C 50%, #D9BC6E 69%, #C9A84C 100%)"
+        ]
+      },
+      "paint_5:3224": {
+        "value": [
+          "#C9A84C"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:02088",
+        "name": "组 2119",
+        "layoutStyle": {
+          "width": 375,
+          "height": 148,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:02096",
+            "name": "组 2120",
+            "layoutStyle": {
+              "width": 375,
+              "height": 2,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:02084",
+            "_color": "linear-gradient(90deg, #C9A84C 3%, #E8D9A8 30%, #C9A84C 50%, #D9BC6E 69%, #C9A84C 100%)",
+            "children": []
+          },
+          {
+            "type": "FRAME",
+            "id": "5:02089",
+            "name": "组 2121",
+            "layoutStyle": {
+              "width": 24,
+              "height": 24,
+              "relativeX": 16,
+              "relativeY": 16
+            },
+            "opacity": 0.6000000238418579,
+            "strokeColor": "paint_5:3224",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "2px 0px 0px 2px",
+            "children": []
+          },
+          {
+            "type": "FRAME",
+            "id": "5:02103",
+            "name": "组 2122",
+            "layoutStyle": {
+              "width": 24,
+              "height": 24,
+              "relativeX": 335,
+              "relativeY": 16
+            },
+            "opacity": 0.6000000238418579,
+            "strokeColor": "paint_5:3224",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "2px 2px 0px 0px",
+            "children": []
+          },
+          {
+            "type": "TEXT",
+            "id": "5:02090",
+            "name": "文本 1",
+            "layoutStyle": {
+              "width": 352.20001220703125,
+              "height": 42,
+              "relativeX": 11.399999618530273,
+              "relativeY": 40
+            },
+            "fill": "paint_5:01947",
+            "_color": "#3D2314",
+            "text": [
+              {
+                "text": "津韵润乡",
+                "font": "font_5:02093"
+              }
+            ],
+            "textColor": [
+              {
+                "start": 0,
+                "end": 4,
+                "color": "paint_5:01947"
+              }
+            ],
+            "textAlign": "center",
+            "textMode": "single-line"
+          },
+          {
+            "type": "TEXT",
+            "id": "5:02104",
+            "name": "文本 2",
+            "layoutStyle": {
+              "width": 335,
+              "height": 16,
+              "relativeX": 20,
+              "relativeY": 86
+            },
+            "fill": "paint_5:01961",
+            "_color": "#6C0A0A",
+            "text": [
+              {
+                "text": "INTANGIBLE HERITAGE",
+                "font": "font_5:02107"
+              }
+            ],
+            "textColor": [
+              {
+                "start": 0,
+                "end": 19,
+                "color": "paint_5:01961"
+              }
+            ],
+            "textAlign": "center",
+            "textMode": "single-line"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:02097",
+            "name": "组 2123",
+            "layoutStyle": {
+              "width": 327,
+              "height": 6,
+              "relativeX": 24,
+              "relativeY": 118
+            },
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:02101",
+                "name": "组 1",
+                "layoutStyle": {
+                  "width": 107.5,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "fill": "paint_5:3224",
+                "_color": "#C9A84C",
+                "children": []
+              },
+              {
+                "type": "FRAME",
+                "id": "5:02099",
+                "name": "组 2",
+                "layoutStyle": {
+                  "width": 107.5,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "fill": "paint_5:3224",
+                "_color": "#C9A84C",
+                "children": []
+              },
+              {
+                "type": "FRAME",
+                "id": "5:02100",
+                "name": "组 2126",
+                "layoutStyle": {
+                  "width": 6,
+                  "height": 6,
+                  "relativeX": 147.5,
+                  "relativeY": 0
+                },
+                "fill": "paint_5:3224",
+                "_color": "#C9A84C",
+                "children": [],
+                "borderRadius": "9999px"
+              },
+              {
+                "type": "FRAME",
+                "id": "5:02102",
+                "name": "组 2127",
+                "layoutStyle": {
+                  "width": 4,
+                  "height": 4,
+                  "relativeX": 161.5,
+                  "relativeY": 1
+                },
+                "fill": "paint_5:3224",
+                "_color": "#C9A84C",
+                "children": [],
+                "borderRadius": "9999px"
+              },
+              {
+                "type": "FRAME",
+                "id": "5:02098",
+                "name": "组 2128",
+                "layoutStyle": {
+                  "width": 6,
+                  "height": 6,
+                  "relativeX": 173.5,
+                  "relativeY": 0
+                },
+                "fill": "paint_5:3224",
+                "_color": "#C9A84C",
+                "children": [],
+                "borderRadius": "9999px"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "id": "5:02095",
+            "name": "容器 6",
+            "layoutStyle": {
+              "width": 373,
+              "height": 1394,
+              "relativeX": 0,
+              "relativeY": -25
+            },
+            "children": []
+          }
+        ]
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "津韵润乡",
+        "parentType": "FRAME",
+        "parentName": "组 2119"
+      },
+      {
+        "text": "INTANGIBLE HERITAGE",
+        "parentType": "FRAME",
+        "parentName": "组 2119"
+      }
+    ]
+  },
+  "nodeCount": 13,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 1/29. MISSING 28 sections: [1,2,3,4,5,6,7,8,9,10... +18 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

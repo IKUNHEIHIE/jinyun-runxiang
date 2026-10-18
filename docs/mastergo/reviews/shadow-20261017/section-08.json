@@ -1,0 +1,91 @@
+{
+  "sectionIndex": 8,
+  "section": {
+    "id": "5:3748",
+    "name": "组 7472",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "446px",
+    "minHeight": "2325px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_5:3752": {
+        "value": {
+          "family": "Ma Shan Zheng",
+          "size": 60,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "60",
+          "letterSpacing": "auto",
+          "weight": "400"
+        }
+      },
+      "paint_5:3754": {
+        "value": [
+          "#A8800F"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:3748",
+        "name": "组 7472",
+        "layoutStyle": {
+          "width": 223.85650634765625,
+          "height": 60,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "TEXT",
+            "id": "5:3749",
+            "name": "文本 7",
+            "layoutStyle": {
+              "width": 240,
+              "height": 60,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:3754",
+            "_color": "#A8800F",
+            "text": [
+              {
+                "text": "角⁠色⁠设⁠计",
+                "font": "font_5:3752"
+              }
+            ],
+            "textColor": [
+              {
+                "start": 0,
+                "end": 7,
+                "color": "paint_5:3754"
+              }
+            ],
+            "textAlign": "left",
+            "textMode": "single-line"
+          }
+        ]
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "角⁠色⁠设⁠计",
+        "parentType": "FRAME",
+        "parentName": "组 7472"
+      }
+    ]
+  },
+  "nodeCount": 2,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 9/31. MISSING 22 sections: [9,10,11,12,13,14,15,16,17,18... +12 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

@@ -1,0 +1,76 @@
+{
+  "sectionIndex": 4,
+  "section": {
+    "id": "5:02198",
+    "name": "文本 23",
+    "type": "TEXT"
+  },
+  "rootContainer": {
+    "width": "373px",
+    "minHeight": "1394px",
+    "background": "#FFFFFF",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_5:02014": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 17,
+          "style": "SemiBold",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "25.5",
+          "letterSpacing": "auto",
+          "weight": "600"
+        }
+      },
+      "paint_5:01947": {
+        "value": [
+          "#3D2314"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "TEXT",
+        "id": "5:02198",
+        "name": "文本 23",
+        "layoutStyle": {
+          "width": 135.66000366210938,
+          "height": 25,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "fill": "paint_5:01947",
+        "_color": "#3D2314",
+        "text": [
+          {
+            "text": "非遗典藏 · 小课",
+            "font": "font_5:02014"
+          }
+        ],
+        "textColor": [
+          {
+            "start": 0,
+            "end": 9,
+            "color": "paint_5:01947"
+          }
+        ],
+        "textAlign": "left",
+        "textMode": "single-line"
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "非遗典藏 · 小课"
+      }
+    ]
+  },
+  "nodeCount": 1,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 5/29. MISSING 24 sections: [5,6,7,8,9,10,11,12,13,14... +14 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

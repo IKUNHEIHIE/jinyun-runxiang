@@ -7,8 +7,8 @@ WORKDIR /app
 
 RUN npm config set registry https://registry.npmmirror.com
 
-COPY package.json package-lock.json* ./
-RUN npm install
+COPY package.json package-lock.json ./
+RUN npm ci --ignore-scripts
 
 COPY . .
 RUN npm run build
@@ -17,6 +17,7 @@ RUN npm run build
 # 阶段 2: Nginx 生产环境静态托管
 # ==========================================
 FROM nginx:stable-alpine AS production-stage
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 EXPOSE 80

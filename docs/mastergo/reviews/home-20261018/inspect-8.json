@@ -1,0 +1,49 @@
+[
+  {
+    "id": "5:02153",
+    "type": "FRAME",
+    "depth": 0,
+    "name": "组 2187",
+    "layout": {
+      "width": 62.47999954223633,
+      "height": 30,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "fill": [
+      "#B85450"
+    ],
+    "borderRadius": "9999px"
+  },
+  {
+    "id": "5:02154",
+    "type": "TEXT",
+    "depth": 1,
+    "name": "文本 24",
+    "layout": {
+      "width": 56.06999969482422,
+      "height": 16,
+      "relativeX": 3.2100000381469727,
+      "relativeY": 7
+    },
+    "fill": [
+      "#FAF5F0"
+    ],
+    "text": [
+      {
+        "text": "1-3年级",
+        "font": "font_5:02157"
+      }
+    ],
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 11,
+      "style": "Medium",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "16.5",
+      "letterSpacing": "auto",
+      "weight": "500"
+    }
+  }
+]

@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS `sys_user` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '用户主键ID',
   `username` VARCHAR(64) NOT NULL COMMENT '登录名/学号/工号',
   `password_hash` VARCHAR(255) NOT NULL COMMENT '加密密码',
+  `token_version` INT NOT NULL DEFAULT 0,
   `nickname` VARCHAR(64) NOT NULL COMMENT '用户昵称',
   `avatar_url` VARCHAR(500) DEFAULT NULL COMMENT '头像图片地址',
   `role_code` VARCHAR(32) NOT NULL DEFAULT 'STUDENT' COMMENT '主要角色: STUDENT/TEACHER/ADMIN/TOURIST',
@@ -400,6 +401,12 @@ CREATE TABLE IF NOT EXISTS `community_post` (
   `view_count` INT NOT NULL DEFAULT 0 COMMENT '浏览量',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_co_creation` BOOLEAN NOT NULL DEFAULT FALSE,
+  `co_creator_name` VARCHAR(64) NULL,
+  `co_creator_school` VARCHAR(128) NULL,
+  `rural_author_name` VARCHAR(64) NULL,
+  `rural_school` VARCHAR(128) NULL,
+  `rural_original_url` VARCHAR(500) NULL,
   PRIMARY KEY (`id`),
   KEY `idx_status_featured_created` (`status`, `is_featured`, `created_at`),
   KEY `idx_user_posts` (`user_id`, `created_at`),
@@ -542,6 +549,7 @@ CREATE TABLE IF NOT EXISTS `assignment` (
   `rubric_json` JSON DEFAULT NULL COMMENT '评价维度与权重打分标准',
   `lesson_plan_id` BIGINT DEFAULT NULL COMMENT '关联的AI智能备课教案ID',
   `status` VARCHAR(16) NOT NULL DEFAULT 'PUBLISHED' COMMENT 'DRAFT/PUBLISHED/CLOSED',
+  `contest_id` BIGINT DEFAULT NULL COMMENT '所属对抗赛ID',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -576,6 +584,42 @@ CREATE TABLE IF NOT EXISTS `assignment_review` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_submission_review` (`submission_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='作业批阅与AI辅助评语表';
+
+-- 班级对抗赛
+CREATE TABLE IF NOT EXISTS `contest` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `teacher_id` BIGINT NOT NULL COMMENT '组织教师',
+  `title` VARCHAR(128) NOT NULL COMMENT '轮次标题',
+  `description` TEXT NOT NULL COMMENT '比赛任务要求',
+  `tool_type` VARCHAR(32) DEFAULT NULL COMMENT '限定创作工具',
+  `home_class_id` BIGINT NOT NULL,
+  `away_class_id` BIGINT NOT NULL,
+  `home_assignment_id` BIGINT DEFAULT NULL,
+  `away_assignment_id` BIGINT DEFAULT NULL,
+  `round_no` INT NOT NULL DEFAULT 1 COMMENT '轮次序号',
+  `scoring_mode` VARCHAR(16) NOT NULL DEFAULT 'TOTAL' COMMENT 'TOTAL/AVERAGE',
+  `deadline` DATETIME NOT NULL,
+  `status` VARCHAR(16) NOT NULL DEFAULT 'OPEN' COMMENT 'OPEN/SCORING/PUBLISHED',
+  `result_json` JSON DEFAULT NULL COMMENT '公布时的成绩快照',
+  `published_at` DATETIME DEFAULT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_contest_teacher_status` (`teacher_id`, `status`),
+  KEY `idx_contest_classes` (`home_class_id`, `away_class_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='班级对抗赛';
+
+CREATE TABLE IF NOT EXISTS `contest_entry` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `contest_id` BIGINT NOT NULL,
+  `class_id` BIGINT NOT NULL,
+  `student_id` BIGINT NOT NULL,
+  `assignment_id` BIGINT NOT NULL COMMENT '该学生所在班级侧的作业ID',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_contest_student` (`contest_id`, `student_id`),
+  KEY `idx_contest_entry_student` (`student_id`),
+  KEY `idx_contest_entry_contest_class` (`contest_id`, `class_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='对抗赛参赛名单';
 
 -- 班级学情日常汇总表（避免高频全量聚合扫描）
 CREATE TABLE IF NOT EXISTS `class_daily_stats` (
@@ -658,9 +702,11 @@ CREATE TABLE IF NOT EXISTS `activity_checkin` (
   `latitude` DECIMAL(10,6) NOT NULL COMMENT '签到时经纬度',
   `longitude` DECIMAL(10,6) NOT NULL,
   `distance_meters` INT NOT NULL COMMENT '距离地标中心误差距离(米)',
+  `location_accuracy_meters` DECIMAL(10,2) DEFAULT NULL,
+  `geofence_status` VARCHAR(16) DEFAULT NULL,
   `checked_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_user_landmark_date` (`user_id`, `landmark_id`),
+  KEY `idx_user_landmark` (`user_id`, `landmark_id`),
   KEY `idx_user_checkin` (`user_id`, `checked_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='非遗地标打卡签到记录表';
 
@@ -699,6 +745,7 @@ CREATE TABLE IF NOT EXISTS `product_sku` (
 CREATE TABLE IF NOT EXISTS `order_main` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '订单ID',
   `order_no` VARCHAR(64) NOT NULL COMMENT '唯一订单流水号',
+  `client_request_id` VARCHAR(64) DEFAULT NULL,
   `user_id` BIGINT NOT NULL COMMENT '下单用户ID',
   `total_amount_cents` INT NOT NULL DEFAULT 0 COMMENT '实付总额(分)',
   `fund_amount_cents` INT NOT NULL DEFAULT 0 COMMENT '贡献至美育基金金额(分)',
@@ -711,6 +758,7 @@ CREATE TABLE IF NOT EXISTS `order_main` (
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_order_no` (`order_no`),
+  UNIQUE KEY `uk_order_client_request_id` (`client_request_id`),
   KEY `idx_user_order` (`user_id`, `created_at`),
   KEY `idx_order_status` (`status`, `created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='助农文创订单主表';
@@ -960,3 +1008,239 @@ CREATE TABLE IF NOT EXISTS `operation_stat_daily` (
 
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+
+
+-- Additional application tables (also available in V9).
+CREATE TABLE IF NOT EXISTS sys_config (
+	id INTEGER NOT NULL AUTO_INCREMENT,
+	config_key VARCHAR(64) NOT NULL,
+	config_value TEXT NOT NULL,
+	description VARCHAR(255),
+	updated_at DATETIME,
+	PRIMARY KEY (id),
+	UNIQUE (config_key)
+);
+
+CREATE TABLE IF NOT EXISTS folk_festival (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	title VARCHAR(128) NOT NULL,
+	solar_date VARCHAR(32),
+	lunar_date VARCHAR(32) NOT NULL,
+	category VARCHAR(64),
+	tag VARCHAR(64),
+	customs VARCHAR(255),
+	description TEXT,
+	cover_url VARCHAR(500),
+	status VARCHAR(16),
+	sort_order INTEGER,
+	created_at DATETIME,
+	updated_at DATETIME,
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS philanthropy_supply (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	school_name VARCHAR(128) NOT NULL,
+	district VARCHAR(64) NOT NULL,
+	materials_name VARCHAR(128) NOT NULL,
+	quantity INTEGER NOT NULL,
+	unit VARCHAR(16),
+	beneficiary_students INTEGER,
+	delivered_date VARCHAR(32),
+	batch_no VARCHAR(64),
+	photo_url VARCHAR(500),
+	status VARCHAR(16),
+	created_at DATETIME,
+	PRIMARY KEY (id)
+);
+
+-- Additive migration for the MasterGo Android client. MySQL 8.0.
+-- Apply after V9. Existing business data and tables are preserved.
+CREATE TABLE IF NOT EXISTS heritage_entry (
+  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(128) NOT NULL,
+  category VARCHAR(64) NOT NULL,
+  era VARCHAR(128),
+  summary VARCHAR(1000),
+  cover_url VARCHAR(500),
+  model_url VARCHAR(500),
+  content_json JSON NOT NULL,
+  status VARCHAR(16) NOT NULL DEFAULT 'PUBLISHED',
+  created_at DATETIME,
+  updated_at DATETIME,
+  INDEX ix_heritage_entry_category (category)
+) CHARACTER SET utf8mb4;
+
+CREATE TABLE IF NOT EXISTS user_collection (
+  user_id BIGINT NOT NULL,
+  target_type VARCHAR(16) NOT NULL,
+  target_id BIGINT NOT NULL,
+  created_at DATETIME,
+  PRIMARY KEY (user_id, target_type, target_id)
+) CHARACTER SET utf8mb4;
+
+CREATE TABLE IF NOT EXISTS user_follow (
+  follower_id BIGINT NOT NULL,
+  followed_id BIGINT NOT NULL,
+  created_at DATETIME,
+  PRIMARY KEY (follower_id, followed_id)
+) CHARACTER SET utf8mb4;
+
+CREATE TABLE IF NOT EXISTS course_rating (
+  user_id BIGINT NOT NULL,
+  course_id BIGINT NOT NULL,
+  score INT NOT NULL,
+  comment VARCHAR(1000) NOT NULL DEFAULT '',
+  updated_at DATETIME,
+  PRIMARY KEY (user_id, course_id), CONSTRAINT ck_course_rating_score CHECK (score BETWEEN 1 AND 5)
+) CHARACTER SET utf8mb4;
+
+CREATE TABLE IF NOT EXISTS user_feedback (
+  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT NOT NULL,
+  content TEXT NOT NULL,
+  contact VARCHAR(128),
+  status VARCHAR(16) NOT NULL DEFAULT 'PENDING',
+  created_at DATETIME,
+  reply_text TEXT,
+  handled_by BIGINT,
+  handled_at DATETIME,
+  INDEX ix_user_feedback_user_id (user_id)
+) CHARACTER SET utf8mb4;
+
+
+-- V11: additive teacher collaboration tables. Apply after V10.
+CREATE TABLE IF NOT EXISTS lesson_plan_record (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	teacher_id BIGINT NOT NULL,
+	title VARCHAR(255) NOT NULL,
+	grade VARCHAR(64) NOT NULL,
+	topic VARCHAR(128) NOT NULL,
+	duration_minutes INTEGER NOT NULL,
+	content_json JSON NOT NULL,
+	source VARCHAR(128) NOT NULL,
+	request_id VARCHAR(64),
+	request_mode VARCHAR(16),
+	created_at DATETIME,
+	PRIMARY KEY (id),
+	INDEX ix_lesson_plan_record_teacher_id (teacher_id),
+	CONSTRAINT uk_lesson_plan_request UNIQUE (teacher_id, request_id)
+) CHARACTER SET utf8mb4;
+
+CREATE TABLE IF NOT EXISTS class_notice (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	class_id BIGINT NOT NULL,
+	teacher_id BIGINT NOT NULL,
+	title VARCHAR(128) NOT NULL,
+	content TEXT NOT NULL,
+	created_at DATETIME,
+	PRIMARY KEY (id),
+	INDEX ix_class_notice_class_id (class_id)
+) CHARACTER SET utf8mb4;
+
+CREATE TABLE IF NOT EXISTS class_attendance (
+	class_id BIGINT NOT NULL,
+	student_id BIGINT NOT NULL,
+	day VARCHAR(10) NOT NULL,
+	status VARCHAR(16) NOT NULL,
+	recorded_by BIGINT NOT NULL,
+	updated_at DATETIME,
+	PRIMARY KEY (class_id, student_id, day)
+) CHARACTER SET utf8mb4;
+
+CREATE TABLE IF NOT EXISTS class_session (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	class_id BIGINT NOT NULL,
+	host_id BIGINT NOT NULL,
+	title VARCHAR(128) NOT NULL,
+	stream_url VARCHAR(500),
+	status VARCHAR(16) NOT NULL,
+	created_at DATETIME,
+	ended_at DATETIME,
+	PRIMARY KEY (id),
+	INDEX ix_class_session_class_id (class_id)
+) CHARACTER SET utf8mb4;
+
+CREATE TABLE IF NOT EXISTS class_message (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	session_id BIGINT NOT NULL,
+	user_id BIGINT NOT NULL,
+	type VARCHAR(16) NOT NULL,
+	content VARCHAR(1000) NOT NULL,
+	created_at DATETIME,
+	PRIMARY KEY (id),
+	INDEX ix_class_message_session_id (session_id)
+) CHARACTER SET utf8mb4;
+
+
+CREATE TABLE IF NOT EXISTS exchange_item (
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  name VARCHAR(128) NOT NULL,
+  cover_url VARCHAR(500),
+  energy_cost INT NOT NULL,
+  stock INT NOT NULL DEFAULT 0,
+  status VARCHAR(16) NOT NULL DEFAULT 'ACTIVE',
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS energy_exchange (
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  request_id VARCHAR(64) NOT NULL,
+  user_id BIGINT NOT NULL,
+  item_id BIGINT NOT NULL,
+  item_name VARCHAR(128) NOT NULL,
+  energy_cost INT NOT NULL,
+  receiver_name VARCHAR(64) NOT NULL,
+  receiver_phone VARCHAR(32) NOT NULL,
+  receiver_address VARCHAR(255) NOT NULL,
+  status VARCHAR(16) NOT NULL DEFAULT 'REQUESTED',
+  tracking_no VARCHAR(128),
+  created_at DATETIME,
+  handling_note VARCHAR(500) NOT NULL DEFAULT '',
+  handled_by BIGINT,
+  handled_at DATETIME,
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_exchange_request (request_id),
+  KEY ix_energy_exchange_user_id (user_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS walk_session (
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  user_id BIGINT NOT NULL,
+  active_seconds INT NOT NULL DEFAULT 0,
+  distance_meters INT NOT NULL DEFAULT 0,
+  status VARCHAR(16) NOT NULL DEFAULT 'ACTIVE',
+  last_latitude NUMERIC(10,6),
+  last_longitude NUMERIC(10,6),
+  last_point_at DATETIME,
+  started_at DATETIME,
+  ended_at DATETIME,
+  PRIMARY KEY (id),
+  KEY ix_walk_session_user_id (user_id)
+);
+
+-- V14: artwork gallery/metadata and comment likes.
+CREATE TABLE IF NOT EXISTS community_post_detail (
+  post_id BIGINT NOT NULL,
+  gallery_json JSON NOT NULL,
+  specifications_json JSON NOT NULL,
+  appreciation_json JSON NOT NULL,
+  PRIMARY KEY (post_id)
+) CHARACTER SET utf8mb4;
+
+CREATE TABLE IF NOT EXISTS community_comment_like (
+  comment_id BIGINT NOT NULL,
+  user_id BIGINT NOT NULL,
+  created_at DATETIME,
+  PRIMARY KEY (comment_id, user_id)
+) CHARACTER SET utf8mb4;
+
+-- V15: one learning record per user and Shanghai calendar day.
+CREATE TABLE IF NOT EXISTS learning_day (
+  user_id BIGINT NOT NULL,
+  day DATE NOT NULL,
+  created_at DATETIME,
+  PRIMARY KEY (user_id, day)
+) CHARACTER SET utf8mb4;

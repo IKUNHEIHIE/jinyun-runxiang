@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
+import { androidPublicAssets } from './scripts/android-public-assets.mjs'
 
-export default defineConfig({
-  plugins: [vue()],
+export default defineConfig(({mode}) => ({
+  plugins: [vue(), ...(mode === 'android' ? [androidPublicAssets()] : [])],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src')
@@ -24,15 +25,12 @@ export default defineConfig({
     }
   },
   build: {
+    copyPublicDir: mode !== 'android',
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vue-vendor': ['vue', 'vue-router', 'pinia'],
-          'element-plus': ['element-plus', '@element-plus/icons-vue'],
-          'echarts-vendor': ['echarts']
-        }
+        manualChunks: id => id.includes('node_modules') && /[\\/](@vue|vue|vue-router)[\\/]/.test(id) ? 'vue-vendor' : undefined
       }
     }
   }
-})
+}))

@@ -1,0 +1,47 @@
+[
+  {
+    "id": "5:02292",
+    "type": "FRAME",
+    "depth": 0,
+    "name": "组 2240",
+    "layout": {
+      "width": 72,
+      "height": 72,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "strokeColor": [
+      "#E8D9A8"
+    ],
+    "borderRadius": "10px"
+  },
+  {
+    "id": "5:02293",
+    "type": "FRAME",
+    "depth": 1,
+    "name": "组 2241",
+    "layout": {
+      "width": 70,
+      "height": 70,
+      "relativeX": 1,
+      "relativeY": 1
+    }
+  },
+  {
+    "id": "5:02294",
+    "type": "FRAME",
+    "depth": 2,
+    "name": "图片 7",
+    "layout": {
+      "width": 70,
+      "height": 70,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "fill": [
+      {
+        "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/45f8e0776923a2475b8c9605125baa99.png"
+      }
+    ]
+  }
+]

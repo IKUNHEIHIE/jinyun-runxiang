@@ -1,0 +1,158 @@
+{
+  "sectionIndex": 5,
+  "section": {
+    "id": "5:8171",
+    "name": "组 10298",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2862px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_5:8181": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 10,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "15",
+          "letterSpacing": "0.5px",
+          "weight": "400"
+        }
+      },
+      "paint_5:8176": {
+        "value": [
+          "rgba(255, 255, 255, 0.7)"
+        ]
+      },
+      "paint_5:8183": {
+        "value": [
+          "rgba(255, 255, 255, 0.7)"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:8171",
+        "name": "组 10298",
+        "layoutStyle": {
+          "width": 42,
+          "height": 39,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:8172",
+            "name": "组 10299",
+            "layoutStyle": {
+              "width": 42,
+              "height": 39,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "children": [
+              {
+                "type": "TEXT",
+                "id": "5:8178",
+                "name": "文本 10",
+                "layoutStyle": {
+                  "width": 55.5,
+                  "height": 15,
+                  "relativeX": -6.75,
+                  "relativeY": 0
+                },
+                "fill": "paint_5:8183",
+                "_color": "rgba(255, 255, 255, 0.7)",
+                "text": [
+                  {
+                    "text": "向⁠下⁠滑⁠动",
+                    "font": "font_5:8181"
+                  }
+                ],
+                "textColor": [
+                  {
+                    "start": 0,
+                    "end": 7,
+                    "color": "paint_5:8183"
+                  }
+                ],
+                "textAlign": "left",
+                "textMode": "single-line"
+              },
+              {
+                "type": "FRAME",
+                "id": "5:8173",
+                "name": "组 10301",
+                "layoutStyle": {
+                  "width": 20,
+                  "height": 20,
+                  "relativeX": 11,
+                  "relativeY": 18.999998092651367
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:8174",
+                    "name": "图标 5",
+                    "layoutStyle": {
+                      "width": 20,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "children": [
+                      {
+                        "type": "PATH",
+                        "id": "5:8175",
+                        "name": "组 9",
+                        "layoutStyle": {
+                          "width": 11.666666030883789,
+                          "height": 15,
+                          "relativeX": 4.166666507720947,
+                          "relativeY": 2.5
+                        },
+                        "svgKey": "S5:图标 5|5:8175",
+                        "svgShortKey": "S5#0",
+                        "svgName": "图标 5"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "flexContainerInfo": {
+              "flexDirection": "column",
+              "alignItems": "center",
+              "mainSizing": "fixed",
+              "crossSizing": "fixed",
+              "gap": "4px 4px"
+            }
+          }
+        ]
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "向⁠下⁠滑⁠动",
+        "parentType": "FRAME",
+        "parentName": "组 10299"
+      }
+    ]
+  },
+  "nodeCount": 6,
+  "svgNodeCount": 1,
+  "hasStrippedSvgs": true,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 6/20. MISSING 14 sections: [6,7,8,9,10,11,12,13,14,15,16,17,18,19]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

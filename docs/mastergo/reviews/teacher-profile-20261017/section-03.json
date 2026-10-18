@@ -1,0 +1,118 @@
+{
+  "sectionIndex": 3,
+  "section": {
+    "id": "40:00255",
+    "name": "组 11809",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "1405px",
+    "background": "#E5D6D6",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_40:5830": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 16,
+          "style": "Bold",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "24",
+          "letterSpacing": "0.800000011920929px",
+          "weight": "700"
+        }
+      },
+      "paint_40:5350": {
+        "value": [
+          "#A84A3B"
+        ]
+      },
+      "paint_5:3215": {
+        "value": [
+          "#2C1810"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "40:00255",
+        "name": "组 11809",
+        "layoutStyle": {
+          "width": 335,
+          "height": 24,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "40:00256",
+            "name": "组 11810",
+            "layoutStyle": {
+              "width": 3,
+              "height": 16,
+              "relativeX": 0,
+              "relativeY": 4
+            },
+            "fill": "paint_40:5350",
+            "_color": "#A84A3B",
+            "children": [],
+            "borderRadius": "9999px"
+          },
+          {
+            "type": "TEXT",
+            "id": "40:00257",
+            "name": "文本 27",
+            "layoutStyle": {
+              "width": 67.19999694824219,
+              "height": 24,
+              "relativeX": 11,
+              "relativeY": 0
+            },
+            "fill": "paint_5:3215",
+            "_color": "#2C1810",
+            "text": [
+              {
+                "text": "教学工坊",
+                "font": "font_40:5830"
+              }
+            ],
+            "textColor": [
+              {
+                "start": 0,
+                "end": 4,
+                "color": "paint_5:3215"
+              }
+            ],
+            "textAlign": "left",
+            "textMode": "single-line"
+          }
+        ],
+        "flexContainerInfo": {
+          "flexDirection": "row",
+          "alignItems": "center",
+          "mainSizing": "fixed",
+          "crossSizing": "fixed",
+          "gap": "8px 8px"
+        }
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "教学工坊",
+        "parentType": "FRAME",
+        "parentName": "组 11809"
+      }
+    ]
+  },
+  "nodeCount": 3,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 4/8. MISSING 4 sections: [4,5,6,7]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

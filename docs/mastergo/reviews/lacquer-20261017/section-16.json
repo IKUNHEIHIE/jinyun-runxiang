@@ -1,0 +1,238 @@
+{
+  "sectionIndex": 16,
+  "section": {
+    "id": "5:00142",
+    "name": "组 7938",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2372px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_5:9703": {
+        "value": {
+          "family": "Ma Shan Zheng",
+          "size": 28,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "42",
+          "letterSpacing": "4px",
+          "weight": "400"
+        }
+      },
+      "font_5:9768": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 8,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "12",
+          "letterSpacing": "2px",
+          "weight": "400"
+        }
+      },
+      "font_5:9773": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 13,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "19.5",
+          "letterSpacing": "2px",
+          "weight": "400"
+        }
+      },
+      "paint_5:8370": {
+        "value": [
+          "#2D4A3E"
+        ]
+      },
+      "paint_5:9705": {
+        "value": [
+          "#B8A67A"
+        ]
+      },
+      "paint_5:9763": {
+        "value": [
+          "rgba(45, 74, 62, 0.06)"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:00142",
+        "name": "组 7938",
+        "layoutStyle": {
+          "width": 335,
+          "height": 40,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:00143",
+            "name": "组 7939",
+            "layoutStyle": {
+              "width": 42,
+              "height": 40,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "opacity": 0.6000000238418579,
+            "children": [
+              {
+                "type": "TEXT",
+                "id": "5:00144",
+                "name": "文本 58",
+                "layoutStyle": {
+                  "width": 28,
+                  "height": 32,
+                  "relativeX": 7,
+                  "relativeY": 8
+                },
+                "fill": "paint_5:9705",
+                "_color": "#B8A67A",
+                "text": [
+                  {
+                    "text": "陆",
+                    "font": "font_5:9703"
+                  }
+                ],
+                "textColor": [
+                  {
+                    "start": 0,
+                    "end": 1,
+                    "color": "paint_5:9705"
+                  }
+                ],
+                "textAlign": "center",
+                "textMode": "single-line"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "id": "5:00148",
+            "name": "组 7940",
+            "layoutStyle": {
+              "width": 124.5,
+              "height": 29,
+              "relativeX": 54,
+              "relativeY": 0
+            },
+            "fill": "paint_5:9763",
+            "_color": "rgba(45, 74, 62, 0.06)",
+            "strokeColor": "paint_5:9705",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "1px",
+            "children": [
+              {
+                "type": "TEXT",
+                "id": "5:00153",
+                "name": "文本 59",
+                "layoutStyle": {
+                  "width": 81.12000274658203,
+                  "height": 19,
+                  "relativeX": 15,
+                  "relativeY": 5
+                },
+                "fill": "paint_5:8370",
+                "_color": "#2D4A3E",
+                "text": [
+                  {
+                    "text": "AI智能补全",
+                    "font": "font_5:9773"
+                  }
+                ],
+                "textColor": [
+                  {
+                    "start": 0,
+                    "end": 6,
+                    "color": "paint_5:8370"
+                  }
+                ],
+                "textAlign": "left",
+                "textMode": "single-line"
+              },
+              {
+                "type": "TEXT",
+                "id": "5:00149",
+                "name": "文本 60",
+                "layoutStyle": {
+                  "width": 8,
+                  "height": 12,
+                  "relativeX": 102.12000274658203,
+                  "relativeY": 8.5
+                },
+                "fill": "paint_5:9705",
+                "_color": "#B8A67A",
+                "text": [
+                  {
+                    "text": "◆",
+                    "font": "font_5:9768"
+                  }
+                ],
+                "textColor": [
+                  {
+                    "start": 0,
+                    "end": 1,
+                    "color": "paint_5:9705"
+                  }
+                ],
+                "textAlign": "left",
+                "textMode": "single-line"
+              }
+            ],
+            "flexContainerInfo": {
+              "flexDirection": "row",
+              "alignItems": "center",
+              "mainSizing": "fixed",
+              "crossSizing": "fixed",
+              "gap": "6px 6px",
+              "padding": "4px 14px"
+            }
+          }
+        ],
+        "flexContainerInfo": {
+          "flexDirection": "row",
+          "mainSizing": "fixed",
+          "crossSizing": "fixed",
+          "gap": "12px"
+        }
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "陆",
+        "parentType": "FRAME",
+        "parentName": "组 7939"
+      },
+      {
+        "text": "AI智能补全",
+        "parentType": "FRAME",
+        "parentName": "组 7940"
+      },
+      {
+        "text": "◆",
+        "parentType": "FRAME",
+        "parentName": "组 7940"
+      }
+    ]
+  },
+  "nodeCount": 6,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 17/22. MISSING 5 sections: [17,18,19,20,21]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

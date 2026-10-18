@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 760" width="540" height="760" id="role-PAINTED_JING">
+  <rect width="540" height="760" rx="16" fill="#F8F4EC"></rect>
+  <text x="270" y="48" text-anchor="middle" font-family="serif" font-size="19" fill="#2F2925">皮影创作 · 净角</text>
+  <text x="270" y="70" text-anchor="middle" font-family="serif" font-size="11" fill="#776D65">本地二维模板参考 · 非实体装配成品</text>
+  <g stroke="#111111" stroke-width="3" stroke-linejoin="round">
+    <path d="M230,535 L258,535 L250,665 L218,665 Z M282,535 L310,535 L324,665 L290,665 Z" fill="none"></path>
+    <path d="M208,660 L250,660 L258,685 L205,685 Z M290,660 L330,660 L345,685 L286,685 Z" fill="none"></path>
+    <path d="M200,310 L340,310 L355,560 Q270,590 185,560 Z" fill="none"></path>
+    <path d="M215,325 L180,370 L145,430 L165,444 L215,400 L240,340 M325,325 L370,370 L395,430 L375,444 L325,400 L300,340" fill="none"></path>
+    <circle cx="155" cy="437" r="11" fill="none"></circle><circle cx="385" cy="437" r="11" fill="none"></circle>
+    <path d="M208,350 L332,350 M220,400 Q270,430 320,400 M222,470 Q270,500 318,470" fill="none" stroke="#111111"></path>
+    <rect x="250" y="270" width="40" height="45" fill="none"></rect>
+    <ellipse cx="270" cy="232" rx="42" ry="50" fill="none"></ellipse>
+    <path d="M224,185 L215,145 L245,165 L270,120 L295,165 L325,145 L316,185 Z" fill="none"></path>
+    <path d="M236,216 Q250,207 261,220 M279,220 Q290,207 304,216" fill="none"></path>
+    <ellipse cx="250" cy="226" rx="7" ry="4" fill="none"></ellipse><ellipse cx="290" cy="226" rx="7" ry="4" fill="none"></ellipse>
+    <path d="M270,229 L261,248 L279,248 M253,260 Q270,270 287,260" fill="none"></path>
+    <path d="M236,265 Q270,290 304,265 L292,330 L270,348 L248,330 Z" fill="none"></path>
+    <path d="M239,202 L251,211 L239,237 M301,202 L289,211 L301,237" fill="none" stroke="#111111"></path>
+    <circle cx="215" cy="325" r="6" fill="none"></circle><circle cx="325" cy="325" r="6" fill="none"></circle>
+  </g>
+  <g stroke="#8C827A" stroke-width="2" stroke-dasharray="4 3"><path d="M270,290 L120,715 M155,437 L75,715 M385,437 L465,715"></path></g>
+<g id="face-FLORAL" transform="translate(270 232) scale(1.3333333333333333 1.3428571428571427)"><path d="M-8,-20 Q0,-34 8,-20 Q0,-26 -8,-20 M-24,-2 Q-7,-18 -3,2 M24,-2 Q7,-18 3,2 M-22,13 Q-5,4 -4,25 M22,13 Q5,4 4,25" fill="none" stroke="#111111" stroke-width="3"></path></g></svg>

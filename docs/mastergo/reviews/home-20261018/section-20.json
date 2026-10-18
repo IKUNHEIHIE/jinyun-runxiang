@@ -1,0 +1,91 @@
+{
+  "sectionIndex": 20,
+  "section": {
+    "id": "5:02281",
+    "name": "组 2243",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "373px",
+    "minHeight": "1394px",
+    "background": "#FFFFFF",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_5:01959": {
+        "value": {
+          "family": "Noto Sans SC",
+          "size": 10,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "15",
+          "letterSpacing": "auto",
+          "weight": "400"
+        }
+      },
+      "paint_5:01961": {
+        "value": [
+          "#6C0A0A"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:02281",
+        "name": "组 2243",
+        "layoutStyle": {
+          "width": 20,
+          "height": 15,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "TEXT",
+            "id": "5:02282",
+            "name": "文本 36",
+            "layoutStyle": {
+              "width": 33.5,
+              "height": 15,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:01961",
+            "_color": "#6C0A0A",
+            "text": [
+              {
+                "text": "小课",
+                "font": "font_5:01959"
+              }
+            ],
+            "textColor": [
+              {
+                "start": 0,
+                "end": 2,
+                "color": "paint_5:01961"
+              }
+            ],
+            "textAlign": "left",
+            "textMode": "single-line"
+          }
+        ]
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "小课",
+        "parentType": "FRAME",
+        "parentName": "组 2243"
+      }
+    ]
+  },
+  "nodeCount": 2,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 21/29. MISSING 8 sections: [21,22,23,24,25,26,27,28]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

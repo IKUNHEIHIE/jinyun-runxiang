@@ -1,0 +1,76 @@
+{
+  "sectionIndex": 26,
+  "section": {
+    "id": "5:3756",
+    "name": "文本 57",
+    "type": "TEXT"
+  },
+  "rootContainer": {
+    "width": "446px",
+    "minHeight": "2325px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_5:3213": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 12,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "16",
+          "letterSpacing": "auto",
+          "weight": "400"
+        }
+      },
+      "paint_5:3274": {
+        "value": [
+          "#5C4A3A"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "TEXT",
+        "id": "5:3756",
+        "name": "文本 57",
+        "layoutStyle": {
+          "width": 271.426025390625,
+          "height": 32,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "fill": "paint_5:3274",
+        "_color": "#5C4A3A",
+        "text": [
+          {
+            "text": "皮影戏发源于西汉，距今两千余年，是世界上最古老的民间艺术之一",
+            "font": "font_5:3213"
+          }
+        ],
+        "textColor": [
+          {
+            "start": 0,
+            "end": 30,
+            "color": "paint_5:3274"
+          }
+        ],
+        "textAlign": "left",
+        "textMode": "single-line"
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "皮影戏发源于西汉，距今两千余年，是世界上最古老的民间艺术之一"
+      }
+    ]
+  },
+  "nodeCount": 1,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 27/31. MISSING 4 sections: [27,28,29,30]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

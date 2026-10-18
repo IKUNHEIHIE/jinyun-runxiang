@@ -1,0 +1,603 @@
+[
+  {
+    "id": "5:02409",
+    "type": "FRAME",
+    "depth": 0,
+    "l": {
+      "width": 335,
+      "height": 386,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "paint": [
+      "#FFFFFF"
+    ],
+    "stroke": [
+      "rgba(232, 208, 208, 0.5)"
+    ],
+    "sw": "1px 0px 0px",
+    "radius": "0px 0px 16px 16px"
+  },
+  {
+    "id": "5:02426",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 295,
+      "height": 20,
+      "relativeX": 20,
+      "relativeY": 17
+    }
+  },
+  {
+    "id": "5:02429",
+    "type": "PATH",
+    "depth": 4,
+    "l": {
+      "width": 12,
+      "height": 12,
+      "relativeX": 1.999999761581421,
+      "relativeY": 1.9999998807907104
+    },
+    "svg": "S6#0"
+  },
+  {
+    "id": "5:02430",
+    "type": "TEXT",
+    "depth": 2,
+    "l": {
+      "width": 56,
+      "height": 20,
+      "relativeX": 24,
+      "relativeY": 0
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "课⁠堂⁠讲⁠稿",
+    "font": {
+      "family": "Noto Serif SC",
+      "size": 14,
+      "style": "SemiBold",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "600"
+    }
+  },
+  {
+    "id": "5:02434",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 295,
+      "height": 280,
+      "relativeX": 20,
+      "relativeY": 49
+    }
+  },
+  {
+    "id": "5:02442",
+    "type": "TEXT",
+    "depth": 4,
+    "l": {
+      "width": 56,
+      "height": 20,
+      "relativeX": 0,
+      "relativeY": -9
+    },
+    "paint": [
+      "#C45C5C"
+    ],
+    "text": "【导入】",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Bold",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "700"
+    }
+  },
+  {
+    "id": "5:02455",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 207,
+      "height": 20,
+      "relativeX": 84,
+      "relativeY": -9
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "同学们，今天我们要走进一项被",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02447",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 291,
+      "height": 20,
+      "relativeX": 0,
+      "relativeY": 11
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "誉为\"东方艺术珍宝\"的传统工艺——景泰蓝。",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02451",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 291,
+      "height": 20,
+      "relativeX": 0,
+      "relativeY": 31
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "请大家先看这件国宝级文物：明代的\"景泰蓝缠",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02436",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 127.04000091552734,
+      "height": 20,
+      "relativeX": 0,
+      "relativeY": 51
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "枝莲纹出戟觚\"。",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02479",
+    "type": "TEXT",
+    "depth": 4,
+    "l": {
+      "width": 84,
+      "height": 20,
+      "relativeX": 0,
+      "relativeY": -9
+    },
+    "paint": [
+      "#C45C5C"
+    ],
+    "text": "【新课讲授】",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Bold",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "700"
+    }
+  },
+  {
+    "id": "5:02499",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 179,
+      "height": 20,
+      "relativeX": 112,
+      "relativeY": -9
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "景泰蓝，学名\"铜胎掐丝珐",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02491",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 291,
+      "height": 20,
+      "relativeX": 0,
+      "relativeY": 11
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "琅\"，起源于元代，盛于明代景泰年间，因以蓝",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02495",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 291,
+      "height": 20,
+      "relativeX": 0,
+      "relativeY": 31
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "色釉料为主而得名。它的制作工艺极为繁复，",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02487",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 291,
+      "height": 20,
+      "relativeX": 0,
+      "relativeY": 51
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "需经过制胎、掐丝、点蓝、烧蓝、磨光、镀金",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02483",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 92.4000015258789,
+      "height": 20,
+      "relativeX": 0,
+      "relativeY": 71
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "六道工序。",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02517",
+    "type": "TEXT",
+    "depth": 4,
+    "l": {
+      "width": 84,
+      "height": 20,
+      "relativeX": 0,
+      "relativeY": -9
+    },
+    "paint": [
+      "#C45C5C"
+    ],
+    "text": "【互动环节】",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Bold",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "700"
+    }
+  },
+  {
+    "id": "5:02508",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 179,
+      "height": 20,
+      "relativeX": 112,
+      "relativeY": -9
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "请同学们观察手中的景泰蓝",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02504",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 291,
+      "height": 20,
+      "relativeX": 0,
+      "relativeY": 11
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "纹样样本，思考：这些缠枝莲纹、回纹、云纹",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02512",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 162.39999389648438,
+      "height": 20,
+      "relativeX": 0,
+      "relativeY": 31
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "分别有什么吉祥寓意？",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02473",
+    "type": "TEXT",
+    "depth": 4,
+    "l": {
+      "width": 56,
+      "height": 20,
+      "relativeX": 0,
+      "relativeY": -9
+    },
+    "paint": [
+      "#C45C5C"
+    ],
+    "text": "【总结】",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Bold",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "700"
+    }
+  },
+  {
+    "id": "5:02464",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 207,
+      "height": 20,
+      "relativeX": 84,
+      "relativeY": -9
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "景泰蓝不仅是一件工艺品，更是",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02460",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 291,
+      "height": 20,
+      "relativeX": 0,
+      "relativeY": 11
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "中华文明智慧的结晶。2006年，景泰蓝制作技",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02468",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 282.79998779296875,
+      "height": 20,
+      "relativeX": 0,
+      "relativeY": 31
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "艺被列入首批国家级非物质文化遗产名录。",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02410",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 295,
+      "height": 29,
+      "relativeX": 20,
+      "relativeY": 341
+    }
+  },
+  {
+    "id": "5:02412",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 84,
+      "height": 17,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "paint": [
+      "#8B7B7B"
+    ],
+    "text": "展⁠开⁠完⁠整⁠讲⁠稿",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 12,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "16",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02423",
+    "type": "PATH",
+    "depth": 4,
+    "l": {
+      "width": 7,
+      "height": 3.5,
+      "relativeX": 3.5,
+      "relativeY": 5.25
+    },
+    "svg": "S6#1"
+  }
+]

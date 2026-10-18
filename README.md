@@ -18,8 +18,9 @@
 
 | 端位 | 技术栈 | 访问地址 | 说明 |
 |:---|:---|:---:|:---|
-| **运营管理后台** `admin-web` | Vue Pure Admin · Element Plus 2.11 · Vite 7 | `:5173` | 内容管理 / 用户治理 / 数据大盘 / 系统设置 |
+| **运营管理后台** `admin-web` | Vue Pure Admin · Element Plus 2.11 · Vite 7 | `:5173` | 内容管理 / 教师工作台 / 用户治理 / 数据大盘 |
 | **用户前台门户** `user-web` | Vue 3.5 · Element Plus · Three.js | `:5174` | 非遗微课 / AI 工坊 / 美育广场 / 助农市集 |
+| **移动端应用 (Android)** `user-web/android` | Vue 3.5 · Capacitor 8 · Android SDK 36 | Debug APK | 非遗研学 / AI双工坊 / 班级对抗 / 平台授权市集 / 离线打卡 |
 | **后端 API 服务** `backend` | FastAPI 0.115 · SQLAlchemy 2 · MySQL 8 | `:8000` | RESTful API · JWT 鉴权 · DeepSeek AI 网关 |
 
 ---
@@ -46,7 +47,7 @@
 
 ### 后端 API（`backend`）
 
-- 🔐 **认证与权限**：JWT + RBAC 双重守卫，bcrypt 密码存储，防注册提权
+- 🔐 **认证与权限**：JWT + RBAC 双重守卫，带独立盐的 PBKDF2 密码存储，防注册提权
 - 🏗️ **泛型仓储层**：`CRUDBase[Model, Create, Update]`（参照 FastAPI 官方生产模板）
 - 🤖 **AI 网关**：官方 OpenAI SDK 统一驱动 DeepSeek，支持流式 SSE 响应与多模态审美诊断
 - 🔒 **安全加固**：文件上传白名单 + 50MB 熔断，随机散列命名防路径遍历，全局异常 TraceId 链路日志
@@ -100,7 +101,7 @@ jinyun-runxiang/
 ```bash
 mysql -u root -p -e "CREATE DATABASE jinyun_runxiang CHARACTER SET utf8mb4;"
 mysql -u root -p jinyun_runxiang < database/schema_all.sql
-mysql -u root -p jinyun_runxiang < database/seed_data.sql
+# seed_data.sql 仅供隔离演示环境，生产不要导入
 
 # 生成 100 条测试数据（可选）
 python3 database/generate_100_seed_data.py
@@ -112,11 +113,11 @@ python3 database/generate_100_seed_data.py
 cd backend
 
 # 安装依赖
-pip install -r requirements.txt
+pip install -r requirements.lock.txt
 
 # 配置环境变量（复制模板后按需修改）
 cp .env.example .env
-# 编辑 .env，填写 DB_URL、JWT_SECRET_KEY、DEEPSEEK_API_KEY 等
+# 编辑 .env，填写 MYSQL_* 和独立随机 JWT_SECRET_KEY，大模型参数在管理端配置
 
 # 启动服务
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
@@ -128,8 +129,8 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 ```bash
 cd admin-web
-npm install
-npm run dev          # 开发模式，端口 :5173
+pnpm install --frozen-lockfile
+pnpm dev             # 开发模式，端口 :5173
 # npm run build      # 生产构建
 ```
 
@@ -142,6 +143,20 @@ npm run dev          # 开发模式，端口 :5174
 # npm run build      # 生产构建
 ```
 
+### 5. Android 客户端构建与运行
+
+详见 [docs/ANDROID_DEPLOYMENT.md](docs/ANDROID_DEPLOYMENT.md)：
+
+```powershell
+# 在 Windows PowerShell 执行一键构建
+.\scripts\build_android_debug.ps1
+
+# 安装至模拟器并映射本地后端端口
+adb -s emulator-5554 reverse tcp:8000 tcp:8000
+adb -s emulator-5554 install -r .local/android/artifacts/jinyun-runxiang-debug.apk
+adb -s emulator-5554 shell am start -n com.jinyun.runxiang/.MainActivity
+```
+
 ---
 
 ## 环境变量说明（`backend/.env`）
@@ -150,7 +165,7 @@ npm run dev          # 开发模式，端口 :5174
 |:---|:---|:---|
 | `DATABASE_URL` | MySQL 连接字符串 | `mysql+pymysql://user:pass@localhost/jinyun_runxiang` |
 | `JWT_SECRET_KEY` | JWT 签名密钥（生产必改） | 任意随机字符串 |
-| `JWT_EXPIRE_HOURS` | Token 有效期（小时） | `24` |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | Token 有效期（分钟） | `10080` |
 | `DEEPSEEK_API_KEY` | DeepSeek API Key | `sk-xxxxxxx` |
 | `DEEPSEEK_BASE_URL` | DeepSeek API 地址 | `https://api.deepseek.com/v1` |
 
@@ -165,8 +180,8 @@ npm run dev          # 开发模式，端口 :5174
 - **SQLAlchemy 2.0** — ORM（参数化查询，防 SQL 注入）
 - **Pydantic v2** — 数据校验与设置管理（`pydantic-settings`）
 - **PyJWT** — JWT 令牌签发与校验
-- **Bcrypt** — 密码哈希存储
-- **OpenAI SDK** — 统一驱动 DeepSeek 多模态推理
+- **PBKDF2-SHA256** — 独立随机盐与600000轮迭代，旧SHA256登录后自动迁移
+- **OpenAI SDK** — 对接可兼容的文本与图像模型；图像测评须单独配置视觉模型
 - **Loguru** — 结构化日志 + TraceId 链路追踪
 
 ### 前端（管理后台）
@@ -187,18 +202,12 @@ npm run dev          # 开发模式，端口 :5174
 
 ---
 
-## 安全审计评级
+## 安全修复与验证
 
-经 OWASP Top 10（2021/2025）与 CWE 标准全量审计：
-
-| 维度 | 评级 |
-|:---|:---:|
-| 安全漏洞（OWASP / CWE） | **A** |
-| 架构与质量（SOLID 原则） | **A+** |
-| 代码规范与可维护性 | **A** |
-| 数据一致性与事务 | **A+** |
-
-**综合评级：A（优秀 / 准生产就绪）**
+2026-10-16 已针对代码审计进行权限、文件处理、订单、身份及部署修复。
+修复明细、验证范围与仍需接入的外部服务见 [SECURITY_REMEDIATION.md](SECURITY_REMEDIATION.md)。
+部署必须配置独立随机 JWT 密钥，并在已有数据库执行 V9 迁移；旧令牌需重新登录。
+默认部署不导入演示账号，管理员通过交互式初始化创建。
 
 ---
 

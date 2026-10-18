@@ -1,0 +1,602 @@
+{
+  "sectionIndex": 18,
+  "section": {
+    "id": "5:03186",
+    "name": "组 10962",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2818px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "effect_5:03039": {
+        "value": [
+          "box-shadow: 0px 2px 4px 0px rgba(74, 124, 89, 0.06);",
+          "box-shadow: 0px 8px 16px 0px rgba(74, 124, 89, 0.08);",
+          "box-shadow: 0px 16px 32px 0px rgba(74, 124, 89, 0.04);"
+        ]
+      },
+      "font_5:03198": {
+        "value": {
+          "family": "Source Han Sans",
+          "size": 16,
+          "style": "{\"fontStyle\":\"Regular\",\"opsz\":\"auto\"}",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "24",
+          "letterSpacing": "auto",
+          "weight": "400"
+        }
+      },
+      "font_5:3213": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 12,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "16",
+          "letterSpacing": "auto",
+          "weight": "400"
+        }
+      },
+      "paint_5:03206": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/de54e6b31da1dc2d374baa93e927c2c5.png"
+          }
+        ]
+      },
+      "paint_5:03211": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/fad521c4f6ccedd3d930b705be4a8a6a.png"
+          }
+        ]
+      },
+      "paint_5:03214": {
+        "value": [
+          "#5B8A5E"
+        ]
+      },
+      "paint_5:3671": {
+        "value": [
+          "#F5F0E8"
+        ]
+      },
+      "paint_5:6897": {
+        "value": [
+          "rgba(255, 255, 255, 0.8)"
+        ]
+      },
+      "paint_5:7698": {
+        "value": [
+          "rgba(255, 255, 255, 0.85)"
+        ]
+      },
+      "paint_5:8338": {
+        "value": [
+          "#8A7E6B"
+        ]
+      },
+      "paint_5:8357": {
+        "value": [
+          "#4A7C59"
+        ]
+      },
+      "paint_5:8378": {
+        "value": [
+          "rgba(74, 124, 89, 0.1)"
+        ]
+      },
+      "paint_5:8427": {
+        "value": [
+          "#C4A882"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:03186",
+        "name": "组 10962",
+        "layoutStyle": {
+          "width": 375,
+          "height": 210.86289978027344,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:03187",
+            "name": "组 10964",
+            "layoutStyle": {
+              "width": 256,
+              "height": 194.86289978027344,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "flexShrink": 1,
+            "fill": "paint_5:7698",
+            "_color": "rgba(255, 255, 255, 0.85)",
+            "strokeColor": "paint_5:8378",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "1px",
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:03204",
+                "name": "组 10965",
+                "layoutStyle": {
+                  "width": 254,
+                  "height": 144,
+                  "relativeX": 1,
+                  "relativeY": 1
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:03205",
+                    "name": "图片 24",
+                    "layoutStyle": {
+                      "width": 254,
+                      "height": 144,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "fill": "paint_5:03206",
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:03188",
+                "name": "组 10967",
+                "layoutStyle": {
+                  "width": 40,
+                  "height": 24,
+                  "relativeX": 13,
+                  "relativeY": 13
+                },
+                "fill": "paint_5:8357",
+                "_color": "#4A7C59",
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "id": "5:03189",
+                    "name": "文本 161",
+                    "layoutStyle": {
+                      "width": 40,
+                      "height": 17,
+                      "relativeX": 0,
+                      "relativeY": 3
+                    },
+                    "fill": "paint_5:3671",
+                    "_color": "#F5F0E8",
+                    "text": [
+                      {
+                        "text": "春⁠季",
+                        "font": "font_5:3213"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 3,
+                        "color": "paint_5:3671"
+                      }
+                    ],
+                    "textAlign": "center",
+                    "textMode": "single-line"
+                  }
+                ],
+                "borderRadius": "6px"
+              },
+              {
+                "type": "FRAME",
+                "id": "5:03193",
+                "name": "组 10968",
+                "layoutStyle": {
+                  "width": 254,
+                  "height": 92,
+                  "relativeX": 1,
+                  "relativeY": 145
+                },
+                "fill": "paint_5:6897",
+                "_color": "rgba(255, 255, 255, 0.8)",
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:03194",
+                    "name": "容器 73",
+                    "layoutStyle": {
+                      "width": 222,
+                      "height": 24,
+                      "relativeX": 16,
+                      "relativeY": 1
+                    },
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "id": "5:03195",
+                        "name": "文本 162",
+                        "layoutStyle": {
+                          "width": 238,
+                          "height": 24,
+                          "relativeX": 0,
+                          "relativeY": 0
+                        },
+                        "fill": "paint_5:8357",
+                        "_color": "#4A7C59",
+                        "text": [
+                          {
+                            "text": "春⁠日⁠采⁠摘⁠园",
+                            "font": "font_5:03198"
+                          }
+                        ],
+                        "textColor": [
+                          {
+                            "start": 0,
+                            "end": 9,
+                            "color": "paint_5:8357"
+                          }
+                        ],
+                        "textAlign": "left",
+                        "textMode": "single-line"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:03200",
+                    "name": "文本 163",
+                    "layoutStyle": {
+                      "width": 222,
+                      "height": 32,
+                      "relativeX": 16,
+                      "relativeY": 29
+                    },
+                    "fill": "paint_5:8338",
+                    "_color": "#8A7E6B",
+                    "text": [
+                      {
+                        "text": "草莓、樱桃正当季，带上家人体验田园乐趣",
+                        "font": "font_5:3213"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 19,
+                        "color": "paint_5:8338"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ]
+              }
+            ],
+            "effect": "effect_5:03039",
+            "borderRadius": "16px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:03208",
+            "name": "组 10970",
+            "layoutStyle": {
+              "width": 256,
+              "height": 194.86289978027344,
+              "relativeX": 272,
+              "relativeY": 0
+            },
+            "flexShrink": 1,
+            "fill": "paint_5:7698",
+            "_color": "rgba(255, 255, 255, 0.85)",
+            "strokeColor": "paint_5:8378",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "1px",
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:03209",
+                "name": "组 10971",
+                "layoutStyle": {
+                  "width": 254,
+                  "height": 144,
+                  "relativeX": 1,
+                  "relativeY": 1
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:03210",
+                    "name": "图片 25",
+                    "layoutStyle": {
+                      "width": 254,
+                      "height": 144,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "fill": "paint_5:03211",
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:03213",
+                "name": "组 10973",
+                "layoutStyle": {
+                  "width": 40,
+                  "height": 24,
+                  "relativeX": 13,
+                  "relativeY": 13
+                },
+                "fill": "paint_5:03214",
+                "_color": "#5B8A5E",
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "id": "5:03216",
+                    "name": "文本 164",
+                    "layoutStyle": {
+                      "width": 40,
+                      "height": 17,
+                      "relativeX": 0,
+                      "relativeY": 3
+                    },
+                    "fill": "paint_5:3671",
+                    "_color": "#F5F0E8",
+                    "text": [
+                      {
+                        "text": "夏⁠季",
+                        "font": "font_5:3213"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 3,
+                        "color": "paint_5:3671"
+                      }
+                    ],
+                    "textAlign": "center",
+                    "textMode": "single-line"
+                  }
+                ],
+                "borderRadius": "6px"
+              },
+              {
+                "type": "FRAME",
+                "id": "5:03220",
+                "name": "组 10974",
+                "layoutStyle": {
+                  "width": 254,
+                  "height": 76,
+                  "relativeX": 1,
+                  "relativeY": 145
+                },
+                "fill": "paint_5:6897",
+                "_color": "rgba(255, 255, 255, 0.8)",
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:03226",
+                    "name": "容器 74",
+                    "layoutStyle": {
+                      "width": 222,
+                      "height": 24,
+                      "relativeX": 16,
+                      "relativeY": 1
+                    },
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "id": "5:03227",
+                        "name": "文本 165",
+                        "layoutStyle": {
+                          "width": 238,
+                          "height": 24,
+                          "relativeX": 0,
+                          "relativeY": 0
+                        },
+                        "fill": "paint_5:8357",
+                        "_color": "#4A7C59",
+                        "text": [
+                          {
+                            "text": "避⁠暑⁠农⁠家⁠乐",
+                            "font": "font_5:03198"
+                          }
+                        ],
+                        "textColor": [
+                          {
+                            "start": 0,
+                            "end": 9,
+                            "color": "paint_5:8357"
+                          }
+                        ],
+                        "textAlign": "left",
+                        "textMode": "single-line"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "id": "5:03221",
+                    "name": "容器 75",
+                    "layoutStyle": {
+                      "width": 222,
+                      "height": 16,
+                      "relativeX": 16,
+                      "relativeY": 29
+                    },
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "id": "5:03222",
+                        "name": "文本 166",
+                        "layoutStyle": {
+                          "width": 234,
+                          "height": 16,
+                          "relativeX": 0,
+                          "relativeY": 0
+                        },
+                        "fill": "paint_5:8338",
+                        "_color": "#8A7E6B",
+                        "text": [
+                          {
+                            "text": "山间清凉，农家美食，远离城市喧嚣",
+                            "font": "font_5:3213"
+                          }
+                        ],
+                        "textColor": [
+                          {
+                            "start": 0,
+                            "end": 16,
+                            "color": "paint_5:8338"
+                          }
+                        ],
+                        "textAlign": "left",
+                        "textMode": "single-line"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "effect": "effect_5:03039",
+            "borderRadius": "16px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:03234",
+            "name": "组 57",
+            "layoutStyle": {
+              "width": 256,
+              "height": 238,
+              "relativeX": 0,
+              "relativeY": -36.6173095703125
+            },
+            "opacity": 0.4000000059604645,
+            "strokeColor": "paint_5:8427",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "1px",
+            "children": [],
+            "borderRadius": "16px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:03233",
+            "name": "组 58",
+            "layoutStyle": {
+              "width": 103,
+              "height": 238,
+              "relativeX": 272,
+              "relativeY": -15
+            },
+            "opacity": 0.4000000059604645,
+            "strokeColor": "paint_5:8427",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "1px",
+            "children": [],
+            "borderRadius": "16px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:03231",
+            "name": "组 10975",
+            "layoutStyle": {
+              "height": 238,
+              "relativeX": 544,
+              "relativeY": 0
+            },
+            "fill": "paint_5:7698",
+            "_color": "rgba(255, 255, 255, 0.85)",
+            "strokeColor": "paint_5:8378",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "1px",
+            "children": [],
+            "effect": "effect_5:03039",
+            "borderRadius": "16px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:03232",
+            "name": "组 10976",
+            "layoutStyle": {
+              "height": 238,
+              "relativeX": 816,
+              "relativeY": 0
+            },
+            "fill": "paint_5:7698",
+            "_color": "rgba(255, 255, 255, 0.85)",
+            "strokeColor": "paint_5:8378",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "1px",
+            "children": [],
+            "effect": "effect_5:03039",
+            "borderRadius": "16px"
+          }
+        ],
+        "flexContainerInfo": {
+          "flexDirection": "row",
+          "mainSizing": "fixed",
+          "crossSizing": "fixed",
+          "gap": "16px 16px",
+          "padding": "0px 20px 16px 0px"
+        }
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "春⁠季",
+        "parentType": "FRAME",
+        "parentName": "组 10967"
+      },
+      {
+        "text": "春⁠日⁠采⁠摘⁠园",
+        "parentType": "FRAME",
+        "parentName": "容器 73"
+      },
+      {
+        "text": "草莓、樱桃正当季，带上家人体验田园乐趣",
+        "parentType": "FRAME",
+        "parentName": "组 10968"
+      },
+      {
+        "text": "夏⁠季",
+        "parentType": "FRAME",
+        "parentName": "组 10973"
+      },
+      {
+        "text": "避⁠暑⁠农⁠家⁠乐",
+        "parentType": "FRAME",
+        "parentName": "容器 74"
+      },
+      {
+        "text": "山间清凉，农家美食，远离城市喧嚣",
+        "parentType": "FRAME",
+        "parentName": "容器 75"
+      }
+    ]
+  },
+  "nodeCount": 24,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 19/22. MISSING 3 sections: [19,20,21]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

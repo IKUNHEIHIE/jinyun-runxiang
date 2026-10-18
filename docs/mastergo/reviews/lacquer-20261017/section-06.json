@@ -1,0 +1,174 @@
+{
+  "sectionIndex": 6,
+  "section": {
+    "id": "5:00008",
+    "name": "组 7790",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2372px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_5:00016": {
+        "value": {
+          "family": "Source Han Sans",
+          "size": 14,
+          "style": "{\"fontStyle\":\"Regular\",\"opsz\":\"auto\"}",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "28",
+          "letterSpacing": "-0.20000000298023224px",
+          "weight": "400"
+        }
+      },
+      "font_5:00023": {
+        "value": {
+          "family": "Source Han Sans",
+          "size": 14,
+          "style": "{\"fontStyle\":\"Regular\",\"opsz\":\"auto\"}",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "28",
+          "letterSpacing": "auto",
+          "weight": "400"
+        }
+      },
+      "paint_5:00011": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/5d51b93b63aeb5d496f93c511d35bb3e.png"
+          }
+        ]
+      },
+      "paint_5:00018": {
+        "value": [
+          "#4A6B8A"
+        ]
+      },
+      "paint_5:9721": {
+        "value": [
+          "#5C5C5C"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:00008",
+        "name": "组 7790",
+        "layoutStyle": {
+          "width": 375,
+          "height": 80,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:00009",
+            "name": "组 7791",
+            "layoutStyle": {
+              "width": 311,
+              "height": 56,
+              "relativeX": 32,
+              "relativeY": 12
+            },
+            "children": [
+              {
+                "type": "TEXT",
+                "id": "5:00020",
+                "name": "文本 6",
+                "layoutStyle": {
+                  "width": 239,
+                  "height": 18,
+                  "relativeX": 16,
+                  "relativeY": 5.5
+                },
+                "fill": "paint_5:9721",
+                "_color": "#5C5C5C",
+                "text": [
+                  {
+                    "text": "一针一线绣乾坤，一漆一镶嵌日月",
+                    "font": "font_5:00023"
+                  }
+                ],
+                "textColor": [
+                  {
+                    "start": 0,
+                    "end": 15,
+                    "color": "paint_5:9721"
+                  }
+                ],
+                "textAlign": "left",
+                "textMode": "single-line"
+              },
+              {
+                "type": "FRAME",
+                "id": "5:00010",
+                "name": "图片 4",
+                "layoutStyle": {
+                  "width": 2,
+                  "height": 44,
+                  "relativeX": 0,
+                  "relativeY": 6
+                },
+                "fill": "paint_5:00011",
+                "children": []
+              },
+              {
+                "type": "TEXT",
+                "id": "5:00013",
+                "name": "文本 7",
+                "layoutStyle": {
+                  "width": 210.9199981689453,
+                  "height": 18,
+                  "relativeX": 16,
+                  "relativeY": 28
+                },
+                "fill": "paint_5:00018",
+                "_color": "#4A6B8A",
+                "text": [
+                  {
+                    "text": "AI赋能传统艺，古今交融谱新篇",
+                    "font": "font_5:00016"
+                  }
+                ],
+                "textColor": [
+                  {
+                    "start": 0,
+                    "end": 15,
+                    "color": "paint_5:00018"
+                  }
+                ],
+                "textAlign": "left",
+                "textMode": "single-line"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "一针一线绣乾坤，一漆一镶嵌日月",
+        "parentType": "FRAME",
+        "parentName": "组 7791"
+      },
+      {
+        "text": "AI赋能传统艺，古今交融谱新篇",
+        "parentType": "FRAME",
+        "parentName": "组 7791"
+      }
+    ]
+  },
+  "nodeCount": 5,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 7/22. MISSING 15 sections: [7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

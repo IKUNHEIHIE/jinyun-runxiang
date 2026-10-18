@@ -58,8 +58,8 @@
         <div class="tech-card">
           <div class="card-header">
             <span class="card-tag"></span>
-            <span class="card-title">天津非遗门类研习与热度分布</span>
-            <span class="card-sub">多模态AI学习热度</span>
+            <span class="card-title">已通过审核作品门类分布</span>
+            <span class="card-sub">已审核社区作品</span>
           </div>
           <div class="card-body">
             <div ref="pieChartRef" class="chart-container"></div>
@@ -230,15 +230,15 @@
                   <div class="battery-bar">
                     <div class="battery-fill" :style="{ width: bot.battery + '%' }"></div>
                   </div>
-                  <span class="s-val">{{ bot.battery }}%</span>
+                  <span class="s-val">{{ bot.battery == null ? '—' : bot.battery + '%' }}</span>
                 </div>
                 <div class="stat-col">
                   <span class="s-label">核心温度</span>
-                  <span class="s-val">{{ bot.temp }}°C</span>
+                  <span class="s-val">{{ bot.temp == null ? '—' : bot.temp + '°C' }}</span>
                 </div>
                 <div class="stat-col">
                   <span class="s-label">端侧延迟</span>
-                  <span class="s-val">{{ bot.latency }}ms</span>
+                  <span class="s-val">{{ bot.latency == null ? '—' : bot.latency + 'ms' }}</span>
                 </div>
               </div>
             </div>
@@ -274,62 +274,14 @@ let dataPollTimer: any = null;
 const rawScreenData = ref<any>(null);
 
 // KPI Counters
-const kpis = ref([
-  { icon: "🏫", label: "覆盖乡村学校", value: "48", unit: "所", subtext: "蓟州18·宝坻12·武清10·静海8", color: "#00f2fe" },
-  { icon: "🎨", label: "赋能乡村学子", value: "12,890", unit: "人", subtext: "累计美育学时 84,200+ h", color: "#4facfe" },
-  { icon: "✨", label: "AI审美诊断/生成", value: "48,320", unit: "件", subtext: "优秀率 91.8% · 意蕴评分 94.1", color: "#f9d423" },
-  { icon: "🧧", label: "爱心助农公益金", value: "164,150", unit: "元", subtext: "反哺爱心画材 3,280 套", color: "#ff4b2b" },
-  { icon: "🤖", label: "具身机器人授课", value: "520", unit: "课时", subtext: "多模态互动率达 98.4%", color: "#00e676" },
-]);
+const kpis = ref<any[]>([]);
 
 // 实时爱心流水
 const tickerOffset = ref(0);
-const donationOrders = ref([
-  { time: "11:52:10", user: "张*明", item: "《杨柳青吉祥抱枕》", school: "蓟州下营小学", fund: "12.80", hash: "SHA256-88a2c1" },
-  { time: "11:50:34", user: "李*华", item: "《津门皮影文创DIY包》", school: "宝坻林亭口小学", fund: "9.90", hash: "SHA256-91b4f0" },
-  { time: "11:47:19", user: "王*敏", item: "《风筝魏手工礼盒》", school: "武清大王古庄美育室", fund: "18.50", hash: "SHA256-47c32e" },
-  { time: "11:45:02", user: "赵*国", item: "《泥人张福娃摆件》", school: "静海独流镇一小", fund: "22.00", hash: "SHA256-62d19b" },
-  { time: "11:42:28", user: "孙*婷", item: "《杨柳青木版明信片》", school: "宁河俵口七里海基地", fund: "8.80", hash: "SHA256-73e81a" },
-  { time: "11:39:15", user: "陈*伟", item: "《津门鼓韵文创书签》", school: "蓟州官庄镇小学", fund: "6.50", hash: "SHA256-55f20c" },
-  { time: "11:35:48", user: "周*杰", item: "《汉沽版画手账本》", school: "宝坻八门城中心校", fund: "15.20", hash: "SHA256-18a77d" },
-]);
+const donationOrders = ref<any[]>([]);
 
 // 具身机器人状态
-const robots = ref([
-  {
-    id: "DEV-SHADOW-BOT-01",
-    name: "DEV-SHADOW-BOT-01 (皮影操纵助教)",
-    location: "蓟州区下营镇中心小学美育室",
-    task: "《津门皮影戏：光影戏韵》课中肢体示范",
-    battery: 82,
-    temp: 34,
-    latency: 15,
-    statusText: "授课中",
-    statusClass: "running"
-  },
-  {
-    id: "DEV-PAINT-BOT-02",
-    name: "DEV-PAINT-BOT-02 (木版年画助教)",
-    location: "宝坻区林亭口中心小学",
-    task: "《杨柳青木版年画》分色拓印步骤指引",
-    battery: 94,
-    temp: 31,
-    latency: 18,
-    statusText: "运行中",
-    statusClass: "running"
-  },
-  {
-    id: "DEV-CLAY-BOT-03",
-    name: "DEV-CLAY-BOT-03 (泥塑多模态工坊)",
-    location: "武清区大王古庄乡村美育室",
-    task: "待机自检 · 就绪接入下节微课",
-    battery: 100,
-    temp: 28,
-    latency: 12,
-    statusText: "待机就绪",
-    statusClass: "idle"
-  }
-]);
+const robots = ref<any[]>([]);
 
 // 更新当前时钟
 const updateClock = () => {
@@ -372,15 +324,9 @@ const fetchScreenData = async () => {
     const res: any = await request.get("/screen/overview");
     const data = res.data || res;
     rawScreenData.value = data;
-    if (data.kpis && data.kpis.length > 0) {
-      kpis.value = data.kpis;
-    }
-    if (data.donation_orders && data.donation_orders.length > 0) {
-      donationOrders.value = data.donation_orders;
-    }
-    if (data.robots && data.robots.length > 0) {
-      robots.value = data.robots;
-    }
+    kpis.value = data.kpis || [];
+    donationOrders.value = data.donation_orders || [];
+    robots.value = data.robots || [];
     if (pieChart && data.pie_chart) {
       pieChart.setOption({
         series: [{ data: data.pie_chart }]
@@ -441,13 +387,7 @@ const initCharts = () => {
             length2: 10,
             lineStyle: { color: "rgba(255,255,255,0.3)" }
           },
-          data: rawScreenData.value?.pie_chart || [
-            { value: 16900, name: "杨柳青年画", itemStyle: { color: "#ffaa00" } },
-            { value: 13500, name: "津门皮影戏", itemStyle: { color: "#00f2fe" } },
-            { value: 8700, name: "泥人张彩塑", itemStyle: { color: "#ff4b2b" } },
-            { value: 5800, name: "风筝魏制作", itemStyle: { color: "#9d4edd" } },
-            { value: 3420, name: "汉沽版画", itemStyle: { color: "#00e676" } }
-          ]
+          data: rawScreenData.value?.pie_chart || []
         }
       ]
     });
@@ -480,15 +420,15 @@ const initCharts = () => {
       },
       yAxis: {
         type: "category",
-        data: rawScreenData.value?.bar_chart?.categories || ["宁河区", "静海区", "武清区", "宝坻区", "蓟州区"],
+        data: rawScreenData.value?.bar_chart?.categories || [],
         axisLine: { lineStyle: { color: "rgba(255,255,255,0.15)" } },
         axisLabel: { color: "#e2e8f0", fontSize: 12, fontWeight: 500 }
       },
       series: [
         {
-          name: "美育总学时",
+          name: "注册学子人数",
           type: "bar",
-          data: rawScreenData.value?.bar_chart?.values || [15200, 19400, 28900, 35800, 42100],
+          data: rawScreenData.value?.bar_chart?.values || [],
           barWidth: 14,
           itemStyle: {
             borderRadius: [0, 8, 8, 0],
@@ -502,7 +442,7 @@ const initCharts = () => {
             position: "right",
             color: "#00f2fe",
             fontSize: 11,
-            formatter: "{c}h"
+            formatter: "{c}人"
           }
         }
       ]
@@ -553,19 +493,7 @@ const initCharts = () => {
         {
           name: "AI 审美诊断维度均分",
           type: "radar",
-          data: [
-            {
-              value: [92.4, 88.6, 86.8, 94.1, 89.5],
-              name: "乡村美育学子平均测评值",
-              symbol: "circle",
-              symbolSize: 6,
-              lineStyle: { width: 2, color: "#ffaa00" },
-              areaStyle: {
-                color: "rgba(255, 170, 0, 0.35)"
-              },
-              itemStyle: { color: "#00f2fe", borderColor: "#fff", borderWidth: 1 }
-            }
-          ]
+          data: []
         }
       ]
     });

@@ -1,0 +1,76 @@
+{
+  "sectionIndex": 19,
+  "section": {
+    "id": "5:02297",
+    "name": "文本 35",
+    "type": "TEXT"
+  },
+  "rootContainer": {
+    "width": "373px",
+    "minHeight": "1394px",
+    "background": "#FFFFFF",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_5:02058": {
+        "value": {
+          "family": "Noto Sans SC",
+          "size": 15,
+          "style": "SemiBold",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "22.5",
+          "letterSpacing": "auto",
+          "weight": "600"
+        }
+      },
+      "paint_5:01947": {
+        "value": [
+          "#3D2314"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "TEXT",
+        "id": "5:02297",
+        "name": "文本 35",
+        "layoutStyle": {
+          "width": 80,
+          "height": 22,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "fill": "paint_5:01947",
+        "_color": "#3D2314",
+        "text": [
+          {
+            "text": "津韵服饰",
+            "font": "font_5:02058"
+          }
+        ],
+        "textColor": [
+          {
+            "start": 0,
+            "end": 4,
+            "color": "paint_5:01947"
+          }
+        ],
+        "textAlign": "left",
+        "textMode": "single-line"
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "津韵服饰"
+      }
+    ]
+  },
+  "nodeCount": 1,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 20/29. MISSING 9 sections: [20,21,22,23,24,25,26,27,28]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

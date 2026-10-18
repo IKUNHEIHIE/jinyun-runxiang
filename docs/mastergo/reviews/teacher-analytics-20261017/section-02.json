@@ -1,0 +1,154 @@
+{
+  "sectionIndex": 2,
+  "section": {
+    "id": "5:3915",
+    "name": "组 4366",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2665px",
+    "background": "rgba(128, 24, 24, 0.2)",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "effect_5:3192": {
+        "value": []
+      },
+      "paint_5:3918": {
+        "value": [
+          "#E8D5C4"
+        ]
+      },
+      "paint_5:3923": {
+        "value": [
+          "#C8A882"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:3915",
+        "name": "组 4366",
+        "layoutStyle": {
+          "width": 335,
+          "height": 12,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:3925",
+            "name": "组 4367",
+            "layoutStyle": {
+              "width": 32,
+              "relativeX": 121.5,
+              "relativeY": 5.5
+            },
+            "children": [
+              {
+                "type": "LAYER",
+                "id": "5:3926",
+                "name": "矩形 2",
+                "layoutStyle": {
+                  "width": 32,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "fill": "paint_5:3918",
+                "_color": "#E8D5C4",
+                "effect": "effect_5:3192"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "id": "5:3920",
+            "name": "组 4368",
+            "layoutStyle": {
+              "width": 12,
+              "height": 12,
+              "relativeX": 161.5,
+              "relativeY": 0
+            },
+            "opacity": 0.4000000059604645,
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:3921",
+                "name": "图标 4",
+                "layoutStyle": {
+                  "width": 12,
+                  "height": 12,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "children": [
+                  {
+                    "type": "PATH",
+                    "id": "5:3922",
+                    "name": "组 4",
+                    "layoutStyle": {
+                      "width": 4,
+                      "height": 3.5,
+                      "relativeX": 4,
+                      "relativeY": 1
+                    },
+                    "path": [
+                      {
+                        "fill": "#C8A882",
+                        "data": ""
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "id": "5:3916",
+            "name": "组 4369",
+            "layoutStyle": {
+              "width": 32,
+              "relativeX": 181.5,
+              "relativeY": 5.5
+            },
+            "children": [
+              {
+                "type": "LAYER",
+                "id": "5:3917",
+                "name": "矩形 3",
+                "layoutStyle": {
+                  "width": 32,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "fill": "paint_5:3918",
+                "_color": "#E8D5C4",
+                "effect": "effect_5:3192"
+              }
+            ]
+          }
+        ],
+        "flexContainerInfo": {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "alignItems": "center",
+          "mainSizing": "fixed",
+          "crossSizing": "fixed",
+          "gap": "8px 8px"
+        }
+      }
+    ],
+    "components": []
+  },
+  "nodeCount": 8,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 3/28. MISSING 25 sections: [3,4,5,6,7,8,9,10,11,12... +15 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

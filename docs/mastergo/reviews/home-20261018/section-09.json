@@ -1,0 +1,96 @@
+{
+  "sectionIndex": 9,
+  "section": {
+    "id": "5:02343",
+    "name": "组 2188",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "373px",
+    "minHeight": "1394px",
+    "background": "#FFFFFF",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_5:02157": {
+        "value": {
+          "family": "Noto Sans SC",
+          "size": 11,
+          "style": "Medium",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "16.5",
+          "letterSpacing": "auto",
+          "weight": "500"
+        }
+      },
+      "paint_5:00539": {
+        "value": [
+          "#B85450"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:02343",
+        "name": "组 2188",
+        "layoutStyle": {
+          "width": 64.4800033569336,
+          "height": 30,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "strokeColor": "paint_5:00539",
+        "strokeType": "solid",
+        "strokeAlign": "inside",
+        "strokeWidth": "1px",
+        "children": [
+          {
+            "type": "TEXT",
+            "id": "5:02344",
+            "name": "文本 25",
+            "layoutStyle": {
+              "width": 56.06999969482422,
+              "height": 16,
+              "relativeX": 4.199999809265137,
+              "relativeY": 7
+            },
+            "fill": "paint_5:00539",
+            "_color": "#B85450",
+            "text": [
+              {
+                "text": "4-6年级",
+                "font": "font_5:02157"
+              }
+            ],
+            "textColor": [
+              {
+                "start": 0,
+                "end": 5,
+                "color": "paint_5:00539"
+              }
+            ],
+            "textAlign": "center",
+            "textMode": "single-line"
+          }
+        ],
+        "borderRadius": "9999px"
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "4-6年级",
+        "parentType": "FRAME",
+        "parentName": "组 2188"
+      }
+    ]
+  },
+  "nodeCount": 2,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 10/29. MISSING 19 sections: [10,11,12,13,14,15,16,17,18,19... +9 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

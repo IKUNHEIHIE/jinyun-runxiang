@@ -1,0 +1,77 @@
+{
+  "sectionIndex": 2,
+  "section": {
+    "id": "40:07214",
+    "name": "组 12064",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "1555px",
+    "background": "#A4967F",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "paint_40:05883": {
+        "value": [
+          "radial-gradient(NaN% 72% at 50% 50%, rgba(168, 197, 160, NaN) NaN%, rgba(168, 197, 160, NaN) 56%, rgba(168, 197, 160, NaN) 100%)"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "40:07214",
+        "name": "组 12064",
+        "layoutStyle": {
+          "width": 96,
+          "height": 96,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "40:05882",
+            "name": "容器 2",
+            "layoutStyle": {
+              "width": 96,
+              "height": 96,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "children": [
+              {
+                "type": "SVG_ELLIPSE",
+                "id": "40:05885",
+                "name": "组 2",
+                "layoutStyle": {
+                  "width": 96,
+                  "height": 96,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "fill": "paint_40:05883",
+                "_color": "radial-gradient(NaN% 72% at 50% 50%, rgba(168, 197, 160, NaN) NaN%, rgba(168, 197, 160, NaN) 56%, rgba(168, 197, 160, NaN) 100%)",
+                "svgKey": "S2:容器 2|40:05885",
+                "svgShortKey": "S2#0",
+                "svgName": "容器 2"
+              }
+            ],
+            "borderRadius": "9999px"
+          }
+        ],
+        "borderRadius": "9999px"
+      }
+    ],
+    "components": []
+  },
+  "nodeCount": 3,
+  "svgNodeCount": 1,
+  "hasStrippedSvgs": true,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 3/11. MISSING 8 sections: [3,4,5,6,7,8,9,10]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

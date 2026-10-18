@@ -5,7 +5,7 @@
       <div class="banner-left">
         <span class="banner-badge">数字化大屏</span>
         <span class="banner-title">津脉智韵 · 乡村美育科技数据大屏 (数字孪生 / 遥测监控)</span>
-        <span class="banner-desc">已连接天津市 48 所乡村试点校、3 台具身智能助教机器人及 AI 审美诊断中台</span>
+        <span class="banner-desc">查看平台实际登记数据与已确认业务记录</span>
       </div>
       <div class="banner-right">
         <el-button type="primary" size="default" class="screen-launch-btn" @click.stop="openScreen">
@@ -21,30 +21,30 @@
     <el-row :gutter="16">
       <el-col :span="6">
         <el-card shadow="hover" class="kpi-card">
-          <div class="kpi-title">日活跃学生 / DAU</div>
-          <div class="kpi-value text-primary">{{ kpi.dau || 2420 }}</div>
-          <div class="kpi-sub">较昨日 <span class="trend-up">+12.5%</span> · 覆盖乡村学校 48 所</div>
+          <div class="kpi-title">最近统计日活跃学生</div>
+          <div class="kpi-value text-primary">{{ kpi.dau ?? '—' }}</div>
+          <div class="kpi-sub">以最近入库统计为准</div>
         </el-card>
       </el-col>
       <el-col :span="6">
         <el-card shadow="hover" class="kpi-card">
-          <div class="kpi-title">非遗课程累计完播</div>
-          <div class="kpi-value text-gold">{{ kpi.total_courses ? kpi.total_courses * 1250 : 7500 }}</div>
-          <div class="kpi-sub">皮影戏与年画门类占比 65%</div>
+          <div class="kpi-title">非遗课程数</div>
+          <div class="kpi-value text-gold">{{ kpi.total_courses ?? 0 }}</div>
+          <div class="kpi-sub">已登记课程</div>
         </el-card>
       </el-col>
       <el-col :span="6">
         <el-card shadow="hover" class="kpi-card">
           <div class="kpi-title">AI工坊创作作品数</div>
-          <div class="kpi-value text-green">{{ kpi.total_posts ? kpi.total_posts * 180 + 1340 : 1340 }}</div>
-          <div class="kpi-sub">今日生成调用 1,340 次</div>
+          <div class="kpi-value text-green">{{ kpi.total_ai_tasks ?? 0 }}</div>
+          <div class="kpi-sub">已成功完成的创作任务</div>
         </el-card>
       </el-col>
       <el-col :span="6">
         <el-card shadow="hover" class="kpi-card">
           <div class="kpi-title">乡村美育公益基金累积</div>
-          <div class="kpi-value text-red">¥ {{ (kpi.fund_total_yuan || 9540.00).toFixed(2) }}</div>
-          <div class="kpi-sub">来自助农订单 10% 收益注入</div>
+          <div class="kpi-value text-red">¥ {{ (kpi.fund_total_yuan ?? 0).toFixed(2) }}</div>
+          <div class="kpi-sub">已确认公益流水</div>
         </el-card>
       </el-col>
     </el-row>
@@ -56,7 +56,7 @@
           <template #header>
             <div class="card-header">
               <span class="header-title">📈 平台活跃度与AI生成调用趋势 (近7日)</span>
-              <el-tag type="info" size="small">每日自动聚合</el-tag>
+              <el-tag type="info" size="small">入库统计</el-tag>
             </div>
           </template>
           <div ref="chartRef" style="height: 320px; width: 100%;"></div>
@@ -89,17 +89,10 @@
           <template #header>
             <div class="card-header">
               <span>🤖 具身智能机器人状态 (在线演示)</span>
-              <el-tag type="success">1台在线</el-tag>
+              <el-tag type="success">{{ kpi.active_devices ?? 0 }} 台在线</el-tag>
             </div>
           </template>
-          <div style="display: flex; align-items: center; justify-content: space-between;">
-            <div>
-              <div style="font-weight: bold; font-size: 15px; color: #2F2925;">DEV-SHADOW-BOT-01</div>
-              <div style="font-size: 13px; color: #776D65; margin-top: 4px;">部署位置: 蓟州区下营镇中心小学美育室</div>
-              <div style="font-size: 12px; color: #4D8B63; margin-top: 4px;">电量: 82% · 信号良好 · 正在执行天津皮影讲解与肢体表演</div>
-            </div>
-            <el-button type="primary" size="small" style="background-color: #8B4A2F; border-color: #8B4A2F;">发送测试指令</el-button>
-          </div>
+          <div>设备状态以真实回执为准，设备网关尚未接入。</div>
         </el-card>
       </el-col>
 
@@ -112,9 +105,9 @@
             </div>
           </template>
           <div style="font-size: 13px; color: #776D65; line-height: 24px;">
-            <div>• 今日多模态AI预审作品：<strong>168</strong> 件</div>
-            <div>• 疑似敏感词触发待人工复核：<strong style="color: #C4863A;">2</strong> 件</div>
-            <div>• 审核策略：首发文本敏感词初筛 + 图像违规识别 + 人工抽检</div>
+            <div>• 已登记社区作品：<strong>{{ kpi.total_posts ?? 0 }}</strong> 件</div>
+            <div>• 待人工复核：<strong style="color: #C4863A;">{{ kpi.pending_reviews ?? 0 }}</strong> 件</div>
+            <div>• 审核策略：文本敏感词初筛 + 人工复核</div>
           </div>
         </el-card>
       </el-col>
@@ -137,21 +130,16 @@ const openScreen = () => {
 }
 
 const openScreenNewTab = () => {
-  window.open('/#/screen', '_blank')
+  window.open('/admin/#/screen', '_blank')
 }
 
-const hotCourses = ref([
-  { rank: 1, title: '津门皮影戏：光影里的民间传奇', views: '2,840' },
-  { rank: 2, title: '杨柳青木版年画：点染岁时吉祥', views: '2,340' },
-  { rank: 3, title: '青铜神兽饕餮：纹样里的古老密码', views: '1,620' },
-  { rank: 4, title: '泥人张彩塑艺术：捏出指尖百态', views: '1,420' },
-  { rank: 5, title: '津门鼓曲与三弦：韵白流转唱津城', views: '980' }
-])
+const hotCourses = ref<any[]>([])
 
 onMounted(async () => {
   try {
     const res: any = await request.get('/admin/dashboard')
     kpi.value = res.kpi || {}
+    hotCourses.value = res.hot_courses || []
 
     if (chartRef.value) {
       const myChart = echarts.init(chartRef.value)
@@ -163,20 +151,20 @@ onMounted(async () => {
         tooltip: { trigger: 'axis' },
         legend: { data: ['日活跃学生 (DAU)', 'AI创作生成次数'] },
         grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-        xAxis: { type: 'category', boundaryGap: false, data: dates.length ? dates : ['09-06','09-07','09-08','09-09','09-10','09-11','09-12'] },
+        xAxis: { type: 'category', boundaryGap: false, data: dates },
         yAxis: { type: 'value' },
         series: [
           {
             name: '日活跃学生 (DAU)',
             type: 'line',
             smooth: true,
-            data: dauData.length ? dauData : [1240, 1320, 1450, 1580, 1820, 2150, 2420],
+            data: dauData,
             itemStyle: { color: '#8B4A2F' }
           },
           {
             name: 'AI创作生成次数',
             type: 'bar',
-            data: aiData.length ? aiData : [480, 520, 610, 740, 890, 1120, 1340],
+            data: aiData,
             itemStyle: { color: '#D6A85C' }
           }
         ]

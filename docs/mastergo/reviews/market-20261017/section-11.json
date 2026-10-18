@@ -1,0 +1,187 @@
+{
+  "sectionIndex": 11,
+  "section": {
+    "id": "5:8129",
+    "name": "组 10331",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2862px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_5:3213": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 12,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "16",
+          "letterSpacing": "auto",
+          "weight": "400"
+        }
+      },
+      "font_5:7347": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 20,
+          "style": "Bold",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "28",
+          "letterSpacing": "auto",
+          "weight": "700"
+        }
+      },
+      "paint_5:7278": {
+        "value": [
+          "#2C2416"
+        ]
+      },
+      "paint_5:7378": {
+        "value": [
+          "#9A9080"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:8129",
+        "name": "组 10331",
+        "layoutStyle": {
+          "width": 335,
+          "height": 48,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:8130",
+            "name": "组 10332",
+            "layoutStyle": {
+              "width": 216,
+              "height": 48,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:8136",
+                "name": "容器 17",
+                "layoutStyle": {
+                  "width": 216,
+                  "height": 28,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "id": "5:8137",
+                    "name": "文本 41",
+                    "layoutStyle": {
+                      "width": 236,
+                      "height": 28,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "fill": "paint_5:7278",
+                    "_color": "#2C2416",
+                    "text": [
+                      {
+                        "text": "非遗文创 · 匠心之作",
+                        "font": "font_5:7347"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 11,
+                        "color": "paint_5:7278"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:8131",
+                "name": "容器 18",
+                "layoutStyle": {
+                  "width": 216,
+                  "height": 16,
+                  "relativeX": 0,
+                  "relativeY": 32
+                },
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "id": "5:8132",
+                    "name": "文本 42",
+                    "layoutStyle": {
+                      "width": 224,
+                      "height": 16,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "fill": "paint_5:7378",
+                    "_color": "#9A9080",
+                    "text": [
+                      {
+                        "text": "每一件都承载着孩子的梦想与乡村的温度",
+                        "font": "font_5:3213"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 18,
+                        "color": "paint_5:7378"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "flexContainerInfo": {
+          "flexDirection": "row",
+          "justifyContent": "space-between",
+          "alignItems": "center",
+          "mainSizing": "fixed",
+          "crossSizing": "fixed"
+        }
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "非遗文创 · 匠心之作",
+        "parentType": "FRAME",
+        "parentName": "容器 17"
+      },
+      {
+        "text": "每一件都承载着孩子的梦想与乡村的温度",
+        "parentType": "FRAME",
+        "parentName": "容器 18"
+      }
+    ]
+  },
+  "nodeCount": 6,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 12/20. MISSING 8 sections: [12,13,14,15,16,17,18,19]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

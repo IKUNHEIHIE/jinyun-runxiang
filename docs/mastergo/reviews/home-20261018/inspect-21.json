@@ -1,0 +1,45 @@
+[
+  {
+    "id": "5:02286",
+    "type": "FRAME",
+    "depth": 0,
+    "name": "组 2244",
+    "layout": {
+      "width": 25.559999465942383,
+      "height": 15,
+      "relativeX": 0,
+      "relativeY": 0
+    }
+  },
+  {
+    "id": "5:02287",
+    "type": "TEXT",
+    "depth": 1,
+    "name": "文本 37",
+    "layout": {
+      "width": 39.060001373291016,
+      "height": 15,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "fill": [
+      "#6C0A0A"
+    ],
+    "text": [
+      {
+        "text": "1小时",
+        "font": "font_5:01959"
+      }
+    ],
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 10,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "15",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  }
+]

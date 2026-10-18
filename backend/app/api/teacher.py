@@ -1,41 +1,65 @@
-import json
-import httpx
+from html import escape
 from fastapi import APIRouter, Depends, Query, HTTPException
 from fastapi.responses import HTMLResponse, Response
 from urllib.parse import quote
 from app.services.ppt_generator import generate_lesson_pptx
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
-from typing import Optional, List, Dict, Any
+from pydantic import BaseModel, Field, field_validator
+from typing import Optional, Literal
 from datetime import datetime, timedelta
 
 from app.core.database import get_db
-from app.core.security import require_teacher, get_current_user_optional
+from app.core.security import require_teacher
+from app.core.lesson_plans import generate_lesson
 from app.schemas.common import success_response, error_response
 from app.models.entities import (
     TeacherClass, ClassMember, Assignment, AssignmentSubmission,
-    AssignmentReview, LearningProgress, UserGrowth, SysUser, SysConfig
+    AssignmentReview, LearningProgress, UserGrowth, SysUser, QuizAttempt, CommunityPost,
+    Contest,
 )
 
 router = APIRouter(prefix="/teacher", tags=["教师工作台与AI智能备课"])
 
+def owned_class(db: Session, class_id: int, user: dict):
+    query = db.query(TeacherClass).filter(TeacherClass.id == class_id)
+    if user["role_code"] != "ADMIN":
+        query = query.filter(TeacherClass.teacher_id == user["user_id"])
+    result = query.first()
+    if not result:
+        raise HTTPException(404, "班级不存在或无权访问")
+    return result
+
+
+def owned_assignment(db: Session, assignment_id: int, user: dict):
+    assignment = db.get(Assignment, assignment_id)
+    if not assignment:
+        raise HTTPException(404, "作业不存在")
+    owned_class(db, assignment.class_id, user)
+    return assignment
+
+
 class LessonPlanRequest(BaseModel):
-    grade: str  # 小学三年级 / 小学四年级 / 初中
-    topic: str  # 天津皮影戏 / 杨柳青木版年画 / 泥人张彩塑 / 骆派京韵大鼓 / 古法大漆
-    duration_minutes: int = 45
-    objectives: Optional[str] = "培养乡村儿童对乡土非遗的文化认同与动手实践能力"
+    grade: str = Field(min_length=1, max_length=64)
+    topic: str = Field(min_length=1, max_length=128)
+    duration_minutes: int = Field(45, ge=10, le=240)
+    objectives: Optional[str] = Field(None, max_length=2000)
+
+    @field_validator("grade", "topic", "objectives", mode="before")
+    @classmethod
+    def strip_text(cls, value):
+        return value.strip() if isinstance(value, str) else value
 
 class CreateAssignmentRequest(BaseModel):
-    class_id: int
-    title: str
-    type: str = "AI_CREATION"  # AI_CREATION / OFFLINE_HANDMADE
-    tool_type: Optional[str] = "SHADOW_PUPPET"
-    deadline_days: int = 7
-    description: str
+    class_id: int = Field(gt=0)
+    title: str = Field(min_length=1, max_length=128)
+    type: Literal["AI_CREATION", "OFFLINE_HANDMADE", "CONTEST"] = "AI_CREATION"
+    tool_type: Optional[Literal["SHADOW_PUPPET", "BRONZE_PATTERN", "LACQUER"]] = "SHADOW_PUPPET"
+    deadline_days: int = Field(7, ge=1, le=365)
+    description: str = Field(min_length=1, max_length=10000)
 
 class ReviewSubmissionRequest(BaseModel):
-    score: int
-    comment: str
+    score: int = Field(..., ge=0, le=100)
+    comment: str = Field(max_length=5000)
 
 @router.get("/classes")
 def list_teacher_classes(
@@ -43,17 +67,19 @@ def list_teacher_classes(
     db: Session = Depends(get_db)
 ):
     teacher_id = current_user["user_id"]
-    classes = db.query(TeacherClass).filter(
-        TeacherClass.teacher_id == teacher_id,
-        TeacherClass.status == "ACTIVE"
-    ).all()
+    query = db.query(TeacherClass).filter(TeacherClass.status == "ACTIVE")
+    if current_user["role_code"] != "ADMIN":
+        query = query.filter(TeacherClass.teacher_id == teacher_id)
+    classes = query.all()
 
     return success_response([{
         "id": c.id,
         "name": c.name,
         "grade": c.grade,
         "invite_code": c.invite_code,
-        "student_count": c.student_count
+        "student_count": db.query(ClassMember.student_id).join(SysUser, SysUser.id == ClassMember.student_id).filter(
+            ClassMember.class_id == c.id, ClassMember.status == "ACTIVE",
+            SysUser.status == "ACTIVE", SysUser.role_code == "STUDENT").distinct().count()
     } for c in classes])
 
 @router.post("/lesson-plans/generate")
@@ -62,129 +88,18 @@ def generate_lesson_plan(
     current_user: dict = Depends(require_teacher),
     db: Session = Depends(get_db)
 ):
-    # 1. 优先读取系统设置中保存的大模型真实接口配置
-    llm_cfg = db.query(SysConfig).filter(SysConfig.config_key == "llm_settings").first()
-    if llm_cfg and llm_cfg.config_value:
-        try:
-            cfg = json.loads(llm_cfg.config_value)
-            api_key = cfg.get("api_key", "").strip()
-            api_base = cfg.get("api_base", "https://api.deepseek.com/v1").strip().rstrip("/")
-            model_name = cfg.get("model_name", "deepseek-chat").strip()
-            temperature = float(cfg.get("temperature", 0.7))
-
-            # 当用户录入了真实的 API Key 时，发起真实 DeepSeek API 推理
-            if api_key and "*" not in api_key and len(api_key) > 10:
-                prompt = (
-                    f"你是一位精通天津非遗文化与乡村美育的专家。请针对学段【{req.grade}】、"
-                    f"非遗主题【{req.topic}】、时长【{req.duration_minutes}分钟】，"
-                    f"生成结构化美育备课方案。\n"
-                    f"输出必须为纯 JSON 对象，格式包含："
-                    f"targets: {{aesthetic, skill, emotion}}, "
-                    f"key_difficult_points: {{key, difficult}}, "
-                    f"teaching_process: [{{step, content}}], "
-                    f"teacher_script: 教师讲稿, "
-                    f"interactive_questions: [问题1, 问题2], "
-                    f"homework_proposal: 课后作业建议。"
-                )
-                with httpx.Client(timeout=15.0) as client:
-                    resp = client.post(
-                        f"{api_base}/chat/completions",
-                        headers={
-                            "Authorization": f"Bearer {api_key}",
-                            "Content-Type": "application/json"
-                        },
-                        json={
-                            "model": model_name,
-                            "messages": [
-                                {"role": "system", "content": "You are a professional art education assistant. You must output JSON."},
-                                {"role": "user", "content": prompt}
-                            ],
-                            "temperature": temperature,
-                            "response_format": {"type": "json_object"}
-                        }
-                    )
-                    if resp.status_code == 200:
-                        data = resp.json()
-                        raw_content = data["choices"][0]["message"]["content"]
-                        ai_parsed = json.loads(raw_content)
-                        steps = ai_parsed.get("teaching_process", [])
-                        return success_response({
-                            "title": f"《津韵润乡·乡土美育微课：{req.topic}》",
-                            "grade": req.grade,
-                            "topic": req.topic,
-                            "duration": f"{req.duration_minutes} 分钟",
-                            "targets": ai_parsed.get("targets", {}),
-                            "key_difficult_points": ai_parsed.get("key_difficult_points", {}),
-                            "teaching_process": steps,
-                            "activity_design": [s.get("step", "") if isinstance(s, dict) else str(s) for s in steps],
-                            "teacher_script": ai_parsed.get("teacher_script", ""),
-                            "interactive_questions": ai_parsed.get("interactive_questions", []),
-                            "homework_proposal": ai_parsed.get("homework_proposal", f"设计1幅{req.topic}非遗作品"),
-                            "ppt_download_url": f"https://example.com/assets/lesson_plans/{req.topic}_课件.pptx",
-                            "generated_by": f"DeepSeek 官方大模型 ({model_name}) 实时生成"
-                        }, message=f"已由 DeepSeek 官方大模型 ({model_name}) 实时生成智能备课方案")
-        except Exception:
-            # 外部大模型调用失败或网络离线时，平滑降级至本地高质量非遗专家教案
-            pass
-
-    # 2. 默认降级方案：天津非遗专家预置结构化教案
-    lesson_plan = {
-        "title": f"《津韵润乡·乡土美育微课：{req.topic}》",
-        "grade": req.grade,
-        "topic": req.topic,
-        "duration": f"{req.duration_minutes} 分钟",
-        "targets": {
-            "aesthetic": "感知天津传统非遗的线条、色彩与造型之美；",
-            "skill": "掌握核心工艺步骤原理，能够使用AI工坊生成个性化设计稿并进行手工实践；",
-            "emotion": "激发对家乡天津传统文化的自豪感与传承乡村手艺的热情。"
-        },
-        "key_difficult_points": {
-            "key": f"{req.topic}的传统渊源与典型艺术造型特征；",
-            "difficult": "如何在现代设计中巧妙融入天津地域风土文化元素。"
-        },
-        "teaching_process": [
-            {
-                "step": "1. 创设情境，唤醒乡愁 (8分钟)",
-                "content": "播放津沽老艺人采风实录短视频，展示非遗实物，引导孩子们观察光影/泥塑/年画的神态与色泽。"
-            },
-            {
-                "step": "2. 匠心溯源，技法揭秘 (15分钟)",
-                "content": "详解工艺五大核心工序，对比天津老物件，重点讲解非遗造型的对称、镂空与寓意手法。"
-            },
-            {
-                "step": "3. 巧借AI，灵感赋能 (12分钟)",
-                "content": "指导学生登录《津韵润乡》APP进入AI工坊，输入心仪角色与天津民俗词汇，生成个性化非遗创作线稿与3D模型。"
-            },
-            {
-                "step": "4. 成果展评，美育升华 (10分钟)",
-                "content": "将AI作品投屏至教室大屏，同学互评、教师点评，一键发布至乡村非遗社区广场。"
-            }
-        ],
-        "activity_design": [
-            "环节一：创设情境，唤醒乡愁 (8分钟)",
-            "环节二：匠心溯源，技法揭秘 (15分钟)",
-            "环节三：巧借AI，灵感赋能 (12分钟)",
-            "环节四：成果展评，美育升华 (10分钟)"
-        ],
-        "teacher_script": f"同学们请看大屏幕，今天王老师带大家跨越时空，来到运河岸边的杨柳青古镇和三岔河口……",
-        "interactive_questions": [
-            "如果你为家乡设计一个守护神皮影，你希望他身披什么图案？",
-            "传统工艺中的矿物颜料与现代水彩相比，有什么独特的质感？"
-        ],
-        "homework_proposal": f"利用AI工坊设计1幅{req.topic}作品，并向爸爸妈妈讲解其中的非遗小故事。",
-        "ppt_download_url": "https://example.com/assets/lesson_plans/tianjin_heritage_template.pptx"
-    }
-
-    return success_response(lesson_plan, message="AI智能备课方案已生成")
+    return success_response(generate_lesson(req, db), message="备课方案已生成")
 
 @router.get("/lesson-plans/export-html", response_class=HTMLResponse)
 def export_lesson_plan_html(
     topic: str = Query("杨柳青木版年画", description="非遗主题"),
     grade: str = Query("小学三年级", description="适用学段"),
-    duration_minutes: int = Query(45, description="课时时长")
+    duration_minutes: int = Query(45, ge=10, le=240, description="课时时长"),
+    current_user: dict = Depends(require_teacher)
 ):
     """导出排版工整的标准非遗美育教案 (支持直接打印与另存为 PDF)"""
     date_str = datetime.utcnow().strftime("%Y年%m月%d日")
+    topic, grade = escape(topic), escape(grade)
     html_content = f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -290,7 +205,7 @@ def export_lesson_plan_html(
     </style>
 </head>
 <body>
-    <button class="print-btn" onclick="window.print()">🖨️ 打印此教案 / 另存为 PDF</button>
+    <div class="print-btn">请使用浏览器打印 / 另存为 PDF</div>
     <div class="paper">
         <div class="header">
             <div class="super-title">天津市“津韵润乡”乡村中小学非遗美育协同工程 · 标准化微课教案</div>
@@ -377,13 +292,14 @@ def export_lesson_plan_html(
     </div>
 </body>
 </html>"""
-    return HTMLResponse(content=html_content)
+    return HTMLResponse(content=html_content, headers={"Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; script-src 'none'", "X-Content-Type-Options": "nosniff"})
 
 @router.get("/lesson-plans/export-pptx")
 def export_lesson_plan_pptx(
     topic: str = Query("杨柳青木版年画", description="非遗主题"),
     grade: str = Query("小学三年级", description="适用学段"),
-    duration_minutes: int = Query(45, description="课时时长")
+    duration_minutes: int = Query(45, ge=10, le=240, description="课时时长"),
+    current_user: dict = Depends(require_teacher)
 ):
     """动态生成并导出津派非遗美育 16:9 标准 PPTX 演示课件 (可直接下载与编辑放映)"""
     pptx_stream = generate_lesson_pptx(
@@ -411,11 +327,12 @@ def list_assignments(
     current_user: dict = Depends(require_teacher),
     db: Session = Depends(get_db)
 ):
+    owned_class(db, class_id, current_user)
     teacher_id = current_user["user_id"]
-    assignments = db.query(Assignment).filter(
-        Assignment.class_id == class_id,
-        Assignment.teacher_id == teacher_id
-    ).order_by(Assignment.created_at.desc()).all()
+    query = db.query(Assignment).filter(Assignment.class_id == class_id)
+    if current_user["role_code"] != "ADMIN":
+        query = query.filter(Assignment.teacher_id == teacher_id)
+    assignments = query.order_by(Assignment.created_at.desc()).all()
 
     res = []
     for a in assignments:
@@ -439,7 +356,8 @@ def create_assignment(
     current_user: dict = Depends(require_teacher),
     db: Session = Depends(get_db)
 ):
-    teacher_id = current_user["user_id"]
+    class_obj = owned_class(db, req.class_id, current_user)
+    teacher_id = class_obj.teacher_id
     deadline = datetime.utcnow() + timedelta(days=req.deadline_days)
     
     assignment = Assignment(
@@ -464,6 +382,7 @@ def list_submissions(
     current_user: dict = Depends(require_teacher),
     db: Session = Depends(get_db)
 ):
+    owned_assignment(db, assignment_id, current_user)
     submissions = db.query(AssignmentSubmission).filter(
         AssignmentSubmission.assignment_id == assignment_id
     ).all()
@@ -483,10 +402,7 @@ def list_submissions(
             "submitted_at": s.submitted_at.strftime("%Y-%m-%d %H:%M") if s.submitted_at else "",
             "score": review.score if review else None,
             "comment": review.comment if review else None,
-            "ai_suggestion": {
-                "score_recommend": 92,
-                "feedback": "作品色彩对比强烈，人物造型生动，展现出天津皮影典型的镂空特色与装饰感。"
-            }
+            "ai_suggestion": None
         })
     return success_response(res)
 
@@ -502,6 +418,12 @@ def review_submission(
     if not sub:
         return error_response(code=4040, message="提交记录不存在")
     
+    owned_assignment(db, sub.assignment_id, current_user)
+    assignment = db.get(Assignment, sub.assignment_id)
+    if assignment and assignment.contest_id:
+        contest = db.get(Contest, assignment.contest_id)
+        if contest and contest.status == "PUBLISHED":
+            raise HTTPException(409, "对抗赛成绩已公布，不能再修改")
     sub.status = "REVIEWED"
 
     review = db.query(AssignmentReview).filter(AssignmentReview.submission_id == submission_id).first()
@@ -528,7 +450,7 @@ def get_class_analytics(
     db: Session = Depends(get_db)
 ):
     # 班级全景学情分析汇总
-    class_obj = db.query(TeacherClass).filter(TeacherClass.id == class_id).first()
+    class_obj = owned_class(db, class_id, current_user)
     if not class_obj:
         return error_response(code=4040, message="班级不存在")
 
@@ -556,28 +478,17 @@ def get_class_analytics(
         })
     ranking.sort(key=lambda x: x["energy_value"], reverse=True)
 
+    progresses = db.query(LearningProgress).filter(LearningProgress.user_id.in_(student_ids)).all() if student_ids else []
+    quizzes = db.query(QuizAttempt).filter(QuizAttempt.user_id.in_(student_ids)).all() if student_ids else []
+    assignment_ids = [a.id for a in db.query(Assignment).filter(Assignment.class_id == class_id).all()]
+    submissions = db.query(AssignmentSubmission).filter(AssignmentSubmission.assignment_id.in_(assignment_ids)).count() if assignment_ids else 0
     analytics_data = {
-        "class_name": class_obj.name,
-        "grade": class_obj.grade,
-        "student_count": len(student_ids),
-        "course_completion_rate": 84.5,
-        "quiz_pass_rate": 88.0,
-        "homework_submit_rate": 92.3,
-        "ranking": ranking,
-        "radar_capabilities": [
-            {"dimension": "非遗传统认知", "score": 90},
-            {"dimension": "AI提示词表达", "score": 85},
-            {"dimension": "色彩与构图审美", "score": 88},
-            {"dimension": "手工实践创作", "score": 82},
-            {"dimension": "文化传承热情", "score": 95}
-        ],
-        "category_preference": [
-            {"name": "津门皮影", "count": 28},
-            {"name": "杨柳青年画", "count": 22},
-            {"name": "泥人张彩塑", "count": 18},
-            {"name": "青铜神兽纹样", "count": 15},
-            {"name": "骆派京韵大鼓", "count": 12}
-        ]
+        "class_name": class_obj.name, "grade": class_obj.grade, "student_count": len(student_ids),
+        "course_completion_rate": round(100 * sum(bool(p.completed) for p in progresses) / len(progresses), 1) if progresses else None,
+        "quiz_pass_rate": round(100 * sum(bool(q.passed) for q in quizzes) / len(quizzes), 1) if quizzes else None,
+        "homework_submit_rate": round(100 * submissions / (len(assignment_ids) * len(student_ids)), 1) if assignment_ids and student_ids else None,
+        "ranking": ranking, "radar_capabilities": [], "category_preference": [],
+        "data_source": "database"
     }
 
     return success_response(analytics_data)
@@ -585,72 +496,39 @@ def get_class_analytics(
 @router.get("/classes/{class_id}/exhibition-package")
 def generate_exhibition_package(
     class_id: int,
-    current_user: Optional[dict] = Depends(get_current_user_optional),
+    current_user: dict = Depends(require_teacher),
     db: Session = Depends(get_db)
 ):
     """
     一键生成乡村小学非遗成果走廊实体展册排版数据集 (A4/A3 标准展出画册规格)
     """
-    class_obj = db.query(TeacherClass).filter(TeacherClass.id == class_id).first()
+    class_obj = owned_class(db, class_id, current_user)
     class_name = class_obj.name if class_obj else "乡村非遗美育特色示范班"
     grade = class_obj.grade if class_obj else "小学三年级"
 
     # 获取班级学生信息与代表性作品
     members = db.query(ClassMember).filter(ClassMember.class_id == class_id, ClassMember.status == "ACTIVE").all()
-    student_ids = [m.student_id for m in members] if members else [2] # 默认回退李小明
+    student_ids = [m.student_id for m in members]
     users = db.query(SysUser).filter(SysUser.id.in_(student_ids)).all() if student_ids else []
     student_map = {u.id: u for u in users}
 
-    # 聚合高精度展品
-    exhibition_items = [
-        {
-            "id": "EXHIBIT-01",
-            "student_id": 2,
-            "student_name": student_map.get(2).nickname if 2 in student_map else "李小明",
-            "student_school": "蓟州区穿芳峪镇中心小学",
-            "student_avatar": student_map.get(2).avatar_url if 2 in student_map else "",
-            "work_title": "《津门赶考文生·青衿致远》",
-            "tool_type": "SHADOW_PUPPET",
-            "tool_name": "津派皮影戏三签可动纸样",
-            "colored_image_url": "/static/generated/c81e3ba909d74c26b507da99c12d6813_colored.svg",
-            "line_art_url": "/static/generated/c81e3ba909d74c26b507da99c12d6813_lineart.svg",
-            "template_url": "/static/generated/c81e3ba909d74c26b507da99c12d6813_template.svg",
-            "color_palette": ["#8B4513 (赭石)", "#2F4F4F (墨青)", "#D2691E (橘褐)", "#F5F5DC (米白)"],
-            "historical_context": "承继津门文仕求学之风，旧时文生分科治学，骨秀神清，重学尚礼。",
-            "craft_technique": "以驴皮为材，先勾线稿，再用平刀刻衣纹，发刀刻细节点染。",
-            "mentor_critique": "刀工流畅沉静，文生巾透雕繁而不杂，兼具文人雅趣与乡村学子质朴灵性。",
-            "qr_verify_url": "http://localhost:5174/ai-workshop?verify=EXHIBIT-01",
-            "status": "APPROVED",
-            "award": "特等奖·津门非遗小小传承人"
-        },
-        {
-            "id": "EXHIBIT-02",
-            "student_id": 3,
-            "student_name": "王小燕",
-            "student_school": "宝坻区林亭口镇第一小学",
-            "student_avatar": "",
-            "work_title": "《喜庆连年·吉庆红鲤福娃》",
-            "tool_type": "SHADOW_PUPPET",
-            "tool_name": "杨柳青木版年画意蕴皮影",
-            "colored_image_url": "/static/generated/b695123fc4d348a29b35062a74c4a6fb_colored.svg",
-            "line_art_url": "/static/generated/b695123fc4d348a29b35062a74c4a6fb_lineart.svg",
-            "template_url": "/static/generated/b695123fc4d348a29b35062a74c4a6fb_template.svg",
-            "color_palette": ["#C1272D (朱砂红)", "#1A6840 (品绿)", "#F9D423 (槐黄)", "#0038A8 (佛青)"],
-            "historical_context": "源自杨柳青年画经典《连年有余》，胖娃娃抱鲤寓意丰衣足食与乡土祥和。",
-            "craft_technique": "半印半画，墨线拓印后手工点染面颊粉润与双髻朱砂。",
-            "mentor_critique": "童真盎然，色彩饱满喜庆，精准呈现了杨柳青木版年画五色套印神韵。",
-            "qr_verify_url": "http://localhost:5174/ai-workshop?verify=EXHIBIT-02",
-            "status": "APPROVED",
-            "award": "一等奖·最佳传统美学创意"
-        }
-    ]
+    posts = db.query(CommunityPost).filter(CommunityPost.user_id.in_(student_ids),
+                                           CommunityPost.status == "APPROVED").all() if student_ids else []
+    exhibition_items = [{"id": str(post.id), "student_id": post.user_id,
+        "student_name": student_map[post.user_id].nickname if post.user_id in student_map else "学员",
+        "student_school": class_obj.school_id or "", "student_avatar": student_map[post.user_id].avatar_url if post.user_id in student_map else "",
+        "work_title": post.title, "tool_type": post.category, "tool_name": post.category,
+        "colored_image_url": post.cover_url, "line_art_url": None, "template_url": None,
+        "color_palette": [], "historical_context": "", "craft_technique": "",
+        "mentor_critique": "", "qr_verify_url": f"/community?post={post.id}",
+        "status": post.status, "award": ""} for post in posts]
 
     return success_response({
         "class_id": class_id,
         "class_name": class_name,
         "grade": grade,
         "curator_title": f"《津韵润乡·乡土非遗美育成果走廊实体展册（{class_name}）》",
-        "academic_year": "2025-2026学年春季期末展",
+        "academic_year": str(datetime.utcnow().year),
         "school_header": "天津市乡村非遗美育振兴协同育人基地",
         "print_standards": {
             "page_size": "A4 (210mm × 297mm) / A3 (297mm × 420mm)",

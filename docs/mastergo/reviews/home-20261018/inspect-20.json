@@ -1,0 +1,45 @@
+[
+  {
+    "id": "5:02281",
+    "type": "FRAME",
+    "depth": 0,
+    "name": "组 2243",
+    "layout": {
+      "width": 20,
+      "height": 15,
+      "relativeX": 0,
+      "relativeY": 0
+    }
+  },
+  {
+    "id": "5:02282",
+    "type": "TEXT",
+    "depth": 1,
+    "name": "文本 36",
+    "layout": {
+      "width": 33.5,
+      "height": 15,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "fill": [
+      "#6C0A0A"
+    ],
+    "text": [
+      {
+        "text": "小课",
+        "font": "font_5:01959"
+      }
+    ],
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 10,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "15",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  }
+]

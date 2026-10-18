@@ -1,0 +1,18 @@
+[
+  {
+    "id": "5:02342",
+    "type": "FRAME",
+    "depth": 0,
+    "name": "组 2184",
+    "layout": {
+      "width": 6,
+      "height": 6,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "fill": [
+      "#C9A84C"
+    ],
+    "borderRadius": "9999px"
+  }
+]

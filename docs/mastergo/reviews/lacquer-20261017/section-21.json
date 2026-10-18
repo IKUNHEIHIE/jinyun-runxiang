@@ -1,0 +1,109 @@
+{
+  "sectionIndex": 21,
+  "section": {
+    "id": "40:55061",
+    "name": "组 7401",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2372px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "effect_5:4717": {
+        "value": [
+          "backdrop-filter: blur(4px);"
+        ]
+      },
+      "paint_5:4713": {
+        "value": [
+          "rgba(240, 230, 208, 0.8)"
+        ]
+      },
+      "paint_5:4715": {
+        "value": [
+          "rgba(245, 232, 184, 0.5)"
+        ]
+      },
+      "paint_5:4722": {
+        "value": [
+          "#4A4238"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "40:55061",
+        "name": "组 7401",
+        "layoutStyle": {
+          "width": 40,
+          "height": 40,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "fill": "paint_5:4713",
+        "_color": "rgba(240, 230, 208, 0.8)",
+        "strokeColor": "paint_5:4715",
+        "strokeType": "solid",
+        "strokeAlign": "inside",
+        "strokeWidth": "1px",
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "40:55063",
+            "name": "组 2551",
+            "layoutStyle": {
+              "width": 20,
+              "height": 20,
+              "relativeX": 10,
+              "relativeY": 10
+            },
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "40:55064",
+                "name": "图标 10",
+                "layoutStyle": {
+                  "width": 20,
+                  "height": 20,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "children": [
+                  {
+                    "type": "PATH",
+                    "id": "40:55065",
+                    "name": "组 17",
+                    "layoutStyle": {
+                      "width": 5.833333492279053,
+                      "height": 11.666666030883789,
+                      "relativeX": 6.666666507720947,
+                      "relativeY": 4.166666507720947
+                    },
+                    "svgKey": "S21:图标 10|40:55065",
+                    "svgShortKey": "S21#0",
+                    "svgName": "图标 10"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "effect": "effect_5:4717",
+        "borderRadius": "9999px"
+      }
+    ],
+    "components": []
+  },
+  "nodeCount": 4,
+  "svgNodeCount": 1,
+  "hasStrippedSvgs": true,
+  "componentDocumentLinks": [],
+  "fetchProgress": "ALL 22 sections fetched. You can now generate the complete HTML."
+}

@@ -1,0 +1,256 @@
+{
+  "sectionIndex": 6,
+  "section": {
+    "id": "5:8188",
+    "name": "组 10302",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2862px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "paint_5:7271": {
+        "value": [
+          "#C4A35A"
+        ]
+      },
+      "paint_5:7355": {
+        "value": [
+          "#5A7D4A"
+        ]
+      },
+      "paint_5:7778": {
+        "value": [
+          "#D4B76A"
+        ]
+      },
+      "paint_5:8192": {
+        "value": [
+          "#7A9D6A"
+        ]
+      },
+      "paint_5:8202": {
+        "value": [
+          "#6A8D5A"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:8188",
+        "name": "组 10302",
+        "layoutStyle": {
+          "width": 176,
+          "height": 256,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:8189",
+            "name": "组 10303",
+            "layoutStyle": {
+              "width": 176,
+              "height": 256,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:8190",
+                "name": "矢量 1",
+                "layoutStyle": {
+                  "width": 176,
+                  "height": 256,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "children": [
+                  {
+                    "type": "PATH",
+                    "id": "5:8191",
+                    "name": "组 10",
+                    "layoutStyle": {
+                      "width": 4.266670227050781,
+                      "height": 238.93333435058594,
+                      "relativeX": 85.86666107177734,
+                      "relativeY": 17.066667556762695
+                    },
+                    "svgKey": "S6:矢量 1|5:8191",
+                    "svgShortKey": "S6#0",
+                    "svgName": "矢量 1"
+                  },
+                  {
+                    "type": "PATH",
+                    "id": "5:8196",
+                    "name": "组 11",
+                    "layoutStyle": {
+                      "width": 25.60000228881836,
+                      "height": 85.33332824707031,
+                      "relativeX": 62.400001525878906,
+                      "relativeY": 153.60000610351562
+                    }
+                  },
+                  {
+                    "type": "PATH",
+                    "id": "5:8199",
+                    "name": "组 12",
+                    "layoutStyle": {
+                      "width": 25.599998474121094,
+                      "height": 85.33332824707031,
+                      "relativeX": 88,
+                      "relativeY": 128
+                    }
+                  },
+                  {
+                    "type": "PATH",
+                    "id": "5:8200",
+                    "name": "组 13",
+                    "layoutStyle": {
+                      "width": 34.13333511352539,
+                      "height": 59.73333740234375,
+                      "relativeX": 53.866668701171875,
+                      "relativeY": 110.93333435058594
+                    }
+                  },
+                  {
+                    "type": "PATH",
+                    "id": "5:8195",
+                    "name": "组 14",
+                    "layoutStyle": {
+                      "width": 34.133331298828125,
+                      "height": 59.73332977294922,
+                      "relativeX": 88,
+                      "relativeY": 85.33333587646484
+                    }
+                  },
+                  {
+                    "type": "SVG_ELLIPSE",
+                    "id": "5:8204",
+                    "name": "组 15",
+                    "layoutStyle": {
+                      "width": 13.65333366394043,
+                      "height": 34.13333511352539,
+                      "relativeX": 81.17,
+                      "relativeY": 12.8,
+                      "rotate": -10
+                    },
+                    "fill": "paint_5:7271",
+                    "_color": "#C4A35A"
+                  },
+                  {
+                    "type": "SVG_ELLIPSE",
+                    "id": "5:8194",
+                    "name": "组 16",
+                    "layoutStyle": {
+                      "width": 11.946666717529297,
+                      "height": 27.30666732788086,
+                      "relativeX": 73.49,
+                      "relativeY": 24.75,
+                      "rotate": -25
+                    },
+                    "fill": "paint_5:7778",
+                    "_color": "#D4B76A"
+                  },
+                  {
+                    "type": "SVG_ELLIPSE",
+                    "id": "5:8198",
+                    "name": "组 17",
+                    "layoutStyle": {
+                      "width": 11.946666717529297,
+                      "height": 27.30666732788086,
+                      "relativeX": 90.56,
+                      "relativeY": 20.48,
+                      "rotate": 15
+                    },
+                    "fill": "paint_5:7778",
+                    "_color": "#D4B76A"
+                  },
+                  {
+                    "type": "SVG_ELLIPSE",
+                    "id": "5:8197",
+                    "name": "组 18",
+                    "layoutStyle": {
+                      "width": 10.239999771118164,
+                      "height": 23.893333435058594,
+                      "relativeX": 70.08,
+                      "relativeY": 34.99,
+                      "rotate": -35
+                    },
+                    "fill": "paint_5:7271",
+                    "_color": "#C4A35A"
+                  },
+                  {
+                    "type": "SVG_ELLIPSE",
+                    "id": "5:8205",
+                    "name": "组 19",
+                    "layoutStyle": {
+                      "width": 10.239999771118164,
+                      "height": 23.893333435058594,
+                      "relativeX": 95.68,
+                      "relativeY": 30.72,
+                      "rotate": 25
+                    },
+                    "fill": "paint_5:7271",
+                    "_color": "#C4A35A"
+                  },
+                  {
+                    "type": "PATH",
+                    "id": "5:8206",
+                    "name": "组 20",
+                    "layoutStyle": {
+                      "width": 59.73333740234375,
+                      "height": 51.19999694824219,
+                      "relativeX": 28.266666412353516,
+                      "relativeY": 170.6666717529297
+                    },
+                    "opacity": 0.800000011920929
+                  },
+                  {
+                    "type": "PATH",
+                    "id": "5:8201",
+                    "name": "组 21",
+                    "layoutStyle": {
+                      "width": 59.73332977294922,
+                      "height": 51.19999694824219,
+                      "relativeX": 88,
+                      "relativeY": 128
+                    },
+                    "opacity": 0.699999988079071
+                  },
+                  {
+                    "type": "PATH",
+                    "id": "5:8207",
+                    "name": "组 22",
+                    "layoutStyle": {
+                      "width": 51.20000076293945,
+                      "height": 42.66667175292969,
+                      "relativeX": 36.80000305175781,
+                      "relativeY": 93.86666870117188
+                    },
+                    "opacity": 0.6000000238418579
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "components": []
+  },
+  "nodeCount": 16,
+  "svgNodeCount": 13,
+  "hasStrippedSvgs": true,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 7/20. MISSING 13 sections: [7,8,9,10,11,12,13,14,15,16,17,18,19]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

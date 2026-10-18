@@ -1,0 +1,156 @@
+{
+  "sectionIndex": 22,
+  "section": {
+    "id": "5:3798",
+    "name": "组 7645",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "446px",
+    "minHeight": "2325px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "effect_5:3192": {
+        "value": []
+      },
+      "font_5:3619": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 16,
+          "style": "Bold",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "24",
+          "letterSpacing": "2.240000009536743px",
+          "weight": "700"
+        }
+      },
+      "paint_5:3262": {
+        "value": [
+          "rgba(201, 168, 76, 0.5)"
+        ]
+      },
+      "paint_5:3652": {
+        "value": [
+          "#73602B"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:3798",
+        "name": "组 7645",
+        "layoutStyle": {
+          "width": 192.14349365234375,
+          "height": 24,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:3799",
+            "name": "组 7646",
+            "layoutStyle": {
+              "width": 32,
+              "relativeX": 0,
+              "relativeY": 11.5
+            },
+            "children": [
+              {
+                "type": "LAYER",
+                "id": "5:3800",
+                "name": "矩形 8",
+                "layoutStyle": {
+                  "width": 32,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "fill": "paint_5:3262",
+                "_color": "rgba(201, 168, 76, 0.5)",
+                "effect": "effect_5:3192"
+              }
+            ]
+          },
+          {
+            "type": "TEXT",
+            "id": "5:3801",
+            "name": "文本 54",
+            "layoutStyle": {
+              "width": 85,
+              "height": 24,
+              "relativeX": 40,
+              "relativeY": 0
+            },
+            "fill": "paint_5:3652",
+            "_color": "#73602B",
+            "text": [
+              {
+                "text": "历⁠史⁠传⁠承",
+                "font": "font_5:3619"
+              }
+            ],
+            "textColor": [
+              {
+                "start": 0,
+                "end": 7,
+                "color": "paint_5:3652"
+              }
+            ],
+            "textAlign": "left",
+            "textMode": "single-line"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:3805",
+            "name": "组 7647",
+            "layoutStyle": {
+              "width": 32,
+              "relativeX": 133,
+              "relativeY": 11.5
+            },
+            "children": [
+              {
+                "type": "LAYER",
+                "id": "5:3806",
+                "name": "矩形 9",
+                "layoutStyle": {
+                  "width": 32,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "fill": "paint_5:3262",
+                "_color": "rgba(201, 168, 76, 0.5)",
+                "effect": "effect_5:3192"
+              }
+            ]
+          }
+        ],
+        "flexContainerInfo": {
+          "flexDirection": "row",
+          "alignItems": "center",
+          "mainSizing": "fixed",
+          "crossSizing": "auto",
+          "gap": "8px 8px"
+        }
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "历⁠史⁠传⁠承",
+        "parentType": "FRAME",
+        "parentName": "组 7645"
+      }
+    ]
+  },
+  "nodeCount": 6,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 23/31. MISSING 8 sections: [23,24,25,26,27,28,29,30]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

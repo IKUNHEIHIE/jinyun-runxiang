@@ -1,0 +1,174 @@
+{
+  "sectionIndex": 9,
+  "section": {
+    "id": "5:3658",
+    "name": "组 7584",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "446px",
+    "minHeight": "2325px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_5:3619": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 16,
+          "style": "Bold",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "24",
+          "letterSpacing": "2.240000009536743px",
+          "weight": "700"
+        }
+      },
+      "paint_5:3659": {
+        "value": [
+          "linear-gradient(99deg, #8B1A1A 0%, #5C0F0F 100%)"
+        ]
+      },
+      "paint_5:3664": {
+        "value": [
+          "#F5F0E8"
+        ]
+      },
+      "paint_5:3671": {
+        "value": [
+          "#F5F0E8"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:3658",
+        "name": "组 7584",
+        "layoutStyle": {
+          "width": 319.9282531738281,
+          "height": 52,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "fill": "paint_5:3659",
+        "_color": "linear-gradient(99deg, #8B1A1A 0%, #5C0F0F 100%)",
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:3661",
+            "name": "组 7585",
+            "layoutStyle": {
+              "width": 20,
+              "height": 20,
+              "relativeX": 92.00912475585938,
+              "relativeY": 16
+            },
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:3662",
+                "name": "图标 11",
+                "layoutStyle": {
+                  "width": 20,
+                  "height": 20,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "children": [
+                  {
+                    "type": "PATH",
+                    "id": "5:3663",
+                    "name": "组 20",
+                    "layoutStyle": {
+                      "width": 13.333334922790527,
+                      "height": 15,
+                      "relativeX": 3.3333332538604736,
+                      "relativeY": 2.5
+                    },
+                    "svgKey": "S9:图标 11|5:3663",
+                    "svgShortKey": "S9#0",
+                    "svgName": "图标 11"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "id": "5:3666",
+            "name": "容器 13",
+            "layoutStyle": {
+              "width": 107.91000366210938,
+              "height": 24,
+              "relativeX": 120.00912475585938,
+              "relativeY": 14
+            },
+            "children": [
+              {
+                "type": "TEXT",
+                "id": "5:3667",
+                "name": "文本 34",
+                "layoutStyle": {
+                  "width": 107.9000015258789,
+                  "height": 16,
+                  "relativeX": 0,
+                  "relativeY": 2105
+                },
+                "fill": "paint_5:3671",
+                "_color": "#F5F0E8",
+                "text": [
+                  {
+                    "text": "生⁠成⁠皮⁠影⁠角⁠色",
+                    "font": "font_5:3619"
+                  }
+                ],
+                "textColor": [
+                  {
+                    "start": 0,
+                    "end": 11,
+                    "color": "paint_5:3671"
+                  }
+                ],
+                "textAlign": "center",
+                "textMode": "single-line"
+              }
+            ],
+            "flexContainerInfo": {
+              "flexDirection": "row",
+              "mainSizing": "fixed",
+              "crossSizing": "fixed",
+              "padding": "2105px 0px 0px"
+            }
+          }
+        ],
+        "flexContainerInfo": {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "alignItems": "center",
+          "mainSizing": "fixed",
+          "crossSizing": "auto",
+          "gap": "8px 8px",
+          "padding": "14px 0px"
+        },
+        "borderRadius": "12px"
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "生⁠成⁠皮⁠影⁠角⁠色",
+        "parentType": "FRAME",
+        "parentName": "容器 13"
+      }
+    ]
+  },
+  "nodeCount": 6,
+  "svgNodeCount": 1,
+  "hasStrippedSvgs": true,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 10/31. MISSING 21 sections: [10,11,12,13,14,15,16,17,18,19... +11 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

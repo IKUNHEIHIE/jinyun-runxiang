@@ -1,15 +1,17 @@
 import os
 import uuid
 import re
-from typing import Optional, List, Dict, Any
-from fastapi import APIRouter, Depends, HTTPException, Query
+from html import escape
+from app.core.files import resolve_static_file, sanitize_svg
+from typing import Optional
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.security import get_current_user_optional, get_current_user
 from app.schemas.common import success_response, error_response
-from app.models.entities import Badge, UserBadge, SysConfig
+from app.models.entities import Badge, UserBadge, Asset
 
 router = APIRouter(prefix="/heritage", tags=["津门非遗环境音与金石印章多宝阁"])
 
@@ -94,7 +96,7 @@ def get_heritage_seals(
         cond = s.condition_json if isinstance(s.condition_json, dict) else {}
         short_text = cond.get("short_text", s.name[:2])
         color = cond.get("color", "#C1272D")
-        is_unlocked = (s.id in unlocked_badge_ids) or (user_id is None)
+        is_unlocked = s.id in unlocked_badge_ids
 
         res.append({
             "id": s.id,
@@ -116,7 +118,7 @@ def get_heritage_seals(
 @router.post("/seals/stamp")
 def stamp_seal_on_svg(
     req: StampSealRequest,
-    current_user: Optional[dict] = Depends(get_current_user_optional),
+    current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     seal = db.query(Badge).filter(Badge.code == req.seal_code).first()
@@ -127,17 +129,28 @@ def stamp_seal_on_svg(
     short_text = cond.get("short_text", seal.name[:2])
     color = cond.get("color", "#C1272D")
 
+    unlocked = db.query(UserBadge).filter(
+        UserBadge.user_id == current_user["user_id"], UserBadge.badge_id == seal.id
+    ).first()
+    if not unlocked and current_user["role_code"] != "ADMIN":
+        raise HTTPException(403, "请先解锁此印章")
     raw_svg = req.svg_raw
     if not raw_svg and req.svg_url:
-        rel_path = req.svg_url.replace("/static/", "")
-        static_base = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "static")
-        local_path = os.path.join(static_base, rel_path)
-        if os.path.exists(local_path):
-            with open(local_path, "r", encoding="utf-8", errors="ignore") as f:
-                raw_svg = f.read()
-
+        local_path = resolve_static_file(req.svg_url)
+        asset = db.query(Asset).filter(Asset.file_url == req.svg_url,
+                                     Asset.created_by == current_user["user_id"]).first()
+        if not asset or local_path.suffix.lower() != ".svg":
+            raise HTTPException(404, "SVG 资源不存在或无权访问")
+        if local_path.stat().st_size > 5 * 1024 * 1024:
+            raise HTTPException(413, "SVG 文件过大")
+        raw_svg = local_path.read_bytes()
     if not raw_svg:
-        return error_response(code=4006, message="未提供有效的 SVG 内容或文件路径")
+        raise HTTPException(400, "请提供有效的 SVG")
+    try:
+        raw_svg = sanitize_svg(raw_svg)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+    short_text, color = escape(str(short_text)), escape(str(color), quote=True)
 
     seal_g = f"""
   <!-- 金石篆刻落款印章：{seal.name} -->
@@ -158,12 +171,22 @@ def stamp_seal_on_svg(
     else:
         stamped_svg = clean_svg + seal_g
 
+    try:
+        stamped_svg = sanitize_svg(stamped_svg)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+
     stamped_id = f"stamped_{uuid.uuid4().hex[:10]}.svg"
     dest_path = os.path.join(STATIC_GENERATED_DIR, stamped_id)
     with open(dest_path, "w", encoding="utf-8") as f:
         f.write(stamped_svg)
 
     stamped_url = f"/static/generated/{stamped_id}"
+
+    db.add(Asset(asset_type="IMAGE", object_key=f"generated/{stamped_id}",
+                 file_url=stamped_url, mime_type="image/svg+xml",
+                 size_bytes=len(stamped_svg.encode()), created_by=current_user["user_id"]))
+    db.commit()
 
     return success_response({
         "seal_name": seal.name,

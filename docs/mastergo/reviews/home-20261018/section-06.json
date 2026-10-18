@@ -1,0 +1,47 @@
+{
+  "sectionIndex": 6,
+  "section": {
+    "id": "5:02302",
+    "name": "组 2185",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "373px",
+    "minHeight": "1394px",
+    "background": "#FFFFFF",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "paint_5:3224": {
+        "value": [
+          "#C9A84C"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:02302",
+        "name": "组 2185",
+        "layoutStyle": {
+          "width": 4,
+          "height": 4,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "opacity": 0.5,
+        "fill": "paint_5:3224",
+        "_color": "rgba(201, 168, 76, 0.5)",
+        "children": [],
+        "borderRadius": "9999px"
+      }
+    ],
+    "components": []
+  },
+  "nodeCount": 1,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 7/29. MISSING 22 sections: [7,8,9,10,11,12,13,14,15,16... +12 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

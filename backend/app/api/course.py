@@ -1,24 +1,28 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException
+from sqlalchemy import func
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
-from typing import Optional, List, Any
-from datetime import datetime
+from pydantic import BaseModel, Field
+from typing import Optional, List
+from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 
 from app.core.database import get_db
-from app.core.security import get_current_user, get_current_user_optional
+from app.core.security import get_current_user, get_current_user_optional, require_admin
 from app.schemas.common import success_response, error_response
 from app.models.entities import (
     Course, CourseChapter, LearningProgress, OfflineSyncEvent,
-    Quiz, QuizQuestion, QuizAttempt, UserGrowth, GrowthEvent, Badge, UserBadge
+    Quiz, QuizQuestion, QuizAttempt, UserGrowth, GrowthEvent, SysUser
 )
+from app.models.mobile import LearningDay, CourseRating
+from app.core.course_badges import award_course_badges
 
 router = APIRouter(prefix="/courses", tags=["非遗小课堂"])
 
 class ProgressReportRequest(BaseModel):
     course_id: int
     chapter_id: int
-    position_seconds: int
-    duration_seconds: int
+    position_seconds: int = Field(..., ge=0)
+    duration_seconds: int = Field(..., ge=1)
     completed: bool = False
 
 class OfflineEventItem(BaseModel):
@@ -28,7 +32,7 @@ class OfflineEventItem(BaseModel):
     event_time: str
 
 class OfflineSyncRequest(BaseModel):
-    events: List[OfflineEventItem]
+    events: List[OfflineEventItem] = Field(..., min_length=1, max_length=100)
 
 class QuizSubmitRequest(BaseModel):
     answers: dict  # {"1": ["B"], "2": ["C"]}
@@ -46,7 +50,7 @@ class CreateCourseRequest(BaseModel):
 @router.post("")
 def create_course(
     req: CreateCourseRequest,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_admin),
     db: Session = Depends(get_db)
 ):
     course = Course(
@@ -69,6 +73,7 @@ def create_course(
 @router.put("/{course_id}/status")
 def toggle_course_status(
     course_id: int,
+    current_user: dict = Depends(require_admin),
     db: Session = Depends(get_db)
 ):
     course = db.query(Course).filter(Course.id == course_id).first()
@@ -85,10 +90,13 @@ def list_courses(
     age_group: Optional[str] = None,
     keyword: Optional[str] = None,
     status: Optional[str] = None,
+    current_user: Optional[dict] = Depends(get_current_user_optional),
     page: int = Query(1, ge=1),
     pageSize: int = Query(10, ge=1, le=50),
     db: Session = Depends(get_db)
 ):
+    if status and status != "PUBLISHED" and (not current_user or current_user["role_code"] != "ADMIN"):
+        raise HTTPException(403, "仅管理员可查询非公开课程")
     query = db.query(Course)
     if status and status != "ALL":
         query = query.filter(Course.status == status)
@@ -129,8 +137,8 @@ def get_course_detail(
     db: Session = Depends(get_db)
 ):
     course = db.query(Course).filter(Course.id == course_id).first()
-    if not course:
-        return error_response(code=4040, message="课程不存在")
+    if not course or (course.status != "PUBLISHED" and (not current_user or current_user["role_code"] != "ADMIN")):
+        raise HTTPException(404, "课程不存在")
     
     # 增加浏览量
     course.view_count += 1
@@ -166,6 +174,7 @@ def get_course_detail(
 
     # 关联测验
     quiz = db.query(Quiz).filter(Quiz.course_id == course_id).first()
+    rating = db.query(func.avg(CourseRating.score)).filter(CourseRating.course_id == course_id).scalar()
 
     return success_response({
         "id": course.id,
@@ -178,16 +187,19 @@ def get_course_detail(
         "duration_minutes": course.duration_minutes,
         "energy_reward": course.energy_reward,
         "view_count": course.view_count,
+        "rating": round(float(rating), 1) if rating is not None else None,
         "chapters": chapter_list,
         "quiz_id": quiz.id if quiz else None
     })
 
-@router.post("/progress")
-def report_progress(
-    req: ProgressReportRequest,
-    current_user: dict = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
+def apply_progress(req: ProgressReportRequest, current_user: dict, db: Session,
+                   learned_at: Optional[datetime] = None):
+    db.query(SysUser).filter_by(id=current_user["user_id"]).with_for_update().one()
+    chapter = db.query(CourseChapter).join(Course, Course.id == CourseChapter.course_id).filter(
+        CourseChapter.id == req.chapter_id, CourseChapter.course_id == req.course_id,
+        Course.status == "PUBLISHED").first()
+    if not chapter:
+        raise HTTPException(404, "课程章节不存在")
     user_id = current_user["user_id"]
     progress = db.query(LearningProgress).filter(
         LearningProgress.user_id == user_id,
@@ -195,6 +207,7 @@ def report_progress(
     ).first()
 
     now = datetime.utcnow()
+    activity_at = learned_at or now
     newly_completed = False
 
     if not progress:
@@ -205,8 +218,8 @@ def report_progress(
             position_seconds=req.position_seconds,
             duration_seconds=req.duration_seconds,
             completed=req.completed,
-            completed_at=now if req.completed else None,
-            last_learned_at=now
+            completed_at=activity_at if req.completed else None,
+            last_learned_at=activity_at
         )
         db.add(progress)
         if req.completed:
@@ -215,10 +228,17 @@ def report_progress(
         if not progress.completed and req.completed:
             newly_completed = True
             progress.completed = True
-            progress.completed_at = now
-        progress.position_seconds = req.position_seconds
-        progress.duration_seconds = req.duration_seconds
-        progress.last_learned_at = now
+            progress.completed_at = activity_at
+        if activity_at >= progress.last_learned_at:
+            progress.position_seconds = req.position_seconds
+            progress.duration_seconds = req.duration_seconds
+            progress.last_learned_at = activity_at
+
+    if req.position_seconds > 0 or req.completed:
+        day = activity_at.replace(tzinfo=timezone.utc).astimezone(ZoneInfo("Asia/Shanghai")).date()
+        # The user row lock above serializes same-user progress reports.
+        if db.get(LearningDay, (user_id, day)) is None:
+            db.add(LearningDay(user_id=user_id, day=day))
     
     # 首次学完章节奖励能量
     energy_added = 0
@@ -245,13 +265,21 @@ def report_progress(
                     growth.level_code = "LV3_CRAFTSMAN"
                 elif growth.energy_value >= 500:
                     growth.level_code = "LV2_JOURNEYMAN"
-    db.commit()
 
     return success_response({
         "chapter_id": req.chapter_id,
-        "completed": req.completed,
-        "energy_added": energy_added
+        "completed": bool(progress.completed),
+        "energy_added": energy_added,
+        "badges_unlocked": award_course_badges(db, user_id),
     })
+
+
+@router.post("/progress")
+def report_progress(req: ProgressReportRequest, current_user: dict = Depends(get_current_user),
+                    db: Session = Depends(get_db)):
+    result = apply_progress(req, current_user, db)
+    db.commit()
+    return result
 
 @router.post("/sync-offline")
 def sync_offline(
@@ -264,51 +292,30 @@ def sync_offline(
     conflict_ids = []
 
     for ev in req.events:
-        # 幂等查重
         exists = db.query(OfflineSyncEvent).filter(OfflineSyncEvent.event_id == ev.event_id).first()
         if exists:
-            success_ids.append(ev.event_id)
+            (success_ids if exists.user_id == user_id else conflict_ids).append(ev.event_id)
             continue
-        
         try:
-            db.add(OfflineSyncEvent(
-                event_id=ev.event_id,
-                user_id=user_id,
-                event_type=ev.event_type,
-                payload_json=ev.payload,
-                event_time=datetime.fromisoformat(ev.event_time) if "T" in ev.event_time else datetime.utcnow()
-            ))
-            
-            # 合并学习进度
-            if ev.event_type == "PROGRESS_UPDATE":
-                ch_id = ev.payload.get("chapter_id")
-                c_id = ev.payload.get("course_id")
-                pos = ev.payload.get("position_seconds", 0)
-                dur = ev.payload.get("duration_seconds", 0)
-                comp = ev.payload.get("completed", False)
-
-                prog = db.query(LearningProgress).filter(
-                    LearningProgress.user_id == user_id,
-                    LearningProgress.chapter_id == ch_id
-                ).first()
-                if not prog:
-                    db.add(LearningProgress(
-                        user_id=user_id,
-                        chapter_id=ch_id,
-                        course_id=c_id,
-                        position_seconds=pos,
-                        duration_seconds=dur,
-                        completed=comp,
-                        last_learned_at=datetime.utcnow()
-                    ))
-                else:
-                    if pos > prog.position_seconds:
-                        prog.position_seconds = pos
-                    if comp and not prog.completed:
-                        prog.completed = True
-            
+            with db.begin_nested():
+                if ev.event_type != "PROGRESS_UPDATE":
+                    raise ValueError("不支持的离线事件")
+                progress_request = ProgressReportRequest.model_validate(ev.payload)
+                event_at = datetime.fromisoformat(ev.event_time.replace("Z", "+00:00"))
+                if event_at.tzinfo is None:
+                    event_at = event_at.replace(tzinfo=timezone.utc)
+                event_at = event_at.astimezone(timezone.utc).replace(tzinfo=None)
+                now = datetime.utcnow()
+                if event_at > now + timedelta(minutes=5):
+                    raise ValueError("离线事件时间不能在未来")
+                event_at = min(event_at, now)
+                apply_progress(progress_request, current_user, db, learned_at=event_at)
+                db.add(OfflineSyncEvent(event_id=ev.event_id, user_id=user_id,
+                    event_type=ev.event_type, payload_json=ev.payload,
+                    event_time=event_at))
+                db.flush()
             success_ids.append(ev.event_id)
-        except Exception:
+        except (ValueError, OverflowError, HTTPException):
             conflict_ids.append(ev.event_id)
 
     db.commit()
@@ -350,6 +357,7 @@ def submit_quiz(
     db: Session = Depends(get_db)
 ):
     user_id = current_user["user_id"]
+    db.query(SysUser).filter_by(id=user_id).with_for_update().one()
     quiz = db.query(Quiz).filter(Quiz.id == quiz_id).first()
     if not quiz:
         return error_response(code=4040, message="测验不存在")

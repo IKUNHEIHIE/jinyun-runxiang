@@ -1,0 +1,699 @@
+{
+  "sections": [
+    {
+      "id": "40:8836",
+      "name": "组 11740",
+      "type": "FRAME",
+      "nodeCount": 53,
+      "x": 0,
+      "y": 0,
+      "width": 375,
+      "height": 295,
+      "textPreview": "己亥年 · 入馆习艺",
+      "containerId": "40:8835",
+      "structureSiblingCount": 1
+    },
+    {
+      "id": "40:9501",
+      "name": "组 11770",
+      "type": "FRAME",
+      "nodeCount": 9,
+      "x": 20,
+      "y": 382,
+      "width": 335,
+      "height": 24,
+      "textPreview": "班级实时数据",
+      "containerId": "40:9500",
+      "structureSiblingCount": 1
+    },
+    {
+      "id": "40:9607",
+      "name": "组 11776",
+      "type": "FRAME",
+      "nodeCount": 59,
+      "x": 20,
+      "y": 418,
+      "width": 335,
+      "height": 304,
+      "textPreview": "今⁠日⁠到⁠课⁠率",
+      "containerId": "40:9500",
+      "structureSiblingCount": 1
+    },
+    {
+      "id": "40:00255",
+      "name": "组 11809",
+      "type": "FRAME",
+      "nodeCount": 3,
+      "x": 20,
+      "y": 742,
+      "width": 335,
+      "height": 24,
+      "textPreview": "教学工坊",
+      "containerId": "40:00210",
+      "structureSiblingCount": 1
+    },
+    {
+      "id": "40:00306",
+      "name": "组 11811",
+      "type": "FRAME",
+      "nodeCount": 60,
+      "x": 20,
+      "y": 778,
+      "width": 335,
+      "height": 244,
+      "textPreview": "智能备课",
+      "containerId": "40:00210",
+      "structureSiblingCount": 1
+    },
+    {
+      "id": "40:00954",
+      "name": "组 11839",
+      "type": "FRAME",
+      "nodeCount": 40,
+      "x": 20,
+      "y": 1042,
+      "width": 335,
+      "height": 159,
+      "textPreview": "教学成就",
+      "containerId": "40:8835",
+      "structureSiblingCount": 1
+    },
+    {
+      "id": "40:01372",
+      "name": "组 11875",
+      "type": "FRAME",
+      "nodeCount": 34,
+      "x": 20,
+      "y": 1221,
+      "width": 335,
+      "height": 128,
+      "textPreview": "快捷操作",
+      "containerId": "40:8835",
+      "structureSiblingCount": 1
+    },
+    {
+      "id": "40:55229",
+      "name": "组 12176",
+      "type": "FRAME",
+      "nodeCount": 34,
+      "x": 0,
+      "y": 1349,
+      "width": 375,
+      "height": 73.5,
+      "textPreview": "首页",
+      "containerId": "40:8835",
+      "structureSiblingCount": 1
+    }
+  ],
+  "totalSections": 8,
+  "totalNodes": 292,
+  "allTexts": [
+    "己亥年 · 入馆习艺",
+    "张新",
+    "128",
+    "授课",
+    "累计2,340节",
+    "56",
+    "关注",
+    "师友同道",
+    "892",
+    "学生",
+    "桃李满园",
+    "班级实时数据",
+    "实时更新",
+    "今⁠日⁠到⁠课⁠率",
+    "%",
+    "96",
+    "作⁠业⁠提⁠交⁠率",
+    "78",
+    "课堂活跃度",
+    "分",
+    "85",
+    "应到 128 人 · 实到 123 人 · 请假 3 人 · 缺勤 2 人",
+    "已提交 100 份 · 待提交 28 份 · 截止时间 今日 22:00",
+    "互动次数 156 次 · 举手 42 人 · 讨论热度 高",
+    "教学工坊",
+    "智能备课",
+    "AI辅助教案生成",
+    "今日 3 份",
+    "进行中 2 场",
+    "作业·对抗赛",
+    "班级PK趣味竞技",
+    "双师课堂",
+    "在⁠线",
+    "远程名师联动授课，实时互动答疑",
+    "进⁠入",
+    "教学成就",
+    "8 / 24",
+    "匠心独运",
+    "桃李芬芳",
+    "春风化雨",
+    "博学笃行",
+    "未解锁",
+    "快捷操作",
+    "发⁠布⁠作⁠业",
+    "班⁠级⁠通⁠知",
+    "成⁠绩⁠录⁠入",
+    "设⁠置",
+    "首页",
+    "小课堂",
+    "AI工坊",
+    "我的",
+    "社区"
+  ],
+  "rootMetadata": {
+    "width": 375,
+    "height": 1405,
+    "name": "教师端 个人中心",
+    "type": "FRAME",
+    "fill": "paint_40:02787",
+    "styles": {
+      "paint_40:02787": {
+        "value": [
+          "#E5D6D6"
+        ]
+      },
+      "paint_40:03901": {
+        "value": [
+          "linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.04) 100%)",
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/fd2936b89e6516c3c5218314d553e049.png"
+          },
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/c5e3213080e9ca46ded99b225c2731bd.webp"
+          }
+        ]
+      },
+      "paint_40:5112": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/5c87c5fb3afa29eadfcecdb766f27340.png"
+          }
+        ]
+      },
+      "paint_40:5124": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/6778f372e966fb89c6e36fbd083e854e.png"
+          }
+        ]
+      },
+      "paint_40:5129": {
+        "value": [
+          "#EDE4DA"
+        ]
+      },
+      "paint_40:6668": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/9d610436277ab82653e6ce454ba033f4.png"
+          }
+        ]
+      },
+      "paint_40:4984": {
+        "value": [
+          "#F7F2ED"
+        ]
+      },
+      "paint_40:5146": {
+        "value": [
+          "#6B8E6B"
+        ]
+      },
+      "paint_5:8183": {
+        "value": [
+          "rgba(255, 255, 255, 0.7)"
+        ]
+      },
+      "effect_5:4717": {
+        "value": [
+          "backdrop-filter: blur(4px);"
+        ]
+      },
+      "paint_40:5170": {
+        "value": [
+          "rgba(168, 74, 59, 0.6)"
+        ]
+      },
+      "paint_5:3630": {
+        "value": [
+          "#8B7355"
+        ]
+      },
+      "paint_5:3215": {
+        "value": [
+          "#2C1810"
+        ]
+      },
+      "paint_5:6890": {
+        "value": [
+          "rgba(255, 255, 255, 0.6)"
+        ]
+      },
+      "effect_5:9356": {
+        "value": [
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+          "box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);",
+          "backdrop-filter: blur(4px);"
+        ]
+      },
+      "paint_40:5071": {
+        "value": [
+          "#8B7355"
+        ]
+      },
+      "paint_5:6897": {
+        "value": [
+          "rgba(255, 255, 255, 0.8)"
+        ]
+      },
+      "paint_40:5350": {
+        "value": [
+          "#A84A3B"
+        ]
+      },
+      "paint_40:5334": {
+        "value": [
+          "rgba(139, 115, 85, 0.15)"
+        ]
+      },
+      "paint_40:5338": {
+        "value": [
+          "rgba(168, 74, 59, 0.3)"
+        ]
+      },
+      "paint_5:4350": {
+        "value": [
+          "#B8956A"
+        ]
+      },
+      "paint_40:5155": {
+        "value": [
+          "#3D3D3D"
+        ]
+      },
+      "paint_40:5494": {
+        "value": [
+          "rgba(184, 149, 106, 0.3)"
+        ]
+      },
+      "paint_40:5657": {
+        "value": [
+          "rgba(107, 142, 107, 0.3)"
+        ]
+      },
+      "paint_5:4780": {
+        "value": [
+          "#FFFFFF"
+        ]
+      },
+      "effect_40:5917": {
+        "value": [
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+          "box-shadow: 0px 4px 20px 0px rgba(44, 24, 16, 0.06);",
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);"
+        ]
+      },
+      "paint_40:5928": {
+        "value": [
+          "#F5E6E0"
+        ]
+      },
+      "paint_40:5075": {
+        "value": [
+          "#A84A3B"
+        ]
+      },
+      "paint_40:6157": {
+        "value": [
+          "#F5EBE0"
+        ]
+      },
+      "paint_40:5082": {
+        "value": [
+          "#B8956A"
+        ]
+      },
+      "paint_40:6372": {
+        "value": [
+          "#E8F0E8"
+        ]
+      },
+      "paint_40:5089": {
+        "value": [
+          "#6B8E6B"
+        ]
+      },
+      "paint_40:6095": {
+        "value": [
+          "linear-gradient(90deg, #C46A5A 0%, #A84A3B 100%)"
+        ]
+      },
+      "paint_40:6105": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/02ca7659c4f936be058201393fe9a12f.png"
+          }
+        ]
+      },
+      "paint_40:6317": {
+        "value": [
+          "linear-gradient(90deg, #D4B896 0%, #B8956A 100%)"
+        ]
+      },
+      "paint_40:6148": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/a23632bd542504c516409a75e808f1b1.png"
+          }
+        ]
+      },
+      "paint_40:6534": {
+        "value": [
+          "linear-gradient(90deg, #8FB08F 0%, #6B8E6B 100%)"
+        ]
+      },
+      "paint_40:6367": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/b7515b688e25ece53161f9b91a825f25.png"
+          }
+        ]
+      },
+      "paint_40:6664": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/cb50e2f48cb833cba8e0a999c55758d6.png"
+          }
+        ]
+      },
+      "paint_40:5093": {
+        "value": [
+          "#A84A3B"
+        ]
+      },
+      "effect_5:3192": {
+        "value": []
+      },
+      "effect_40:6808": {
+        "value": [
+          "box-shadow: 0px 4px 20px 0px rgba(168, 74, 59, 0.25);",
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);"
+        ]
+      },
+      "paint_40:6824": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/54fc2441b3ad07c934cfddc2fbc5c552.png"
+          }
+        ]
+      },
+      "paint_5:7773": {
+        "value": [
+          "rgba(255, 255, 255, 0.2)"
+        ]
+      },
+      "paint_40:00485": {
+        "value": [
+          "#FFFFFF"
+        ]
+      },
+      "paint_40:00481": {
+        "value": [
+          "#FFFFFF"
+        ]
+      },
+      "paint_40:7001": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/dce6d2d48706e1986e261b689bfee2a4.png"
+          }
+        ]
+      },
+      "paint_40:00490": {
+        "value": [
+          "#B8956A"
+        ]
+      },
+      "paint_40:00497": {
+        "value": [
+          "#8B7355"
+        ]
+      },
+      "paint_40:7324": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/3017eb29b038cd02ef00b76d2e318dcf.png"
+          }
+        ]
+      },
+      "paint_40:7515": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/411e8e9e3b501314f928fa7f3c8bd3c7.png"
+          }
+        ]
+      },
+      "paint_40:7387": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/3fab8f629ea14c0c17543b6fa00a57e4.png"
+          }
+        ]
+      },
+      "paint_40:7572": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/2dfd7117e79b50b2363604a5cb8062e8.png"
+          }
+        ]
+      },
+      "paint_40:7450": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/4d3ff9e1c68efd7cd36a9d1a9deb17c7.png"
+          }
+        ]
+      },
+      "paint_40:7586": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/51fd279203776b8c2c0943370e44612b.png"
+          }
+        ]
+      },
+      "paint_40:7519": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/76a97161ed74ddb10a8101d832edc1d6.png"
+          }
+        ]
+      },
+      "paint_40:7510": {
+        "value": [
+          "#F0E8DC"
+        ]
+      },
+      "paint_40:7929": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/d936a07dca47bc4bb23cc1889051be71.png"
+          }
+        ]
+      },
+      "paint_40:7590": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/d0ef5b3be5354f9d5a2ff5f3184fd9ab.png"
+          }
+        ]
+      },
+      "paint_40:00501": {
+        "value": [
+          "#8B7355"
+        ]
+      },
+      "paint_40:00506": {
+        "value": [
+          "#A84A3B"
+        ]
+      },
+      "paint_40:00511": {
+        "value": [
+          "#B8956A"
+        ]
+      },
+      "paint_40:00515": {
+        "value": [
+          "#6B8E6B"
+        ]
+      },
+      "paint_40:00522": {
+        "value": [
+          "#8B7355"
+        ]
+      },
+      "paint_5:01936": {
+        "value": [
+          "#FAF5F0"
+        ]
+      },
+      "paint_5:02029": {
+        "value": [
+          "#E8D9A8"
+        ]
+      },
+      "paint_5:02084": {
+        "value": [
+          "linear-gradient(90deg, #C9A84C 2%, #E8D9A8 30%, #C9A84C 50%, #D9BC6E 69%, #C9A84C 100%)"
+        ]
+      },
+      "paint_5:02244": {
+        "value": [
+          "#8B6914"
+        ]
+      },
+      "paint_5:04389": {
+        "value": [
+          "#8B6914"
+        ]
+      },
+      "paint_5:02224": {
+        "value": [
+          "#8B6944"
+        ]
+      },
+      "paint_5:02216": {
+        "value": [
+          "#8B6944"
+        ]
+      },
+      "paint_5:05286": {
+        "value": [
+          "#6C2E11"
+        ]
+      },
+      "paint_5:02261": {
+        "value": [
+          "#6C2E11"
+        ]
+      }
+    },
+    "allTexts": [
+      "己亥年 · 入馆习艺",
+      "张新",
+      "128",
+      "授课",
+      "累计2,340节",
+      "56",
+      "关注",
+      "师友同道",
+      "892",
+      "学生",
+      "桃李满园",
+      "班级实时数据",
+      "实时更新",
+      "今⁠日⁠到⁠课⁠率",
+      "%",
+      "96",
+      "作⁠业⁠提⁠交⁠率",
+      "78",
+      "课堂活跃度",
+      "分",
+      "85",
+      "应到 128 人 · 实到 123 人 · 请假 3 人 · 缺勤 2 人",
+      "已提交 100 份 · 待提交 28 份 · 截止时间 今日 22:00",
+      "互动次数 156 次 · 举手 42 人 · 讨论热度 高",
+      "教学工坊",
+      "智能备课",
+      "AI辅助教案生成",
+      "今日 3 份",
+      "进行中 2 场",
+      "作业·对抗赛",
+      "班级PK趣味竞技",
+      "双师课堂",
+      "在⁠线",
+      "远程名师联动授课，实时互动答疑",
+      "进⁠入",
+      "教学成就",
+      "8 / 24",
+      "匠心独运",
+      "桃李芬芳",
+      "春风化雨",
+      "博学笃行",
+      "未解锁",
+      "快捷操作",
+      "发⁠布⁠作⁠业",
+      "班⁠级⁠通⁠知",
+      "成⁠绩⁠录⁠入",
+      "设⁠置",
+      "首页",
+      "小课堂",
+      "AI工坊",
+      "我的",
+      "社区"
+    ]
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "1405px",
+    "background": "#E5D6D6",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "splitContainers": [
+    {
+      "name": "组 11769",
+      "type": "FRAME",
+      "id": "40:9500",
+      "width": 335,
+      "height": 340,
+      "x": 20,
+      "y": 382
+    },
+    {
+      "name": "组 11808",
+      "type": "FRAME",
+      "id": "40:00210",
+      "width": 335,
+      "height": 280,
+      "x": 20,
+      "y": 742
+    },
+    {
+      "name": "组 11739",
+      "type": "FRAME",
+      "id": "40:8835",
+      "width": 375,
+      "height": 1437,
+      "x": 0,
+      "y": 0
+    }
+  ],
+  "nextAction": "STOP. This section LIST is only a directory — it has NO DSL nodes,  NO rowTexts. You CANNOT generate HTML from this list alone. Your NEXT ACTION: call mcp__getDesignSections with sectionIndex=0, then sectionIndex=1, ... up to sectionIndex=7 (total 8 calls). Fetch ALL 8 sections in batches of 3-5 before writing ANY HTML. Sections with nodeCount=3 and empty name are NOT empty — they contain real menu items and content (resolved from INSTANCE overrides during DSL transfer). Skipping section DSL fetch is the #1 cause of missing menus, broken icons, and wrong data.",
+  "rules": [
+    "CRITICAL — Page positioning: the section LIST response contains splitContainers with page-absolute coordinates for each page region. Use splitContainers to construct the page skeleton (position:absolute with exact coordinates). Do NOT guess or stack with flex. IMPORTANT: splitContainers x/y are the container's absolute position on the canvas — they are NOT CSS margins/padding for child elements. Do NOT apply a container's y coordinate as top/margin-top on the main content wrapper. The main content area should start at top:0 within its own positioning context; sub-sections inside it use their own bbox y coordinates relative to the container, not to the page root.",
+    "CRITICAL — Multi-column sidebar layout: render ALL sidebar levels as persistent visible columns positioned via splitContainers coordinates. Do NOT use position:absolute/fixed for submenu panels (they become floating overlays and break the main content width). Instead, lay out ALL columns (primary sidebar + submenu + main content) side-by-side using flex or absolute positioning that ACCOUNTS for every column's width. The main content area width = rootContainer.width minus ALL sidebar column widths. Do NOT use flex:1 for main content when there are multiple sidebar columns — it will expand into the submenu's space. Each sidebar column's width comes from its splitContainer entry.",
+    "token filed must be generated as a variable (colors, shadows, fonts, etc.) and the token field must be displayed in the comment",
+    "componentDocumentLinks is a list of frontend component documentation links. When it exists and is not empty, use mcp__getComponentLink to get the documentation.",
+    "",
+    "CRITICAL — SVG FROM PATH NODES (MUST FOLLOW): Every PATH node has a `svgShortKey` field (a short sequential ID like `S0#0`, `S0#1`). The SVG markup is NOT in the DSL. You MUST place a placeholder `@@SVG:{svgShortKey}@@` where each icon goes, then call `mcp__applyDesign` at the end to inject the real high-precision SVG. NEVER hand-write `<path d=\"...\">` — the DSL does NOT contain path data. NEVER leave a PATH node unrendered — every icon MUST have a `@@SVG:{svgShortKey}@@` placeholder.",
+    "CRITICAL — RENDER EVERY ICON IN PATH NODES: Every PATH node has a `svgShortKey`. Place `@@SVG:{svgShortKey}@@` for each — sidebar menu icons, table header sort/filter/search icons, pagination prev/next/refresh icons, and action buttons. A header cell or menu item showing only plain text is a fidelity defect. After ALL placeholders are placed, call `mcp__applyDesign` to replace them with real SVG.",
+    "",
+    "CRITICAL — _placeholder TEXT handling: TEXT nodes with `_placeholder: true` (name==text) are listed in `dsl.placeholderTexts`. These are component-library boilerplate — NOT real column headers, labels, or data. Do NOT render them as table headers, column names, or visible UI labels. They appear alongside real text in the same section (e.g. a header cell has both realTitle='用户名称' and placeholder='Hillstone Design') — render ONLY the real title, omit the placeholder. EXCEPTION: if a placeholder text is the SOLE text in its section AND it reads as a legitimate brand name or page title (e.g. '智源智能安全运营平台'), it may be real content — render it in its proper context (logo area, page title), never as a table header.",
+    "CRITICAL — CLOSED-SET TEXT: the section LIST response carries `rootMetadata.allTexts` — the complete whitelist of text strings in this design (including placeholder strings). Any visible string NOT in allTexts is a hallucination and MUST be removed. Use `dsl.placeholderTexts` in each section to identify which strings are component-library boilerplate.",
+    "",
+    "CRITICAL — INSTANCE fill color: when an INSTANCE has both `fill` and `_color`, use `_color` directly as the CSS value. Do NOT guess colors from _variantProps semantics.",
+    "CRITICAL — INSTANCE _variantProps: compare across siblings for selected/hovered/disabled. Active class MUST match DSL variant state, NOT a default index.",
+    "CRITICAL — Render count = structureSiblingCount: if ssc=1, that single instance IS complete — do NOT fabricate extra rows/items.",
+    "CRITICAL — BACKGROUND FROM splitContainers: splitContainers[].background IS the exact CSS background-color. Copy verbatim, no changes.",
+    "CRITICAL — FRAME/GROUP opacity: translate to rgba() on background only, NOT CSS opacity (would make children translucent).",
+    "CRITICAL — rowTexts: each entry has parentType/parentName for context and `_placeholder: true` if boilerplate. Use parentName to place text correctly; skip _placeholder entries. IMPORTANT: if a short numeric text (like '8') has parentName matching a button INSTANCE (e.g. '分类[a3]=文本按钮,类型[aI]=危险'), it is likely a badge/count indicator overlaid on that button — NOT part of the button label. Do NOT render it inside the button text; render it as a separate badge element positioned on the button corner, OR omit it if the design does not show a visible badge on that specific button instance.",
+    "Render ALL nodes recursively. Section root layoutStyle.width = section width. Do not call mcp__getDsl after completing section workflow.",
+    "CRITICAL — ICON-TO-NODE BINDING: match PATH nodes to their UI position by the node's ancestor name. A PATH node under a menu item belongs in that menu's icon slot; one under a button/refresh belongs in that button. NEVER substitute a memorized icon — use the exact `@@SVG:{svgShortKey}@@` from the PATH node in its section. NEVER reuse a svgShortKey from a different section.",
+    "CRITICAL — TEXT PROVENANCE SELF-CHECK: before finalizing output, verify every visible text string exists in allTexts. If you emit MORE distinct strings than allTexts.length, you are hallucinating. Typical hallucinations: fabricated table headers, invented data, brand tokens, generic labels not in the design.",
+    "CRITICAL — DO NOT SKIP SECTION DSL FETCH: the section LIST response is ONLY a directory (id/name/nodeCount/textPreview). It does NOT contain DSL nodes, rowTexts, or any rendering data. You CANNOT generate correct HTML from the list alone. You MUST call mcp__getDesignSections with sectionIndex=0, then 1, ... up to totalSections-1 to get each section's DSL. Generating HTML without fetching ALL section DSLs will produce missing content (menus, table data, icons) and incorrect SVGs — this is the #1 cause of broken output."
+  ]
+}

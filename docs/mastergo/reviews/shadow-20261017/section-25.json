@@ -1,0 +1,80 @@
+{
+  "sectionIndex": 25,
+  "section": {
+    "id": "5:3632",
+    "name": "组 7644",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "446px",
+    "minHeight": "2325px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "effect_5:3192": {
+        "value": []
+      },
+      "paint_5:3208": {
+        "value": [
+          "rgba(201, 168, 76, 0.2)"
+        ]
+      },
+      "paint_5:3633": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/626155f86c3039209aab7de438ee1b40.webp"
+          }
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:3632",
+        "name": "组 7644",
+        "layoutStyle": {
+          "width": 349.7757873535156,
+          "height": 889,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "fill": "paint_5:3633",
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:3635",
+            "name": "组 7648",
+            "layoutStyle": {
+              "height": 296,
+              "relativeX": 36,
+              "relativeY": 64
+            },
+            "children": [
+              {
+                "type": "LAYER",
+                "id": "5:3636",
+                "name": "矩形 10",
+                "layoutStyle": {
+                  "height": 317,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "fill": "paint_5:3208",
+                "_color": "rgba(201, 168, 76, 0.2)",
+                "effect": "effect_5:3192"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "components": []
+  },
+  "nodeCount": 3,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 26/31. MISSING 5 sections: [26,27,28,29,30]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

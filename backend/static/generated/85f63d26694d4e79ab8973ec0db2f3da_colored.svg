@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 760" width="540" height="760" id="role-COMIC_CHOU">
+  <rect width="540" height="760" rx="16" fill="#F8F4EC"></rect>
+  <text x="270" y="48" text-anchor="middle" font-family="serif" font-size="19" fill="#2F2925">皮影创作 · 丑角</text>
+  <text x="270" y="70" text-anchor="middle" font-family="serif" font-size="11" fill="#776D65">本地二维模板参考 · 非实体装配成品</text>
+  <g stroke="#2F2925" stroke-width="3" stroke-linejoin="round">
+    <path d="M230,535 L258,535 L250,665 L218,665 Z M282,535 L310,535 L324,665 L290,665 Z" fill="#2F4F4F"></path>
+    <path d="M208,660 L250,660 L258,685 L205,685 Z M290,660 L330,660 L345,685 L286,685 Z" fill="#1A1A1A"></path>
+    <path d="M215,310 L325,310 L340,500 L310,545 L230,545 L200,500 Z" fill="#CA8A04"></path>
+    <path d="M215,325 L180,370 L145,430 L165,444 L215,400 L240,340 M325,325 L370,370 L395,430 L375,444 L325,400 L300,340" fill="#CA8A04"></path>
+    <circle cx="155" cy="437" r="11" fill="#FBF4E8"></circle><circle cx="385" cy="437" r="11" fill="#FBF4E8"></circle>
+    <path d="M208,350 L332,350 M220,400 Q270,430 320,400 M222,470 Q270,500 318,470" fill="none" stroke="#D6A85C"></path>
+    <rect x="250" y="270" width="40" height="45" fill="#FBF4E8"></rect>
+    <ellipse cx="270" cy="232" rx="42" ry="50" fill="#FBF4E8"></ellipse>
+    <path d="M230,185 Q270,145 310,185 L306,202 L234,202 Z" fill="#1A1A1A"></path>
+    <path d="M236,216 Q250,207 261,220 M279,220 Q290,207 304,216" fill="none"></path>
+    <ellipse cx="250" cy="226" rx="7" ry="4" fill="#1A1A1A"></ellipse><ellipse cx="290" cy="226" rx="7" ry="4" fill="#1A1A1A"></ellipse>
+    <path d="M270,229 L261,248 L279,248 M253,260 Q270,270 287,260" fill="none"></path>
+    <path d="M249,273 Q270,297 291,273" fill="none"></path>
+    <path d="M254,234 Q270,223 286,234 L283,251 Q270,257 257,251 Z" fill="#FFFFFF"></path>
+    <circle cx="215" cy="325" r="6" fill="#D6A85C"></circle><circle cx="325" cy="325" r="6" fill="#D6A85C"></circle>
+  </g>
+  <g stroke="#8C827A" stroke-width="2" stroke-dasharray="4 3"><path d="M270,290 L120,715 M155,437 L75,715 M385,437 L465,715"></path></g>
+<g id="face-BOLD" transform="translate(270 232) scale(1.3333333333333333 1.3428571428571427)"><path d="M0,-30 L9,-15 L0,-6 L-9,-15 Z M-26,-4 L-6,-11 L-11,8 L-26,13 Z M26,-4 L6,-11 L11,8 L26,13 Z" fill="#243827" stroke="#243827" stroke-width="2.5"></path></g></svg>

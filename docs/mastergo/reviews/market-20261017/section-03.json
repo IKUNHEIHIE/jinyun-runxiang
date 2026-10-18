@@ -1,0 +1,559 @@
+{
+  "sectionIndex": 3,
+  "section": {
+    "id": "5:8228",
+    "name": "组 10279",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2862px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "effect_5:4717": {
+        "value": [
+          "backdrop-filter: blur(4px);"
+        ]
+      },
+      "effect_5:7511": {
+        "value": [
+          "box-shadow: 0px 4px 6px -4px rgba(0, 0, 0, 0.1);",
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+          "box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);",
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);"
+        ]
+      },
+      "font_5:3676": {
+        "value": {
+          "family": "Ma Shan Zheng",
+          "size": 48,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "60",
+          "letterSpacing": "auto",
+          "weight": "400"
+        }
+      },
+      "font_5:5389": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 14,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "22.75",
+          "letterSpacing": "auto",
+          "weight": "400"
+        }
+      },
+      "font_5:8245": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 12,
+          "style": "SemiBold",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "16",
+          "letterSpacing": "0.6000000238418579px",
+          "weight": "600"
+        }
+      },
+      "font_5:8252": {
+        "value": {
+          "family": "Ma Shan Zheng",
+          "size": 20,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "28",
+          "letterSpacing": "2px",
+          "weight": "400"
+        }
+      },
+      "font_5:8268": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 16,
+          "style": "SemiBold",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "24",
+          "letterSpacing": "auto",
+          "weight": "600"
+        }
+      },
+      "paint_5:3844": {
+        "value": [
+          "#FFFFFF"
+        ]
+      },
+      "paint_5:4780": {
+        "value": [
+          "#FFFFFF"
+        ]
+      },
+      "paint_5:4846": {
+        "value": [
+          "rgba(255, 255, 255, 0.9)"
+        ]
+      },
+      "paint_5:6897": {
+        "value": [
+          "rgba(255, 255, 255, 0.8)"
+        ]
+      },
+      "paint_5:7293": {
+        "value": [
+          "linear-gradient(90deg, #5A7D4A 0%, #7A9D6A 100%)"
+        ]
+      },
+      "paint_5:7314": {
+        "value": [
+          "#C4A35A"
+        ]
+      },
+      "paint_5:7773": {
+        "value": [
+          "rgba(255, 255, 255, 0.2)"
+        ]
+      },
+      "paint_5:8240": {
+        "value": [
+          "rgba(255, 255, 255, 0.3)"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:8228",
+        "name": "组 10279",
+        "layoutStyle": {
+          "width": 375,
+          "height": 707,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:8238",
+            "name": "组 10280",
+            "layoutStyle": {
+              "width": 202.8000030517578,
+              "height": 154,
+              "relativeX": 86.10000610351562,
+              "relativeY": 210.5
+            },
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:8239",
+                "name": "组 10281",
+                "layoutStyle": {
+                  "width": 202.8000030517578,
+                  "height": 30,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "fill": "paint_5:7773",
+                "_color": "rgba(255, 255, 255, 0.2)",
+                "strokeColor": "paint_5:8240",
+                "strokeType": "solid",
+                "strokeAlign": "inside",
+                "strokeWidth": "1px",
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:8247",
+                    "name": "组 10282",
+                    "layoutStyle": {
+                      "width": 8,
+                      "height": 8,
+                      "relativeX": 17,
+                      "relativeY": 11
+                    },
+                    "fill": "paint_5:7314",
+                    "_color": "#C4A35A",
+                    "children": [],
+                    "borderRadius": "9999px"
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:8242",
+                    "name": "文本 4",
+                    "layoutStyle": {
+                      "width": 152.8000030517578,
+                      "height": 16,
+                      "relativeX": 33,
+                      "relativeY": 7
+                    },
+                    "fill": "paint_5:4780",
+                    "_color": "#FFFFFF",
+                    "text": [
+                      {
+                        "text": "A⁠I⁠非⁠遗⁠工⁠坊⁠ ⁠·⁠ ⁠学⁠生⁠共⁠创⁠计⁠划",
+                        "font": "font_5:8245"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 29,
+                        "color": "paint_5:4780"
+                      }
+                    ],
+                    "textAlign": "center",
+                    "textMode": "single-line"
+                  }
+                ],
+                "effect": "effect_5:4717",
+                "flexContainerInfo": {
+                  "flexDirection": "row",
+                  "alignItems": "center",
+                  "mainSizing": "fixed",
+                  "crossSizing": "fixed",
+                  "gap": "8px 8px",
+                  "padding": "6px 16px"
+                },
+                "borderRadius": "9999px"
+              },
+              {
+                "type": "FRAME",
+                "id": "5:8254",
+                "name": "组 10284",
+                "layoutStyle": {
+                  "width": 202.8000030517578,
+                  "height": 60,
+                  "relativeX": 0,
+                  "relativeY": 54
+                },
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "id": "5:8255",
+                    "name": "文本 5",
+                    "layoutStyle": {
+                      "width": 192,
+                      "height": 48,
+                      "relativeX": -18.59999656677246,
+                      "relativeY": 6
+                    },
+                    "fill": "paint_5:4780",
+                    "_color": "#FFFFFF",
+                    "text": [
+                      {
+                        "text": "稻⁠香⁠非⁠遗",
+                        "font": "font_5:3676"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 7,
+                        "color": "paint_5:4780"
+                      }
+                    ],
+                    "textAlign": "center",
+                    "textMode": "single-line"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:8248",
+                "name": "组 10285",
+                "layoutStyle": {
+                  "width": 202.8000030517578,
+                  "height": 28,
+                  "relativeX": 0,
+                  "relativeY": 126
+                },
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "id": "5:8249",
+                    "name": "文本 6",
+                    "layoutStyle": {
+                      "width": 154,
+                      "height": 20,
+                      "relativeX": 24.399999618530273,
+                      "relativeY": 4
+                    },
+                    "fill": "paint_5:4846",
+                    "_color": "rgba(255, 255, 255, 0.9)",
+                    "text": [
+                      {
+                        "text": "文⁠创⁠共⁠创⁠市⁠集",
+                        "font": "font_5:8252"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 11,
+                        "color": "paint_5:4846"
+                      }
+                    ],
+                    "textAlign": "center",
+                    "textMode": "single-line"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "id": "5:8259",
+            "name": "组 6",
+            "layoutStyle": {
+              "height": 24,
+              "relativeX": 187,
+              "relativeY": 357.5
+            },
+            "children": []
+          },
+          {
+            "type": "FRAME",
+            "id": "5:8229",
+            "name": "组 10286",
+            "layoutStyle": {
+              "width": 224,
+              "height": 44,
+              "relativeX": 75.5,
+              "relativeY": 374.5
+            },
+            "children": [
+              {
+                "type": "TEXT",
+                "id": "5:8230",
+                "name": "文本 7",
+                "layoutStyle": {
+                  "width": 238,
+                  "height": 20,
+                  "relativeX": -7,
+                  "relativeY": 1
+                },
+                "fill": "paint_5:6897",
+                "_color": "rgba(255, 255, 255, 0.8)",
+                "text": [
+                  {
+                    "text": "每一件作品，都来自乡村孩子的创意",
+                    "font": "font_5:5389"
+                  }
+                ],
+                "textColor": [
+                  {
+                    "start": 0,
+                    "end": 16,
+                    "color": "paint_5:6897"
+                  }
+                ],
+                "textAlign": "center",
+                "textMode": "single-line"
+              },
+              {
+                "type": "TEXT",
+                "id": "5:8234",
+                "name": "文本 8",
+                "layoutStyle": {
+                  "width": 224,
+                  "height": 20,
+                  "relativeX": 0,
+                  "relativeY": 23
+                },
+                "fill": "paint_5:6897",
+                "_color": "rgba(255, 255, 255, 0.8)",
+                "text": [
+                  {
+                    "text": "每一次购买，都在点亮美育的希望",
+                    "font": "font_5:5389"
+                  }
+                ],
+                "textColor": [
+                  {
+                    "start": 0,
+                    "end": 15,
+                    "color": "paint_5:6897"
+                  }
+                ],
+                "textAlign": "center",
+                "textMode": "single-line"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "id": "5:8270",
+            "name": "组 7",
+            "layoutStyle": {
+              "height": 40,
+              "relativeX": 187,
+              "relativeY": 411.5
+            },
+            "children": []
+          },
+          {
+            "type": "FRAME",
+            "id": "5:8260",
+            "name": "组 10287",
+            "layoutStyle": {
+              "width": 152,
+              "height": 52,
+              "relativeX": 111.5,
+              "relativeY": 444.5
+            },
+            "fill": "paint_5:7293",
+            "_color": "linear-gradient(90deg, #5A7D4A 0%, #7A9D6A 100%)",
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:8264",
+                "name": "容器 2",
+                "layoutStyle": {
+                  "width": 64,
+                  "height": 24,
+                  "relativeX": 32,
+                  "relativeY": 14
+                },
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "id": "5:8265",
+                    "name": "文本 9",
+                    "layoutStyle": {
+                      "width": 80,
+                      "height": 23,
+                      "relativeX": -8,
+                      "relativeY": 0
+                    },
+                    "fill": "paint_5:4780",
+                    "_color": "#FFFFFF",
+                    "text": [
+                      {
+                        "text": "探⁠索⁠市⁠集",
+                        "font": "font_5:8268"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 7,
+                        "color": "paint_5:4780"
+                      }
+                    ],
+                    "textAlign": "center",
+                    "textMode": "single-line"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:8261",
+                "name": "组 10289",
+                "layoutStyle": {
+                  "width": 16,
+                  "height": 16,
+                  "relativeX": 104,
+                  "relativeY": 18
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:8262",
+                    "name": "图标 4",
+                    "layoutStyle": {
+                      "width": 16,
+                      "height": 16,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "children": [
+                      {
+                        "type": "PATH",
+                        "id": "5:8263",
+                        "name": "组 8",
+                        "layoutStyle": {
+                          "width": 9.333333969116211,
+                          "height": 4.666666507720947,
+                          "relativeX": 3.3333334922790527,
+                          "relativeY": 5.999999523162842
+                        },
+                        "svgKey": "S3:图标 4|5:8263",
+                        "svgShortKey": "S3#0",
+                        "svgName": "图标 4"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "effect": "effect_5:7511",
+            "flexContainerInfo": {
+              "flexDirection": "row",
+              "alignItems": "center",
+              "mainSizing": "fixed",
+              "crossSizing": "fixed",
+              "gap": "8px 8px",
+              "padding": "14px 32px"
+            },
+            "borderRadius": "9999px"
+          }
+        ],
+        "flexContainerInfo": {
+          "flexDirection": "column",
+          "justifyContent": "center",
+          "alignItems": "center",
+          "mainSizing": "fixed",
+          "crossSizing": "fixed",
+          "gap": "-7px",
+          "padding": "0px 24px"
+        }
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "A⁠I⁠非⁠遗⁠工⁠坊⁠ ⁠·⁠ ⁠学⁠生⁠共⁠创⁠计⁠划",
+        "parentType": "FRAME",
+        "parentName": "组 10281"
+      },
+      {
+        "text": "稻⁠香⁠非⁠遗",
+        "parentType": "FRAME",
+        "parentName": "组 10284"
+      },
+      {
+        "text": "文⁠创⁠共⁠创⁠市⁠集",
+        "parentType": "FRAME",
+        "parentName": "组 10285"
+      },
+      {
+        "text": "每一件作品，都来自乡村孩子的创意",
+        "parentType": "FRAME",
+        "parentName": "组 10286"
+      },
+      {
+        "text": "每一次购买，都在点亮美育的希望",
+        "parentType": "FRAME",
+        "parentName": "组 10286"
+      },
+      {
+        "text": "探⁠索⁠市⁠集",
+        "parentType": "FRAME",
+        "parentName": "容器 2"
+      }
+    ]
+  },
+  "nodeCount": 20,
+  "svgNodeCount": 1,
+  "hasStrippedSvgs": true,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 4/20. MISSING 16 sections: [4,5,6,7,8,9,10,11,12,13... +6 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

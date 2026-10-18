@@ -1,0 +1,71 @@
+{
+  "sectionIndex": 2,
+  "section": {
+    "id": "5:3851",
+    "name": "组 7649",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "446px",
+    "minHeight": "2325px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {},
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:3851",
+        "name": "组 7649",
+        "layoutStyle": {
+          "width": 312.46636962890625,
+          "height": 76,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:3852",
+            "name": "组 7650",
+            "layoutStyle": {
+              "width": 312.46636962890625,
+              "height": 76,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:3853",
+                "name": "容器 17",
+                "layoutStyle": {
+                  "width": 291,
+                  "height": 20,
+                  "relativeX": 0,
+                  "relativeY": 3
+                },
+                "children": []
+              }
+            ]
+          }
+        ],
+        "flexContainerInfo": {
+          "flexDirection": "row",
+          "mainSizing": "fixed",
+          "crossSizing": "fixed",
+          "gap": "12px 12px"
+        }
+      }
+    ],
+    "components": []
+  },
+  "nodeCount": 3,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 3/31. MISSING 28 sections: [3,4,5,6,7,8,9,10,11,12... +18 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

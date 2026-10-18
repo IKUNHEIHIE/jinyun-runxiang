@@ -6,19 +6,17 @@
         <div class="tag-gold mb-2">❖ 非遗文创助农 · 乡村美育赋能闭环</div>
         <h1 class="page-title font-serif">文创助农市集 · 每一笔订单都在反哺乡村小学</h1>
         <p class="page-sub">
-          市集精选天津各涉农区县非遗工匠手作、杨柳青年画拓印包与非遗研学文创。每笔订单的指定比例（10%~20%）将自动注入<strong>“乡村小学非遗美育耗材定向采购专项基金”</strong>，用于为偏远乡村学校采购画纸、皮影材料包、矿物颜料等教学耗材。
+          市集精选天津各涉农区县非遗工匠手作、杨柳青年画拓印包与非遗研学文创。每笔确认付款订单的商品公示比例将注入<strong>“乡村小学非遗美育耗材定向采购专项基金”</strong>，用于为偏远乡村学校采购画纸、皮影材料包、矿物颜料等教学耗材。
         </p>
       </div>
       <div class="fund-stat-box">
         <span class="fund-label">累计筹集美育耗材专项基金</span>
-        <span class="fund-val font-serif">¥ 164.15</span>
-        <div style="width: 160px; margin: 6px 0;">
-          <el-progress :percentage="33" :stroke-width="6" color="#8B4A2F" :show-text="false" />
-        </div>
-        <span class="fund-tag">公开透明 · 实时链上入账</span>
+        <span class="fund-val font-serif">¥ {{ fundTotal.toFixed(2) }}</span>
+        <span class="fund-tag">已确认公益入账</span>
         <el-button size="small" round class="btn-cert-link mt-2" @click="openMyCert">
           ❖ 查验/生成爱心助农证书
         </el-button>
+      </div>
     </div>
 
     <!-- 🌱 P3: 美育微光林·助农物资实体流向树 -->
@@ -41,8 +39,8 @@
             <span class="pill-val">{{ supplyData.total_schools }} 所</span>
           </div>
           <div class="tree-stat-pill highlight">
-            <span class="pill-label">惠及乡村学子</span>
-            <span class="pill-val">{{ supplyData.total_students_benefited }} 人</span>
+            <span class="pill-label">累计服务学子</span>
+            <span class="pill-val">{{ supplyData.total_students_benefited }} 人次</span>
           </div>
         </div>
       </div>
@@ -52,15 +50,15 @@
         <div v-for="item in supplyData.batches" :key="item.id" class="supply-node-card">
           <div class="node-head">
             <span class="node-batch">{{ item.batch_no }}</span>
-            <span class="node-status" :class="item.logistics_status.toLowerCase()">
-              {{ item.logistics_status === 'DELIVERED' ? '✓ 已送达签收' : '🚚 在途发运中' }}
+            <span class="node-status" :class="item.status.toLowerCase()">
+              {{ item.status === 'DELIVERED' ? '✓ 已送达签收' : '🚚 在途发运中' }}
             </span>
           </div>
-          <h4 class="node-name font-serif">{{ item.supply_name }}</h4>
+          <h4 class="node-name font-serif">{{ item.materials_name }}</h4>
           <div class="node-detail">
-            <p><strong>物资规格：</strong>{{ item.quantity_desc }} (价值 ¥{{ item.allocated_amount_yuan }})</p>
-            <p><strong>受赠学校：</strong>🏫 {{ item.beneficiary_school }}</p>
-            <p><strong>物流运单：</strong>📦 {{ item.tracking_no }}</p>
+            <p><strong>物资规格：</strong>{{ item.quantity }} {{ item.unit }}</p>
+            <p><strong>受赠学校：</strong>🏫 {{ item.school_name }}</p>
+
           </div>
           <div v-if="item.receipt_feedback" class="node-feedback">
             💬 “{{ item.receipt_feedback }}”
@@ -165,7 +163,7 @@
       <template #footer>
         <el-button @click="orderModal = false">取消</el-button>
         <el-button type="primary" class="btn-primary" :loading="submittingOrder" @click="confirmOrder">
-          模拟支付下单
+          提交订单
         </el-button>
       </template>
     </el-dialog>
@@ -240,6 +238,21 @@ import request from '../api/request'
 
 const loading = ref(false)
 const products = ref<any[]>([])
+const fundTotal = ref(0)
+const supplyData = ref({ total_batches: 0, total_schools: 0, total_students_benefited: 0, batches: [] as any[] })
+const fetchSupplies = async () => {
+  try {
+    const data: any = await request.get('/mall/philanthropy/supplies')
+    supplyData.value = {
+      total_batches: data.summary.total_batches,
+      total_schools: new Set(data.supplies.map((item: any) => item.school_name)).size,
+      total_students_benefited: data.summary.total_beneficiary_students,
+      batches: data.supplies
+    }
+    fundTotal.value = data.summary.fund_total_yuan
+  } catch { /* Keep an empty state when the service is unavailable. */ }
+}
+
 
 const orderModal = ref(false)
 const selectedProd = ref<any>(null)
@@ -305,8 +318,7 @@ const confirmOrder = async () => {
     submittingOrder.value = false
     orderModal.value = false
 
-    // 获取并展示爱心助农证书
-    await showCertificate(res.order_no)
+    ElMessage.success(`订单 ${res.order_no} 已创建，待确认付款`)
   } catch (e) {
     submittingOrder.value = false
     ElMessage.error('下单失败')
@@ -328,10 +340,11 @@ const openMyCert = async () => {
   try {
     const orders: any = await request.get('/mall/orders')
     if (orders && orders.length > 0) {
-      await showCertificate(orders[0].order_no)
+      const paid = orders.find((order: any) => ['PAID', 'SHIPPED', 'COMPLETED'].includes(order.status))
+      if (paid) await showCertificate(paid.order_no)
+      else ElMessage.info('暂无已确认付款的订单证书')
     } else {
-      const mockOrderNo = 'ORD20260912164036379EB8'
-      await showCertificate(mockOrderNo)
+      ElMessage.info('暂无订单记录')
     }
   } catch (err) {
     ElMessage.info('暂无订单记录')
@@ -344,6 +357,7 @@ const downloadCertImage = () => {
 
 onMounted(() => {
   fetchProducts()
+  fetchSupplies()
 })
 </script>
 

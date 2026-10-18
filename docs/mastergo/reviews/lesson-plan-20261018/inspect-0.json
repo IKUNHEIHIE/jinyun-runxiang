@@ -1,0 +1,201 @@
+[
+  {
+    "id": "5:02838",
+    "type": "FRAME",
+    "depth": 0,
+    "l": {
+      "width": 375,
+      "height": 183,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "paint": [
+      {
+        "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/a2aef60c7c74fe0b299c150a0b28d1a9.webp"
+      }
+    ],
+    "stroke": [
+      "#000000"
+    ]
+  },
+  {
+    "id": "5:02889",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 120,
+      "height": 60,
+      "relativeX": 231,
+      "relativeY": 16
+    }
+  },
+  {
+    "id": "5:02891",
+    "type": "FRAME",
+    "depth": 3,
+    "l": {
+      "width": 120,
+      "height": 60,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "svg": "S0#0"
+  },
+  {
+    "id": "5:02843",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 335,
+      "height": 103,
+      "relativeX": 16,
+      "relativeY": 40
+    },
+    "paint": [
+      "#CDB0AE"
+    ]
+  },
+  {
+    "id": "5:02863",
+    "type": "TEXT",
+    "depth": 5,
+    "l": {
+      "width": 241.41000366210938,
+      "height": 35,
+      "relativeX": 13,
+      "relativeY": 0
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "智⁠能⁠备⁠课⁠·⁠工⁠坊",
+    "font": {
+      "family": "Noto Serif SC",
+      "size": 28,
+      "style": "Bold",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "35",
+      "letterSpacing": "0.699999988079071px",
+      "weight": "700"
+    }
+  },
+  {
+    "id": "5:02869",
+    "type": "TEXT",
+    "depth": 5,
+    "l": {
+      "width": 227.41000366210938,
+      "height": 20,
+      "relativeX": 19,
+      "relativeY": 0
+    },
+    "paint": [
+      "#8B7B7B"
+    ],
+    "text": "非遗文化 · 一键生成教案与课件",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Light",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "0.699999988079071px",
+      "weight": "300"
+    }
+  },
+  {
+    "id": "5:02879",
+    "type": "TEXT",
+    "depth": 5,
+    "l": {
+      "width": 13.710000038146973,
+      "height": 33.58000183105469,
+      "relativeX": -0.02001953125,
+      "relativeY": 2.7750244140625
+    },
+    "paint": [
+      "#C45C5C"
+    ],
+    "text": "匠心",
+    "font": {
+      "family": "Noto Serif SC",
+      "size": 12,
+      "style": "Bold",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "16",
+      "letterSpacing": "auto",
+      "weight": "700"
+    }
+  },
+  {
+    "id": "5:02884",
+    "type": "TEXT",
+    "depth": 6,
+    "l": {
+      "width": 13.710000038146973,
+      "height": 33.58000183105469,
+      "relativeX": 5,
+      "relativeY": -2
+    },
+    "paint": [
+      "#C45C5C"
+    ],
+    "text": "备课",
+    "font": {
+      "family": "Noto Serif SC",
+      "size": 12,
+      "style": "Bold",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "16",
+      "letterSpacing": "auto",
+      "weight": "700"
+    }
+  },
+  {
+    "id": "5:02848",
+    "type": "FRAME",
+    "depth": 4,
+    "l": {
+      "width": 24,
+      "height": 24,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "svg": "S0#1"
+  },
+  {
+    "id": "5:02839",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 40,
+      "height": 40,
+      "relativeX": 16,
+      "relativeY": 8
+    },
+    "paint": [
+      "rgba(240, 230, 208, 0.8)"
+    ],
+    "stroke": [
+      "rgba(245, 232, 184, 0.5)"
+    ],
+    "sw": "1px",
+    "radius": "9999px"
+  },
+  {
+    "id": "5:02842",
+    "type": "PATH",
+    "depth": 4,
+    "l": {
+      "width": 5.833333492279053,
+      "height": 11.666666030883789,
+      "relativeX": 6.666666507720947,
+      "relativeY": 4.166666507720947
+    },
+    "svg": "S0#2"
+  }
+]

@@ -1,0 +1,91 @@
+{
+  "sectionIndex": 8,
+  "section": {
+    "id": "5:03088",
+    "name": "容器 50",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2818px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_5:3213": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 12,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "16",
+          "letterSpacing": "auto",
+          "weight": "400"
+        }
+      },
+      "paint_5:8338": {
+        "value": [
+          "#8A7E6B"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:03088",
+        "name": "容器 50",
+        "layoutStyle": {
+          "width": 335,
+          "height": 12.976178169250488,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "TEXT",
+            "id": "5:03089",
+            "name": "文本 114",
+            "layoutStyle": {
+              "width": 347,
+              "height": 16,
+              "relativeX": -6,
+              "relativeY": 0
+            },
+            "fill": "paint_5:8338",
+            "_color": "#8A7E6B",
+            "text": [
+              {
+                "text": "打卡非遗基地，一键购买地道农产",
+                "font": "font_5:3213"
+              }
+            ],
+            "textColor": [
+              {
+                "start": 0,
+                "end": 15,
+                "color": "paint_5:8338"
+              }
+            ],
+            "textAlign": "center",
+            "textMode": "single-line"
+          }
+        ]
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "打卡非遗基地，一键购买地道农产",
+        "parentType": "FRAME",
+        "parentName": "容器 50"
+      }
+    ]
+  },
+  "nodeCount": 2,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 9/22. MISSING 13 sections: [9,10,11,12,13,14,15,16,17,18,19,20,21]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

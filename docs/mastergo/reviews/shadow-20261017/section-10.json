@@ -1,0 +1,81 @@
+{
+  "sectionIndex": 10,
+  "section": {
+    "id": "5:3706",
+    "name": "一键生成",
+    "type": "TEXT"
+  },
+  "rootContainer": {
+    "width": "446px",
+    "minHeight": "2325px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_5:3709": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 22,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "16",
+          "letterSpacing": "auto",
+          "weight": "400"
+        }
+      },
+      "paint_5:3259": {
+        "value": [
+          "#C9A84C"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "TEXT",
+        "id": "5:3706",
+        "name": "一键生成",
+        "layoutStyle": {
+          "width": 264.8968505859375,
+          "height": 77,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "fill": "paint_5:3259",
+        "_color": "#C9A84C",
+        "text": [
+          {
+            "text": "一键生成",
+            "font": "font_5:3709"
+          }
+        ],
+        "textColor": [
+          {
+            "start": 0,
+            "end": 4,
+            "color": "paint_5:3259"
+          }
+        ],
+        "textAlign": "left",
+        "textMode": "single-line",
+        "_placeholder": true
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "一键生成",
+        "_placeholder": true
+      }
+    ],
+    "placeholderTexts": [
+      "一键生成"
+    ]
+  },
+  "nodeCount": 1,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 11/31. MISSING 20 sections: [11,12,13,14,15,16,17,18,19,20... +10 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

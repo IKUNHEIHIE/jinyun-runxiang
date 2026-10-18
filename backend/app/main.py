@@ -5,6 +5,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
@@ -27,6 +28,9 @@ ALLOWED_ORIGINS = [
     "http://127.0.0.1:5174",
     "http://0.0.0.0:5173",
     "http://0.0.0.0:5174",
+    "https://localhost",
+    "http://localhost",
+    "capacitor://localhost",
 ]
 custom_origins = os.environ.get("ALLOWED_ORIGINS")
 if custom_origins:
@@ -35,7 +39,6 @@ if custom_origins:
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -52,6 +55,10 @@ async def add_trace_id_and_log(request: Request, call_next):
     request_id = request.headers.get("X-Request-Id", uuid.uuid4().hex)
     response = await call_next(request)
     response.headers["X-Request-Id"] = request_id
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    if request.url.path.startswith("/static/"):
+        response.headers["Content-Security-Policy"] = "default-src 'none'; style-src 'unsafe-inline'; sandbox"
+
     logger.info(f"[{request_id[:8]}] {request.method} {request.url.path} -> {response.status_code}")
     return response
 
@@ -60,14 +67,15 @@ async def add_trace_id_and_log(request: Request, call_next):
 async def http_exception_handler(request: Request, exc: HTTPException):
     return JSONResponse(
         status_code=exc.status_code,
-        content={"code": exc.status_code, "message": exc.detail, "data": None}
+        content={"code": exc.status_code, "message": exc.detail, "data": None},
+        headers=exc.headers
     )
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
         status_code=422,
-        content={"code": 4220, "message": "请求参数校验失败", "detail": exc.errors(), "data": None}
+        content={"code": 4220, "message": "请求参数校验失败", "detail": jsonable_encoder(exc.errors()), "data": None}
     )
 
 @app.exception_handler(Exception)

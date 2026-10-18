@@ -1,0 +1,223 @@
+[
+  {
+    "id": "5:02088",
+    "type": "FRAME",
+    "depth": 0,
+    "name": "组 2119",
+    "layout": {
+      "width": 375,
+      "height": 148,
+      "relativeX": 0,
+      "relativeY": 0
+    }
+  },
+  {
+    "id": "5:02096",
+    "type": "FRAME",
+    "depth": 1,
+    "name": "组 2120",
+    "layout": {
+      "width": 375,
+      "height": 2,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "fill": [
+      "linear-gradient(90deg, #C9A84C 3%, #E8D9A8 30%, #C9A84C 50%, #D9BC6E 69%, #C9A84C 100%)"
+    ]
+  },
+  {
+    "id": "5:02089",
+    "type": "FRAME",
+    "depth": 1,
+    "name": "组 2121",
+    "layout": {
+      "width": 24,
+      "height": 24,
+      "relativeX": 16,
+      "relativeY": 16
+    },
+    "strokeColor": [
+      "#C9A84C"
+    ],
+    "opacity": 0.6000000238418579
+  },
+  {
+    "id": "5:02103",
+    "type": "FRAME",
+    "depth": 1,
+    "name": "组 2122",
+    "layout": {
+      "width": 24,
+      "height": 24,
+      "relativeX": 335,
+      "relativeY": 16
+    },
+    "strokeColor": [
+      "#C9A84C"
+    ],
+    "opacity": 0.6000000238418579
+  },
+  {
+    "id": "5:02090",
+    "type": "TEXT",
+    "depth": 1,
+    "name": "文本 1",
+    "layout": {
+      "width": 352.20001220703125,
+      "height": 42,
+      "relativeX": 11.399999618530273,
+      "relativeY": 40
+    },
+    "fill": [
+      "#3D2314"
+    ],
+    "text": [
+      {
+        "text": "津韵润乡",
+        "font": "font_5:02093"
+      }
+    ],
+    "font": {
+      "family": "Noto Serif SC",
+      "size": 28,
+      "style": "Bold",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "42",
+      "letterSpacing": "4.199999809265137px",
+      "weight": "700"
+    }
+  },
+  {
+    "id": "5:02104",
+    "type": "TEXT",
+    "depth": 1,
+    "name": "文本 2",
+    "layout": {
+      "width": 335,
+      "height": 16,
+      "relativeX": 20,
+      "relativeY": 86
+    },
+    "fill": [
+      "#6C0A0A"
+    ],
+    "text": [
+      {
+        "text": "INTANGIBLE HERITAGE",
+        "font": "font_5:02107"
+      }
+    ],
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 11,
+      "style": "Medium",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "16.5",
+      "letterSpacing": "3.299999952316284px",
+      "weight": "500"
+    }
+  },
+  {
+    "id": "5:02097",
+    "type": "FRAME",
+    "depth": 1,
+    "name": "组 2123",
+    "layout": {
+      "width": 327,
+      "height": 6,
+      "relativeX": 24,
+      "relativeY": 118
+    }
+  },
+  {
+    "id": "5:02101",
+    "type": "FRAME",
+    "depth": 2,
+    "name": "组 1",
+    "layout": {
+      "width": 107.5,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "fill": [
+      "#C9A84C"
+    ]
+  },
+  {
+    "id": "5:02099",
+    "type": "FRAME",
+    "depth": 2,
+    "name": "组 2",
+    "layout": {
+      "width": 107.5,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "fill": [
+      "#C9A84C"
+    ]
+  },
+  {
+    "id": "5:02100",
+    "type": "FRAME",
+    "depth": 2,
+    "name": "组 2126",
+    "layout": {
+      "width": 6,
+      "height": 6,
+      "relativeX": 147.5,
+      "relativeY": 0
+    },
+    "fill": [
+      "#C9A84C"
+    ],
+    "borderRadius": "9999px"
+  },
+  {
+    "id": "5:02102",
+    "type": "FRAME",
+    "depth": 2,
+    "name": "组 2127",
+    "layout": {
+      "width": 4,
+      "height": 4,
+      "relativeX": 161.5,
+      "relativeY": 1
+    },
+    "fill": [
+      "#C9A84C"
+    ],
+    "borderRadius": "9999px"
+  },
+  {
+    "id": "5:02098",
+    "type": "FRAME",
+    "depth": 2,
+    "name": "组 2128",
+    "layout": {
+      "width": 6,
+      "height": 6,
+      "relativeX": 173.5,
+      "relativeY": 0
+    },
+    "fill": [
+      "#C9A84C"
+    ],
+    "borderRadius": "9999px"
+  },
+  {
+    "id": "5:02095",
+    "type": "FRAME",
+    "depth": 1,
+    "name": "容器 6",
+    "layout": {
+      "width": 373,
+      "height": 1394,
+      "relativeX": 0,
+      "relativeY": -25
+    }
+  }
+]

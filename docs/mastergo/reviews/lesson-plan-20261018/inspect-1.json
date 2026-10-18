@@ -1,0 +1,340 @@
+[
+  {
+    "id": "5:02715",
+    "type": "FRAME",
+    "depth": 0,
+    "l": {
+      "width": 335,
+      "height": 404,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "paint": [
+      "#FFF9F9"
+    ],
+    "radius": "16px"
+  },
+  {
+    "id": "5:02733",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 287,
+      "height": 20,
+      "relativeX": 24,
+      "relativeY": 72
+    }
+  },
+  {
+    "id": "5:02734",
+    "type": "TEXT",
+    "depth": 2,
+    "l": {
+      "width": 301,
+      "height": 20,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "选择学段",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Medium",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "500"
+    }
+  },
+  {
+    "id": "5:02718",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 287,
+      "height": 48,
+      "relativeX": 24,
+      "relativeY": 100
+    },
+    "paint": [
+      "#FFFAFA"
+    ],
+    "stroke": [
+      "#E8D0D0"
+    ],
+    "sw": "1px",
+    "radius": "12px"
+  },
+  {
+    "id": "5:02725",
+    "type": "TEXT",
+    "depth": 2,
+    "l": {
+      "width": 244,
+      "height": 20,
+      "relativeX": 16,
+      "relativeY": 14
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "请选择学段",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02745",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 287,
+      "height": 20,
+      "relativeX": 24,
+      "relativeY": 164
+    }
+  },
+  {
+    "id": "5:02746",
+    "type": "TEXT",
+    "depth": 2,
+    "l": {
+      "width": 301,
+      "height": 20,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "非遗主题",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Medium",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "500"
+    }
+  },
+  {
+    "id": "5:02738",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 287,
+      "height": 48,
+      "relativeX": 24,
+      "relativeY": 192
+    },
+    "paint": [
+      "#FFFAFA"
+    ],
+    "stroke": [
+      "#E8D0D0"
+    ],
+    "sw": "1px",
+    "radius": "12px"
+  },
+  {
+    "id": "5:02741",
+    "type": "TEXT",
+    "depth": 2,
+    "l": {
+      "width": 244,
+      "height": 20,
+      "relativeX": 16,
+      "relativeY": 14
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "请选择非遗主题",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 14,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02771",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 287,
+      "height": 52,
+      "relativeX": 24,
+      "relativeY": 264
+    },
+    "paint": [
+      "#9F7272"
+    ],
+    "radius": "14px"
+  },
+  {
+    "id": "5:02784",
+    "type": "PATH",
+    "depth": 4,
+    "l": {
+      "width": 15,
+      "height": 15,
+      "relativeX": 2.5,
+      "relativeY": 2.5
+    },
+    "svg": "S1#0"
+  },
+  {
+    "id": "5:02778",
+    "type": "TEXT",
+    "depth": 2,
+    "l": {
+      "width": 112,
+      "height": 24,
+      "relativeX": 101.5,
+      "relativeY": 14
+    },
+    "paint": [
+      "#FFFFFF"
+    ],
+    "text": "生⁠成⁠教⁠案⁠与⁠课⁠件",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 16,
+      "style": "Medium",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "24",
+      "letterSpacing": "auto",
+      "weight": "500"
+    }
+  },
+  {
+    "id": "5:02750",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 287,
+      "height": 28,
+      "relativeX": 24,
+      "relativeY": 24
+    }
+  },
+  {
+    "id": "5:02752",
+    "type": "TEXT",
+    "depth": 2,
+    "l": {
+      "width": 72,
+      "height": 28,
+      "relativeX": 12,
+      "relativeY": 0
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "课⁠程⁠配⁠置",
+    "font": {
+      "family": "Noto Serif SC",
+      "size": 18,
+      "style": "SemiBold",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "28",
+      "letterSpacing": "auto",
+      "weight": "600"
+    }
+  },
+  {
+    "id": "5:02729",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 96,
+      "height": 96,
+      "relativeX": 239,
+      "relativeY": 0
+    }
+  },
+  {
+    "id": "5:02732",
+    "type": "PATH",
+    "depth": 4,
+    "l": {
+      "width": 67.20000457763672,
+      "height": 67.20000457763672,
+      "relativeX": 14.40000057220459,
+      "relativeY": 14.40000057220459
+    },
+    "svg": "S1#1"
+  },
+  {
+    "id": "5:02757",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 287,
+      "height": 52,
+      "relativeX": 24,
+      "relativeY": 328
+    },
+    "paint": [
+      "rgba(149, 96, 96, 0.8)"
+    ],
+    "radius": "14px"
+  },
+  {
+    "id": "5:02762",
+    "type": "PATH",
+    "depth": 4,
+    "l": {
+      "width": 23.25833511352539,
+      "height": 23.25833511352539,
+      "relativeX": 2.3258285522460938,
+      "relativeY": 2.32586669921875
+    },
+    "svg": "S1#2"
+  },
+  {
+    "id": "5:02766",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 122.55999755859375,
+      "height": 24,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "paint": [
+      "rgba(255, 255, 255, 0.9)"
+    ],
+    "text": "正在生成中...",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 16,
+      "style": "Medium",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "24",
+      "letterSpacing": "auto",
+      "weight": "500"
+    }
+  }
+]

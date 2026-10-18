@@ -1,0 +1,73 @@
+{
+  "sectionIndex": 23,
+  "section": {
+    "id": "5:02274",
+    "name": "组 2246",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "373px",
+    "minHeight": "1394px",
+    "background": "#FFFFFF",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 3,
+  "dsl": {
+    "styles": {
+      "paint_5:3259": {
+        "value": [
+          "#C9A84C"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:02274",
+        "name": "组 2246",
+        "layoutStyle": {
+          "width": 11,
+          "height": 11,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:02275",
+            "name": "图标 18",
+            "layoutStyle": {
+              "width": 11.0024995803833,
+              "height": 9.779999732971191,
+              "relativeX": 0,
+              "relativeY": 0.6100000143051147
+            },
+            "children": [
+              {
+                "type": "PATH",
+                "id": "5:02276",
+                "name": "组 21",
+                "layoutStyle": {
+                  "width": 10.509122848510742,
+                  "height": 10.039837837219238,
+                  "relativeX": 0.246795654296875,
+                  "relativeY": -0.6112060546875
+                },
+                "svgKey": "S23:图标 18|5:02276",
+                "svgShortKey": "S23#0",
+                "svgName": "图标 18"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "components": []
+  },
+  "nodeCount": 3,
+  "svgNodeCount": 1,
+  "hasStrippedSvgs": true,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 24/29. MISSING 5 sections: [24,25,26,27,28]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

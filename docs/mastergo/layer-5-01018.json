@@ -1,0 +1,5697 @@
+{
+  "fileId": "201619411459855",
+  "layerId": "5:01018",
+  "overview": {
+    "sections": [
+      {
+        "id": "5:01273",
+        "name": "组 2470",
+        "type": "FRAME",
+        "nodeCount": 1,
+        "x": 12,
+        "y": 80,
+        "height": 1403.8800048828125,
+        "containerId": "40:32435",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01088",
+        "name": "组 2471",
+        "type": "FRAME",
+        "nodeCount": 1,
+        "x": 12,
+        "y": 80,
+        "width": 8,
+        "height": 8,
+        "structureHash": "{\"t\":\"FRAME\",\"l\":{\"w\":8,\"h\":8}}",
+        "containerId": "40:32435",
+        "structureSiblingCount": 2
+      },
+      {
+        "id": "5:01174",
+        "name": "组 2472",
+        "type": "FRAME",
+        "nodeCount": 1,
+        "x": 12,
+        "y": 1475.88,
+        "width": 8,
+        "height": 8,
+        "structureHash": "{\"t\":\"FRAME\",\"l\":{\"w\":8,\"h\":8}}",
+        "containerId": "40:32435",
+        "structureSiblingCount": 2
+      },
+      {
+        "id": "5:01178",
+        "name": "组 2473",
+        "type": "FRAME",
+        "nodeCount": 21,
+        "x": 20,
+        "y": 84,
+        "width": 335,
+        "height": 228.8800048828125,
+        "textPreview": "12:34",
+        "containerId": "40:32435",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01091",
+        "name": "组 2489",
+        "type": "FRAME",
+        "nodeCount": 25,
+        "x": 0,
+        "y": 337,
+        "width": 375,
+        "height": 249,
+        "textPreview": "青铜纹饰的铸造密码",
+        "containerId": "40:32435",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01025",
+        "name": "组 2504",
+        "type": "FRAME",
+        "nodeCount": 1,
+        "x": 32,
+        "y": 632.88,
+        "width": 311,
+        "containerId": "5:01277",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01082",
+        "name": "组 2505",
+        "type": "FRAME",
+        "nodeCount": 4,
+        "x": 165.5,
+        "y": 623.38,
+        "width": 44,
+        "height": 20,
+        "containerId": "5:01277",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01358",
+        "name": "组 6",
+        "type": "FRAME",
+        "nodeCount": 1,
+        "x": 20,
+        "y": 610,
+        "width": 335,
+        "height": 794,
+        "containerId": "5:01277",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01365",
+        "name": "组 2509",
+        "type": "FRAME",
+        "nodeCount": 1,
+        "x": 22,
+        "y": 612,
+        "width": 24,
+        "height": 24,
+        "structureHash": "{\"t\":\"FRAME\",\"l\":{\"w\":24,\"h\":24}}",
+        "containerId": "5:01277",
+        "structureSiblingCount": 4
+      },
+      {
+        "id": "5:01352",
+        "name": "组 2510",
+        "type": "FRAME",
+        "nodeCount": 1,
+        "x": 329,
+        "y": 612,
+        "width": 24,
+        "height": 24,
+        "structureHash": "{\"t\":\"FRAME\",\"l\":{\"w\":24,\"h\":24}}",
+        "containerId": "5:01277",
+        "structureSiblingCount": 4
+      },
+      {
+        "id": "5:01399",
+        "name": "组 2511",
+        "type": "FRAME",
+        "nodeCount": 1,
+        "x": 22,
+        "y": 1378,
+        "width": 24,
+        "height": 24,
+        "structureHash": "{\"t\":\"FRAME\",\"l\":{\"w\":24,\"h\":24}}",
+        "containerId": "5:01277",
+        "structureSiblingCount": 4
+      },
+      {
+        "id": "5:01427",
+        "name": "组 2512",
+        "type": "FRAME",
+        "nodeCount": 1,
+        "x": 329,
+        "y": 1378,
+        "width": 24,
+        "height": 24,
+        "structureHash": "{\"t\":\"FRAME\",\"l\":{\"w\":24,\"h\":24}}",
+        "containerId": "5:01277",
+        "structureSiblingCount": 4
+      },
+      {
+        "id": "5:01326",
+        "name": "组 2513",
+        "type": "FRAME",
+        "nodeCount": 4,
+        "x": 42,
+        "y": 632,
+        "width": 32,
+        "height": 32,
+        "containerId": "5:01277",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01347",
+        "name": "文本 13",
+        "type": "TEXT",
+        "nodeCount": 1,
+        "x": 82,
+        "y": 636,
+        "width": 95.68000030517578,
+        "height": 24,
+        "textPreview": "随堂 · 鉴宝",
+        "containerId": "5:01277",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01394",
+        "name": "组 2515",
+        "type": "FRAME",
+        "nodeCount": 2,
+        "x": 259.22,
+        "y": 635,
+        "width": 73.77999877929688,
+        "height": 26,
+        "textPreview": "第 1/3 题",
+        "containerId": "5:01277",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01330",
+        "name": "文本 15",
+        "type": "TEXT",
+        "nodeCount": 1,
+        "x": 42,
+        "y": 680,
+        "width": 291,
+        "height": 46,
+        "textPreview": "观察右侧青铜鼎腹部纹饰，判断其属于以下哪",
+        "containerId": "5:01277",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01384",
+        "name": "组 2516",
+        "type": "FRAME",
+        "nodeCount": 4,
+        "x": 42,
+        "y": 746,
+        "width": 291,
+        "height": 130,
+        "containerId": "5:01277",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01334",
+        "name": "组 2520",
+        "type": "FRAME",
+        "nodeCount": 6,
+        "x": 42,
+        "y": 896,
+        "width": 291,
+        "height": 58,
+        "textPreview": "A",
+        "containerId": "5:01277",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01306",
+        "name": "组 2523",
+        "type": "FRAME",
+        "nodeCount": 6,
+        "x": 42,
+        "y": 966,
+        "width": 291,
+        "height": 58,
+        "textPreview": "B",
+        "containerId": "5:01277",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01428",
+        "name": "组 2526",
+        "type": "FRAME",
+        "nodeCount": 10,
+        "x": 42,
+        "y": 1036,
+        "width": 291,
+        "height": 60,
+        "textPreview": "夔龙纹（侧面龙纹）",
+        "containerId": "5:01277",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01400",
+        "name": "组 2531",
+        "type": "FRAME",
+        "nodeCount": 10,
+        "x": 42,
+        "y": 1108,
+        "width": 291,
+        "height": 60,
+        "textPreview": "蝉纹（仿生纹）",
+        "containerId": "5:01277",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01278",
+        "name": "组 2536",
+        "type": "FRAME",
+        "nodeCount": 4,
+        "x": 42,
+        "y": 1188,
+        "width": 291,
+        "height": 48,
+        "textPreview": "提交鉴赏",
+        "containerId": "5:01277",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01424",
+        "name": "组 2539",
+        "type": "FRAME",
+        "nodeCount": 1,
+        "x": 125.5,
+        "y": 1253.5,
+        "width": 48,
+        "structureHash": "{\"t\":\"FRAME\",\"l\":{\"w\":48}}",
+        "containerId": "5:01277",
+        "structureSiblingCount": 2
+      },
+      {
+        "id": "5:01346",
+        "name": "组 2540",
+        "type": "FRAME",
+        "nodeCount": 1,
+        "x": 185.5,
+        "y": 1252,
+        "width": 4,
+        "height": 4,
+        "containerId": "5:01277",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01355",
+        "name": "组 2541",
+        "type": "FRAME",
+        "nodeCount": 1,
+        "x": 201.5,
+        "y": 1253.5,
+        "width": 48,
+        "structureHash": "{\"t\":\"FRAME\",\"l\":{\"w\":48}}",
+        "containerId": "5:01277",
+        "structureSiblingCount": 2
+      },
+      {
+        "id": "5:01294",
+        "name": "组 2542",
+        "type": "FRAME",
+        "nodeCount": 6,
+        "x": 42,
+        "y": 1272,
+        "width": 291,
+        "height": 48,
+        "textPreview": "下一件瑰宝",
+        "containerId": "5:01277",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01366",
+        "name": "组 2545",
+        "type": "FRAME",
+        "nodeCount": 7,
+        "x": 42,
+        "y": 1332,
+        "width": 291,
+        "height": 50,
+        "textPreview": "继续研习",
+        "containerId": "5:01277",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01175",
+        "name": "组 2548",
+        "type": "FRAME",
+        "nodeCount": 1,
+        "x": 362,
+        "y": 160,
+        "height": 1243.8800048828125,
+        "containerId": "40:32435",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01241",
+        "name": "组 2549",
+        "type": "FRAME",
+        "nodeCount": 20,
+        "x": 0,
+        "y": 0,
+        "width": 375,
+        "height": 48,
+        "textPreview": "第 2/10 课",
+        "containerId": "40:32435",
+        "structureSiblingCount": 1
+      },
+      {
+        "id": "5:01028",
+        "name": "组 2563",
+        "type": "FRAME",
+        "nodeCount": 20,
+        "x": 0,
+        "y": 1425,
+        "width": 375,
+        "height": 55,
+        "textPreview": "30",
+        "containerId": "40:32435",
+        "structureSiblingCount": 1
+      }
+    ],
+    "totalSections": 30,
+    "totalNodes": 164,
+    "allTexts": [
+      "12:34",
+      "高清",
+      "青铜纹饰的铸造密码",
+      "王铸华",
+      "非遗铜艺第三代传人",
+      "从事青铜铸造技艺四十余年",
+      "1/3章节",
+      "艺术密码",
+      "本课深入解析商周青铜器的饕餮纹、夔龙纹的",
+      "铸造工艺，从泥范制模到浇铸成型，揭秘三千",
+      "年前的金属",
+      "。",
+      "随堂 · 鉴宝",
+      "第 1/3 题",
+      "观察右侧青铜鼎腹部纹饰，判断其属于以下哪种经典纹样类型？",
+      "A",
+      "云雷纹（地纹）",
+      "B",
+      "饕餮纹（兽面纹）",
+      "夔龙纹（侧面龙纹）",
+      "蝉纹（仿生纹）",
+      "提交鉴赏",
+      "下一件瑰宝",
+      "继续研习",
+      "第 2/10 课",
+      "4.9",
+      "30",
+      "已保存",
+      "前往AI工坊"
+    ],
+    "rootMetadata": {
+      "width": 375,
+      "height": 1537,
+      "name": "小课堂-课程播放页",
+      "type": "FRAME",
+      "fill": "paint_5:01019",
+      "styles": {
+        "paint_5:01019": {
+          "value": [
+            {
+              "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+            }
+          ]
+        },
+        "effect_5:01021": {
+          "value": [
+            "box-shadow: 0px 0px 60px 0px rgba(201, 168, 76, 0.08);",
+            "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+            "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);"
+          ]
+        },
+        "paint_5:01274": {
+          "value": [
+            {
+              "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/f6e3b71ad30211f0b1a0aa092328f399.png"
+            }
+          ]
+        },
+        "paint_5:01089": {
+          "value": [
+            "#D48C58"
+          ]
+        },
+        "paint_5:01183": {
+          "value": [
+            "rgba(245, 232, 184, 0.6)"
+          ]
+        },
+        "effect_5:01185": {
+          "value": [
+            "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+            "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+            "box-shadow: 0px 8px 32px 0px rgba(212, 140, 88, 0.12);"
+          ]
+        },
+        "paint_5:01225": {
+          "value": [
+            {
+              "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/54222e2579af598cb112d6b6253e8aee.png"
+            }
+          ]
+        },
+        "paint_5:01190": {
+          "value": [
+            {
+              "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/243d3a0da2aca19e5d1dd872b1d8005e.png"
+            }
+          ]
+        },
+        "paint_5:01211": {
+          "value": [
+            "rgba(249, 244, 232, 0.9)"
+          ]
+        },
+        "effect_5:01213": {
+          "value": [
+            "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+            "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+            "box-shadow: 0px 4px 20px 0px rgba(212, 140, 88, 0.25);",
+            "backdrop-filter: blur(4px);"
+          ]
+        },
+        "paint_5:01221": {
+          "value": [
+            "#B05A30"
+          ]
+        },
+        "paint_5:01202": {
+          "value": [
+            "rgba(26, 24, 20, 0.7)"
+          ]
+        },
+        "effect_5:4717": {
+          "value": [
+            "backdrop-filter: blur(4px);"
+          ]
+        },
+        "paint_5:01208": {
+          "value": [
+            "#F9F4E8"
+          ]
+        },
+        "effect_5:3192": {
+          "value": []
+        },
+        "paint_5:01194": {
+          "value": [
+            "linear-gradient(90deg, #C47040 0%, #B86040 100%)"
+          ]
+        },
+        "effect_5:9356": {
+          "value": [
+            "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+            "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+            "box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);",
+            "backdrop-filter: blur(4px);"
+          ]
+        },
+        "paint_5:01080": {
+          "value": [
+            "#FDFBF5"
+          ]
+        },
+        "paint_5:01228": {
+          "value": [
+            "rgba(42, 38, 32, 0.3)"
+          ]
+        },
+        "paint_5:01231": {
+          "value": [
+            "linear-gradient(90deg, #D48C58 0%, #E0C05C 50%, #E0A878 100%)"
+          ]
+        },
+        "paint_5:01180": {
+          "value": [
+            {
+              "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/9ca4ce0e5d86bd5f78d5613f5bc46ac1.png"
+            }
+          ]
+        },
+        "paint_5:01237": {
+          "value": [
+            "linear-gradient(90deg, #E0A878 0%, #EDD68A 50%, #E0A878 100%)"
+          ]
+        },
+        "paint_5:01234": {
+          "value": [
+            {
+              "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/6b76494232ff64802e24b33f284645b0.png"
+            }
+          ]
+        },
+        "paint_5:01093": {
+          "value": [
+            "linear-gradient(127deg, #F9F4E8 4%, #FDFBF5 100%)"
+          ]
+        },
+        "paint_5:4715": {
+          "value": [
+            "rgba(245, 232, 184, 0.5)"
+          ]
+        },
+        "effect_5:01095": {
+          "value": [
+            "box-shadow: 0px 4px 20px 0px rgba(212, 140, 88, 0.06);",
+            "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+            "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);"
+          ]
+        },
+        "paint_5:01153": {
+          "value": [
+            "#2A2620"
+          ]
+        },
+        "paint_5:01171": {
+          "value": [
+            {
+              "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/96e05f29ddda99baab020f12ee2fd146.png"
+            }
+          ]
+        },
+        "paint_5:01043": {
+          "value": [
+            "#E0A878"
+          ]
+        },
+        "effect_5:5816": {
+          "value": [
+            "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+            "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+            "box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);"
+          ]
+        },
+        "paint_5:01158": {
+          "value": [
+            {
+              "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/b5e46d0af65e9b6cdcc3dd4c8fab8507.png"
+            }
+          ]
+        },
+        "paint_5:01168": {
+          "value": [
+            "#3A342C"
+          ]
+        },
+        "paint_5:01053": {
+          "value": [
+            "#FBF0E8"
+          ]
+        },
+        "paint_5:01055": {
+          "value": [
+            "#EBC4A8"
+          ]
+        },
+        "paint_5:01129": {
+          "value": [
+            "#9C4828"
+          ]
+        },
+        "paint_5:01136": {
+          "value": [
+            "#7A6E5E"
+          ]
+        },
+        "paint_5:01143": {
+          "value": [
+            "#C47040"
+          ]
+        },
+        "paint_5:01050": {
+          "value": [
+            "#B05A30"
+          ]
+        },
+        "paint_5:01037": {
+          "value": [
+            "#5E5448"
+          ]
+        },
+        "paint_5:01146": {
+          "value": [
+            {
+              "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/abb5811a02c0603c26f729632b048fdf.png"
+            }
+          ]
+        },
+        "paint_5:01026": {
+          "value": [
+            {
+              "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/f562f3dacddb16815b8a77e7613b30fe.png"
+            }
+          ]
+        },
+        "paint_5:01086": {
+          "value": [
+            "#D48C58"
+          ]
+        },
+        "paint_5:01359": {
+          "value": [
+            "linear-gradient(157deg, #F9F4E8 9%, #FDFBF5 50%, #F9F4E8 100%)"
+          ]
+        },
+        "effect_5:01361": {
+          "value": [
+            "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+            "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+            "box-shadow: 0px 8px 40px 0px rgba(212, 140, 88, 0.08);"
+          ]
+        },
+        "paint_5:01353": {
+          "value": [
+            "#E0C05C"
+          ]
+        },
+        "paint_5:01324": {
+          "value": [
+            "#4A4238"
+          ]
+        },
+        "paint_5:01385": {
+          "value": [
+            "rgba(235, 196, 168, 0.4)"
+          ]
+        },
+        "paint_5:01392": {
+          "value": [
+            {
+              "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/7e88a75f6d08a6984a8e1f6413296931.png"
+            }
+          ]
+        },
+        "paint_5:01388": {
+          "value": [
+            {
+              "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/8ee197cb1724e9e292c280ca015a656d.png"
+            }
+          ]
+        },
+        "effect_5:01295": {
+          "value": [
+            "box-shadow: 0px 8px 32px 0px rgba(0, 0, 0, 0.16);"
+          ]
+        },
+        "paint_5:01314": {
+          "value": [
+            "#F0E6D0"
+          ]
+        },
+        "paint_5:01316": {
+          "value": [
+            "#F5E8B8"
+          ]
+        },
+        "paint_5:01429": {
+          "value": [
+            {
+              "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/d0d173eec8d65485ced142b471b206b3.png"
+            }
+          ]
+        },
+        "effect_5:01431": {
+          "value": [
+            "box-shadow: 0px 2px 12px 0px rgba(212, 140, 88, 0.15);",
+            "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+            "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);"
+          ]
+        },
+        "paint_5:01441": {
+          "value": [
+            "linear-gradient(135deg, #D48C58 0%, #B86040 100%)"
+          ]
+        },
+        "paint_5:01072": {
+          "value": [
+            "#FDFBF5"
+          ]
+        },
+        "paint_5:6879": {
+          "value": [
+            "#C47040"
+          ]
+        },
+        "paint_5:01401": {
+          "value": [
+            "rgba(248, 237, 232, 0.6)"
+          ]
+        },
+        "paint_5:01403": {
+          "value": [
+            "#E4B8A8"
+          ]
+        },
+        "paint_5:01409": {
+          "value": [
+            "#B86040"
+          ]
+        },
+        "paint_5:01417": {
+          "value": [
+            "#B86040"
+          ]
+        },
+        "paint_5:01422": {
+          "value": [
+            "#C87858"
+          ]
+        },
+        "paint_5:01279": {
+          "value": [
+            "linear-gradient(90deg, #A72806 0%, #C47040 38%, #A85038 100%)"
+          ]
+        },
+        "effect_5:01281": {
+          "value": [
+            "box-shadow: 0px 4px 16px 0px rgba(180, 90, 48, 0.3);",
+            "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+            "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);"
+          ]
+        },
+        "paint_5:01286": {
+          "value": [
+            {
+              "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/b035ed3bc6f614562556ea3e2ce0b7c3.png"
+            }
+          ]
+        },
+        "paint_5:01425": {
+          "value": [
+            {
+              "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/a9e7d874ceffb6c6f534d8e68963cda8.png"
+            }
+          ]
+        },
+        "paint_5:01356": {
+          "value": [
+            {
+              "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/c2443584fa3537449fa903babdeb3b40.png"
+            }
+          ]
+        },
+        "paint_5:01367": {
+          "value": [
+            "linear-gradient(90deg, #231F19 0%, #4A4238 50%, #3A342C 100%)"
+          ]
+        },
+        "effect_5:01369": {
+          "value": [
+            "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+            "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+            "box-shadow: 0px 4px 16px 0px rgba(74, 66, 56, 0.2);"
+          ]
+        },
+        "paint_5:01376": {
+          "value": [
+            "#F9F4E8"
+          ]
+        },
+        "paint_5:01176": {
+          "value": [
+            {
+              "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/7571e44390f447350748c10a1adf04bc.png"
+            }
+          ]
+        },
+        "paint_5:4713": {
+          "value": [
+            "rgba(240, 230, 208, 0.8)"
+          ]
+        },
+        "paint_5:4722": {
+          "value": [
+            "#4A4238"
+          ]
+        },
+        "paint_5:01029": {
+          "value": [
+            "rgba(249, 244, 232, 0.95)"
+          ]
+        },
+        "effect_5:4697": {
+          "value": [
+            "backdrop-filter: blur(12px);"
+          ]
+        },
+        "paint_5:01067": {
+          "value": [
+            "linear-gradient(90deg, #B86040 0%, #C47040 50%, #B86040 100%)"
+          ]
+        }
+      },
+      "allTexts": [
+        "12:34",
+        "高清",
+        "青铜纹饰的铸造密码",
+        "王铸华",
+        "非遗铜艺第三代传人",
+        "从事青铜铸造技艺四十余年",
+        "1/3章节",
+        "艺术密码",
+        "本课深入解析商周青铜器的饕餮纹、夔龙纹的",
+        "铸造工艺，从泥范制模到浇铸成型，揭秘三千",
+        "年前的金属",
+        "。",
+        "随堂 · 鉴宝",
+        "第 1/3 题",
+        "观察右侧青铜鼎腹部纹饰，判断其属于以下哪种经典纹样类型？",
+        "A",
+        "云雷纹（地纹）",
+        "B",
+        "饕餮纹（兽面纹）",
+        "夔龙纹（侧面龙纹）",
+        "蝉纹（仿生纹）",
+        "提交鉴赏",
+        "下一件瑰宝",
+        "继续研习",
+        "第 2/10 课",
+        "4.9",
+        "30",
+        "已保存",
+        "前往AI工坊"
+      ]
+    },
+    "rootContainer": {
+      "width": "375px",
+      "minHeight": "1537px",
+      "background": {
+        "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+      },
+      "overflow": "hidden",
+      "position": "relative"
+    },
+    "splitContainers": [
+      {
+        "name": "组 2508",
+        "type": "FRAME",
+        "id": "5:01277",
+        "width": 335,
+        "height": 794,
+        "x": 20,
+        "y": 610,
+        "effect": "effect_5:3192"
+      },
+      {
+        "name": "组 2507",
+        "type": "FRAME",
+        "id": "5:01276",
+        "width": 375,
+        "height": 826,
+        "x": 0,
+        "y": 610
+      },
+      {
+        "name": "容器 107",
+        "type": "FRAME",
+        "id": "40:32435",
+        "width": 375,
+        "height": 1483.8800048828125,
+        "x": 0,
+        "y": 0
+      }
+    ],
+    "nextAction": "STOP. This section LIST is only a directory — it has NO DSL nodes,  NO rowTexts. You CANNOT generate HTML from this list alone. Your NEXT ACTION: call mcp__getDesignSections with sectionIndex=0, then sectionIndex=1, ... up to sectionIndex=29 (total 30 calls). Fetch ALL 30 sections in batches of 3-5 before writing ANY HTML. Sections with nodeCount=3 and empty name are NOT empty — they contain real menu items and content (resolved from INSTANCE overrides during DSL transfer). WARNING: 8 sections have structureSiblingCount up to 4 — they look identical in the list (same nodeCount, empty name) but each has DIFFERENT text content and variant state. You MUST fetch ALL of them individually (do NOT skip any after fetching a few). Skipping sibling sections causes missing active-state styling and wrong menu item rendering. Skipping section DSL fetch is the #1 cause of missing menus, broken icons, and wrong data.",
+    "rules": [
+      "CRITICAL — Page positioning: the section LIST response contains splitContainers with page-absolute coordinates for each page region. Use splitContainers to construct the page skeleton (position:absolute with exact coordinates). Do NOT guess or stack with flex. IMPORTANT: splitContainers x/y are the container's absolute position on the canvas — they are NOT CSS margins/padding for child elements. Do NOT apply a container's y coordinate as top/margin-top on the main content wrapper. The main content area should start at top:0 within its own positioning context; sub-sections inside it use their own bbox y coordinates relative to the container, not to the page root.",
+      "CRITICAL — Multi-column sidebar layout: render ALL sidebar levels as persistent visible columns positioned via splitContainers coordinates. Do NOT use position:absolute/fixed for submenu panels (they become floating overlays and break the main content width). Instead, lay out ALL columns (primary sidebar + submenu + main content) side-by-side using flex or absolute positioning that ACCOUNTS for every column's width. The main content area width = rootContainer.width minus ALL sidebar column widths. Do NOT use flex:1 for main content when there are multiple sidebar columns — it will expand into the submenu's space. Each sidebar column's width comes from its splitContainer entry.",
+      "token filed must be generated as a variable (colors, shadows, fonts, etc.) and the token field must be displayed in the comment",
+      "componentDocumentLinks is a list of frontend component documentation links. When it exists and is not empty, use mcp__getComponentLink to get the documentation.",
+      "",
+      "CRITICAL — SVG FROM PATH NODES (MUST FOLLOW): Every PATH node has a `svgShortKey` field (a short sequential ID like `S0#0`, `S0#1`). The SVG markup is NOT in the DSL. You MUST place a placeholder `@@SVG:{svgShortKey}@@` where each icon goes, then call `mcp__applyDesign` at the end to inject the real high-precision SVG. NEVER hand-write `<path d=\"...\">` — the DSL does NOT contain path data. NEVER leave a PATH node unrendered — every icon MUST have a `@@SVG:{svgShortKey}@@` placeholder.",
+      "CRITICAL — RENDER EVERY ICON IN PATH NODES: Every PATH node has a `svgShortKey`. Place `@@SVG:{svgShortKey}@@` for each — sidebar menu icons, table header sort/filter/search icons, pagination prev/next/refresh icons, and action buttons. A header cell or menu item showing only plain text is a fidelity defect. After ALL placeholders are placed, call `mcp__applyDesign` to replace them with real SVG.",
+      "",
+      "CRITICAL — _placeholder TEXT handling: TEXT nodes with `_placeholder: true` (name==text) are listed in `dsl.placeholderTexts`. These are component-library boilerplate — NOT real column headers, labels, or data. Do NOT render them as table headers, column names, or visible UI labels. They appear alongside real text in the same section (e.g. a header cell has both realTitle='用户名称' and placeholder='Hillstone Design') — render ONLY the real title, omit the placeholder. EXCEPTION: if a placeholder text is the SOLE text in its section AND it reads as a legitimate brand name or page title (e.g. '智源智能安全运营平台'), it may be real content — render it in its proper context (logo area, page title), never as a table header.",
+      "CRITICAL — CLOSED-SET TEXT: the section LIST response carries `rootMetadata.allTexts` — the complete whitelist of text strings in this design (including placeholder strings). Any visible string NOT in allTexts is a hallucination and MUST be removed. Use `dsl.placeholderTexts` in each section to identify which strings are component-library boilerplate.",
+      "",
+      "CRITICAL — INSTANCE fill color: when an INSTANCE has both `fill` and `_color`, use `_color` directly as the CSS value. Do NOT guess colors from _variantProps semantics.",
+      "CRITICAL — INSTANCE _variantProps: compare across siblings for selected/hovered/disabled. Active class MUST match DSL variant state, NOT a default index.",
+      "CRITICAL — Render count = structureSiblingCount: if ssc=1, that single instance IS complete — do NOT fabricate extra rows/items.",
+      "CRITICAL — BACKGROUND FROM splitContainers: splitContainers[].background IS the exact CSS background-color. Copy verbatim, no changes.",
+      "CRITICAL — FRAME/GROUP opacity: translate to rgba() on background only, NOT CSS opacity (would make children translucent).",
+      "CRITICAL — rowTexts: each entry has parentType/parentName for context and `_placeholder: true` if boilerplate. Use parentName to place text correctly; skip _placeholder entries. IMPORTANT: if a short numeric text (like '8') has parentName matching a button INSTANCE (e.g. '分类[a3]=文本按钮,类型[aI]=危险'), it is likely a badge/count indicator overlaid on that button — NOT part of the button label. Do NOT render it inside the button text; render it as a separate badge element positioned on the button corner, OR omit it if the design does not show a visible badge on that specific button instance.",
+      "Render ALL nodes recursively. Section root layoutStyle.width = section width. Do not call mcp__getDsl after completing section workflow.",
+      "CRITICAL — ICON-TO-NODE BINDING: match PATH nodes to their UI position by the node's ancestor name. A PATH node under a menu item belongs in that menu's icon slot; one under a button/refresh belongs in that button. NEVER substitute a memorized icon — use the exact `@@SVG:{svgShortKey}@@` from the PATH node in its section. NEVER reuse a svgShortKey from a different section.",
+      "CRITICAL — TEXT PROVENANCE SELF-CHECK: before finalizing output, verify every visible text string exists in allTexts. If you emit MORE distinct strings than allTexts.length, you are hallucinating. Typical hallucinations: fabricated table headers, invented data, brand tokens, generic labels not in the design.",
+      "CRITICAL — DO NOT SKIP SECTION DSL FETCH: the section LIST response is ONLY a directory (id/name/nodeCount/textPreview). It does NOT contain DSL nodes, rowTexts, or any rendering data. You CANNOT generate correct HTML from the list alone. You MUST call mcp__getDesignSections with sectionIndex=0, then 1, ... up to totalSections-1 to get each section's DSL. Generating HTML without fetching ALL section DSLs will produce missing content (menus, table data, icons) and incorrect SVGs — this is the #1 cause of broken output."
+    ]
+  },
+  "sections": [
+    {
+      "sectionIndex": 0,
+      "section": {
+        "id": "5:01273",
+        "name": "组 2470",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "paint_5:01274": {
+            "value": [
+              {
+                "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/f6e3b71ad30211f0b1a0aa092328f399.png"
+              }
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01273",
+            "name": "组 2470",
+            "layoutStyle": {
+              "height": 1403.8800048828125,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "opacity": 0.4000000059604645,
+            "fill": "paint_5:01274",
+            "children": []
+          }
+        ],
+        "components": []
+      },
+      "nodeCount": 1,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 1/30. MISSING 29 sections: [1,2,3,4,5,6,7,8,9,10... +19 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 1,
+      "section": {
+        "id": "5:01088",
+        "name": "组 2471",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 2,
+      "dsl": {
+        "styles": {
+          "paint_5:01089": {
+            "value": [
+              "#D48C58"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01088",
+            "name": "组 2471",
+            "layoutStyle": {
+              "width": 8,
+              "height": 8,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "opacity": 0.6000000238418579,
+            "fill": "paint_5:01089",
+            "_color": "rgba(212, 140, 88, 0.6)",
+            "children": [],
+            "borderRadius": "9999px"
+          }
+        ],
+        "components": []
+      },
+      "nodeCount": 1,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 2/30. MISSING 28 sections: [2,3,4,5,6,7,8,9,10,11... +18 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 2,
+      "section": {
+        "id": "5:01174",
+        "name": "组 2472",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 2,
+      "dsl": {
+        "styles": {
+          "paint_5:01089": {
+            "value": [
+              "#D48C58"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01174",
+            "name": "组 2472",
+            "layoutStyle": {
+              "width": 8,
+              "height": 8,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "opacity": 0.6000000238418579,
+            "fill": "paint_5:01089",
+            "_color": "rgba(212, 140, 88, 0.6)",
+            "children": [],
+            "borderRadius": "9999px"
+          }
+        ],
+        "components": []
+      },
+      "nodeCount": 1,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 3/30. MISSING 27 sections: [3,4,5,6,7,8,9,10,11,12... +17 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 3,
+      "section": {
+        "id": "5:01178",
+        "name": "组 2473",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "effect_5:01185": {
+            "value": [
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 8px 32px 0px rgba(212, 140, 88, 0.12);"
+            ]
+          },
+          "effect_5:01213": {
+            "value": [
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 4px 20px 0px rgba(212, 140, 88, 0.25);",
+              "backdrop-filter: blur(4px);"
+            ]
+          },
+          "effect_5:3192": {
+            "value": []
+          },
+          "effect_5:4717": {
+            "value": [
+              "backdrop-filter: blur(4px);"
+            ]
+          },
+          "effect_5:9356": {
+            "value": [
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);",
+              "backdrop-filter: blur(4px);"
+            ]
+          },
+          "font_5:01035": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 12,
+              "style": "Medium",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "16",
+              "letterSpacing": "auto",
+              "weight": "500"
+            }
+          },
+          "font_5:01199": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 12,
+              "style": "SemiBold",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "16",
+              "letterSpacing": "0.6000000238418579px",
+              "weight": "600"
+            }
+          },
+          "paint_5:01080": {
+            "value": [
+              "#FDFBF5"
+            ]
+          },
+          "paint_5:01089": {
+            "value": [
+              "#D48C58"
+            ]
+          },
+          "paint_5:01180": {
+            "value": [
+              {
+                "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/9ca4ce0e5d86bd5f78d5613f5bc46ac1.png"
+              }
+            ]
+          },
+          "paint_5:01183": {
+            "value": [
+              "rgba(245, 232, 184, 0.6)"
+            ]
+          },
+          "paint_5:01190": {
+            "value": [
+              {
+                "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/243d3a0da2aca19e5d1dd872b1d8005e.png"
+              }
+            ]
+          },
+          "paint_5:01194": {
+            "value": [
+              "linear-gradient(90deg, #C47040 0%, #B86040 100%)"
+            ]
+          },
+          "paint_5:01202": {
+            "value": [
+              "rgba(26, 24, 20, 0.7)"
+            ]
+          },
+          "paint_5:01208": {
+            "value": [
+              "#F9F4E8"
+            ]
+          },
+          "paint_5:01211": {
+            "value": [
+              "rgba(249, 244, 232, 0.9)"
+            ]
+          },
+          "paint_5:01221": {
+            "value": [
+              "#B05A30"
+            ]
+          },
+          "paint_5:01225": {
+            "value": [
+              {
+                "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/54222e2579af598cb112d6b6253e8aee.png"
+              }
+            ]
+          },
+          "paint_5:01228": {
+            "value": [
+              "rgba(42, 38, 32, 0.3)"
+            ]
+          },
+          "paint_5:01231": {
+            "value": [
+              "linear-gradient(90deg, #D48C58 0%, #E0C05C 50%, #E0A878 100%)"
+            ]
+          },
+          "paint_5:01234": {
+            "value": [
+              {
+                "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/6b76494232ff64802e24b33f284645b0.png"
+              }
+            ]
+          },
+          "paint_5:01237": {
+            "value": [
+              "linear-gradient(90deg, #E0A878 0%, #EDD68A 50%, #E0A878 100%)"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01178",
+            "name": "组 2473",
+            "layoutStyle": {
+              "width": 335,
+              "height": 228.8800048828125,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:01182",
+                "name": "组 2474",
+                "layoutStyle": {
+                  "width": 335,
+                  "height": 210.8800048828125,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "strokeColor": "paint_5:01183",
+                "strokeType": "solid",
+                "strokeAlign": "inside",
+                "strokeWidth": "2px",
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:01223",
+                    "name": "组 2475",
+                    "layoutStyle": {
+                      "width": 331,
+                      "height": 206.8800048828125,
+                      "relativeX": 2,
+                      "relativeY": 2
+                    },
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "id": "5:01224",
+                        "name": "图片 1",
+                        "layoutStyle": {
+                          "width": 331,
+                          "height": 206.8800048828125,
+                          "relativeX": 0,
+                          "relativeY": 0
+                        },
+                        "fill": "paint_5:01225",
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "id": "5:01189",
+                    "name": "组 2477",
+                    "layoutStyle": {
+                      "width": 331,
+                      "height": 206.8800048828125,
+                      "relativeX": 2,
+                      "relativeY": 2
+                    },
+                    "fill": "paint_5:01190",
+                    "children": []
+                  },
+                  {
+                    "type": "FRAME",
+                    "id": "5:01210",
+                    "name": "组 2478",
+                    "layoutStyle": {
+                      "width": 64,
+                      "height": 64,
+                      "relativeX": 135.5,
+                      "relativeY": 73.44000244140625
+                    },
+                    "fill": "paint_5:01211",
+                    "_color": "rgba(249, 244, 232, 0.9)",
+                    "strokeColor": "paint_5:01089",
+                    "strokeType": "solid",
+                    "strokeAlign": "inside",
+                    "strokeWidth": "2px",
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "id": "5:01218",
+                        "name": "组 2479",
+                        "layoutStyle": {
+                          "width": 28,
+                          "height": 28,
+                          "relativeX": 20,
+                          "relativeY": 18
+                        },
+                        "children": [
+                          {
+                            "type": "FRAME",
+                            "id": "5:01219",
+                            "name": "图标 1",
+                            "layoutStyle": {
+                              "width": 28,
+                              "height": 28,
+                              "relativeX": 0,
+                              "relativeY": 0
+                            },
+                            "children": [
+                              {
+                                "type": "PATH",
+                                "id": "5:01220",
+                                "name": "组 1",
+                                "layoutStyle": {
+                                  "width": 12.833333015441895,
+                                  "height": 16.33333396911621,
+                                  "relativeX": 9.333333015441895,
+                                  "relativeY": 5.833333492279053
+                                },
+                                "svgKey": "S3:图标 1|5:01220",
+                                "svgShortKey": "S3#0",
+                                "svgName": "图标 1"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "effect": "effect_5:01213",
+                    "borderRadius": "9999px"
+                  },
+                  {
+                    "type": "FRAME",
+                    "id": "5:01201",
+                    "name": "组 2480",
+                    "layoutStyle": {
+                      "width": 50.95000076293945,
+                      "height": 24,
+                      "relativeX": 270.04998779296875,
+                      "relativeY": 172.8800048828125
+                    },
+                    "fill": "paint_5:01202",
+                    "_color": "rgba(26, 24, 20, 0.7)",
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "id": "5:01204",
+                        "name": "文本 1",
+                        "layoutStyle": {
+                          "width": 36.04999923706055,
+                          "height": 17,
+                          "relativeX": 10,
+                          "relativeY": 3
+                        },
+                        "fill": "paint_5:01208",
+                        "_color": "#F9F4E8",
+                        "text": [
+                          {
+                            "text": "12:34",
+                            "font": "font_5:01035"
+                          }
+                        ],
+                        "textColor": [
+                          {
+                            "start": 0,
+                            "end": 5,
+                            "color": "paint_5:01208"
+                          }
+                        ],
+                        "textAlign": "left",
+                        "textMode": "single-line"
+                      }
+                    ],
+                    "effect": "effect_5:4717",
+                    "borderRadius": "6px"
+                  },
+                  {
+                    "type": "FRAME",
+                    "id": "5:01192",
+                    "name": "组 2481",
+                    "layoutStyle": {
+                      "width": 49.20000076293945,
+                      "height": 24,
+                      "relativeX": 14,
+                      "relativeY": 14
+                    },
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "id": "5:01193",
+                        "name": "组 2",
+                        "layoutStyle": {
+                          "width": 49.20000076293945,
+                          "height": 24,
+                          "relativeX": 0,
+                          "relativeY": 0
+                        },
+                        "fill": "paint_5:01194",
+                        "_color": "linear-gradient(90deg, #C47040 0%, #B86040 100%)",
+                        "children": [],
+                        "effect": "effect_5:9356",
+                        "borderRadius": "9999px"
+                      },
+                      {
+                        "type": "TEXT",
+                        "id": "5:01196",
+                        "name": "文本 2",
+                        "layoutStyle": {
+                          "width": 41.400001525878906,
+                          "height": 17,
+                          "relativeX": 12,
+                          "relativeY": 3
+                        },
+                        "fill": "paint_5:01080",
+                        "_color": "#FDFBF5",
+                        "text": [
+                          {
+                            "text": "高清",
+                            "font": "font_5:01199"
+                          }
+                        ],
+                        "textColor": [
+                          {
+                            "start": 0,
+                            "end": 2,
+                            "color": "paint_5:01080"
+                          }
+                        ],
+                        "textAlign": "left",
+                        "textMode": "single-line"
+                      }
+                    ],
+                    "effect": "effect_5:3192"
+                  },
+                  {
+                    "type": "FRAME",
+                    "id": "5:01227",
+                    "name": "组 2482",
+                    "layoutStyle": {
+                      "width": 331,
+                      "height": 4,
+                      "relativeX": 2,
+                      "relativeY": 204.8800048828125
+                    },
+                    "fill": "paint_5:01228",
+                    "_color": "rgba(42, 38, 32, 0.3)",
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "id": "5:01230",
+                        "name": "组 2483",
+                        "layoutStyle": {
+                          "width": 115.83999633789062,
+                          "height": 4,
+                          "relativeX": 0,
+                          "relativeY": 0
+                        },
+                        "fill": "paint_5:01231",
+                        "_color": "linear-gradient(90deg, #D48C58 0%, #E0C05C 50%, #E0A878 100%)",
+                        "children": [],
+                        "borderRadius": "9999px"
+                      }
+                    ]
+                  }
+                ],
+                "effect": "effect_5:01185",
+                "borderRadius": "16px"
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01179",
+                "name": "组 2484",
+                "layoutStyle": {
+                  "width": 32,
+                  "relativeX": 81.5,
+                  "relativeY": 225.3800048828125
+                },
+                "fill": "paint_5:01180",
+                "children": []
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01239",
+                "name": "组 2485",
+                "layoutStyle": {
+                  "width": 6,
+                  "height": 6,
+                  "relativeX": 121.5,
+                  "relativeY": 222.8800048828125
+                },
+                "fill": "paint_5:01089",
+                "_color": "#D48C58",
+                "children": [],
+                "borderRadius": "9999px"
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01236",
+                "name": "组 2486",
+                "layoutStyle": {
+                  "width": 64,
+                  "relativeX": 135.5,
+                  "relativeY": 225.3800048828125
+                },
+                "fill": "paint_5:01237",
+                "_color": "linear-gradient(90deg, #E0A878 0%, #EDD68A 50%, #E0A878 100%)",
+                "children": []
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01240",
+                "name": "组 2487",
+                "layoutStyle": {
+                  "width": 6,
+                  "height": 6,
+                  "relativeX": 207.5,
+                  "relativeY": 222.8800048828125
+                },
+                "fill": "paint_5:01089",
+                "_color": "#D48C58",
+                "children": [],
+                "borderRadius": "9999px"
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01233",
+                "name": "组 2488",
+                "layoutStyle": {
+                  "width": 32,
+                  "relativeX": 221.5,
+                  "relativeY": 225.3800048828125
+                },
+                "fill": "paint_5:01234",
+                "children": []
+              }
+            ]
+          }
+        ],
+        "components": [],
+        "rowTexts": [
+          {
+            "text": "12:34",
+            "parentType": "FRAME",
+            "parentName": "组 2480"
+          },
+          {
+            "text": "高清",
+            "parentType": "FRAME",
+            "parentName": "组 2481"
+          }
+        ]
+      },
+      "nodeCount": 21,
+      "svgNodeCount": 1,
+      "hasStrippedSvgs": true,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 4/30. MISSING 26 sections: [4,5,6,7,8,9,10,11,12,13... +16 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 4,
+      "section": {
+        "id": "5:01091",
+        "name": "组 2489",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "effect_5:01095": {
+            "value": [
+              "box-shadow: 0px 4px 20px 0px rgba(212, 140, 88, 0.06);",
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);"
+            ]
+          },
+          "effect_5:5816": {
+            "value": [
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);"
+            ]
+          },
+          "font_5:01035": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 12,
+              "style": "Medium",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "16",
+              "letterSpacing": "auto",
+              "weight": "500"
+            }
+          },
+          "font_5:01103": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 14,
+              "style": "Regular",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "23.799999237060547",
+              "letterSpacing": "auto",
+              "weight": "400"
+            }
+          },
+          "font_5:01109": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 14,
+              "style": "Medium",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "23.799999237060547",
+              "letterSpacing": "auto",
+              "weight": "500"
+            }
+          },
+          "font_5:01127": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 10,
+              "style": "Medium",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "15",
+              "letterSpacing": "auto",
+              "weight": "500"
+            }
+          },
+          "font_5:01134": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 12,
+              "style": "Regular",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "16",
+              "letterSpacing": "auto",
+              "weight": "400"
+            }
+          },
+          "font_5:01151": {
+            "value": {
+              "family": "Noto Serif SC",
+              "size": 20,
+              "style": "Bold",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "32.5",
+              "letterSpacing": "0.5px",
+              "weight": "700"
+            }
+          },
+          "font_5:01166": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 14,
+              "style": "SemiBold",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "20",
+              "letterSpacing": "auto",
+              "weight": "600"
+            }
+          },
+          "paint_5:01037": {
+            "value": [
+              "#5E5448"
+            ]
+          },
+          "paint_5:01043": {
+            "value": [
+              "#E0A878"
+            ]
+          },
+          "paint_5:01050": {
+            "value": [
+              "#B05A30"
+            ]
+          },
+          "paint_5:01053": {
+            "value": [
+              "#FBF0E8"
+            ]
+          },
+          "paint_5:01055": {
+            "value": [
+              "#EBC4A8"
+            ]
+          },
+          "paint_5:01089": {
+            "value": [
+              "#D48C58"
+            ]
+          },
+          "paint_5:01093": {
+            "value": [
+              "linear-gradient(127deg, #F9F4E8 4%, #FDFBF5 100%)"
+            ]
+          },
+          "paint_5:01129": {
+            "value": [
+              "#9C4828"
+            ]
+          },
+          "paint_5:01136": {
+            "value": [
+              "#7A6E5E"
+            ]
+          },
+          "paint_5:01143": {
+            "value": [
+              "#C47040"
+            ]
+          },
+          "paint_5:01146": {
+            "value": [
+              {
+                "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/abb5811a02c0603c26f729632b048fdf.png"
+              }
+            ]
+          },
+          "paint_5:01153": {
+            "value": [
+              "#2A2620"
+            ]
+          },
+          "paint_5:01158": {
+            "value": [
+              {
+                "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/b5e46d0af65e9b6cdcc3dd4c8fab8507.png"
+              }
+            ]
+          },
+          "paint_5:01168": {
+            "value": [
+              "#3A342C"
+            ]
+          },
+          "paint_5:01171": {
+            "value": [
+              {
+                "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/96e05f29ddda99baab020f12ee2fd146.png"
+              }
+            ]
+          },
+          "paint_5:4715": {
+            "value": [
+              "rgba(245, 232, 184, 0.5)"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01091",
+            "name": "组 2489",
+            "layoutStyle": {
+              "width": 375,
+              "height": 249,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:01173",
+                "name": "组 3",
+                "layoutStyle": {
+                  "width": 24,
+                  "height": 24,
+                  "relativeX": 19,
+                  "relativeY": -1
+                },
+                "strokeColor": "paint_5:01089",
+                "strokeType": "solid",
+                "strokeAlign": "inside",
+                "strokeWidth": "2px 0px 0px 2px",
+                "children": []
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01092",
+                "name": "组 2491",
+                "layoutStyle": {
+                  "width": 335,
+                  "height": 248,
+                  "relativeX": 20,
+                  "relativeY": 1
+                },
+                "fill": "paint_5:01093",
+                "_color": "linear-gradient(127deg, #F9F4E8 4%, #FDFBF5 100%)",
+                "strokeColor": "paint_5:4715",
+                "strokeType": "solid",
+                "strokeAlign": "inside",
+                "strokeWidth": "1px",
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:01160",
+                    "name": "组 4",
+                    "layoutStyle": {
+                      "width": 24,
+                      "height": 24,
+                      "relativeX": 310,
+                      "relativeY": 223
+                    },
+                    "strokeColor": "paint_5:01089",
+                    "strokeType": "solid",
+                    "strokeAlign": "inside",
+                    "strokeWidth": "0px 2px 2px 0px",
+                    "children": []
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:01148",
+                    "name": "文本 3",
+                    "layoutStyle": {
+                      "width": 311,
+                      "height": 32,
+                      "relativeX": 21,
+                      "relativeY": 21
+                    },
+                    "fill": "paint_5:01153",
+                    "_color": "#2A2620",
+                    "text": [
+                      {
+                        "text": "青铜纹饰的铸造密码",
+                        "font": "font_5:01151"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 9,
+                        "color": "paint_5:01153"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  },
+                  {
+                    "type": "FRAME",
+                    "id": "5:01170",
+                    "name": "组 2493",
+                    "layoutStyle": {
+                      "width": 293,
+                      "relativeX": 21,
+                      "relativeY": 65
+                    },
+                    "fill": "paint_5:01171",
+                    "children": []
+                  },
+                  {
+                    "type": "FRAME",
+                    "id": "5:01155",
+                    "name": "组 2494",
+                    "layoutStyle": {
+                      "width": 40,
+                      "height": 40,
+                      "relativeX": 21,
+                      "relativeY": 78
+                    },
+                    "strokeColor": "paint_5:01043",
+                    "strokeType": "solid",
+                    "strokeAlign": "inside",
+                    "strokeWidth": "2px",
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "id": "5:01156",
+                        "name": "组 2495",
+                        "layoutStyle": {
+                          "width": 36,
+                          "height": 36,
+                          "relativeX": 2,
+                          "relativeY": 2
+                        },
+                        "children": [
+                          {
+                            "type": "FRAME",
+                            "id": "5:01157",
+                            "name": "图片 2",
+                            "layoutStyle": {
+                              "width": 36,
+                              "height": 36,
+                              "relativeX": 0,
+                              "relativeY": 0
+                            },
+                            "fill": "paint_5:01158",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ],
+                    "effect": "effect_5:5816",
+                    "borderRadius": "9999px"
+                  },
+                  {
+                    "type": "FRAME",
+                    "id": "5:01162",
+                    "name": "组 2497",
+                    "layoutStyle": {
+                      "width": 42,
+                      "height": 20,
+                      "relativeX": 73,
+                      "relativeY": 79
+                    },
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "id": "5:01163",
+                        "name": "文本 4",
+                        "layoutStyle": {
+                          "width": 60.900001525878906,
+                          "height": 20,
+                          "relativeX": 0,
+                          "relativeY": 0
+                        },
+                        "fill": "paint_5:01168",
+                        "_color": "#3A342C",
+                        "text": [
+                          {
+                            "text": "王铸华",
+                            "font": "font_5:01166"
+                          }
+                        ],
+                        "textColor": [
+                          {
+                            "start": 0,
+                            "end": 3,
+                            "color": "paint_5:01168"
+                          }
+                        ],
+                        "textAlign": "left",
+                        "textMode": "single-line"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "id": "5:01123",
+                    "name": "组 2498",
+                    "layoutStyle": {
+                      "width": 108,
+                      "height": 21,
+                      "relativeX": 123,
+                      "relativeY": 78.5
+                    },
+                    "fill": "paint_5:01053",
+                    "_color": "#FBF0E8",
+                    "strokeColor": "paint_5:01055",
+                    "strokeType": "solid",
+                    "strokeAlign": "inside",
+                    "strokeWidth": "1px",
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "id": "5:01124",
+                        "name": "文本 5",
+                        "layoutStyle": {
+                          "width": 102,
+                          "height": 15,
+                          "relativeX": 9,
+                          "relativeY": 3
+                        },
+                        "fill": "paint_5:01129",
+                        "_color": "#9C4828",
+                        "text": [
+                          {
+                            "text": "非遗铜艺第三代传人",
+                            "font": "font_5:01127"
+                          }
+                        ],
+                        "textColor": [
+                          {
+                            "start": 0,
+                            "end": 9,
+                            "color": "paint_5:01129"
+                          }
+                        ],
+                        "textAlign": "left",
+                        "textMode": "single-line"
+                      }
+                    ],
+                    "borderRadius": "9999px"
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:01131",
+                    "name": "文本 6",
+                    "layoutStyle": {
+                      "width": 198.6300048828125,
+                      "height": 16,
+                      "relativeX": 73,
+                      "relativeY": 101.5
+                    },
+                    "fill": "paint_5:01136",
+                    "_color": "#7A6E5E",
+                    "text": [
+                      {
+                        "text": "从事青铜铸造技艺四十余年",
+                        "font": "font_5:01134"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 12,
+                        "color": "paint_5:01136"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  },
+                  {
+                    "type": "FRAME",
+                    "id": "5:01138",
+                    "name": "组 2499",
+                    "layoutStyle": {
+                      "width": 42.36000061035156,
+                      "height": 17,
+                      "relativeX": 271.6400146484375,
+                      "relativeY": 91
+                    },
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "id": "5:01139",
+                        "name": "文本 7",
+                        "layoutStyle": {
+                          "width": 57.119998931884766,
+                          "height": 17,
+                          "relativeX": 0,
+                          "relativeY": -5
+                        },
+                        "fill": "paint_5:01143",
+                        "_color": "#C47040",
+                        "text": [
+                          {
+                            "text": "1/3章节",
+                            "font": "font_5:01035"
+                          }
+                        ],
+                        "textColor": [
+                          {
+                            "start": 0,
+                            "end": 5,
+                            "color": "paint_5:01143"
+                          }
+                        ],
+                        "textAlign": "left",
+                        "textMode": "single-line"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "id": "5:01099",
+                    "name": "组 2500",
+                    "layoutStyle": {
+                      "width": 293,
+                      "height": 69,
+                      "relativeX": 21,
+                      "relativeY": 134
+                    },
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "id": "5:01105",
+                        "name": "组 2501",
+                        "layoutStyle": {
+                          "width": 56,
+                          "height": 20,
+                          "relativeX": 70,
+                          "relativeY": 47
+                        },
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "id": "5:01106",
+                            "name": "文本 8",
+                            "layoutStyle": {
+                              "width": 78.4000015258789,
+                              "height": 20,
+                              "relativeX": 0,
+                              "relativeY": 0
+                            },
+                            "fill": "paint_5:01050",
+                            "_color": "#B05A30",
+                            "text": [
+                              {
+                                "text": "艺术密码",
+                                "font": "font_5:01109"
+                              }
+                            ],
+                            "textColor": [
+                              {
+                                "start": 0,
+                                "end": 4,
+                                "color": "paint_5:01050"
+                              }
+                            ],
+                            "textAlign": "left",
+                            "textMode": "single-line"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "TEXT",
+                        "id": "5:01111",
+                        "name": "文本 9",
+                        "layoutStyle": {
+                          "width": 296.79998779296875,
+                          "height": 20,
+                          "relativeX": 0,
+                          "relativeY": 1
+                        },
+                        "fill": "paint_5:01037",
+                        "_color": "#5E5448",
+                        "text": [
+                          {
+                            "text": "本课深入解析商周青铜器的饕餮纹、夔龙纹的",
+                            "font": "font_5:01103"
+                          }
+                        ],
+                        "textColor": [
+                          {
+                            "start": 0,
+                            "end": 20,
+                            "color": "paint_5:01037"
+                          }
+                        ],
+                        "textAlign": "left",
+                        "textMode": "single-line"
+                      },
+                      {
+                        "type": "TEXT",
+                        "id": "5:01115",
+                        "name": "文本 10",
+                        "layoutStyle": {
+                          "width": 296.79998779296875,
+                          "height": 20,
+                          "relativeX": 0,
+                          "relativeY": 24
+                        },
+                        "fill": "paint_5:01037",
+                        "_color": "#5E5448",
+                        "text": [
+                          {
+                            "text": "铸造工艺，从泥范制模到浇铸成型，揭秘三千",
+                            "font": "font_5:01103"
+                          }
+                        ],
+                        "textColor": [
+                          {
+                            "start": 0,
+                            "end": 20,
+                            "color": "paint_5:01037"
+                          }
+                        ],
+                        "textAlign": "left",
+                        "textMode": "single-line"
+                      },
+                      {
+                        "type": "TEXT",
+                        "id": "5:01100",
+                        "name": "文本 11",
+                        "layoutStyle": {
+                          "width": 92.4000015258789,
+                          "height": 20,
+                          "relativeX": 0,
+                          "relativeY": 47
+                        },
+                        "fill": "paint_5:01037",
+                        "_color": "#5E5448",
+                        "text": [
+                          {
+                            "text": "年前的金属",
+                            "font": "font_5:01103"
+                          }
+                        ],
+                        "textColor": [
+                          {
+                            "start": 0,
+                            "end": 5,
+                            "color": "paint_5:01037"
+                          }
+                        ],
+                        "textAlign": "left",
+                        "textMode": "single-line"
+                      },
+                      {
+                        "type": "TEXT",
+                        "id": "5:01119",
+                        "name": "文本 12",
+                        "layoutStyle": {
+                          "width": 36.400001525878906,
+                          "height": 20,
+                          "relativeX": 126,
+                          "relativeY": 47
+                        },
+                        "fill": "paint_5:01037",
+                        "_color": "#5E5448",
+                        "text": [
+                          {
+                            "text": "。",
+                            "font": "font_5:01103"
+                          }
+                        ],
+                        "textColor": [
+                          {
+                            "start": 0,
+                            "end": 1,
+                            "color": "paint_5:01037"
+                          }
+                        ],
+                        "textAlign": "left",
+                        "textMode": "single-line"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "id": "5:01161",
+                    "name": "组 2502",
+                    "layoutStyle": {
+                      "width": 8,
+                      "height": 8,
+                      "relativeX": 21,
+                      "relativeY": 219
+                    },
+                    "fill": "paint_5:01043",
+                    "_color": "#E0A878",
+                    "children": [],
+                    "borderRadius": "9999px"
+                  },
+                  {
+                    "type": "FRAME",
+                    "id": "5:01145",
+                    "name": "组 2503",
+                    "layoutStyle": {
+                      "width": 277,
+                      "relativeX": 37,
+                      "relativeY": 222.5
+                    },
+                    "fill": "paint_5:01146",
+                    "children": []
+                  }
+                ],
+                "effect": "effect_5:01095",
+                "borderRadius": "16px"
+              }
+            ]
+          }
+        ],
+        "components": [],
+        "rowTexts": [
+          {
+            "text": "青铜纹饰的铸造密码",
+            "parentType": "FRAME",
+            "parentName": "组 2491"
+          },
+          {
+            "text": "王铸华",
+            "parentType": "FRAME",
+            "parentName": "组 2497"
+          },
+          {
+            "text": "非遗铜艺第三代传人",
+            "parentType": "FRAME",
+            "parentName": "组 2498"
+          },
+          {
+            "text": "从事青铜铸造技艺四十余年",
+            "parentType": "FRAME",
+            "parentName": "组 2491"
+          },
+          {
+            "text": "1/3章节",
+            "parentType": "FRAME",
+            "parentName": "组 2499"
+          },
+          {
+            "text": "艺术密码",
+            "parentType": "FRAME",
+            "parentName": "组 2501"
+          },
+          {
+            "text": "本课深入解析商周青铜器的饕餮纹、夔龙纹的",
+            "parentType": "FRAME",
+            "parentName": "组 2500"
+          },
+          {
+            "text": "铸造工艺，从泥范制模到浇铸成型，揭秘三千",
+            "parentType": "FRAME",
+            "parentName": "组 2500"
+          },
+          {
+            "text": "年前的金属",
+            "parentType": "FRAME",
+            "parentName": "组 2500"
+          },
+          {
+            "text": "。",
+            "parentType": "FRAME",
+            "parentName": "组 2500"
+          }
+        ]
+      },
+      "nodeCount": 25,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 5/30. MISSING 25 sections: [5,6,7,8,9,10,11,12,13,14... +15 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 5,
+      "section": {
+        "id": "5:01025",
+        "name": "组 2504",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "paint_5:01026": {
+            "value": [
+              {
+                "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/f562f3dacddb16815b8a77e7613b30fe.png"
+              }
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01025",
+            "name": "组 2504",
+            "layoutStyle": {
+              "width": 311,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:01026",
+            "children": []
+          }
+        ],
+        "components": []
+      },
+      "nodeCount": 1,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 6/30. MISSING 24 sections: [6,7,8,9,10,11,12,13,14,15... +14 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 6,
+      "section": {
+        "id": "5:01082",
+        "name": "组 2505",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "paint_5:01086": {
+            "value": [
+              "#D48C58"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01082",
+            "name": "组 2505",
+            "layoutStyle": {
+              "width": 44,
+              "height": 20,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:01083",
+                "name": "组 2506",
+                "layoutStyle": {
+                  "width": 20,
+                  "height": 20,
+                  "relativeX": 12,
+                  "relativeY": 0
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:01084",
+                    "name": "图标 2",
+                    "layoutStyle": {
+                      "width": 20,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "children": [
+                      {
+                        "type": "PATH",
+                        "id": "5:01085",
+                        "name": "组 5",
+                        "layoutStyle": {
+                          "width": 15.292994499206543,
+                          "height": 13.333333015441895,
+                          "relativeX": 2.353400230407715,
+                          "relativeY": 3.3333332538604736
+                        },
+                        "svgKey": "S6:图标 2|5:01085",
+                        "svgShortKey": "S6#0",
+                        "svgName": "图标 2"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "components": []
+      },
+      "nodeCount": 4,
+      "svgNodeCount": 1,
+      "hasStrippedSvgs": true,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 7/30. MISSING 23 sections: [7,8,9,10,11,12,13,14,15,16... +13 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 7,
+      "section": {
+        "id": "5:01358",
+        "name": "组 6",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "effect_5:01361": {
+            "value": [
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 8px 40px 0px rgba(212, 140, 88, 0.08);"
+            ]
+          },
+          "paint_5:01183": {
+            "value": [
+              "rgba(245, 232, 184, 0.6)"
+            ]
+          },
+          "paint_5:01359": {
+            "value": [
+              "linear-gradient(157deg, #F9F4E8 9%, #FDFBF5 50%, #F9F4E8 100%)"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01358",
+            "name": "组 6",
+            "layoutStyle": {
+              "width": 335,
+              "height": 794,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:01359",
+            "_color": "linear-gradient(157deg, #F9F4E8 9%, #FDFBF5 50%, #F9F4E8 100%)",
+            "strokeColor": "paint_5:01183",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "2px 2px 2px 0px",
+            "children": [],
+            "effect": "effect_5:01361",
+            "borderRadius": "20px"
+          }
+        ],
+        "components": []
+      },
+      "nodeCount": 1,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 8/30. MISSING 22 sections: [8,9,10,11,12,13,14,15,16,17... +12 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 8,
+      "section": {
+        "id": "5:01365",
+        "name": "组 2509",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 4,
+      "dsl": {
+        "styles": {
+          "paint_5:01089": {
+            "value": [
+              "#D48C58"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01365",
+            "name": "组 2509",
+            "layoutStyle": {
+              "width": 24,
+              "height": 24,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "strokeColor": "paint_5:01089",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "2px 0px 0px 2px",
+            "children": [],
+            "borderRadius": "16px 0px 0px"
+          }
+        ],
+        "components": []
+      },
+      "nodeCount": 1,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 9/30. MISSING 21 sections: [9,10,11,12,13,14,15,16,17,18... +11 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 9,
+      "section": {
+        "id": "5:01352",
+        "name": "组 2510",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 4,
+      "dsl": {
+        "styles": {
+          "paint_5:01353": {
+            "value": [
+              "#E0C05C"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01352",
+            "name": "组 2510",
+            "layoutStyle": {
+              "width": 24,
+              "height": 24,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "strokeColor": "paint_5:01353",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "2px 2px 0px 0px",
+            "children": [],
+            "borderRadius": "0px 16px 0px 0px"
+          }
+        ],
+        "components": []
+      },
+      "nodeCount": 1,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 10/30. MISSING 20 sections: [10,11,12,13,14,15,16,17,18,19... +10 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 10,
+      "section": {
+        "id": "5:01399",
+        "name": "组 2511",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 4,
+      "dsl": {
+        "styles": {
+          "paint_5:01353": {
+            "value": [
+              "#E0C05C"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01399",
+            "name": "组 2511",
+            "layoutStyle": {
+              "width": 24,
+              "height": 24,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "strokeColor": "paint_5:01353",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "0px 0px 2px 2px",
+            "children": [],
+            "borderRadius": "0px 0px 0px 16px"
+          }
+        ],
+        "components": []
+      },
+      "nodeCount": 1,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 11/30. MISSING 19 sections: [11,12,13,14,15,16,17,18,19,20... +9 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 11,
+      "section": {
+        "id": "5:01427",
+        "name": "组 2512",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 4,
+      "dsl": {
+        "styles": {
+          "paint_5:01089": {
+            "value": [
+              "#D48C58"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01427",
+            "name": "组 2512",
+            "layoutStyle": {
+              "width": 24,
+              "height": 24,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "strokeColor": "paint_5:01089",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "0px 2px 2px 0px",
+            "children": [],
+            "borderRadius": "0px 0px 16px"
+          }
+        ],
+        "components": []
+      },
+      "nodeCount": 1,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 12/30. MISSING 18 sections: [12,13,14,15,16,17,18,19,20,21... +8 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 12,
+      "section": {
+        "id": "5:01326",
+        "name": "组 2513",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "paint_5:01053": {
+            "value": [
+              "#FBF0E8"
+            ]
+          },
+          "paint_5:01055": {
+            "value": [
+              "#EBC4A8"
+            ]
+          },
+          "paint_5:01221": {
+            "value": [
+              "#B05A30"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01326",
+            "name": "组 2513",
+            "layoutStyle": {
+              "width": 32,
+              "height": 32,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:01053",
+            "_color": "#FBF0E8",
+            "strokeColor": "paint_5:01055",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "1px",
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:01327",
+                "name": "组 2514",
+                "layoutStyle": {
+                  "width": 16,
+                  "height": 16,
+                  "relativeX": 8,
+                  "relativeY": 8
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:01328",
+                    "name": "图标 3",
+                    "layoutStyle": {
+                      "width": 16,
+                      "height": 16,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "children": [
+                      {
+                        "type": "PATH",
+                        "id": "5:01329",
+                        "name": "组 7",
+                        "layoutStyle": {
+                          "width": 12,
+                          "height": 12,
+                          "relativeX": 2,
+                          "relativeY": 1.9999995231628418
+                        },
+                        "svgKey": "S12:图标 3|5:01329",
+                        "svgShortKey": "S12#0",
+                        "svgName": "图标 3"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "borderRadius": "8px"
+          }
+        ],
+        "components": []
+      },
+      "nodeCount": 4,
+      "svgNodeCount": 1,
+      "hasStrippedSvgs": true,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 13/30. MISSING 17 sections: [13,14,15,16,17,18,19,20,21,22... +7 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 13,
+      "section": {
+        "id": "5:01347",
+        "name": "文本 13",
+        "type": "TEXT"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "font_5:01350": {
+            "value": {
+              "family": "Noto Serif SC",
+              "size": 16,
+              "style": "Bold",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "24",
+              "letterSpacing": "0.4000000059604645px",
+              "weight": "700"
+            }
+          },
+          "paint_5:01168": {
+            "value": [
+              "#3A342C"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "TEXT",
+            "id": "5:01347",
+            "name": "文本 13",
+            "layoutStyle": {
+              "width": 95.68000030517578,
+              "height": 24,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:01168",
+            "_color": "#3A342C",
+            "text": [
+              {
+                "text": "随堂 · 鉴宝",
+                "font": "font_5:01350"
+              }
+            ],
+            "textColor": [
+              {
+                "start": 0,
+                "end": 7,
+                "color": "paint_5:01168"
+              }
+            ],
+            "textAlign": "left",
+            "textMode": "single-line"
+          }
+        ],
+        "components": [],
+        "rowTexts": [
+          {
+            "text": "随堂 · 鉴宝"
+          }
+        ]
+      },
+      "nodeCount": 1,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 14/30. MISSING 16 sections: [14,15,16,17,18,19,20,21,22,23... +6 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 14,
+      "section": {
+        "id": "5:01394",
+        "name": "组 2515",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "font_5:01035": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 12,
+              "style": "Medium",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "16",
+              "letterSpacing": "auto",
+              "weight": "500"
+            }
+          },
+          "paint_5:01050": {
+            "value": [
+              "#B05A30"
+            ]
+          },
+          "paint_5:01053": {
+            "value": [
+              "#FBF0E8"
+            ]
+          },
+          "paint_5:01055": {
+            "value": [
+              "#EBC4A8"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01394",
+            "name": "组 2515",
+            "layoutStyle": {
+              "width": 73.77999877929688,
+              "height": 26,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:01053",
+            "_color": "#FBF0E8",
+            "strokeColor": "paint_5:01055",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "1px",
+            "children": [
+              {
+                "type": "TEXT",
+                "id": "5:01395",
+                "name": "文本 14",
+                "layoutStyle": {
+                  "width": 63.84000015258789,
+                  "height": 17,
+                  "relativeX": 13,
+                  "relativeY": 4
+                },
+                "fill": "paint_5:01050",
+                "_color": "#B05A30",
+                "text": [
+                  {
+                    "text": "第 1/3 题",
+                    "font": "font_5:01035"
+                  }
+                ],
+                "textColor": [
+                  {
+                    "start": 0,
+                    "end": 7,
+                    "color": "paint_5:01050"
+                  }
+                ],
+                "textAlign": "left",
+                "textMode": "single-line"
+              }
+            ],
+            "borderRadius": "9999px"
+          }
+        ],
+        "components": [],
+        "rowTexts": [
+          {
+            "text": "第 1/3 题",
+            "parentType": "FRAME",
+            "parentName": "组 2515"
+          }
+        ]
+      },
+      "nodeCount": 2,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 15/30. MISSING 15 sections: [15,16,17,18,19,20,21,22,23,24,25,26,27,28,29]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 15,
+      "section": {
+        "id": "5:01330",
+        "name": "文本 15",
+        "type": "TEXT"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "font_5:01109": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 14,
+              "style": "Medium",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "23.799999237060547",
+              "letterSpacing": "auto",
+              "weight": "500"
+            }
+          },
+          "paint_5:01324": {
+            "value": [
+              "#4A4238"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "TEXT",
+            "id": "5:01330",
+            "name": "文本 15",
+            "layoutStyle": {
+              "width": 291,
+              "height": 46,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:01324",
+            "_color": "#4A4238",
+            "text": [
+              {
+                "text": "观察右侧青铜鼎腹部纹饰，判断其属于以下哪种经典纹样类型？",
+                "font": "font_5:01109"
+              }
+            ],
+            "textColor": [
+              {
+                "start": 0,
+                "end": 28,
+                "color": "paint_5:01324"
+              }
+            ],
+            "textAlign": "left",
+            "textMode": "single-line"
+          }
+        ],
+        "components": [],
+        "rowTexts": [
+          {
+            "text": "观察右侧青铜鼎腹部纹饰，判断其属于以下哪种经典纹样类型？"
+          }
+        ]
+      },
+      "nodeCount": 1,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 16/30. MISSING 14 sections: [16,17,18,19,20,21,22,23,24,25,26,27,28,29]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 16,
+      "section": {
+        "id": "5:01384",
+        "name": "组 2516",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "effect_5:5816": {
+            "value": [
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);"
+            ]
+          },
+          "paint_5:01385": {
+            "value": [
+              "rgba(235, 196, 168, 0.4)"
+            ]
+          },
+          "paint_5:01388": {
+            "value": [
+              {
+                "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/8ee197cb1724e9e292c280ca015a656d.png"
+              }
+            ]
+          },
+          "paint_5:01392": {
+            "value": [
+              {
+                "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/7e88a75f6d08a6984a8e1f6413296931.png"
+              }
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01384",
+            "name": "组 2516",
+            "layoutStyle": {
+              "width": 291,
+              "height": 130,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "strokeColor": "paint_5:01385",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "1px",
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:01390",
+                "name": "组 2517",
+                "layoutStyle": {
+                  "width": 289,
+                  "height": 128,
+                  "relativeX": 1,
+                  "relativeY": 1
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:01391",
+                    "name": "图片 3",
+                    "layoutStyle": {
+                      "width": 289,
+                      "height": 128,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "fill": "paint_5:01392",
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01387",
+                "name": "组 2519",
+                "layoutStyle": {
+                  "width": 289,
+                  "height": 128,
+                  "relativeX": 1,
+                  "relativeY": 1
+                },
+                "fill": "paint_5:01388",
+                "children": []
+              }
+            ],
+            "effect": "effect_5:5816",
+            "borderRadius": "12px"
+          }
+        ],
+        "components": []
+      },
+      "nodeCount": 4,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 17/30. MISSING 13 sections: [17,18,19,20,21,22,23,24,25,26,27,28,29]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 17,
+      "section": {
+        "id": "5:01334",
+        "name": "组 2520",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "effect_5:01295": {
+            "value": [
+              "box-shadow: 0px 8px 32px 0px rgba(0, 0, 0, 0.16);"
+            ]
+          },
+          "effect_5:3192": {
+            "value": []
+          },
+          "font_5:01311": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 12,
+              "style": "Bold",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "16",
+              "letterSpacing": "auto",
+              "weight": "700"
+            }
+          },
+          "font_5:01322": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 14,
+              "style": "Regular",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "20",
+              "letterSpacing": "auto",
+              "weight": "400"
+            }
+          },
+          "paint_5:01037": {
+            "value": [
+              "#5E5448"
+            ]
+          },
+          "paint_5:01080": {
+            "value": [
+              "#FDFBF5"
+            ]
+          },
+          "paint_5:01314": {
+            "value": [
+              "#F0E6D0"
+            ]
+          },
+          "paint_5:01316": {
+            "value": [
+              "#F5E8B8"
+            ]
+          },
+          "paint_5:01324": {
+            "value": [
+              "#4A4238"
+            ]
+          },
+          "paint_5:4715": {
+            "value": [
+              "rgba(245, 232, 184, 0.5)"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01334",
+            "name": "组 2520",
+            "layoutStyle": {
+              "width": 291,
+              "height": 58,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:01080",
+            "_color": "#FDFBF5",
+            "strokeColor": "paint_5:4715",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "1px",
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:01340",
+                "name": "组 2521",
+                "layoutStyle": {
+                  "width": 28,
+                  "height": 28,
+                  "relativeX": 17,
+                  "relativeY": 15
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:01341",
+                    "name": "组 8",
+                    "layoutStyle": {
+                      "width": 28,
+                      "height": 28,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "fill": "paint_5:01314",
+                    "_color": "#F0E6D0",
+                    "strokeColor": "paint_5:01316",
+                    "strokeType": "solid",
+                    "strokeAlign": "inside",
+                    "strokeWidth": "1px 0px 1px 1px",
+                    "children": [],
+                    "effect": "effect_5:3192",
+                    "borderRadius": "8px"
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:01342",
+                    "name": "文本 16",
+                    "layoutStyle": {
+                      "width": 26.889999389648438,
+                      "height": 17,
+                      "relativeX": 10.140000343322754,
+                      "relativeY": 5
+                    },
+                    "fill": "paint_5:01037",
+                    "_color": "#5E5448",
+                    "text": [
+                      {
+                        "text": "A",
+                        "font": "font_5:01311"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 1,
+                        "color": "paint_5:01037"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ],
+                "effect": "effect_5:3192"
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01335",
+                "name": "组 2522",
+                "layoutStyle": {
+                  "width": 98,
+                  "height": 20,
+                  "relativeX": 57,
+                  "relativeY": 19
+                },
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "id": "5:01336",
+                    "name": "文本 17",
+                    "layoutStyle": {
+                      "width": 120.4000015258789,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "fill": "paint_5:01324",
+                    "_color": "#4A4238",
+                    "text": [
+                      {
+                        "text": "云雷纹（地纹）",
+                        "font": "font_5:01322"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 7,
+                        "color": "paint_5:01324"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ]
+              }
+            ],
+            "effect": "effect_5:01295",
+            "borderRadius": "12px"
+          }
+        ],
+        "components": [],
+        "rowTexts": [
+          {
+            "text": "A",
+            "parentType": "FRAME",
+            "parentName": "组 2521"
+          },
+          {
+            "text": "云雷纹（地纹）",
+            "parentType": "FRAME",
+            "parentName": "组 2522"
+          }
+        ]
+      },
+      "nodeCount": 6,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 18/30. MISSING 12 sections: [18,19,20,21,22,23,24,25,26,27,28,29]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 18,
+      "section": {
+        "id": "5:01306",
+        "name": "组 2523",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "effect_5:01295": {
+            "value": [
+              "box-shadow: 0px 8px 32px 0px rgba(0, 0, 0, 0.16);"
+            ]
+          },
+          "effect_5:3192": {
+            "value": []
+          },
+          "font_5:01311": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 12,
+              "style": "Bold",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "16",
+              "letterSpacing": "auto",
+              "weight": "700"
+            }
+          },
+          "font_5:01322": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 14,
+              "style": "Regular",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "20",
+              "letterSpacing": "auto",
+              "weight": "400"
+            }
+          },
+          "paint_5:01037": {
+            "value": [
+              "#5E5448"
+            ]
+          },
+          "paint_5:01080": {
+            "value": [
+              "#FDFBF5"
+            ]
+          },
+          "paint_5:01314": {
+            "value": [
+              "#F0E6D0"
+            ]
+          },
+          "paint_5:01316": {
+            "value": [
+              "#F5E8B8"
+            ]
+          },
+          "paint_5:01324": {
+            "value": [
+              "#4A4238"
+            ]
+          },
+          "paint_5:4715": {
+            "value": [
+              "rgba(245, 232, 184, 0.5)"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01306",
+            "name": "组 2523",
+            "layoutStyle": {
+              "width": 291,
+              "height": 58,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:01080",
+            "_color": "#FDFBF5",
+            "strokeColor": "paint_5:4715",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "1px",
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:01307",
+                "name": "组 2524",
+                "layoutStyle": {
+                  "width": 28,
+                  "height": 28,
+                  "relativeX": 17,
+                  "relativeY": 15
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:01313",
+                    "name": "组 9",
+                    "layoutStyle": {
+                      "width": 28,
+                      "height": 28,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "fill": "paint_5:01314",
+                    "_color": "#F0E6D0",
+                    "strokeColor": "paint_5:01316",
+                    "strokeType": "solid",
+                    "strokeAlign": "inside",
+                    "strokeWidth": "1px 0px 1px 1px",
+                    "children": [],
+                    "effect": "effect_5:3192",
+                    "borderRadius": "8px"
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:01308",
+                    "name": "文本 18",
+                    "layoutStyle": {
+                      "width": 27.3700008392334,
+                      "height": 17,
+                      "relativeX": 9.90999984741211,
+                      "relativeY": 5
+                    },
+                    "fill": "paint_5:01037",
+                    "_color": "#5E5448",
+                    "text": [
+                      {
+                        "text": "B",
+                        "font": "font_5:01311"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 1,
+                        "color": "paint_5:01037"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ],
+                "effect": "effect_5:3192"
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01318",
+                "name": "组 2525",
+                "layoutStyle": {
+                  "width": 112,
+                  "height": 20,
+                  "relativeX": 57,
+                  "relativeY": 19
+                },
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "id": "5:01319",
+                    "name": "文本 19",
+                    "layoutStyle": {
+                      "width": 134.39999389648438,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "fill": "paint_5:01324",
+                    "_color": "#4A4238",
+                    "text": [
+                      {
+                        "text": "饕餮纹（兽面纹）",
+                        "font": "font_5:01322"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 8,
+                        "color": "paint_5:01324"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ]
+              }
+            ],
+            "effect": "effect_5:01295",
+            "borderRadius": "12px"
+          }
+        ],
+        "components": [],
+        "rowTexts": [
+          {
+            "text": "B",
+            "parentType": "FRAME",
+            "parentName": "组 2524"
+          },
+          {
+            "text": "饕餮纹（兽面纹）",
+            "parentType": "FRAME",
+            "parentName": "组 2525"
+          }
+        ]
+      },
+      "nodeCount": 6,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 19/30. MISSING 11 sections: [19,20,21,22,23,24,25,26,27,28,29]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 19,
+      "section": {
+        "id": "5:01428",
+        "name": "组 2526",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "effect_5:01431": {
+            "value": [
+              "box-shadow: 0px 2px 12px 0px rgba(212, 140, 88, 0.15);",
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);"
+            ]
+          },
+          "effect_5:5816": {
+            "value": [
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);"
+            ]
+          },
+          "font_5:01166": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 14,
+              "style": "SemiBold",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "20",
+              "letterSpacing": "auto",
+              "weight": "600"
+            }
+          },
+          "paint_5:01072": {
+            "value": [
+              "#FDFBF5"
+            ]
+          },
+          "paint_5:01089": {
+            "value": [
+              "#D48C58"
+            ]
+          },
+          "paint_5:01168": {
+            "value": [
+              "#3A342C"
+            ]
+          },
+          "paint_5:01429": {
+            "value": [
+              {
+                "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/d0d173eec8d65485ced142b471b206b3.png"
+              }
+            ]
+          },
+          "paint_5:01441": {
+            "value": [
+              "linear-gradient(135deg, #D48C58 0%, #B86040 100%)"
+            ]
+          },
+          "paint_5:6879": {
+            "value": [
+              "#C47040"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01428",
+            "name": "组 2526",
+            "layoutStyle": {
+              "width": 291,
+              "height": 60,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:01429",
+            "strokeColor": "paint_5:01089",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "2px",
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:01440",
+                "name": "组 2527",
+                "layoutStyle": {
+                  "width": 28,
+                  "height": 28,
+                  "relativeX": 18,
+                  "relativeY": 16
+                },
+                "fill": "paint_5:01441",
+                "_color": "linear-gradient(135deg, #D48C58 0%, #B86040 100%)",
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:01443",
+                    "name": "组 2528",
+                    "layoutStyle": {
+                      "width": 14,
+                      "height": 14,
+                      "relativeX": 7,
+                      "relativeY": 7
+                    },
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "id": "5:01444",
+                        "name": "图标 4",
+                        "layoutStyle": {
+                          "width": 14,
+                          "height": 14,
+                          "relativeX": 0,
+                          "relativeY": 0
+                        },
+                        "children": [
+                          {
+                            "type": "PATH",
+                            "id": "5:01445",
+                            "name": "组 10",
+                            "layoutStyle": {
+                              "width": 8.166666030883789,
+                              "height": 5.833333492279053,
+                              "relativeX": 2.9166667461395264,
+                              "relativeY": 4.083333492279053
+                            },
+                            "svgKey": "S19:图标 4|5:01445",
+                            "svgShortKey": "S19#0",
+                            "svgName": "图标 4"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "effect": "effect_5:5816",
+                "borderRadius": "8px"
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01435",
+                "name": "组 2529",
+                "layoutStyle": {
+                  "width": 126,
+                  "height": 20,
+                  "relativeX": 58,
+                  "relativeY": 20
+                },
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "id": "5:01436",
+                    "name": "文本 20",
+                    "layoutStyle": {
+                      "width": 148.39999389648438,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "fill": "paint_5:01168",
+                    "_color": "#3A342C",
+                    "text": [
+                      {
+                        "text": "夔龙纹（侧面龙纹）",
+                        "font": "font_5:01166"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 9,
+                        "color": "paint_5:01168"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01446",
+                "name": "组 2530",
+                "layoutStyle": {
+                  "width": 20,
+                  "height": 20,
+                  "relativeX": 253,
+                  "relativeY": 20
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:01447",
+                    "name": "图标 5",
+                    "layoutStyle": {
+                      "width": 20,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "children": [
+                      {
+                        "type": "PATH",
+                        "id": "5:01448",
+                        "name": "组 11",
+                        "layoutStyle": {
+                          "width": 15,
+                          "height": 15.000000953674316,
+                          "relativeX": 2.5,
+                          "relativeY": 2.5000011920928955
+                        },
+                        "svgKey": "S19:图标 5|5:01448",
+                        "svgShortKey": "S19#1",
+                        "svgName": "图标 5"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "effect": "effect_5:01431",
+            "borderRadius": "12px"
+          }
+        ],
+        "components": [],
+        "rowTexts": [
+          {
+            "text": "夔龙纹（侧面龙纹）",
+            "parentType": "FRAME",
+            "parentName": "组 2529"
+          }
+        ]
+      },
+      "nodeCount": 10,
+      "svgNodeCount": 2,
+      "hasStrippedSvgs": true,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 20/30. MISSING 10 sections: [20,21,22,23,24,25,26,27,28,29]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 20,
+      "section": {
+        "id": "5:01400",
+        "name": "组 2531",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "effect_5:01295": {
+            "value": [
+              "box-shadow: 0px 8px 32px 0px rgba(0, 0, 0, 0.16);"
+            ]
+          },
+          "font_5:01415": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 14,
+              "style": "Regular",
+              "decoration": "line-through",
+              "case": "none",
+              "lineHeight": "20",
+              "letterSpacing": "auto",
+              "weight": "400"
+            }
+          },
+          "paint_5:01401": {
+            "value": [
+              "rgba(248, 237, 232, 0.6)"
+            ]
+          },
+          "paint_5:01403": {
+            "value": [
+              "#E4B8A8"
+            ]
+          },
+          "paint_5:01409": {
+            "value": [
+              "#B86040"
+            ]
+          },
+          "paint_5:01417": {
+            "value": [
+              "#B86040"
+            ]
+          },
+          "paint_5:01422": {
+            "value": [
+              "#C87858"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01400",
+            "name": "组 2531",
+            "layoutStyle": {
+              "width": 291,
+              "height": 60,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "opacity": 0.699999988079071,
+            "fill": "paint_5:01401",
+            "_color": "rgba(248, 237, 232, 0.6)",
+            "strokeColor": "paint_5:01403",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "2px",
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:01405",
+                "name": "组 2532",
+                "layoutStyle": {
+                  "width": 28,
+                  "height": 28,
+                  "relativeX": 18,
+                  "relativeY": 16
+                },
+                "fill": "paint_5:01403",
+                "_color": "#E4B8A8",
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:01406",
+                    "name": "组 2533",
+                    "layoutStyle": {
+                      "width": 14,
+                      "height": 14,
+                      "relativeX": 7,
+                      "relativeY": 7
+                    },
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "id": "5:01407",
+                        "name": "图标 6",
+                        "layoutStyle": {
+                          "width": 14,
+                          "height": 14,
+                          "relativeX": 0,
+                          "relativeY": 0
+                        },
+                        "children": [
+                          {
+                            "type": "PATH",
+                            "id": "5:01408",
+                            "name": "组 12",
+                            "layoutStyle": {
+                              "width": 7,
+                              "height": 7,
+                              "relativeX": 3.5,
+                              "relativeY": 3.5
+                            },
+                            "svgKey": "S20:图标 6|5:01408",
+                            "svgShortKey": "S20#0",
+                            "svgName": "图标 6"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "borderRadius": "8px"
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01411",
+                "name": "组 2534",
+                "layoutStyle": {
+                  "width": 98,
+                  "height": 20,
+                  "relativeX": 58,
+                  "relativeY": 20
+                },
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "id": "5:01412",
+                    "name": "文本 21",
+                    "layoutStyle": {
+                      "width": 120.4000015258789,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "fill": "paint_5:01417",
+                    "_color": "#B86040",
+                    "text": [
+                      {
+                        "text": "蝉纹（仿生纹）",
+                        "font": "font_5:01415"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 7,
+                        "color": "paint_5:01417"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01419",
+                "name": "组 2535",
+                "layoutStyle": {
+                  "width": 20,
+                  "height": 20,
+                  "relativeX": 253,
+                  "relativeY": 20
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:01420",
+                    "name": "图标 7",
+                    "layoutStyle": {
+                      "width": 20,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "children": [
+                      {
+                        "type": "PATH",
+                        "id": "5:01421",
+                        "name": "组 13",
+                        "layoutStyle": {
+                          "width": 15,
+                          "height": 15.000001907348633,
+                          "relativeX": 2.5,
+                          "relativeY": 2.500000238418579
+                        },
+                        "svgKey": "S20:图标 7|5:01421",
+                        "svgShortKey": "S20#1",
+                        "svgName": "图标 7"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "effect": "effect_5:01295",
+            "borderRadius": "12px"
+          }
+        ],
+        "components": [],
+        "rowTexts": [
+          {
+            "text": "蝉纹（仿生纹）",
+            "parentType": "FRAME",
+            "parentName": "组 2534"
+          }
+        ]
+      },
+      "nodeCount": 10,
+      "svgNodeCount": 2,
+      "hasStrippedSvgs": true,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 21/30. MISSING 9 sections: [21,22,23,24,25,26,27,28,29]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 21,
+      "section": {
+        "id": "5:01278",
+        "name": "组 2536",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "effect_5:01281": {
+            "value": [
+              "box-shadow: 0px 4px 16px 0px rgba(180, 90, 48, 0.3);",
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);"
+            ]
+          },
+          "font_5:01292": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 14,
+              "style": "SemiBold",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "20",
+              "letterSpacing": "0.699999988079071px",
+              "weight": "600"
+            }
+          },
+          "paint_5:01080": {
+            "value": [
+              "#FDFBF5"
+            ]
+          },
+          "paint_5:01279": {
+            "value": [
+              "linear-gradient(90deg, #A72806 0%, #C47040 38%, #A85038 100%)"
+            ]
+          },
+          "paint_5:01286": {
+            "value": [
+              {
+                "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/b035ed3bc6f614562556ea3e2ce0b7c3.png"
+              }
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01278",
+            "name": "组 2536",
+            "layoutStyle": {
+              "width": 291,
+              "height": 48,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:01279",
+            "_color": "linear-gradient(90deg, #A72806 0%, #C47040 38%, #A85038 100%)",
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:01285",
+                "name": "组 2537",
+                "layoutStyle": {
+                  "width": 47.099998474121094,
+                  "height": 48,
+                  "relativeX": -42,
+                  "relativeY": 0
+                },
+                "fill": "paint_5:01286",
+                "children": []
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01288",
+                "name": "组 2538",
+                "layoutStyle": {
+                  "width": 58.79999923706055,
+                  "height": 20,
+                  "relativeX": 116.0999984741211,
+                  "relativeY": 14
+                },
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "id": "5:01289",
+                    "name": "文本 22",
+                    "layoutStyle": {
+                      "width": 81.19999694824219,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "fill": "paint_5:01080",
+                    "_color": "#FDFBF5",
+                    "text": [
+                      {
+                        "text": "提交鉴赏",
+                        "font": "font_5:01292"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 4,
+                        "color": "paint_5:01080"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ]
+              }
+            ],
+            "effect": "effect_5:01281",
+            "borderRadius": "12px"
+          }
+        ],
+        "components": [],
+        "rowTexts": [
+          {
+            "text": "提交鉴赏",
+            "parentType": "FRAME",
+            "parentName": "组 2538"
+          }
+        ]
+      },
+      "nodeCount": 4,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 23/30. MISSING 7 sections: [23,24,25,26,27,28,29]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 22,
+      "section": {
+        "id": "5:01424",
+        "name": "组 2539",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 2,
+      "dsl": {
+        "styles": {
+          "paint_5:01425": {
+            "value": [
+              {
+                "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/a9e7d874ceffb6c6f534d8e68963cda8.png"
+              }
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01424",
+            "name": "组 2539",
+            "layoutStyle": {
+              "width": 48,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:01425",
+            "children": []
+          }
+        ],
+        "components": []
+      },
+      "nodeCount": 1,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 22/30. MISSING 8 sections: [21,23,24,25,26,27,28,29]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 23,
+      "section": {
+        "id": "5:01346",
+        "name": "组 2540",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "paint_5:01043": {
+            "value": [
+              "#E0A878"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01346",
+            "name": "组 2540",
+            "layoutStyle": {
+              "width": 4,
+              "height": 4,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:01043",
+            "_color": "#E0A878",
+            "children": [],
+            "borderRadius": "9999px"
+          }
+        ],
+        "components": []
+      },
+      "nodeCount": 1,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 24/30. MISSING 6 sections: [24,25,26,27,28,29]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 24,
+      "section": {
+        "id": "5:01355",
+        "name": "组 2541",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 2,
+      "dsl": {
+        "styles": {
+          "paint_5:01356": {
+            "value": [
+              {
+                "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/c2443584fa3537449fa903babdeb3b40.png"
+              }
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01355",
+            "name": "组 2541",
+            "layoutStyle": {
+              "width": 48,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:01356",
+            "children": []
+          }
+        ],
+        "components": []
+      },
+      "nodeCount": 1,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 25/30. MISSING 5 sections: [25,26,27,28,29]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 25,
+      "section": {
+        "id": "5:01294",
+        "name": "组 2542",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "effect_5:01295": {
+            "value": [
+              "box-shadow: 0px 8px 32px 0px rgba(0, 0, 0, 0.16);"
+            ]
+          },
+          "font_5:01304": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 14,
+              "style": "Medium",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "20",
+              "letterSpacing": "0.699999988079071px",
+              "weight": "500"
+            }
+          },
+          "paint_5:01043": {
+            "value": [
+              "#E0A878"
+            ]
+          },
+          "paint_5:01050": {
+            "value": [
+              "#B05A30"
+            ]
+          },
+          "paint_5:01208": {
+            "value": [
+              "#F9F4E8"
+            ]
+          },
+          "paint_5:01221": {
+            "value": [
+              "#B05A30"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01294",
+            "name": "组 2542",
+            "layoutStyle": {
+              "width": 291,
+              "height": 48,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:01208",
+            "_color": "#F9F4E8",
+            "strokeColor": "paint_5:01043",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "2px",
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:01300",
+                "name": "组 2543",
+                "layoutStyle": {
+                  "width": 73.5,
+                  "height": 20,
+                  "relativeX": 96.75,
+                  "relativeY": 14
+                },
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "id": "5:01301",
+                    "name": "文本 23",
+                    "layoutStyle": {
+                      "width": 95.9000015258789,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "fill": "paint_5:01050",
+                    "_color": "#B05A30",
+                    "text": [
+                      {
+                        "text": "下一件瑰宝",
+                        "font": "font_5:01304"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 5,
+                        "color": "paint_5:01050"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01297",
+                "name": "组 2544",
+                "layoutStyle": {
+                  "width": 16,
+                  "height": 16,
+                  "relativeX": 178.25,
+                  "relativeY": 16
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:01298",
+                    "name": "图标 8",
+                    "layoutStyle": {
+                      "width": 16,
+                      "height": 16,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "children": [
+                      {
+                        "type": "PATH",
+                        "id": "5:01299",
+                        "name": "组 14",
+                        "layoutStyle": {
+                          "width": 12,
+                          "height": 5.333333492279053,
+                          "relativeX": 2,
+                          "relativeY": 5.333333492279053
+                        },
+                        "svgKey": "S25:图标 8|5:01299",
+                        "svgShortKey": "S25#0",
+                        "svgName": "图标 8"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "effect": "effect_5:01295",
+            "borderRadius": "12px"
+          }
+        ],
+        "components": [],
+        "rowTexts": [
+          {
+            "text": "下一件瑰宝",
+            "parentType": "FRAME",
+            "parentName": "组 2543"
+          }
+        ]
+      },
+      "nodeCount": 6,
+      "svgNodeCount": 1,
+      "hasStrippedSvgs": true,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 26/30. MISSING 4 sections: [26,27,28,29]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 26,
+      "section": {
+        "id": "5:01366",
+        "name": "组 2545",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "effect_5:01369": {
+            "value": [
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 4px 16px 0px rgba(74, 66, 56, 0.2);"
+            ]
+          },
+          "font_5:01292": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 14,
+              "style": "SemiBold",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "20",
+              "letterSpacing": "0.699999988079071px",
+              "weight": "600"
+            }
+          },
+          "paint_5:01037": {
+            "value": [
+              "#5E5448"
+            ]
+          },
+          "paint_5:01208": {
+            "value": [
+              "#F9F4E8"
+            ]
+          },
+          "paint_5:01367": {
+            "value": [
+              "linear-gradient(90deg, #231F19 0%, #4A4238 50%, #3A342C 100%)"
+            ]
+          },
+          "paint_5:01376": {
+            "value": [
+              "#F9F4E8"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01366",
+            "name": "组 2545",
+            "layoutStyle": {
+              "width": 291,
+              "height": 50,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:01367",
+            "_color": "linear-gradient(90deg, #231F19 0%, #4A4238 50%, #3A342C 100%)",
+            "strokeColor": "paint_5:01037",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "1px",
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:01379",
+                "name": "组 2546",
+                "layoutStyle": {
+                  "width": 58.810001373291016,
+                  "height": 20,
+                  "relativeX": 104.08999633789062,
+                  "relativeY": 15
+                },
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "id": "5:01380",
+                    "name": "文本 24",
+                    "layoutStyle": {
+                      "width": 81.19999694824219,
+                      "height": 20,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "fill": "paint_5:01208",
+                    "_color": "#F9F4E8",
+                    "text": [
+                      {
+                        "text": "继续研习",
+                        "font": "font_5:01292"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 4,
+                        "color": "paint_5:01208"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01373",
+                "name": "组 2547",
+                "layoutStyle": {
+                  "width": 16,
+                  "height": 16,
+                  "relativeX": 170.91000366210938,
+                  "relativeY": 17
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:01374",
+                    "name": "图标 9",
+                    "layoutStyle": {
+                      "width": 16,
+                      "height": 16,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "_mergedVector": true,
+                    "svgKey": "S26:组 2547|5:01374",
+                    "svgShortKey": "S26#0",
+                    "svgName": "组 2547"
+                  }
+                ]
+              }
+            ],
+            "effect": "effect_5:01369",
+            "borderRadius": "12px"
+          }
+        ],
+        "components": [],
+        "rowTexts": [
+          {
+            "text": "继续研习",
+            "parentType": "FRAME",
+            "parentName": "组 2546"
+          }
+        ]
+      },
+      "nodeCount": 5,
+      "svgNodeCount": 1,
+      "hasStrippedSvgs": true,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 27/30. MISSING 3 sections: [27,28,29]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 27,
+      "section": {
+        "id": "5:01175",
+        "name": "组 2548",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "paint_5:01176": {
+            "value": [
+              {
+                "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/7571e44390f447350748c10a1adf04bc.png"
+              }
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01175",
+            "name": "组 2548",
+            "layoutStyle": {
+              "height": 1243.8800048828125,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "opacity": 0.30000001192092896,
+            "fill": "paint_5:01176",
+            "children": []
+          }
+        ],
+        "components": []
+      },
+      "nodeCount": 1,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 28/30. MISSING 2 sections: [28,29]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 28,
+      "section": {
+        "id": "5:01241",
+        "name": "组 2549",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "effect_5:4717": {
+            "value": [
+              "backdrop-filter: blur(4px);"
+            ]
+          },
+          "font_5:01261": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 12,
+              "style": "SemiBold",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "16",
+              "letterSpacing": "auto",
+              "weight": "600"
+            }
+          },
+          "font_5:01270": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 12,
+              "style": "Medium",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "16",
+              "letterSpacing": "0.6000000238418579px",
+              "weight": "500"
+            }
+          },
+          "paint_5:01037": {
+            "value": [
+              "#5E5448"
+            ]
+          },
+          "paint_5:01043": {
+            "value": [
+              "#E0A878"
+            ]
+          },
+          "paint_5:01050": {
+            "value": [
+              "#B05A30"
+            ]
+          },
+          "paint_5:4713": {
+            "value": [
+              "rgba(240, 230, 208, 0.8)"
+            ]
+          },
+          "paint_5:4715": {
+            "value": [
+              "rgba(245, 232, 184, 0.5)"
+            ]
+          },
+          "paint_5:4722": {
+            "value": [
+              "#4A4238"
+            ]
+          },
+          "paint_5:6879": {
+            "value": [
+              "#C47040"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01241",
+            "name": "组 2549",
+            "layoutStyle": {
+              "width": 375,
+              "height": 48,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:01255",
+                "name": "组 2552",
+                "layoutStyle": {
+                  "width": 147,
+                  "height": 21,
+                  "relativeX": 87,
+                  "relativeY": 27
+                },
+                "fill": "paint_5:4713",
+                "_color": "rgba(240, 230, 208, 0.8)",
+                "strokeColor": "paint_5:4715",
+                "strokeType": "solid",
+                "strokeAlign": "inside",
+                "strokeWidth": "1px",
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:01266",
+                    "name": "组 2553",
+                    "layoutStyle": {
+                      "width": 59.41999816894531,
+                      "height": 16,
+                      "relativeX": 17,
+                      "relativeY": 7
+                    },
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "id": "5:01267",
+                        "name": "文本 25",
+                        "layoutStyle": {
+                          "width": 71.27999877929688,
+                          "height": 17,
+                          "relativeX": 0,
+                          "relativeY": -1
+                        },
+                        "fill": "paint_5:01037",
+                        "_color": "#5E5448",
+                        "text": [
+                          {
+                            "text": "第 2/10 课",
+                            "font": "font_5:01270"
+                          }
+                        ],
+                        "textColor": [
+                          {
+                            "start": 0,
+                            "end": 8,
+                            "color": "paint_5:01037"
+                          }
+                        ],
+                        "textAlign": "left",
+                        "textMode": "single-line"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "id": "5:01272",
+                    "name": "组 2554",
+                    "layoutStyle": {
+                      "height": 12,
+                      "relativeX": 84.43000030517578,
+                      "relativeY": 9
+                    },
+                    "fill": "paint_5:01043",
+                    "_color": "#E0A878",
+                    "children": []
+                  },
+                  {
+                    "type": "FRAME",
+                    "id": "5:01256",
+                    "name": "组 2555",
+                    "layoutStyle": {
+                      "width": 35.65999984741211,
+                      "height": 16,
+                      "relativeX": 93.43000030517578,
+                      "relativeY": 7
+                    },
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "id": "5:01263",
+                        "name": "组 2556",
+                        "layoutStyle": {
+                          "width": 14,
+                          "height": 14,
+                          "relativeX": 0,
+                          "relativeY": 1
+                        },
+                        "children": [
+                          {
+                            "type": "FRAME",
+                            "id": "5:01264",
+                            "name": "图标 11",
+                            "layoutStyle": {
+                              "width": 14,
+                              "height": 14,
+                              "relativeX": 0,
+                              "relativeY": 0
+                            },
+                            "children": [
+                              {
+                                "type": "PATH",
+                                "id": "5:01265",
+                                "name": "组 18",
+                                "layoutStyle": {
+                                  "width": 10.407872200012207,
+                                  "height": 9.96833610534668,
+                                  "relativeX": 1.7965024709701538,
+                                  "relativeY": 1.5653748512268066
+                                },
+                                "svgKey": "S28:图标 11|5:01265",
+                                "svgShortKey": "S28#0",
+                                "svgName": "图标 11"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "FRAME",
+                        "id": "5:01257",
+                        "name": "组 2557",
+                        "layoutStyle": {
+                          "width": 17.65999984741211,
+                          "height": 16,
+                          "relativeX": 18,
+                          "relativeY": 0
+                        },
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "id": "5:01258",
+                            "name": "文本 26",
+                            "layoutStyle": {
+                              "width": 36.86000061035156,
+                              "height": 17,
+                              "relativeX": 0,
+                              "relativeY": -1
+                            },
+                            "fill": "paint_5:01050",
+                            "_color": "#B05A30",
+                            "text": [
+                              {
+                                "text": "4.9",
+                                "font": "font_5:01261"
+                              }
+                            ],
+                            "textColor": [
+                              {
+                                "start": 0,
+                                "end": 3,
+                                "color": "paint_5:01050"
+                              }
+                            ],
+                            "textAlign": "left",
+                            "textMode": "single-line"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "effect": "effect_5:4717",
+                "borderRadius": "9999px"
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01246",
+                "name": "组 2558",
+                "layoutStyle": {
+                  "width": 88,
+                  "height": 40,
+                  "relativeX": 267,
+                  "relativeY": 24
+                },
+                "_mergedVector": true,
+                "svgKey": "S28:组 2549|5:01246",
+                "svgShortKey": "S28#1",
+                "svgName": "组 2549"
+              }
+            ]
+          }
+        ],
+        "components": [],
+        "rowTexts": [
+          {
+            "text": "第 2/10 课",
+            "parentType": "FRAME",
+            "parentName": "组 2553"
+          },
+          {
+            "text": "4.9",
+            "parentType": "FRAME",
+            "parentName": "组 2557"
+          }
+        ]
+      },
+      "nodeCount": 12,
+      "svgNodeCount": 2,
+      "hasStrippedSvgs": true,
+      "componentDocumentLinks": [],
+      "fetchProgress": "Fetched 29/30. MISSING 1 sections: [29]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+    },
+    {
+      "sectionIndex": 29,
+      "section": {
+        "id": "5:01028",
+        "name": "组 2563",
+        "type": "FRAME"
+      },
+      "rootContainer": {
+        "width": "375px",
+        "minHeight": "1537px",
+        "background": {
+          "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ab0eb7660aedfe669e715b2e65c4d103.jpg"
+        },
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "structureSiblingCount": 1,
+      "dsl": {
+        "styles": {
+          "effect_5:4697": {
+            "value": [
+              "backdrop-filter: blur(12px);"
+            ]
+          },
+          "effect_5:5816": {
+            "value": [
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+              "box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);"
+            ]
+          },
+          "font_5:01035": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 12,
+              "style": "Medium",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "16",
+              "letterSpacing": "auto",
+              "weight": "500"
+            }
+          },
+          "font_5:01048": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 9.979999542236328,
+              "style": "Medium",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "16",
+              "letterSpacing": "auto",
+              "weight": "500"
+            }
+          },
+          "font_5:01064": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 9.359999656677246,
+              "style": "Medium",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "16",
+              "letterSpacing": "auto",
+              "weight": "500"
+            }
+          },
+          "font_5:01078": {
+            "value": {
+              "family": "Noto Sans SC",
+              "size": 9.859999656677246,
+              "style": "Medium",
+              "decoration": "none",
+              "case": "none",
+              "lineHeight": "16",
+              "letterSpacing": "auto",
+              "weight": "500"
+            }
+          },
+          "paint_5:01029": {
+            "value": [
+              "rgba(249, 244, 232, 0.95)"
+            ]
+          },
+          "paint_5:01037": {
+            "value": [
+              "#5E5448"
+            ]
+          },
+          "paint_5:01043": {
+            "value": [
+              "#E0A878"
+            ]
+          },
+          "paint_5:01050": {
+            "value": [
+              "#B05A30"
+            ]
+          },
+          "paint_5:01053": {
+            "value": [
+              "#FBF0E8"
+            ]
+          },
+          "paint_5:01055": {
+            "value": [
+              "#EBC4A8"
+            ]
+          },
+          "paint_5:01067": {
+            "value": [
+              "linear-gradient(90deg, #B86040 0%, #C47040 50%, #B86040 100%)"
+            ]
+          },
+          "paint_5:01072": {
+            "value": [
+              "#FDFBF5"
+            ]
+          },
+          "paint_5:01080": {
+            "value": [
+              "#FDFBF5"
+            ]
+          },
+          "paint_5:4715": {
+            "value": [
+              "rgba(245, 232, 184, 0.5)"
+            ]
+          },
+          "paint_5:6879": {
+            "value": [
+              "#C47040"
+            ]
+          }
+        },
+        "nodes": [
+          {
+            "type": "FRAME",
+            "id": "5:01028",
+            "name": "组 2563",
+            "layoutStyle": {
+              "width": 375,
+              "height": 55,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:01029",
+            "_color": "rgba(249, 244, 232, 0.95)",
+            "strokeColor": "paint_5:4715",
+            "strokeType": "solid",
+            "strokeAlign": "inside",
+            "strokeWidth": "1px 0px 0px",
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:01039",
+                "name": "组 2564",
+                "layoutStyle": {
+                  "width": 16,
+                  "height": 16,
+                  "relativeX": 24,
+                  "relativeY": 20
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:01040",
+                    "name": "图标 14",
+                    "layoutStyle": {
+                      "width": 16,
+                      "height": 16,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "children": [
+                      {
+                        "type": "PATH",
+                        "id": "5:01041",
+                        "name": "组 21",
+                        "layoutStyle": {
+                          "width": 12,
+                          "height": 12,
+                          "relativeX": 2,
+                          "relativeY": 2
+                        },
+                        "svgKey": "S29:图标 14|5:01041",
+                        "svgShortKey": "S29#0",
+                        "svgName": "图标 14"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01031",
+                "name": "组 2565",
+                "layoutStyle": {
+                  "width": 13.6899995803833,
+                  "height": 16,
+                  "relativeX": 46,
+                  "relativeY": 20
+                },
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "id": "5:01032",
+                    "name": "文本 27",
+                    "layoutStyle": {
+                      "width": 13.6899995803833,
+                      "height": 17,
+                      "relativeX": 0,
+                      "relativeY": -1
+                    },
+                    "fill": "paint_5:01037",
+                    "_color": "#5E5448",
+                    "text": [
+                      {
+                        "text": "30",
+                        "font": "font_5:01035"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 2,
+                        "color": "paint_5:01037"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ]
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01052",
+                "name": "组 2566",
+                "layoutStyle": {
+                  "width": 84,
+                  "height": 30,
+                  "relativeX": 65.72000122070312,
+                  "relativeY": 13
+                },
+                "fill": "paint_5:01053",
+                "_color": "#FBF0E8",
+                "strokeColor": "paint_5:01055",
+                "strokeType": "solid",
+                "strokeAlign": "inside",
+                "strokeWidth": "1px",
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:01057",
+                    "name": "组 2567",
+                    "layoutStyle": {
+                      "width": 14,
+                      "height": 14,
+                      "relativeX": 13,
+                      "relativeY": 8
+                    },
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "id": "5:01058",
+                        "name": "图标 15",
+                        "layoutStyle": {
+                          "width": 14,
+                          "height": 14,
+                          "relativeX": 0,
+                          "relativeY": 0
+                        },
+                        "children": [
+                          {
+                            "type": "PATH",
+                            "id": "5:01059",
+                            "name": "组 22",
+                            "layoutStyle": {
+                              "width": 9.791243553161621,
+                              "height": 6.999702453613281,
+                              "relativeX": 2.1086061000823975,
+                              "relativeY": 3.5001490116119385
+                            },
+                            "svgKey": "S29:图标 15|5:01059",
+                            "svgShortKey": "S29#1",
+                            "svgName": "图标 15"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "id": "5:01060",
+                    "name": "组 2568",
+                    "layoutStyle": {
+                      "width": 36,
+                      "height": 16,
+                      "relativeX": 35,
+                      "relativeY": 7
+                    },
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "id": "5:01061",
+                        "name": "文本 28",
+                        "layoutStyle": {
+                          "width": 36,
+                          "height": 17,
+                          "relativeX": 0,
+                          "relativeY": -1
+                        },
+                        "fill": "paint_5:01050",
+                        "_color": "#B05A30",
+                        "text": [
+                          {
+                            "text": "已保存",
+                            "font": "font_5:01064"
+                          }
+                        ],
+                        "textColor": [
+                          {
+                            "start": 0,
+                            "end": 3,
+                            "color": "paint_5:01050"
+                          }
+                        ],
+                        "textAlign": "left",
+                        "textMode": "single-line"
+                      }
+                    ]
+                  }
+                ],
+                "borderRadius": "9999px"
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01042",
+                "name": "组 2569",
+                "layoutStyle": {
+                  "width": 82,
+                  "height": 30,
+                  "relativeX": 155.75,
+                  "relativeY": 13
+                },
+                "strokeColor": "paint_5:01043",
+                "strokeType": "solid",
+                "strokeAlign": "inside",
+                "strokeWidth": "1px",
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "id": "5:01045",
+                    "name": "文本 29",
+                    "layoutStyle": {
+                      "width": 48,
+                      "height": 17,
+                      "relativeX": 17,
+                      "relativeY": 6
+                    },
+                    "fill": "paint_5:01050",
+                    "_color": "#B05A30",
+                    "text": [
+                      {
+                        "text": "继续研习",
+                        "font": "font_5:01048"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 4,
+                        "color": "paint_5:01050"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ],
+                "borderRadius": "9999px"
+              },
+              {
+                "type": "FRAME",
+                "id": "5:01066",
+                "name": "组 2570",
+                "layoutStyle": {
+                  "width": 107.19000244140625,
+                  "height": 28,
+                  "relativeX": 243.77999877929688,
+                  "relativeY": 14
+                },
+                "fill": "paint_5:01067",
+                "_color": "linear-gradient(90deg, #B86040 0%, #C47040 50%, #B86040 100%)",
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:01074",
+                    "name": "组 2571",
+                    "layoutStyle": {
+                      "width": 59.189998626708984,
+                      "height": 16,
+                      "relativeX": 16,
+                      "relativeY": 6
+                    },
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "id": "5:01075",
+                        "name": "文本 30",
+                        "layoutStyle": {
+                          "width": 59.16999816894531,
+                          "height": 17,
+                          "relativeX": 0,
+                          "relativeY": -1
+                        },
+                        "fill": "paint_5:01080",
+                        "_color": "#FDFBF5",
+                        "text": [
+                          {
+                            "text": "前往AI工坊",
+                            "font": "font_5:01078"
+                          }
+                        ],
+                        "textColor": [
+                          {
+                            "start": 0,
+                            "end": 6,
+                            "color": "paint_5:01080"
+                          }
+                        ],
+                        "textAlign": "left",
+                        "textMode": "single-line"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "id": "5:01069",
+                    "name": "组 2572",
+                    "layoutStyle": {
+                      "width": 12,
+                      "height": 12,
+                      "relativeX": 79.19000244140625,
+                      "relativeY": 8
+                    },
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "id": "5:01070",
+                        "name": "图标 16",
+                        "layoutStyle": {
+                          "width": 12,
+                          "height": 12,
+                          "relativeX": 0,
+                          "relativeY": 0
+                        },
+                        "children": [
+                          {
+                            "type": "PATH",
+                            "id": "5:01071",
+                            "name": "组 23",
+                            "layoutStyle": {
+                              "width": 3.5,
+                              "height": 7,
+                              "relativeX": 4.5,
+                              "relativeY": 2.5
+                            },
+                            "svgKey": "S29:图标 16|5:01071",
+                            "svgShortKey": "S29#2",
+                            "svgName": "图标 16"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "effect": "effect_5:5816",
+                "borderRadius": "9999px"
+              }
+            ],
+            "effect": "effect_5:4697"
+          }
+        ],
+        "components": [],
+        "rowTexts": [
+          {
+            "text": "30",
+            "parentType": "FRAME",
+            "parentName": "组 2565"
+          },
+          {
+            "text": "已保存",
+            "parentType": "FRAME",
+            "parentName": "组 2568"
+          },
+          {
+            "text": "继续研习",
+            "parentType": "FRAME",
+            "parentName": "组 2569"
+          },
+          {
+            "text": "前往AI工坊",
+            "parentType": "FRAME",
+            "parentName": "组 2571"
+          }
+        ]
+      },
+      "nodeCount": 20,
+      "svgNodeCount": 3,
+      "hasStrippedSvgs": true,
+      "componentDocumentLinks": [],
+      "fetchProgress": "ALL 30 sections fetched. You can now generate the complete HTML."
+    }
+  ]
+}

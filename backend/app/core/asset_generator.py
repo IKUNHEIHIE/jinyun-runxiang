@@ -3,8 +3,9 @@
 负责依据大模型推理与用户提示词语义，动态生成真实的津门皮影、青铜器、大漆螺钿与A4激光雕刻纸样矢量资产
 """
 import os
+from html import escape
+from app.core.files import sanitize_svg
 import re
-import math
 
 STATIC_GENERATED_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "static", "generated")
 os.makedirs(STATIC_GENERATED_DIR, exist_ok=True)
@@ -26,6 +27,10 @@ def extract_hex_colors(color_palette_list, default_colors=None):
 
 def detect_puppet_archetype(prompt: str = "", role_type: str = "") -> str:
     """根据提示词与角色定名智能判断皮影艺术原型"""
+    if role_type.startswith("净"):
+        return "PAINTED_JING"
+    if role_type.startswith("丑"):
+        return "COMIC_CHOU"
     text = f"{prompt} {role_type}".lower()
     if any(k in text for k in ["大圣", "悟空", "猴王", "美猴王", "金箍棒", "翎毛", "齐天大圣", "大闹天宫"]):
         return "MONKEY_KING"
@@ -38,7 +43,7 @@ def detect_puppet_archetype(prompt: str = "", role_type: str = "") -> str:
     else:
         return "SCHOLAR"
 
-def generate_shadow_puppet_svg(
+def _generate_shadow_puppet_base_svg(
     role_type: str = "生角·津门书生",
     colored: bool = True,
     prompt: str = "",
@@ -49,6 +54,8 @@ def generate_shadow_puppet_svg(
     支持 MONKEY_KING (齐天大圣), FORTUNE_CHILD (杨柳青福娃), WARRIOR_HERO (穆桂英/武生),
     BEAUTY_DAN (津派花旦), SCHOLAR (赶考书生) 五大原型，支持大模型色彩注入与线稿/套色切换。
     """
+    role_type = escape(role_type, quote=True)
+    prompt = escape(prompt, quote=True)
     archetype = detect_puppet_archetype(prompt, role_type)
     hex_colors = extract_hex_colors(colors)
     
@@ -70,6 +77,8 @@ def generate_shadow_puppet_svg(
         c_skin = "none"
         c_accent = "none"
 
+    if archetype in {"PAINTED_JING", "COMIC_CHOU"}:
+        return generate_mask_role_puppet(role_type, archetype, colored, hex_colors)
     if archetype == "MONKEY_KING":
         # 齐天大圣·美猴王皮影 (带双根超长活动翎毛、紧箍、凤翅紫金冠、锁子甲、虎皮裙、如意金箍棒)
         c_armor = c_gold if colored else "none"
@@ -507,8 +516,81 @@ def generate_shadow_puppet_svg(
 </svg>"""
 
 
-def generate_shadow_puppet_template_svg(role_type: str = "生角·津门书生", prompt: str = "") -> str:
+FACE_STYLES = {"CLASSIC", "FLORAL", "BOLD"}
+
+
+def face_pattern_svg(style: str, colored: bool, x: float, y: float, rx: float, ry: float) -> str:
+    """Local creative face patterns, separate from the MasterGo interface artwork."""
+    if style not in FACE_STYLES:
+        raise ValueError("不支持的脸谱样式")
+    if style == "CLASSIC":
+        return ""
+    ink = "#243827" if colored else "#111111"
+    if style == "FLORAL":
+        paths = ('<path d="M-8,-20 Q0,-34 8,-20 Q0,-26 -8,-20 M-24,-2 Q-7,-18 -3,2 '
+                 'M24,-2 Q7,-18 3,2 M-22,13 Q-5,4 -4,25 M22,13 Q5,4 4,25" '
+                 f'fill="none" stroke="{ink}" stroke-width="3"/>')
+    else:
+        paths = (f'<path d="M0,-30 L9,-15 L0,-6 L-9,-15 Z M-26,-4 L-6,-11 L-11,8 L-26,13 Z '
+                 f'M26,-4 L6,-11 L11,8 L26,13 Z" fill="{ink if colored else "none"}" '
+                 f'stroke="{ink}" stroke-width="2.5"/>')
+    return (f'<g id="face-{style}" transform="translate({x} {y}) scale({rx / 30} {ry / 35})">'
+            f'{paths}</g>')
+
+
+def generate_mask_role_puppet(role_type: str, archetype: str, colored: bool, colors: list) -> str:
+    """Distinct net and comic-role templates; these are illustrative two-dimensional assets."""
+    comic = archetype == "COMIC_CHOU"
+    primary, gold, secondary, dark = colors[:4] if colored else ["none"] * 4
+    skin, ink = ("#FBF4E8", "#2F2925") if colored else ("none", "#111111")
+    face_fill = primary if not comic else skin
+    nose_fill = "#FFFFFF" if colored else "none"
+    robe = ("M215,310 L325,310 L340,500 L310,545 L230,545 L200,500 Z" if comic else
+            "M200,310 L340,310 L355,560 Q270,590 185,560 Z")
+    cap = ("M230,185 Q270,145 310,185 L306,202 L234,202 Z" if comic else
+           "M224,185 L215,145 L245,165 L270,120 L295,165 L325,145 L316,185 Z")
+    beard = ("M249,273 Q270,297 291,273" if comic else
+             "M236,265 Q270,290 304,265 L292,330 L270,348 L248,330 Z")
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 760" width="540" height="760" id="role-{archetype}">
+  <rect width="540" height="760" rx="16" fill="#F8F4EC"/>
+  <text x="270" y="48" text-anchor="middle" font-family="serif" font-size="19" fill="#2F2925">皮影创作 · {role_type}</text>
+  <text x="270" y="70" text-anchor="middle" font-family="serif" font-size="11" fill="#776D65">本地二维模板参考 · 非实体装配成品</text>
+  <g stroke="{ink}" stroke-width="3" stroke-linejoin="round">
+    <path d="M230,535 L258,535 L250,665 L218,665 Z M282,535 L310,535 L324,665 L290,665 Z" fill="{secondary}"/>
+    <path d="M208,660 L250,660 L258,685 L205,685 Z M290,660 L330,660 L345,685 L286,685 Z" fill="{dark}"/>
+    <path d="{robe}" fill="{primary}"/>
+    <path d="M215,325 L180,370 L145,430 L165,444 L215,400 L240,340 M325,325 L370,370 L395,430 L375,444 L325,400 L300,340" fill="{primary}"/>
+    <circle cx="155" cy="437" r="11" fill="{skin}"/><circle cx="385" cy="437" r="11" fill="{skin}"/>
+    <path d="M208,350 L332,350 M220,400 Q270,430 320,400 M222,470 Q270,500 318,470" fill="none" stroke="{gold if colored else ink}"/>
+    <rect x="250" y="270" width="40" height="45" fill="{skin}"/>
+    <ellipse cx="270" cy="232" rx="42" ry="50" fill="{face_fill}"/>
+    <path d="{cap}" fill="{dark if comic else gold}"/>
+    <path d="M236,216 Q250,207 261,220 M279,220 Q290,207 304,216" fill="none"/>
+    <ellipse cx="250" cy="226" rx="7" ry="4" fill="{dark}"/><ellipse cx="290" cy="226" rx="7" ry="4" fill="{dark}"/>
+    <path d="M270,229 L261,248 L279,248 M253,260 Q270,270 287,260" fill="none"/>
+    <path d="{beard}" fill="{dark if not comic else "none"}"/>
+    {f'<path d="M254,234 Q270,223 286,234 L283,251 Q270,257 257,251 Z" fill="{nose_fill}"/>' if comic else f'<path d="M239,202 L251,211 L239,237 M301,202 L289,211 L301,237" fill="none" stroke="{gold if colored else ink}"/>'}
+    <circle cx="215" cy="325" r="6" fill="{gold}"/><circle cx="325" cy="325" r="6" fill="{gold}"/>
+  </g>
+  <g stroke="#8C827A" stroke-width="2" stroke-dasharray="4 3"><path d="M270,290 L120,715 M155,437 L75,715 M385,437 L465,715"/></g>
+</svg>"""
+
+
+def generate_shadow_puppet_svg(role_type="生角·津门书生", colored=True, prompt="", colors=None, face_style="CLASSIC"):
+    svg = _generate_shadow_puppet_base_svg(role_type, colored, prompt, colors)
+    archetype = detect_puppet_archetype(prompt, role_type)
+    anchors = {"MONKEY_KING":(270,305,22,24), "FORTUNE_CHILD":(270,295,26,23),
+               "WARRIOR_HERO":(276,300,14,13), "BEAUTY_DAN":(278,305,13,15),
+               "SCHOLAR":(285,281,12,17), "PAINTED_JING":(270,232,40,47),
+               "COMIC_CHOU":(270,232,40,47)}
+    pattern = face_pattern_svg(face_style, colored, *anchors[archetype])
+    return svg.replace("</svg>", pattern + "</svg>")
+
+
+def _generate_shadow_puppet_template_base_svg(role_type: str = "生角·津门书生", prompt: str = "") -> str:
     """生成真实的 A4 激光切割与手工打印三签纸样排版，自适应大圣、福娃、武生等原型部件"""
+    role_type = escape(role_type, quote=True)
+    prompt = escape(prompt, quote=True)
     archetype = detect_puppet_archetype(prompt, role_type)
 
     if archetype == "MONKEY_KING":
@@ -689,6 +771,28 @@ def generate_shadow_puppet_template_svg(role_type: str = "生角·津门书生",
 </svg>"""
 
 
+def generate_shadow_puppet_template_svg(role_type="生角·津门书生", prompt="", face_style="CLASSIC"):
+    svg = _generate_shadow_puppet_template_base_svg(role_type, prompt)
+    svg = svg.replace("A4激光雕刻纸样", "A4比例纸样参考")
+    svg = svg.replace("直接将本文件发送至激光切割机，采用红色实线作为裁切层。",
+                      "纸样仅供学习参考；请先核对打印比例，设备切割需专业人员另行检查。")
+    archetype = detect_puppet_archetype(prompt, role_type)
+    if archetype in {"PAINTED_JING", "COMIC_CHOU"}:
+        comic = archetype == "COMIC_CHOU"
+        head = ('<g id="paper-' + archetype + '"><rect x="110" y="175" width="80" height="100" fill="#FDFBF7"/>'
+                '<ellipse cx="150" cy="215" rx="26" ry="30" fill="none" stroke="#B64A44" stroke-width="2"/>'
+                '<path d="M128,198 Q150,179 172,198 M134,210 L143,207 M157,207 L166,210 M142,230 Q150,236 158,230" fill="none" stroke="#B64A44" stroke-width="2"/>'
+                + ('<path d="M140,212 Q150,207 160,212 L158,223 Q150,228 142,223 Z" fill="none" stroke="#B64A44" stroke-width="1.5"/>' if comic else
+                   '<path d="M130,230 L140,252 L150,262 L160,252 L170,230 M129,194 L125,180 L140,188 L150,175 L160,188 L175,180 L171,194" fill="none" stroke="#B64A44" stroke-width="2"/>') +
+                '<circle cx="150" cy="270" r="4" fill="none" stroke="#333" stroke-width="2"/></g>')
+        pattern = head + face_pattern_svg(face_style, False, 150, 215, 24, 28)
+    else:
+        pattern = face_pattern_svg(face_style, False, 150, 170, 12, 17)
+    warning = ('<text x="400" y="1080" text-anchor="middle" font-size="12" fill="#776D65">'
+               '纸样参考：未验证实体装配与设备切割，请勿直接作为机器加工文件。</text>')
+    return svg.replace("</svg>", pattern + warning + "</svg>")
+
+
 def generate_bronze_taotie_svg(
     pattern_type: str = "饕餮纹",
     style: str = "氧化古铜",
@@ -696,6 +800,9 @@ def generate_bronze_taotie_svg(
     colors: list = None
 ) -> str:
     """生成真实的蓟州青铜器矢量纹饰 (支持编钟、双夔龙、饕餮兽面多原型及大模型铜绿色板注入)"""
+    pattern_type = escape(pattern_type, quote=True)
+    style = escape(style, quote=True)
+    prompt = escape(prompt, quote=True)
     hex_colors = extract_hex_colors(colors, default_colors=["#4D5D53", "#C59B27", "#2B2625", "#1B3B34", "#E5DCC5"])
     c_patina = hex_colors[0]
     c_gold = hex_colors[1]
@@ -840,6 +947,11 @@ def generate_ballad_sheet_svg(
     colors: list = None
 ) -> str:
     """生成真实的津门曲艺时调简谱工尺谱与茶馆鼓板矢量艺术图谱"""
+    tune_name = escape(tune_name, quote=True)
+    rhythm_style = escape(rhythm_style, quote=True)
+    sheet_music_text = escape(sheet_music_text, quote=True)
+    ballad_lyrics = escape(ballad_lyrics, quote=True)
+    prompt = escape(prompt, quote=True)
     hex_colors = extract_hex_colors(colors, default_colors=["#B63E2C", "#D6A85C", "#5C3317", "#1A1A1A", "#FAF5EB"])
     c_red = hex_colors[0]
     c_gold = hex_colors[1]
@@ -888,6 +1000,9 @@ def generate_lacquer_raden_svg(
     colors: list = None
 ) -> str:
     """生成真实的津派大漆螺钿髹饰矢量艺术图 (支持喜上眉梢/锦鲤戏莲/月季花鸟多题材及大模型色板注入)"""
+    title = escape(title, quote=True)
+    style = escape(style, quote=True)
+    prompt = escape(prompt, quote=True)
     clean_title = title.strip("《》").strip()
     hex_colors = extract_hex_colors(colors, default_colors=["#B63E2C", "#D6A85C", "#7CE8E2", "#1A1817", "#FAF089"])
     c_gold = hex_colors[1]
@@ -1015,8 +1130,40 @@ def generate_lacquer_raden_svg(
 </svg>"""
 
 
+def generate_lacquer_design_svg(title: str, pattern: str = "FLORAL", prompt: str = "", colors: list = None) -> str:
+    """Create a local 2D motif reference; no image inference or material simulation."""
+    palette = extract_hex_colors(colors, ["#C4A35A", "#D4AF37", "#2D5A4A", "#1A1817", "#F7F4ED"])
+    primary, gold, green, ink, paper = palette[:5]
+    note = "本地二维纹样参考；未分析草图、应用LoRA或验证实体制作。"
+    if pattern == "FLORAL":
+        svg = generate_lacquer_raden_svg(title, "本地花鸟模板", prompt=prompt, colors=palette)
+        for old in ["#7CE8E2", "#B794F4", "#FF7675", "#FEB2B2", "#9AE6B4"]:
+            svg = svg.replace(old, primary)
+        return svg.rsplit('</svg>', 1)[0] + f'<text x="300" y="585" font-size="10" fill="#EAD6B8" text-anchor="middle">{note}</text></svg>'
+    label = "几何纹样" if pattern == "GEOMETRIC" else "吉祥文字"
+    if pattern == "GEOMETRIC":
+        motifs = []
+        for row in range(3):
+            for col in range(3):
+                x, y = 170 + col * 130, 175 + row * 130
+                motifs.append(f'<g transform="translate({x},{y})"><path d="M0,-48 L48,0 L0,48 L-48,0 Z" fill="{primary}" stroke="{gold}" stroke-width="3"></path><path d="M0,-29 L29,0 L0,29 L-29,0 Z" fill="{ink}" stroke="{green}" stroke-width="3"></path><circle r="10" fill="{gold}"></circle></g>')
+        art = ''.join(motifs)
+    else:
+        character = next((char for char in prompt if char in "福寿喜和"), "福")
+        art = (f'<circle cx="300" cy="300" r="178" fill="{primary}" stroke="{gold}" stroke-width="5"></circle>'
+               f'<path d="M300,95 L505,300 L300,505 L95,300 Z" fill="none" stroke="{green}" stroke-width="8"></path>'
+               f'<text x="300" y="358" font-family="serif" font-size="174" fill="{paper}" text-anchor="middle">{character}</text>')
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">'
+            f'<rect width="600" height="600" fill="{ink}"></rect>'
+            f'<rect x="32" y="32" width="536" height="536" rx="24" fill="none" stroke="{gold}" stroke-width="2"></rect>'
+            f'<text x="300" y="65" font-size="18" font-family="serif" fill="{paper}" text-anchor="middle">{escape(title[:60], quote=True)}</text>'
+            f'<text x="300" y="88" font-size="11" fill="{gold}" text-anchor="middle">{label} · 本地模板</text>'
+            f'{art}<text x="300" y="585" font-size="10" fill="{paper}" text-anchor="middle">{note}</text></svg>')
+
+
 def generate_mesh_preview_svg(title: str = "津门皮影三维骨骼") -> str:
     """生成三维骨骼与网格模型的等轴测预览矢量图"""
+    title = escape(title, quote=True)
     return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450" width="600" height="450">
   <rect width="100%" height="100%" fill="#111827" rx="12"/>
   <defs>
@@ -1054,6 +1201,7 @@ def generate_mesh_preview_svg(title: str = "津门皮影三维骨骼") -> str:
 
 def save_generated_asset(filename: str, content: str) -> str:
     """将生成的真实非遗 SVG/数据写入静态托管路径并返回访问 URL"""
+    content = sanitize_svg(content)
     filepath = os.path.join(STATIC_GENERATED_DIR, filename)
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(content)

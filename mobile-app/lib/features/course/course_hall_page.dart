@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../app/theme.dart';
 import '../../core/network/api_client.dart';
+import 'course_learning_page.dart';
 
 class CourseHallPage extends StatefulWidget {
   const CourseHallPage({super.key});
@@ -157,7 +158,7 @@ class _CourseHallPageState extends State<CourseHallPage> {
                                           Text('⏱️ ${item['duration_minutes']} 分钟 · ⚡ +${item['energy_reward']} 能量', style: const TextStyle(fontSize: 12, color: AppTheme.accentGold, fontWeight: FontWeight.w600)),
                                           ElevatedButton(
                                             onPressed: () {
-                                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('正在进入《${item['title']}》视频学习...')));
+                                              Navigator.of(context).push(MaterialPageRoute(builder: (_) => CourseLearningPage(courseId: item['id'])));
                                             },
                                             child: const Text('开始学习'),
                                           ),

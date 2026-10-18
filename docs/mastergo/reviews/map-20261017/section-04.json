@@ -1,0 +1,541 @@
+{
+  "sectionIndex": 4,
+  "section": {
+    "id": "5:03268",
+    "name": "组 10804",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2818px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "effect_5:8341": {
+        "value": [
+          "box-shadow: 0px 8px 16px 0px rgba(74, 124, 89, 0.08);",
+          "box-shadow: 0px 2px 4px 0px rgba(74, 124, 89, 0.06);",
+          "box-shadow: 0px 16px 32px 0px rgba(74, 124, 89, 0.04);",
+          "backdrop-filter: blur(4px);"
+        ]
+      },
+      "font_5:02928": {
+        "value": {
+          "family": "Ma Shan Zheng",
+          "size": 12,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "16",
+          "letterSpacing": "auto",
+          "weight": "400"
+        }
+      },
+      "font_5:3213": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 12,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "16",
+          "letterSpacing": "auto",
+          "weight": "400"
+        }
+      },
+      "font_5:3933": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 12,
+          "style": "Medium",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "16",
+          "letterSpacing": "auto",
+          "weight": "500"
+        }
+      },
+      "font_5:8268": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 16,
+          "style": "SemiBold",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "24",
+          "letterSpacing": "auto",
+          "weight": "600"
+        }
+      },
+      "paint_5:03306": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/146432f7f1282c482fcc7556a98627bf.png"
+          }
+        ]
+      },
+      "paint_5:3671": {
+        "value": [
+          "#F5F0E8"
+        ]
+      },
+      "paint_5:6897": {
+        "value": [
+          "rgba(255, 255, 255, 0.8)"
+        ]
+      },
+      "paint_5:8338": {
+        "value": [
+          "#8A7E6B"
+        ]
+      },
+      "paint_5:8357": {
+        "value": [
+          "#4A7C59"
+        ]
+      },
+      "paint_5:8427": {
+        "value": [
+          "#C4A882"
+        ]
+      },
+      "paint_5:9811": {
+        "value": [
+          "#8B3A3A"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:03268",
+        "name": "组 10804",
+        "layoutStyle": {
+          "width": 335,
+          "height": 126.51773834228516,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "fill": "paint_5:6897",
+        "_color": "rgba(255, 255, 255, 0.8)",
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:03269",
+            "name": "组 10805",
+            "layoutStyle": {
+              "width": 303,
+              "height": 130,
+              "relativeX": 16,
+              "relativeY": 16
+            },
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:03303",
+                "name": "组 10806",
+                "layoutStyle": {
+                  "width": 96,
+                  "height": 96,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:03304",
+                    "name": "组 10807",
+                    "layoutStyle": {
+                      "width": 96,
+                      "height": 96,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "id": "5:03305",
+                        "name": "图片 11",
+                        "layoutStyle": {
+                          "width": 96,
+                          "height": 96,
+                          "relativeX": 0,
+                          "relativeY": 0
+                        },
+                        "fill": "paint_5:03306",
+                        "children": []
+                      }
+                    ]
+                  }
+                ],
+                "borderRadius": "12px"
+              },
+              {
+                "type": "FRAME",
+                "id": "5:03270",
+                "name": "组 10809",
+                "layoutStyle": {
+                  "width": 195,
+                  "height": 130,
+                  "relativeX": 108,
+                  "relativeY": 0
+                },
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "children": [
+                  {
+                    "type": "FRAME",
+                    "id": "5:03286",
+                    "name": "组 10810",
+                    "layoutStyle": {
+                      "width": 195,
+                      "height": 24,
+                      "relativeX": 0,
+                      "relativeY": 0
+                    },
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "id": "5:03287",
+                        "name": "容器 43",
+                        "layoutStyle": {
+                          "width": 96,
+                          "height": 24,
+                          "relativeX": 0,
+                          "relativeY": 0
+                        },
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "id": "5:03288",
+                            "name": "文本 97",
+                            "layoutStyle": {
+                              "width": 96,
+                              "height": 24,
+                              "relativeX": 0,
+                              "relativeY": 0
+                            },
+                            "fill": "paint_5:8357",
+                            "_color": "#4A7C59",
+                            "text": [
+                              {
+                                "text": "蓟州皮影工坊",
+                                "font": "font_5:8268"
+                              }
+                            ],
+                            "textColor": [
+                              {
+                                "start": 0,
+                                "end": 6,
+                                "color": "paint_5:8357"
+                              }
+                            ],
+                            "textAlign": "left",
+                            "textMode": "single-line"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "FRAME",
+                        "id": "5:03292",
+                        "name": "组 10811",
+                        "layoutStyle": {
+                          "width": 41.20000076293945,
+                          "height": 26.059999465942383,
+                          "relativeX": 104,
+                          "relativeY": -1.0299997329711914
+                        },
+                        "strokeColor": "paint_5:9811",
+                        "strokeType": "solid",
+                        "strokeAlign": "inside",
+                        "strokeWidth": "2px",
+                        "children": [
+                          {
+                            "type": "FRAME",
+                            "id": "5:03293",
+                            "name": "容器 44",
+                            "layoutStyle": {
+                              "width": 24.600000381469727,
+                              "height": 13.239999771118164,
+                              "relativeX": 8.29998779296875,
+                              "relativeY": 6.409912109375
+                            },
+                            "children": [
+                              {
+                                "type": "TEXT",
+                                "id": "5:03294",
+                                "name": "文本 98",
+                                "layoutStyle": {
+                                  "width": 32.900001525878906,
+                                  "height": 13.239999771118164,
+                                  "relativeX": 0,
+                                  "relativeY": 0
+                                },
+                                "fill": "paint_5:9811",
+                                "_color": "#8B3A3A",
+                                "text": [
+                                  {
+                                    "text": "非⁠遗",
+                                    "font": "font_5:02928"
+                                  }
+                                ],
+                                "textColor": [
+                                  {
+                                    "start": 0,
+                                    "end": 3,
+                                    "color": "paint_5:9811"
+                                  }
+                                ],
+                                "textAlign": "center",
+                                "textMode": "single-line"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "flexContainerInfo": {
+                      "flexDirection": "row",
+                      "alignItems": "center",
+                      "mainSizing": "fixed",
+                      "crossSizing": "fixed",
+                      "gap": "8px 8px"
+                    }
+                  },
+                  {
+                    "type": "TEXT",
+                    "id": "5:03282",
+                    "name": "文本 99",
+                    "layoutStyle": {
+                      "width": 199.8000030517578,
+                      "height": 32,
+                      "relativeX": 0,
+                      "relativeY": 19
+                    },
+                    "fill": "paint_5:8338",
+                    "_color": "#8A7E6B",
+                    "text": [
+                      {
+                        "text": "传承三百年的皮影艺术，国家级非物\n质文化遗产。工坊内可体验皮影制…",
+                        "font": "font_5:3213"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 33,
+                        "color": "paint_5:8338"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  },
+                  {
+                    "type": "FRAME",
+                    "id": "5:03298",
+                    "name": "容器 45",
+                    "layoutStyle": {
+                      "width": 195,
+                      "height": 16,
+                      "relativeX": 0,
+                      "relativeY": 59
+                    },
+                    "children": [
+                      {
+                        "type": "TEXT",
+                        "id": "5:03299",
+                        "name": "文本 100",
+                        "layoutStyle": {
+                          "width": 207,
+                          "height": 16,
+                          "relativeX": 0,
+                          "relativeY": 0
+                        },
+                        "fill": "paint_5:8427",
+                        "_color": "#C4A882",
+                        "text": [
+                          {
+                            "text": "传承人：王德顺 · 第五代传人",
+                            "font": "font_5:3213"
+                          }
+                        ],
+                        "textColor": [
+                          {
+                            "start": 0,
+                            "end": 15,
+                            "color": "paint_5:8427"
+                          }
+                        ],
+                        "textAlign": "left",
+                        "textMode": "single-line"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FRAME",
+                    "id": "5:03271",
+                    "name": "组 10812",
+                    "layoutStyle": {
+                      "width": 195,
+                      "height": 32,
+                      "relativeX": 0,
+                      "relativeY": 98
+                    },
+                    "children": [
+                      {
+                        "type": "FRAME",
+                        "id": "5:03272",
+                        "name": "组 10813",
+                        "layoutStyle": {
+                          "width": 93.5,
+                          "height": 32,
+                          "relativeX": 0,
+                          "relativeY": 0
+                        },
+                        "flexGrow": 1,
+                        "flexShrink": 1,
+                        "fill": "paint_5:8357",
+                        "_color": "#4A7C59",
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "id": "5:03273",
+                            "name": "文本 101",
+                            "layoutStyle": {
+                              "width": 55.20000076293945,
+                              "height": 17,
+                              "relativeX": 28.75,
+                              "relativeY": 7
+                            },
+                            "fill": "paint_5:3671",
+                            "_color": "#F5F0E8",
+                            "text": [
+                              {
+                                "text": "去打卡",
+                                "font": "font_5:3933"
+                              }
+                            ],
+                            "textColor": [
+                              {
+                                "start": 0,
+                                "end": 3,
+                                "color": "paint_5:3671"
+                              }
+                            ],
+                            "textAlign": "left",
+                            "textMode": "single-line"
+                          }
+                        ],
+                        "borderRadius": "8px"
+                      },
+                      {
+                        "type": "FRAME",
+                        "id": "5:03277",
+                        "name": "组 10814",
+                        "layoutStyle": {
+                          "width": 93.5,
+                          "height": 32,
+                          "relativeX": 101.5,
+                          "relativeY": 0
+                        },
+                        "flexGrow": 1,
+                        "flexShrink": 1,
+                        "fill": "paint_5:9811",
+                        "_color": "#8B3A3A",
+                        "children": [
+                          {
+                            "type": "TEXT",
+                            "id": "5:03278",
+                            "name": "文本 102",
+                            "layoutStyle": {
+                              "width": 55.20000076293945,
+                              "height": 17,
+                              "relativeX": 28.75,
+                              "relativeY": 7
+                            },
+                            "fill": "paint_5:3671",
+                            "_color": "#F5F0E8",
+                            "text": [
+                              {
+                                "text": "买特产",
+                                "font": "font_5:3933"
+                              }
+                            ],
+                            "textColor": [
+                              {
+                                "start": 0,
+                                "end": 3,
+                                "color": "paint_5:3671"
+                              }
+                            ],
+                            "textAlign": "left",
+                            "textMode": "single-line"
+                          }
+                        ],
+                        "borderRadius": "8px"
+                      }
+                    ],
+                    "flexContainerInfo": {
+                      "flexDirection": "row",
+                      "mainSizing": "fixed",
+                      "crossSizing": "fixed",
+                      "gap": "8px 8px"
+                    }
+                  }
+                ]
+              }
+            ],
+            "flexContainerInfo": {
+              "flexDirection": "row",
+              "mainSizing": "fixed",
+              "crossSizing": "fixed",
+              "gap": "12px 12px"
+            }
+          }
+        ],
+        "effect": "effect_5:8341",
+        "borderRadius": "16px"
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "蓟州皮影工坊",
+        "parentType": "FRAME",
+        "parentName": "容器 43"
+      },
+      {
+        "text": "非⁠遗",
+        "parentType": "FRAME",
+        "parentName": "容器 44"
+      },
+      {
+        "text": "传承三百年的皮影艺术，国家级非物\n质文化遗产。工坊内可体验皮影制…",
+        "parentType": "FRAME",
+        "parentName": "组 10809"
+      },
+      {
+        "text": "传承人：王德顺 · 第五代传人",
+        "parentType": "FRAME",
+        "parentName": "容器 45"
+      },
+      {
+        "text": "去打卡",
+        "parentType": "FRAME",
+        "parentName": "组 10813"
+      },
+      {
+        "text": "买特产",
+        "parentType": "FRAME",
+        "parentName": "组 10814"
+      }
+    ]
+  },
+  "nodeCount": 20,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 5/22. MISSING 17 sections: [5,6,7,8,9,10,11,12,13,14... +7 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

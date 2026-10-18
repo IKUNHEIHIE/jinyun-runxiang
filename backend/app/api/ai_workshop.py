@@ -1,26 +1,31 @@
 import os
 import uuid
 import json
-import asyncio
+import base64
+import hashlib
+import re
+from app.core.files import resolve_static_file, sanitize_svg
 from datetime import datetime
 from fastapi import APIRouter, Depends, BackgroundTasks, HTTPException, File, UploadFile
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
-from typing import Optional, Dict, Any
+from pydantic import BaseModel, Field
+from typing import Optional, Dict, Any, Literal
 from openai import OpenAI
 from loguru import logger
 
-from app.core.database import get_db, SessionLocal, redis_client
-from app.core.security import get_current_user
+from app.core.database import get_db, SessionLocal
+from app.core.security import get_current_user, get_current_user_optional, require_admin
+from app.core.task_assets import task_collected, task_image_asset, owned_task_for_asset
 from app.schemas.common import success_response, error_response
-from app.models.entities import AiTask, AiModel, Asset, GrowthEvent, UserGrowth, SysConfig
+from app.models.entities import AiTask, AiModel, Asset, GrowthEvent, UserGrowth, SysConfig, SysUser
+from app.models.mobile import UserCollection
 from app.core.asset_generator import (
     generate_shadow_puppet_svg,
     generate_shadow_puppet_template_svg,
     generate_bronze_taotie_svg,
     generate_ballad_sheet_svg,
-    generate_lacquer_raden_svg,
-    generate_mesh_preview_svg,
+    generate_lacquer_design_svg,
+    extract_hex_colors,
     save_generated_asset
 )
 
@@ -31,7 +36,7 @@ STATIC_UPLOADS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirnam
 os.makedirs(STATIC_UPLOADS_DIR, exist_ok=True)
 
 class CreateTaskRequest(BaseModel):
-    tool_type: str  # SHADOW_PUPPET, BRONZE, BALLAD, LACQUER, EMBROIDERY, MESH_3D
+    tool_type: Literal["SHADOW_PUPPET", "BRONZE", "BALLAD", "LACQUER", "EMBROIDERY", "MESH_3D"]
     input_payload: Dict[str, Any]
     model_id: Optional[int] = None
 
@@ -75,19 +80,20 @@ def extract_json_from_llm(raw_text: str) -> Optional[dict]:
 
 def execute_ai_inference(task_id: str, tool_type: str, user_id: int):
     """
-    异步多模态推理 Worker：
-    优先调用运营后台配置的真实大模型 (如 step-3.7-flash / DeepSeek) 进行非遗美学知识推理，
-    再配合高精度矢量生成引擎生成可下载纸样与三维模型。
+    可选语言模型提供文字分析；实际图片与纸样由本地矢量模板生成。
+    三维生成服务尚未接入，不将固定示意模型作为生成结果。
     """
     db = SessionLocal()
     try:
         task = db.query(AiTask).filter(AiTask.task_id == task_id).first()
-        if not task:
+        if not task or task.status != "QUEUED":
             return
-        
-        task.status = "RUNNING"
-        task.progress = 30
+        started = db.query(AiTask).filter(AiTask.task_id == task_id, AiTask.status == "QUEUED").update(
+            {"status": "RUNNING", "progress": 30}, synchronize_session=False
+        )
         db.commit()
+        if not started:
+            return
 
         # 尝试调用真实大模型发起非遗结构化推理
         client, cfg = get_llm_client_and_config(db)
@@ -133,38 +139,41 @@ def execute_ai_inference(task_id: str, tool_type: str, user_id: int):
         
         # 依据不同的非遗工具类型组装资产
         llm_colors = llm_analysis.get("color_palette") if llm_analysis else None
+        supplied_colors = validated_input_palette(task.input_json)
+        if supplied_colors:
+            llm_colors = supplied_colors
         if tool_type == "SHADOW_PUPPET":
             role_type = task.input_json.get("role_type", "生角·津门书生") if isinstance(task.input_json, dict) else "生角·津门书生"
-            if llm_analysis and llm_analysis.get("title"):
-                role_type = llm_analysis.get("title")
+            face_style = task.input_json.get("face_style", "CLASSIC") if isinstance(task.input_json, dict) else "CLASSIC"
 
             # 1. 真实生成线稿矢量图
-            line_art_svg = generate_shadow_puppet_svg(role_type, colored=False, prompt=user_prompt, colors=llm_colors)
+            line_art_svg = generate_shadow_puppet_svg(role_type, colored=False, prompt=user_prompt, colors=llm_colors, face_style=face_style)
             line_art_url = save_generated_asset(f"{task_id}_lineart.svg", line_art_svg)
             
             # 2. 真实生成津派矿物套色皮影
-            colored_svg = generate_shadow_puppet_svg(role_type, colored=True, prompt=user_prompt, colors=llm_colors)
+            colored_svg = generate_shadow_puppet_svg(role_type, colored=True, prompt=user_prompt, colors=llm_colors, face_style=face_style)
             colored_url = save_generated_asset(f"{task_id}_colored.svg", colored_svg)
             
             # 3. 真实生成可打印 A4 激光切割纸样排版
-            template_svg = generate_shadow_puppet_template_svg(role_type, prompt=user_prompt)
+            template_svg = generate_shadow_puppet_template_svg(role_type, prompt=user_prompt, face_style=face_style)
             template_url = save_generated_asset(f"{task_id}_template.svg", template_svg)
             
-            # 4. 天津皮影可动骨骼三维模型
-            mesh_3d_url = "/static/models/tianjin_shadow_puppet.glb"
-            
-            desc = llm_analysis.get("mentor_description") if llm_analysis else f"基于传统津派皮影雕镂技艺真实生成【{role_type}】。包含镂空轮廓、传统矿物五色刮浆套色、A4激光切割手工纸样及可动关节骨骼三维模型。"
+            desc = shadow_template_description(role_type)
             
             result = {
                 "role_type": role_type,
+                "face_style": face_style,
+                "title": llm_analysis.get("title") if llm_analysis else f"{role_type} · 皮影创作",
                 "line_art_url": line_art_url,
                 "colored_image_url": colored_url,
                 "rendered_image_url": colored_url,
-                "mesh_3d_url": mesh_3d_url,
+                "mesh_3d_url": None,
+                "model_available": False,
+                "generation_method": "local_template",
                 "print_template_url": template_url,
                 "description": desc,
                 "historical_context": llm_analysis.get("historical_context") if llm_analysis else "津派皮影融合东路皮影与津门时调规范，清末民初在海河沿岸茶馆盛行，风格硬朗中见儒雅。",
-                "color_palette": llm_analysis.get("color_palette") if llm_analysis else ["#8B4A2F (岱红)", "#D6A85C (泥金)", "#2F4F4F (螺钿青)", "#1A1A1A (生漆黑)"],
+                "color_palette": extract_hex_colors(llm_colors),
                 "craft_technique": llm_analysis.get("craft_technique") if llm_analysis else "阴阳刻结合，软线硬刻，三签五骨操纵布局。",
                 "llm_generated": bool(llm_analysis),
                 "llm_model": model_name if llm_analysis else None
@@ -196,7 +205,7 @@ def execute_ai_inference(task_id: str, tool_type: str, user_id: int):
             }
         elif tool_type == "BALLAD":
             tune_name = llm_analysis.get("title", "津韵新声·时调大鼓") if llm_analysis else "津韵新声·时调大鼓"
-            desc = llm_analysis.get("mentor_description") if llm_analysis else "已为唱词完成天津传统五声音阶配曲，并融合津门茶馆鼓板与三弦快板伴奏节奏。"
+            desc = "当前仅提供本地曲艺简谱版式参考，音符为固定示例，并非根据唱词自动作曲；演唱与伴奏音频服务尚未接入。"
             sheet_music_text = "1 1 5 5 | 6 6 5 - | 4 4 3 3 | 2 2 1 -"
             rhythm_style = "骆派京韵大鼓快板"
             ballad_lyrics = "运河水阔映津门，曲艺声声唱古今。"
@@ -209,11 +218,14 @@ def execute_ai_inference(task_id: str, tool_type: str, user_id: int):
             result = {
                 "tune_name": tune_name,
                 "sheet_music_text": sheet_music_text,
-                "audio_url": "https://actions.google.com/sounds/v1/water/rain_heavy.ogg",
+                "audio_url": None,
+                "audio_available": False,
+                "custom_melody_available": False,
+                "generation_method": "local_sheet_template",
                 "rhythm_style": rhythm_style,
                 "colored_image_url": ballad_url,
                 "rendered_image_url": ballad_url,
-                "completed_sketch_url": ballad_url,
+                "completed_sketch_url": None,
                 "sheet_music_url": ballad_url,
                 "vector_svg_url": ballad_url,
                 "print_template_url": ballad_url,
@@ -225,43 +237,43 @@ def execute_ai_inference(task_id: str, tool_type: str, user_id: int):
                 "llm_model": model_name if llm_analysis else None
             }
         elif tool_type in ["LACQUER", "EMBROIDERY"]:
-            title = llm_analysis.get("title", "古法大漆螺钿月季圆盘") if llm_analysis else "古法大漆螺钿月季圆盘"
-            style_filter = task.input_json.get("style", "天然矿物大漆") if isinstance(task.input_json, dict) else "天然矿物大漆"
-            lacquer_svg = generate_lacquer_raden_svg(title, style_filter, prompt=user_prompt, colors=llm_colors)
+            title = llm_analysis.get("title", "漆绣纹样参考") if llm_analysis else "漆绣纹样参考"
+            local_pattern = task.input_json.get("local_pattern", "FLORAL")
+            lacquer_svg = generate_lacquer_design_svg(title, local_pattern, prompt=user_prompt, colors=llm_colors)
             lacquer_url = save_generated_asset(f"{task_id}_lacquer.svg", lacquer_svg)
-            desc = llm_analysis.get("mentor_description") if llm_analysis else "AI对草图线条完成中国传统大漆髹饰标准配色，精准提取津派螺钿工艺矿物反射折射光谱。"
             result = {
                 "title": title,
-                "color_palette": llm_analysis.get("color_palette") if llm_analysis else ["#8B4A2F (岱红)", "#D6A85C (泥金)", "#2F4F4F (螺钿青)", "#1A1A1A (生漆黑)"],
+                "local_pattern": local_pattern,
+                "color_palette": extract_hex_colors(llm_colors, ["#C4A35A", "#D4AF37", "#2D5A4A", "#1A1817", "#F7F4ED"]),
                 "colored_image_url": lacquer_url,
                 "rendered_image_url": lacquer_url,
-                "completed_sketch_url": lacquer_url,
+                "completed_sketch_url": None,
+                "reference_sketch_url": task.input_json.get("sketch_url") or None,
                 "vector_svg_url": lacquer_url,
-                "print_template_url": lacquer_url,
-                "description": desc,
+                "print_template_url": None,
+                "description": lacquer_template_description(),
+                "generation_method": "local_template",
+                "model_available": False,
+                "sketch_redraw_available": False,
+                "lora_available": False,
+                "lora_applied": False,
                 "historical_context": llm_analysis.get("historical_context") if llm_analysis else "津派大漆螺钿承继北方宫廷造办处推光漆器与民间螺钿镶嵌风貌，光泽深邃内敛。",
                 "craft_technique": llm_analysis.get("craft_technique") if llm_analysis else "生漆刮灰底，螺钿薄片镶嵌，推光研磨显珠光。",
                 "llm_generated": bool(llm_analysis),
                 "llm_model": model_name if llm_analysis else None
             }
-        else:  # MESH_3D
-            mesh_svg = generate_mesh_preview_svg("津门皮影三维可动网格")
-            mesh_preview_url = save_generated_asset(f"{task_id}_mesh_preview.svg", mesh_svg)
-            result = {
-                "model_url": "/static/models/tianjin_shadow_puppet.glb",
-                "colored_image_url": mesh_preview_url,
-                "rendered_image_url": mesh_preview_url,
-                "face_count": 24,
-                "texture_format": "GLTF/GLB (津门皮影三签可动网格)",
-                "description": "基于津门皮影传统三签操纵结构生成的真实 GLTF 三维网格骨骼与装配拓扑图谱。",
-                "llm_generated": False,
-                "llm_model": None
-            }
+        else:  # No three-dimensional generator is configured.
+            raise ValueError("三维生成服务尚未配置")
 
-        task.status = "SUCCESS"
-        task.progress = 100
-        task.result_summary_json = result
-        db.commit()
+        finished = db.query(AiTask).filter(AiTask.task_id == task_id, AiTask.status == "RUNNING").update(
+            {"status": "SUCCESS", "progress": 100, "result_summary_json": result}, synchronize_session=False
+        )
+        if not finished:
+            db.rollback()
+            return
+        for url in {v for v in result.values() if isinstance(v, str) and v.startswith("/static/generated/")}:
+            db.add(Asset(asset_type="IMAGE", object_key=url.removeprefix("/static/"),
+                         file_url=url, mime_type="image/svg+xml", created_by=user_id))
 
         # 首次生成奖励能量值
         event_ref = f"ai_{task_id}"
@@ -277,20 +289,20 @@ def execute_ai_inference(task_id: str, tool_type: str, user_id: int):
                 ref_id=event_ref,
                 value=20
             ))
-            growth = db.query(UserGrowth).filter(UserGrowth.user_id == user_id).first()
+            growth = db.query(UserGrowth).filter(UserGrowth.user_id == user_id).with_for_update().first()
             if growth:
                 growth.energy_value += 20
-            db.commit()
+        db.commit()
 
     except Exception as exc:
         logger.exception(f"[AI Workshop] Task {task_id} execution failed: {exc}")
         db.rollback()
         try:
             err_task = db.query(AiTask).filter(AiTask.task_id == task_id).first()
-            if err_task:
+            if err_task and err_task.status != "CANCELLED":
                 err_task.status = "FAILED"
                 err_task.error_code = "INFERENCE_ERROR"
-                err_task.error_message = str(exc)[:490]
+                err_task.error_message = "生成失败，请重试或联系管理员"
                 db.commit()
         except Exception as inner_e:
             logger.error(f"[AI Workshop] Failed to mark task as FAILED: {inner_e}")
@@ -304,6 +316,37 @@ def create_ai_task(
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    if req.tool_type == "MESH_3D":
+        raise HTTPException(503, "三维生成服务尚未配置")
+    if req.tool_type == "SHADOW_PUPPET":
+        face = req.input_payload.get("face_style", "CLASSIC")
+        prompt = req.input_payload.get("prompt")
+        role = req.input_payload.get("role_type", "生角")
+        if not isinstance(face, str) or face not in {"CLASSIC", "FLORAL", "BOLD"}:
+            raise HTTPException(422, "不支持的脸谱样式")
+        if not isinstance(prompt, str) or not 1 <= len(prompt.strip()) <= 1000:
+            raise HTTPException(422, "请输入 1–1000 字的创作描述")
+        if not isinstance(role, str) or not 1 <= len(role) <= 80:
+            raise HTTPException(422, "角色类型无效")
+        if "color_palette" in req.input_payload and not validated_input_palette(req.input_payload):
+            raise HTTPException(422, "服饰颜色无效")
+    if req.tool_type in {"LACQUER", "EMBROIDERY"}:
+        prompt = req.input_payload.get("prompt")
+        pattern = req.input_payload.get("local_pattern", "FLORAL")
+        if not isinstance(prompt, str) or not 1 <= len(prompt.strip()) <= 1000:
+            raise HTTPException(422, "请输入 1–1000 字的创作描述")
+        if not isinstance(pattern, str) or pattern not in {"FLORAL", "GEOMETRIC", "AUSPICIOUS"}:
+            raise HTTPException(422, "不支持的本地纹样类型")
+        if "color_palette" in req.input_payload and not validated_input_palette(req.input_payload):
+            raise HTTPException(422, "配色无效")
+        sketch = req.input_payload.get("sketch_url")
+        if sketch is not None and sketch != "":
+            if not isinstance(sketch, str) or not sketch.startswith("/static/"):
+                raise HTTPException(422, "草图资源无效")
+            asset = db.query(Asset).filter_by(file_url=sketch, created_by=current_user["user_id"]).first()
+            if not asset or not (asset.mime_type or "").startswith("image/"):
+                raise HTTPException(404, "草图资源不存在")
+            resolve_static_file(sketch)
     user_id = current_user["user_id"]
     task_uuid = uuid.uuid4().hex
 
@@ -313,7 +356,7 @@ def create_ai_task(
         tool_type=req.tool_type,
         status="QUEUED",
         progress=10,
-        model_id=req.model_id or 1,
+        model_id=req.model_id,
         model_version="1.0.0",
         input_json=req.input_payload,
         trace_id=f"trace_{task_uuid[:8]}"
@@ -331,6 +374,50 @@ def create_ai_task(
         "progress": 10,
         "estimated_wait_seconds": 3
     }, message="AI创作任务已创建")
+
+def shadow_template_description(role_type: str) -> str:
+    return (f"已根据【{role_type}】的本地工艺模板生成彩色 SVG、轮廓图与 A4 比例纸样参考。"
+            "纸样尚未经过实体装配或设备切割验证；三维模型生成尚未接入。")
+
+
+def lacquer_template_description() -> str:
+    return ("已根据文字、纹样类型和配色生成本地二维 SVG 参考。上传草图仅保留为创作参考，"
+            "未进行轮廓识别或草图重绘，未应用 LoRA；色板不代表实物材料色号，实体制作尚未验证。")
+
+
+def validated_input_palette(payload):
+    supplied = payload.get("color_palette") if isinstance(payload, dict) else None
+    if isinstance(supplied, list) and 1 <= len(supplied) <= 8 and all(
+            isinstance(c, str) and re.fullmatch(r"#[0-9a-fA-F]{6}", c) for c in supplied):
+        return supplied
+    return None
+
+
+def task_result_for_client(task: AiTask):
+    """Correct legacy capability claims without rewriting saved task records."""
+    if not isinstance(task.result_summary_json, dict):
+        return task.result_summary_json
+    result = dict(task.result_summary_json)
+    if task.tool_type == "SHADOW_PUPPET":
+        result.update(mesh_3d_url=None, model_available=False, generation_method="local_template",
+                      description=shadow_template_description(result.get("role_type") or "皮影角色"))
+        # Earlier local tasks used this palette in the SVG but returned an unrelated default legend.
+        supplied_colors = validated_input_palette(task.input_json)
+        if supplied_colors and not result.get("llm_generated"):
+            result["color_palette"] = extract_hex_colors(supplied_colors)
+    elif task.tool_type == "BALLAD":
+        result.update(audio_url=None, audio_available=False, custom_melody_available=False,
+                      completed_sketch_url=None, generation_method="local_sheet_template",
+                      description="此任务提供本地简谱版式与固定示例音符，不是自动作曲；演唱与伴奏音频服务尚未接入。")
+    elif task.tool_type == "MESH_3D":
+        result.update(model_url=None, model_available=False, face_count=None,
+                      description="此历史任务仅包含二维示意预览，三维模型生成服务尚未接入。")
+    elif task.tool_type in {"LACQUER", "EMBROIDERY"}:
+        result.update(completed_sketch_url=None, print_template_url=None, model_available=False,
+                      generation_method="local_template", sketch_redraw_available=False,
+                      lora_available=False, lora_applied=False, description=lacquer_template_description())
+    return result
+
 
 @router.get("/tasks/latest")
 def get_latest_task(
@@ -350,13 +437,14 @@ def get_latest_task(
         "status": task.status,
         "progress": task.progress,
         "input": task.input_json,
-        "result": task.result_summary_json,
+        "result": task_result_for_client(task),
+        "collected": task_collected(db, task),
         "created_at": task.created_at.isoformat() if task.created_at else None
     })
 
 @router.get("/tasks/{task_id}")
-def get_ai_task(task_id: str, db: Session = Depends(get_db)):
-    task = db.query(AiTask).filter(AiTask.task_id == task_id).first()
+def get_ai_task(task_id: str, current_user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
+    task = db.query(AiTask).filter(AiTask.task_id == task_id, AiTask.user_id == current_user["user_id"]).first()
     if not task:
         return error_response(code=4040, message="任务不存在")
     
@@ -367,17 +455,44 @@ def get_ai_task(task_id: str, db: Session = Depends(get_db)):
         "progress": task.progress,
         "model_version": task.model_version,
         "input": task.input_json,
-        "result": task.result_summary_json,
+        "result": task_result_for_client(task),
+        "collected": task_collected(db, task),
         "error_message": task.error_message,
         "created_at": task.created_at.isoformat() if task.created_at else None
     })
 
+class TaskFavoriteRequest(BaseModel):
+    collected: bool
+
+
+@router.post("/tasks/{task_id}/favorite")
+def save_task_favorite(task_id: str, req: TaskFavoriteRequest, current_user: dict = Depends(get_current_user),
+                       db: Session = Depends(get_db)):
+    user_id = current_user["user_id"]
+    db.query(SysUser).filter_by(id=user_id).with_for_update().one()
+    task = db.query(AiTask).filter_by(task_id=task_id, user_id=user_id).first()
+    if not task:
+        raise HTTPException(404, "任务不存在")
+    asset = task_image_asset(db, task)
+    if not asset:
+        raise HTTPException(409, "请先完成创作")
+    owned_task_for_asset(db, asset, user_id)
+    key = (user_id, "ASSET", asset.id)
+    record = db.get(UserCollection, key)
+    if req.collected and not record:
+        db.add(UserCollection(user_id=user_id, target_type="ASSET", target_id=asset.id))
+    elif not req.collected and record:
+        db.delete(record)
+    db.commit()
+    return success_response({"collected":req.collected})
+
+
 @router.post("/tasks/{task_id}/cancel")
-def cancel_ai_task(task_id: str, db: Session = Depends(get_db)):
-    task = db.query(AiTask).filter(AiTask.task_id == task_id).first()
+def cancel_ai_task(task_id: str, current_user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
+    task = db.query(AiTask).filter(AiTask.task_id == task_id, AiTask.user_id == current_user["user_id"]).with_for_update().first()
     if not task:
         return error_response(code=4040, message="任务不存在")
-    if task.status in ["SUCCESS", "FAILED"]:
+    if task.status not in ["QUEUED", "RUNNING"]:
         return error_response(code=4090, message="已完成的任务不可取消")
     
     task.status = "CANCELLED"
@@ -392,7 +507,10 @@ class UpdateAiModelRequest(BaseModel):
     config: Optional[dict] = None
 
 @router.get("/models")
-def list_ai_models(task_type: Optional[str] = None, all_status: bool = False, db: Session = Depends(get_db)):
+def list_ai_models(task_type: Optional[str] = None, all_status: bool = False, current_user: Optional[dict] = Depends(get_current_user_optional), db: Session = Depends(get_db)):
+    is_admin = bool(current_user and current_user["role_code"] == "ADMIN")
+    if all_status and not is_admin:
+        raise HTTPException(403, "仅管理员可查询全部模型")
     query = db.query(AiModel)
     if not all_status:
         query = query.filter(AiModel.status == "ACTIVE")
@@ -406,14 +524,14 @@ def list_ai_models(task_type: Optional[str] = None, all_status: bool = False, db
         "task_type": m.task_type,
         "version": m.version,
         "provider": m.provider,
-        "config": m.config_json,
-        "prompt_template": m.prompt_template,
+        "config": m.config_json if is_admin else None,
+        "prompt_template": m.prompt_template if is_admin else None,
         "status": m.status,
         "is_default": m.is_default
     } for m in models])
 
 @router.put("/models/{model_id}")
-def update_ai_model(model_id: int, req: UpdateAiModelRequest, db: Session = Depends(get_db)):
+def update_ai_model(model_id: int, req: UpdateAiModelRequest, current_user: dict = Depends(require_admin), db: Session = Depends(get_db)):
     m = db.query(AiModel).filter(AiModel.id == model_id).first()
     if not m:
         return error_response(code=4040, message="模型不存在")
@@ -431,29 +549,43 @@ def update_ai_model(model_id: int, req: UpdateAiModelRequest, db: Session = Depe
     return success_response({"id": m.id, "status": m.status, "name": m.name}, message="模型配置已更新")
 
 @router.post("/assets/upload")
-async def upload_asset(file: UploadFile = File(...)):
+async def upload_asset(file: UploadFile = File(...), current_user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
     """真实多模态素材与学生作品文件上传 (含安全白名单校验)"""
     allowed_exts = {".png", ".jpg", ".jpeg", ".svg", ".webp", ".mp4", ".glb"}
     raw_ext = os.path.splitext(file.filename or "")[1].lower()
     if raw_ext not in allowed_exts:
         return error_response(code=4003, message="不支持的文件格式，仅允许上传图片、微课视频或3D非遗模型")
 
-    content = await file.read()
+    content = await file.read(50 * 1024 * 1024 + 1)
     if len(content) > 50 * 1024 * 1024:
         return error_response(code=4004, message="文件体积超过限制 (最大 50MB)")
 
-    # 安全审计防御：防范 SVG 内嵌恶意脚本 (Stored XSS / CWE-79)
+    mime_types = {".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg",
+                  ".jpeg": "image/jpeg", ".webp": "image/webp", ".mp4": "video/mp4", ".glb": "model/gltf-binary"}
     if raw_ext == ".svg":
-        content_lower = content.lower()
-        dangerous_patterns = [b"<script", b"javascript:", b"onload=", b"onerror=", b"xlink:href=\"javascript"]
-        if any(pat in content_lower for pat in dangerous_patterns):
-            return error_response(code=4005, message="SVG 文件中包含不安全的脚本或事件指令，已被系统安全策略拦截")
+        try:
+            content = sanitize_svg(content).encode("utf-8")
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+    else:
+        valid = ((raw_ext == ".png" and content.startswith(b"\x89PNG\r\n\x1a\n"))
+                 or (raw_ext in {".jpg", ".jpeg"} and content.startswith(b"\xff\xd8\xff"))
+                 or (raw_ext == ".webp" and content[:4] == b"RIFF" and content[8:12] == b"WEBP")
+                 or (raw_ext == ".mp4" and content[4:8] == b"ftyp")
+                 or (raw_ext == ".glb" and content.startswith(b"glTF")))
+        if not valid:
+            raise HTTPException(400, "文件内容与扩展名不匹配")
 
     file_id = f"{uuid.uuid4().hex}{raw_ext}"
     dest_path = os.path.join(STATIC_UPLOADS_DIR, file_id)
     with open(dest_path, "wb") as f:
         f.write(content)
     file_url = f"/static/uploads/{file_id}"
+    db.add(Asset(asset_type="IMAGE" if raw_ext in {".svg", ".png", ".jpg", ".jpeg", ".webp"} else "MEDIA",
+                 object_key=f"uploads/{file_id}", file_url=file_url, mime_type=mime_types[raw_ext],
+                 size_bytes=len(content), sha256=hashlib.sha256(content).hexdigest(),
+                 created_by=current_user["user_id"]))
+    db.commit()
     return success_response({
         "file_id": file_id,
         "filename": file.filename,
@@ -462,7 +594,7 @@ async def upload_asset(file: UploadFile = File(...)):
     }, message="文件上传成功")
 
 @router.post("/assets/presign")
-def presign_upload(asset_type: str = "IMAGE"):
+def presign_upload(asset_type: str = "IMAGE", current_user: dict = Depends(get_current_user)):
     """对象存储预签名/直传接口"""
     file_id = uuid.uuid4().hex
     return success_response({
@@ -478,139 +610,73 @@ class EvaluateArtworkRequest(BaseModel):
     title: Optional[str] = "非遗手作作品"
     notes: Optional[str] = None
 
+class ArtworkEvaluation(BaseModel):
+    total_score: float = Field(..., ge=0, le=100)
+    stars: int = Field(..., ge=1, le=5)
+    composition_score: int = Field(..., ge=0, le=100)
+    color_score: int = Field(..., ge=0, le=100)
+    technique_score: int = Field(..., ge=0, le=100)
+    composition_feedback: str
+    color_feedback: str
+    technique_feedback: str
+    mentor_comment: str
+
+
 @router.post("/evaluate")
-def evaluate_artwork(
-    req: EvaluateArtworkRequest,
-    current_user: dict = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """
-    AI 多模态非遗审美诊断打分测评：
-    结合津派非遗传统美学，对学生手作/数字作品进行构图、色彩、线条三维深度诊断
-    """
-    user_id = current_user["user_id"]
-    
-    heritage_name_map = {
-        "SHADOW_PUPPET": "津派皮影戏",
-        "NEW_YEAR_PAINTING": "杨柳青年画",
-        "PAINTING": "杨柳青年画",
-        "CLAY": "泥人张彩塑",
-        "WOODCUT": "汉沽版画",
-        "BRONZE": "蓟州独乐寺榫卯"
-    }
-    heritage_name = heritage_name_map.get(req.heritage_type, "津门传统非遗")
-    
-    # 优先调用后台配置的真实大模型 (如 step-3.7-flash / DeepSeek) 发起审美诊断
+def evaluate_artwork(req: EvaluateArtworkRequest, current_user: dict = Depends(get_current_user),
+                     db: Session = Depends(get_db)):
+    asset = db.query(Asset).filter(Asset.file_url == req.image_url,
+                                  Asset.created_by == current_user["user_id"]).first()
+    if not asset:
+        raise HTTPException(404, "作品不存在或无权访问")
+    path = resolve_static_file(req.image_url)
+    mime = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp"}.get(path.suffix.lower())
+    if not mime:
+        raise HTTPException(415, "审美测评需要上传 PNG、JPEG 或 WebP 图片")
+    if path.stat().st_size > 10 * 1024 * 1024:
+        raise HTTPException(413, "测评图片不能超过10MB")
     client, cfg = get_llm_client_and_config(db)
-    llm_eval = None
-    model_name = cfg.get("model_name", "step-3.7-flash") if cfg else None
-
-    if client and cfg:
-        eval_prompt = f"""
-学生在乡村美育平台上提交了一件非遗作品进行审美诊断：
-【作品名称】：{req.title}
-【非遗门类】：{heritage_name}
-【学生手作手记】：{req.notes or "无特殊说明"}
-
-请你以【天津美术学院非遗美育专家组导师】的专业身份，对其进行三维审美诊断与作品测评。
-必须输出严格合法的纯 JSON 对象，不要附加任何非 JSON 解释，字段必须包含：
-{{
-  "total_score": 92.5,
-  "stars": 5,
-  "composition_score": 93,
-  "composition_feedback": "构图均衡度点评（40-60字）",
-  "color_score": 91,
-  "color_feedback": "津派色彩美学点评（40-60字）",
-  "technique_score": 94,
-  "technique_feedback": "线条与工艺技法点评（40-60字）",
-  "mentor_comment": "名师综合寄语与未来提升建议（80-120字）"
-}}
-"""
-        try:
-            resp = client.chat.completions.create(
-                model=model_name,
-                messages=[
-                    {"role": "system", "content": "你是一位国家级非遗美育专家导师。必须输出纯JSON。"},
-                    {"role": "user", "content": eval_prompt}
-                ],
-                max_tokens=4096,
-                temperature=0.5,
-                timeout=30.0
-            )
-            raw = resp.choices[0].message.content or ""
-            llm_eval = extract_json_from_llm(raw)
-        except Exception as e:
-            print(f"[AI Evaluate] LLM evaluation fallback: {e}")
-
-    # 若大模型成功返回，则采纳大模型生成的深度测评，否则使用本地规则兜底
-    if llm_eval:
-        comp_score = int(llm_eval.get("composition_score", 92))
-        col_score = int(llm_eval.get("color_score", 90))
-        line_score = int(llm_eval.get("technique_score", 93))
-        total = float(llm_eval.get("total_score", round((comp_score * 0.35 + col_score * 0.35 + line_score * 0.3), 1)))
-        stars = int(llm_eval.get("stars", 5 if total >= 92 else 4))
-        feedback_aspects = {
-            "composition": llm_eval.get("composition_feedback", f"画面重心稳健，主体【{req.title}】舒展得体，具备北方民间美术典型开阖大气的章法。"),
-            "color": llm_eval.get("color_feedback", f"色调汲取了津派非遗天然矿物色彩，朱砂红与石青温润呼应，呈现鲜明的乡土喜庆文化质感。"),
-            "technique": llm_eval.get("technique_feedback", f"走线劲道利落，结构转折处富于张力，展现出良好的工匠专注度与非遗造型掌控力。")
-        }
-        mentor_comment = llm_eval.get("mentor_comment", "作品很好地传承了天津非遗形神兼备的特点，展现了乡村小工匠的敏锐审美。")
-        is_llm = True
-    else:
-        # 本地确定性规则兜底
-        h = abs(hash(req.image_url + req.heritage_type))
-        comp_score = 88 + (h % 10)
-        col_score = 86 + ((h // 10) % 12)
-        line_score = 89 + ((h // 100) % 9)
-        total = round((comp_score * 0.35 + col_score * 0.35 + line_score * 0.3), 1)
-        stars = 5 if total >= 92 else 4
-        
-        feedback_aspects = {
-            "composition": f"画面重心稳健，主体【{req.title}】舒展得体，具备北方民间美术典型开阖大气的章法。",
-            "color": f"色调汲取了津派非遗天然矿物色彩，朱砂红与石青温润呼应，呈现鲜明的乡土喜庆文化质感。",
-            "technique": f"走线劲道利落，结构转折处富于张力，展现出良好的工匠专注度与非遗造型掌控力。"
-        }
-        mentor_tips = [
-            f"在【{heritage_name}】的传统工艺中，讲究'虚实相生、气韵生动'。建议在局部镂空细节上多作留白，突出主题神韵。",
-            f"整体作品神采飞扬！若能在边饰中适当融入杨柳青传统的'连年有余'或祥云回字纹，文化叙事感会更为深厚。",
-            f"运笔与着色非常具有灵气，展现了乡村新时代小工匠的敏锐审美，已达到非遗数字工坊标兵级别！"
-        ]
-        mentor_comment = mentor_tips[(h % len(mentor_tips))]
-        is_llm = False
-    
-    energy_reward = 30
-    db.add(GrowthEvent(
-        user_id=user_id,
-        event_type="AI_EVALUATION",
-        ref_id=f"eval_{uuid.uuid4().hex[:8]}",
-        value=energy_reward
-    ))
-    growth = db.query(UserGrowth).filter(UserGrowth.user_id == user_id).first()
-    if growth:
-        growth.energy_value += energy_reward
+    model_name = cfg.get("vision_model_name") if cfg else None
+    if not client or not model_name:
+        raise HTTPException(503, "图像测评服务尚未配置，请联系管理员")
+    content = path.read_bytes()
+    prompt = f"请评价非遗作品《{req.title}》，门类：{req.heritage_type}，手记：{req.notes or ''}。"
+    prompt += "只返回JSON，包含total_score、stars、composition_score、color_score、technique_score，以及composition_feedback、color_feedback、technique_feedback、mentor_comment。分数0至100，星级1至5。"
+    try:
+        response = client.chat.completions.create(
+            model=model_name,
+            messages=[{"role": "user", "content": [
+                {"type": "text", "text": prompt},
+                {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{base64.b64encode(content).decode()}"}}
+            ]}], max_tokens=2048, temperature=0.3, timeout=30,
+        )
+        evaluation = ArtworkEvaluation.model_validate(extract_json_from_llm(response.choices[0].message.content or ""))
+    except Exception as exc:
+        logger.warning("Image evaluation failed: {}", type(exc).__name__)
+        raise HTTPException(502, "图像测评暂时不可用，请稍后重试") from exc
+    ref = hashlib.sha256(content).hexdigest()
+    growth = db.query(UserGrowth).filter(UserGrowth.user_id == current_user["user_id"]).with_for_update().first()
+    existing = db.query(GrowthEvent).filter(GrowthEvent.user_id == current_user["user_id"],
+                                           GrowthEvent.event_type == "AI_EVALUATION", GrowthEvent.ref_id == ref).first()
+    reward = 30 if growth and not existing else 0
+    if reward:
+        db.add(GrowthEvent(user_id=current_user["user_id"], event_type="AI_EVALUATION", ref_id=ref, value=reward))
+        growth.energy_value += reward
         if growth.energy_value >= 1000:
             growth.level_code = "LV3_CRAFTSMAN"
         elif growth.energy_value >= 500:
             growth.level_code = "LV2_JOURNEYMAN"
     db.commit()
-    
     return success_response({
-        "evaluation_id": f"JY-EVAL-{datetime.utcnow().strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}",
-        "heritage_name": heritage_name,
-        "title": req.title,
-        "image_url": req.image_url,
-        "total_score": total,
-        "stars": stars,
+        "evaluation_id": f"JY-EVAL-{ref[:12]}", "heritage_name": req.heritage_type,
+        "title": req.title, "image_url": req.image_url,
+        "total_score": evaluation.total_score, "stars": evaluation.stars,
         "dimensions": {
-            "composition": {"name": "构图均衡度", "score": comp_score, "feedback": feedback_aspects["composition"]},
-            "color": {"name": "津派色彩美学", "score": col_score, "feedback": feedback_aspects["color"]},
-            "technique": {"name": "线条与工艺技法", "score": line_score, "feedback": feedback_aspects["technique"]}
+            "composition": {"name": "构图均衡度", "score": evaluation.composition_score, "feedback": evaluation.composition_feedback},
+            "color": {"name": "色彩美学", "score": evaluation.color_score, "feedback": evaluation.color_feedback},
+            "technique": {"name": "线条与工艺", "score": evaluation.technique_score, "feedback": evaluation.technique_feedback}
         },
-        "mentor_comment": mentor_comment,
-        "energy_reward": energy_reward,
-        "certified_by": "天津美术学院非遗美育专家组 & 乡村数字美育 AI 导师",
-        "created_at": datetime.utcnow().strftime("%Y-%m-%d %H:%M"),
-        "llm_generated": is_llm,
-        "llm_model": model_name if is_llm else None
-    }, message="非遗审美诊断与作品测评完成")
-
+        "mentor_comment": evaluation.mentor_comment, "energy_reward": reward,
+        "certified_by": "AI 图像测评", "created_at": datetime.utcnow().isoformat(),
+        "llm_generated": True, "llm_model": model_name,
+    }, message="作品图像测评完成")

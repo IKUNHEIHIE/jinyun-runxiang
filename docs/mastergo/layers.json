@@ -1,0 +1,212 @@
+[
+  {
+    "id": "5:00420",
+    "name": "组 3457",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 1
+  },
+  {
+    "id": "40:55092",
+    "name": "组 137",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 2
+  },
+  {
+    "id": "40:55102",
+    "name": "组 2263",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 1
+  },
+  {
+    "id": "40:55121",
+    "name": "组 2258",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 2
+  },
+  {
+    "id": "40:55112",
+    "name": "组 2255",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 2
+  },
+  {
+    "id": "40:55130",
+    "name": "组 2252",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 2
+  },
+  {
+    "id": "40:55101",
+    "name": "组 2251",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 0
+  },
+  {
+    "id": "40:55600",
+    "name": "学生端 个人中心",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 0
+  },
+  {
+    "id": "5:3855",
+    "name": "容器 38",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 1
+  },
+  {
+    "id": "40:8834",
+    "name": "教师端 个人中心",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 1
+  },
+  {
+    "id": "5:5591",
+    "name": "作品广场 详情页",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 3
+  },
+  {
+    "id": "40:55029",
+    "name": "AI工坊",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 1
+  },
+  {
+    "id": "40:32809",
+    "name": "非遗百科库 详情页",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 10
+  },
+  {
+    "id": "40:32437",
+    "name": "非遗百科库",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 8
+  },
+  {
+    "id": "40:11916",
+    "name": "容器 104",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 0
+  },
+  {
+    "id": "40:32392",
+    "name": "小课堂",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 1
+  },
+  {
+    "id": "5:01925",
+    "name": "首页",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 1
+  },
+  {
+    "id": "40:07198",
+    "name": "组 12060",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 1
+  },
+  {
+    "id": "40:11915",
+    "name": "容器 103",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 1
+  },
+  {
+    "id": "40:10972",
+    "name": "组 11541",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 1
+  },
+  {
+    "id": "40:10819",
+    "name": "组 3489",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 1
+  },
+  {
+    "id": "5:01018",
+    "name": "小课堂-课程播放页",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 1
+  },
+  {
+    "id": "40:32808",
+    "name": "非遗百科库沉浸",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 1
+  },
+  {
+    "id": "5:7245",
+    "name": "容器 89",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 1
+  },
+  {
+    "id": "40:55031",
+    "name": "容器 115",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 2
+  },
+  {
+    "id": "5:3193",
+    "name": "容器 48",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 1
+  },
+  {
+    "id": "40:55030",
+    "name": "容器 114",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 1
+  },
+  {
+    "id": "5:02348",
+    "name": "组 5130",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 1
+  },
+  {
+    "id": "5:01016",
+    "name": "组 2816",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 1
+  },
+  {
+    "id": "5:01452",
+    "name": "图标 21",
+    "type": "FRAME",
+    "depth": 0,
+    "childrenCount": 0
+  }
+]

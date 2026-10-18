@@ -1,0 +1,179 @@
+[
+  {
+    "id": "5:02579",
+    "type": "FRAME",
+    "depth": 0,
+    "l": {
+      "width": 335,
+      "height": 161,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "paint": [
+      "#FFFFFF"
+    ],
+    "stroke": [
+      "rgba(232, 208, 208, 0.5)"
+    ],
+    "sw": "1px 0px 0px"
+  },
+  {
+    "id": "5:02611",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 295,
+      "height": 20,
+      "relativeX": 20,
+      "relativeY": 17
+    }
+  },
+  {
+    "id": "5:02619",
+    "type": "PATH",
+    "depth": 4,
+    "l": {
+      "width": 13.333333015441895,
+      "height": 13.333333015441895,
+      "relativeX": 1.3333333730697632,
+      "relativeY": 1.3333333730697632
+    },
+    "svg": "S5#0"
+  },
+  {
+    "id": "5:02613",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 85.4000015258789,
+      "height": 20,
+      "relativeX": 0,
+      "relativeY": 0
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "教⁠学⁠重⁠难⁠点",
+    "font": {
+      "family": "Noto Serif SC",
+      "size": 14,
+      "style": "SemiBold",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "20",
+      "letterSpacing": "auto",
+      "weight": "600"
+    }
+  },
+  {
+    "id": "5:02580",
+    "type": "FRAME",
+    "depth": 1,
+    "l": {
+      "width": 295,
+      "height": 105,
+      "relativeX": 20,
+      "relativeY": 49
+    }
+  },
+  {
+    "id": "5:02587",
+    "type": "TEXT",
+    "depth": 5,
+    "l": {
+      "width": 36,
+      "height": 17,
+      "relativeX": -6,
+      "relativeY": 0
+    },
+    "paint": [
+      "#C45C5C"
+    ],
+    "text": "重点",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 12,
+      "style": "Medium",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "16",
+      "letterSpacing": "auto",
+      "weight": "500"
+    }
+  },
+  {
+    "id": "5:02591",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 117.5,
+      "height": 48,
+      "relativeX": 12,
+      "relativeY": 36
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "景泰蓝工艺流程的理解与记忆，色彩搭配的审美原则",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 12,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "16",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  },
+  {
+    "id": "5:02600",
+    "type": "TEXT",
+    "depth": 5,
+    "l": {
+      "width": 36,
+      "height": 17,
+      "relativeX": -6,
+      "relativeY": 0
+    },
+    "paint": [
+      "#000000"
+    ],
+    "text": "难点",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 12,
+      "style": "Medium",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "16",
+      "letterSpacing": "auto",
+      "weight": "500"
+    }
+  },
+  {
+    "id": "5:02607",
+    "type": "TEXT",
+    "depth": 3,
+    "l": {
+      "width": 117.5,
+      "height": 48,
+      "relativeX": 12,
+      "relativeY": 36
+    },
+    "paint": [
+      "#4A3A3A"
+    ],
+    "text": "掐丝技法的精细操作，传统纹样的文化内涵解读",
+    "font": {
+      "family": "Noto Sans SC",
+      "size": 12,
+      "style": "Regular",
+      "decoration": "none",
+      "case": "none",
+      "lineHeight": "16",
+      "letterSpacing": "auto",
+      "weight": "400"
+    }
+  }
+]

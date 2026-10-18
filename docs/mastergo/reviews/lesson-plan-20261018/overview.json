@@ -1,0 +1,645 @@
+{
+  "sections": [
+    {
+      "id": "5:02838",
+      "name": "组 5131",
+      "type": "FRAME",
+      "nodeCount": 36,
+      "x": 0,
+      "y": 9,
+      "width": 375,
+      "height": 183,
+      "textPreview": "智⁠能⁠备⁠课⁠·⁠工⁠坊",
+      "containerId": "5:02352",
+      "structureSiblingCount": 1
+    },
+    {
+      "id": "5:02715",
+      "name": "组 5147",
+      "type": "FRAME",
+      "nodeCount": 31,
+      "x": 20,
+      "y": 192,
+      "width": 335,
+      "height": 404,
+      "textPreview": "选择学段",
+      "containerId": "5:02358",
+      "structureSiblingCount": 1
+    },
+    {
+      "id": "5:02521",
+      "name": "组 5163",
+      "type": "FRAME",
+      "nodeCount": 20,
+      "x": 20,
+      "y": 620,
+      "width": 335,
+      "height": 74,
+      "textPreview": "景泰蓝工艺鉴赏",
+      "containerId": "5:02359",
+      "structureSiblingCount": 1
+    },
+    {
+      "id": "5:02563",
+      "name": "组 5212",
+      "type": "FRAME",
+      "nodeCount": 8,
+      "x": 24,
+      "y": 1479,
+      "width": 327,
+      "height": 48,
+      "textPreview": "导出PPT课件",
+      "containerId": "5:02358",
+      "structureSiblingCount": 1
+    },
+    {
+      "id": "5:02360",
+      "name": "组 5173",
+      "type": "FRAME",
+      "nodeCount": 24,
+      "x": 20,
+      "y": 694,
+      "width": 335,
+      "height": 213,
+      "textPreview": "教⁠学⁠目⁠标",
+      "containerId": "5:02359",
+      "structureSiblingCount": 1
+    },
+    {
+      "id": "5:02579",
+      "name": "组 5185",
+      "type": "FRAME",
+      "nodeCount": 20,
+      "x": 20,
+      "y": 907,
+      "width": 335,
+      "height": 161,
+      "textPreview": "教⁠学⁠重⁠难⁠点",
+      "containerId": "5:02359",
+      "structureSiblingCount": 1
+    },
+    {
+      "id": "5:02409",
+      "name": "组 5197",
+      "type": "FRAME",
+      "nodeCount": 41,
+      "x": 20,
+      "y": 1077,
+      "width": 335,
+      "height": 386,
+      "textPreview": "课⁠堂⁠讲⁠稿",
+      "containerId": "5:02359",
+      "structureSiblingCount": 1
+    },
+    {
+      "id": "5:02620",
+      "name": "组 5215",
+      "type": "FRAME",
+      "nodeCount": 41,
+      "x": 20,
+      "y": 1551,
+      "width": 335,
+      "height": 330,
+      "textPreview": "历史备课记录",
+      "containerId": "5:02358",
+      "structureSiblingCount": 1
+    },
+    {
+      "id": "5:02785",
+      "name": "组 5238",
+      "type": "FRAME",
+      "nodeCount": 32,
+      "x": 20,
+      "y": 1905,
+      "width": 335,
+      "height": 219,
+      "textPreview": "推荐模板",
+      "containerId": "5:02358",
+      "structureSiblingCount": 1
+    },
+    {
+      "id": "5:02353",
+      "name": "组 5252",
+      "type": "FRAME",
+      "nodeCount": 1,
+      "x": 0,
+      "y": 672,
+      "width": 375,
+      "height": 4,
+      "containerId": "5:02358",
+      "structureSiblingCount": 1
+    }
+  ],
+  "totalSections": 10,
+  "totalNodes": 254,
+  "allTexts": [
+    "智⁠能⁠备⁠课⁠·⁠工⁠坊",
+    "非遗文化 · 一键生成教案与课件",
+    "匠心",
+    "备课",
+    "选择学段",
+    "请选择学段",
+    "非遗主题",
+    "请选择非遗主题",
+    "生⁠成⁠教⁠案⁠与⁠课⁠件",
+    "课⁠程⁠配⁠置",
+    "正在生成中...",
+    "景泰蓝工艺鉴赏",
+    "高⁠中⁠ ⁠·⁠ ⁠美⁠术⁠鉴⁠赏⁠ ⁠·⁠ ⁠2⁠课⁠时",
+    "已⁠生⁠成",
+    "导出PPT课件",
+    "教⁠学⁠目⁠标",
+    "1",
+    "了解景泰蓝的历史渊源与发展脉络，认识其\n在中华传统工艺中的重要地位",
+    "2",
+    "掌握景泰蓝\"掐丝、点蓝、烧蓝、磨光、镀金\"五大核心工艺技法",
+    "3",
+    "培养学生的审美鉴赏能力，激发对非物质文化遗产的保护与传承意识",
+    "教⁠学⁠重⁠难⁠点",
+    "重点",
+    "景泰蓝工艺流程的理解与记忆，色彩搭配的审美原则",
+    "难点",
+    "掐丝技法的精细操作，传统纹样的文化内涵解读",
+    "课⁠堂⁠讲⁠稿",
+    "【导入】",
+    "同学们，今天我们要走进一项被",
+    "誉为\"东方艺术珍宝\"的传统工艺——景泰蓝。",
+    "请大家先看这件国宝级文物：明代的\"景泰蓝缠",
+    "枝莲纹出戟觚\"。",
+    "【新课讲授】",
+    "景泰蓝，学名\"铜胎掐丝珐",
+    "琅\"，起源于元代，盛于明代景泰年间，因以蓝",
+    "色釉料为主而得名。它的制作工艺极为繁复，",
+    "需经过制胎、掐丝、点蓝、烧蓝、磨光、镀金",
+    "六道工序。",
+    "【互动环节】",
+    "请同学们观察手中的景泰蓝",
+    "纹样样本，思考：这些缠枝莲纹、回纹、云纹",
+    "分别有什么吉祥寓意？",
+    "【总结】",
+    "景泰蓝不仅是一件工艺品，更是",
+    "中华文明智慧的结晶。2006年，景泰蓝制作技",
+    "艺被列入首批国家级非物质文化遗产名录。",
+    "展⁠开⁠完⁠整⁠讲⁠稿",
+    "历史备课记录",
+    "查⁠看⁠全⁠部",
+    "苏",
+    "苏绣针法入门",
+    "初中 · 2024.01.15",
+    "已完成",
+    "剪",
+    "剪纸艺术与民俗",
+    "小学 · 2024.01.12",
+    "已导出",
+    "皮",
+    "皮影戏造型艺术",
+    "高中 · 2024.01.08",
+    "推荐模板",
+    "古琴鉴赏",
+    "大学 · 音乐系",
+    "陶瓷文化",
+    "高中 · 美术",
+    "京剧脸谱",
+    "小学 · 综合实践"
+  ],
+  "rootMetadata": {
+    "width": 375,
+    "height": 2155,
+    "name": "组 5130",
+    "type": "FRAME",
+    "fill": "paint_5:02349",
+    "styles": {
+      "paint_5:02349": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/5576fb521ca134e55c7ca0d481dcc303.png"
+          }
+        ]
+      },
+      "paint_5:02354": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/a2aef60c7c74fe0b299c150a0b28d1a9.webp"
+          }
+        ]
+      },
+      "paint_5:02356": {
+        "value": [
+          "#000000"
+        ]
+      },
+      "paint_5:8659": {
+        "value": [
+          "#C45C5C"
+        ]
+      },
+      "paint_5:8798": {
+        "value": [
+          "#D4A574"
+        ]
+      },
+      "paint_5:02844": {
+        "value": [
+          "#CDB0AE"
+        ]
+      },
+      "paint_5:02368": {
+        "value": [
+          "#4A3A3A"
+        ]
+      },
+      "paint_5:02416": {
+        "value": [
+          "#8B7B7B"
+        ]
+      },
+      "paint_5:8667": {
+        "value": [
+          "#C45C5C"
+        ]
+      },
+      "paint_5:9339": {
+        "value": [
+          "rgba(196, 92, 92, 0.3)"
+        ]
+      },
+      "paint_5:02855": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/ac2d01a4d3d41efeeb1817d453f2e6e4.png"
+          }
+        ]
+      },
+      "paint_5:02858": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/a8b05b5d1f72acac33084e8d6e376019.png"
+          }
+        ]
+      },
+      "paint_5:4713": {
+        "value": [
+          "rgba(240, 230, 208, 0.8)"
+        ]
+      },
+      "paint_5:4715": {
+        "value": [
+          "rgba(245, 232, 184, 0.5)"
+        ]
+      },
+      "effect_5:4717": {
+        "value": [
+          "backdrop-filter: blur(4px);"
+        ]
+      },
+      "paint_5:4722": {
+        "value": [
+          "#4A4238"
+        ]
+      },
+      "paint_7:4814": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/a2aef60c7c74fe0b299c150a0b28d1a9.webp"
+          }
+        ]
+      },
+      "paint_5:02716": {
+        "value": [
+          "#FFF9F9"
+        ]
+      },
+      "effect_5:8673": {
+        "value": [
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+          "box-shadow: 0px 4px 20px 0px rgba(196, 92, 92, 0.08);"
+        ]
+      },
+      "paint_5:02719": {
+        "value": [
+          "#FFFAFA"
+        ]
+      },
+      "paint_5:02556": {
+        "value": [
+          "#E8D0D0"
+        ]
+      },
+      "paint_5:02723": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/1300b6d5aa58073b885a353487d01eb4.png"
+          }
+        ]
+      },
+      "paint_5:02772": {
+        "value": [
+          "#9F7272"
+        ]
+      },
+      "effect_5:02774": {
+        "value": [
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+          "box-shadow: 0px 4px 16px 0px rgba(196, 92, 92, 0.3);",
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);"
+        ]
+      },
+      "paint_5:3844": {
+        "value": [
+          "#FFFFFF"
+        ]
+      },
+      "paint_5:4780": {
+        "value": [
+          "#FFFFFF"
+        ]
+      },
+      "paint_5:02758": {
+        "value": [
+          "rgba(149, 96, 96, 0.8)"
+        ]
+      },
+      "paint_5:02763": {
+        "value": [
+          "rgba(255, 255, 255, 0.9)"
+        ]
+      },
+      "paint_5:4846": {
+        "value": [
+          "rgba(255, 255, 255, 0.9)"
+        ]
+      },
+      "effect_5:02522": {
+        "value": [
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+          "box-shadow: 0px -4px 20px 0px rgba(196, 92, 92, 0.06);",
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);"
+        ]
+      },
+      "paint_5:02527": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/13c07cf8169b73c8580c93a099e5741f.png"
+          }
+        ]
+      },
+      "paint_5:02530": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/df3af37b8bc7923cf99c0f96d218b2d6.png"
+          }
+        ]
+      },
+      "paint_5:00484": {
+        "value": [
+          "#FFF0F0"
+        ]
+      },
+      "paint_5:02554": {
+        "value": [
+          "rgba(196, 92, 92, 0.06)"
+        ]
+      },
+      "effect_5:02564": {
+        "value": [
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+          "box-shadow: 0px 2px 12px 0px rgba(196, 92, 92, 0.12);",
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);"
+        ]
+      },
+      "paint_5:02361": {
+        "value": [
+          "rgba(232, 208, 208, 0.5)"
+        ]
+      },
+      "effect_5:3192": {
+        "value": []
+      },
+      "paint_5:02582": {
+        "value": [
+          "rgba(255, 240, 240, 0.5)"
+        ]
+      },
+      "paint_5:02596": {
+        "value": [
+          "rgba(240, 212, 176, 0.3)"
+        ]
+      },
+      "paint_5:8711": {
+        "value": [
+          "#D4A574"
+        ]
+      },
+      "paint_5:02604": {
+        "value": [
+          "#000000"
+        ]
+      },
+      "paint_5:02424": {
+        "value": [
+          "#8B7B7B"
+        ]
+      },
+      "paint_5:02419": {
+        "value": [
+          "rgba(232, 208, 208, 0.3)"
+        ]
+      },
+      "effect_5:02622": {
+        "value": [
+          "box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.04);",
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);"
+        ]
+      },
+      "paint_5:02674": {
+        "value": [
+          "rgba(196, 92, 92, 0.2)"
+        ]
+      },
+      "effect_5:02676": {
+        "value": [
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+          "box-shadow: 0px 4px 16px 0px rgba(196, 92, 92, 0.1);",
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);"
+        ]
+      },
+      "paint_5:8735": {
+        "value": [
+          "rgba(196, 92, 92, 0.1)"
+        ]
+      },
+      "paint_5:02627": {
+        "value": [
+          "rgba(240, 212, 176, 0.4)"
+        ]
+      }
+    },
+    "allTexts": [
+      "智⁠能⁠备⁠课⁠·⁠工⁠坊",
+      "非遗文化 · 一键生成教案与课件",
+      "匠心",
+      "备课",
+      "选择学段",
+      "请选择学段",
+      "非遗主题",
+      "请选择非遗主题",
+      "生⁠成⁠教⁠案⁠与⁠课⁠件",
+      "课⁠程⁠配⁠置",
+      "正在生成中...",
+      "景泰蓝工艺鉴赏",
+      "高⁠中⁠ ⁠·⁠ ⁠美⁠术⁠鉴⁠赏⁠ ⁠·⁠ ⁠2⁠课⁠时",
+      "已⁠生⁠成",
+      "导出PPT课件",
+      "教⁠学⁠目⁠标",
+      "1",
+      "了解景泰蓝的历史渊源与发展脉络，认识其\n在中华传统工艺中的重要地位",
+      "2",
+      "掌握景泰蓝\"掐丝、点蓝、烧蓝、磨光、镀金\"五大核心工艺技法",
+      "3",
+      "培养学生的审美鉴赏能力，激发对非物质文化遗产的保护与传承意识",
+      "教⁠学⁠重⁠难⁠点",
+      "重点",
+      "景泰蓝工艺流程的理解与记忆，色彩搭配的审美原则",
+      "难点",
+      "掐丝技法的精细操作，传统纹样的文化内涵解读",
+      "课⁠堂⁠讲⁠稿",
+      "【导入】",
+      "同学们，今天我们要走进一项被",
+      "誉为\"东方艺术珍宝\"的传统工艺——景泰蓝。",
+      "请大家先看这件国宝级文物：明代的\"景泰蓝缠",
+      "枝莲纹出戟觚\"。",
+      "【新课讲授】",
+      "景泰蓝，学名\"铜胎掐丝珐",
+      "琅\"，起源于元代，盛于明代景泰年间，因以蓝",
+      "色釉料为主而得名。它的制作工艺极为繁复，",
+      "需经过制胎、掐丝、点蓝、烧蓝、磨光、镀金",
+      "六道工序。",
+      "【互动环节】",
+      "请同学们观察手中的景泰蓝",
+      "纹样样本，思考：这些缠枝莲纹、回纹、云纹",
+      "分别有什么吉祥寓意？",
+      "【总结】",
+      "景泰蓝不仅是一件工艺品，更是",
+      "中华文明智慧的结晶。2006年，景泰蓝制作技",
+      "艺被列入首批国家级非物质文化遗产名录。",
+      "展⁠开⁠完⁠整⁠讲⁠稿",
+      "历史备课记录",
+      "查⁠看⁠全⁠部",
+      "苏",
+      "苏绣针法入门",
+      "初中 · 2024.01.15",
+      "已完成",
+      "剪",
+      "剪纸艺术与民俗",
+      "小学 · 2024.01.12",
+      "已导出",
+      "皮",
+      "皮影戏造型艺术",
+      "高中 · 2024.01.08",
+      "推荐模板",
+      "古琴鉴赏",
+      "大学 · 音乐系",
+      "陶瓷文化",
+      "高中 · 美术",
+      "京剧脸谱",
+      "小学 · 综合实践"
+    ]
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2155px",
+    "background": {
+      "url": "https://image-resource.mastergo.com/175711820692372/175711820692374/5576fb521ca134e55c7ca0d481dcc303.png"
+    },
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "splitContainers": [
+    {
+      "name": "组 5162",
+      "type": "FRAME",
+      "id": "5:02359",
+      "width": 335,
+      "height": 898,
+      "x": 20,
+      "y": 620
+    },
+    {
+      "name": "组 5146",
+      "type": "FRAME",
+      "id": "5:02358",
+      "width": 375,
+      "height": 1963,
+      "x": 0,
+      "y": 192,
+      "fill": "paint_7:4814",
+      "stroke": {
+        "strokeColor": "paint_5:02356",
+        "strokeType": "solid",
+        "strokeAlign": "inside"
+      }
+    },
+    {
+      "name": "组 6119",
+      "type": "GROUP",
+      "id": "5:02352",
+      "width": 375,
+      "height": 2146,
+      "x": 0,
+      "y": 9
+    },
+    {
+      "name": "组 6120",
+      "type": "GROUP",
+      "id": "5:02351",
+      "width": 375,
+      "height": 2146,
+      "x": 0,
+      "y": 9
+    },
+    {
+      "name": "容器 116",
+      "type": "FRAME",
+      "id": "40:55207",
+      "width": 375,
+      "height": 2146,
+      "x": 0,
+      "y": 9
+    },
+    {
+      "name": "组 14566",
+      "type": "GROUP",
+      "id": "40:55208",
+      "width": 375,
+      "height": 2146,
+      "x": 0,
+      "y": 9
+    }
+  ],
+  "nextAction": "STOP. This section LIST is only a directory — it has NO DSL nodes,  NO rowTexts. You CANNOT generate HTML from this list alone. Your NEXT ACTION: call mcp__getDesignSections with sectionIndex=0, then sectionIndex=1, ... up to sectionIndex=9 (total 10 calls). Fetch ALL 10 sections in batches of 3-5 before writing ANY HTML. Sections with nodeCount=3 and empty name are NOT empty — they contain real menu items and content (resolved from INSTANCE overrides during DSL transfer). Skipping section DSL fetch is the #1 cause of missing menus, broken icons, and wrong data.",
+  "rules": [
+    "CRITICAL — Page positioning: the section LIST response contains splitContainers with page-absolute coordinates for each page region. Use splitContainers to construct the page skeleton (position:absolute with exact coordinates). Do NOT guess or stack with flex. IMPORTANT: splitContainers x/y are the container's absolute position on the canvas — they are NOT CSS margins/padding for child elements. Do NOT apply a container's y coordinate as top/margin-top on the main content wrapper. The main content area should start at top:0 within its own positioning context; sub-sections inside it use their own bbox y coordinates relative to the container, not to the page root.",
+    "CRITICAL — Multi-column sidebar layout: render ALL sidebar levels as persistent visible columns positioned via splitContainers coordinates. Do NOT use position:absolute/fixed for submenu panels (they become floating overlays and break the main content width). Instead, lay out ALL columns (primary sidebar + submenu + main content) side-by-side using flex or absolute positioning that ACCOUNTS for every column's width. The main content area width = rootContainer.width minus ALL sidebar column widths. Do NOT use flex:1 for main content when there are multiple sidebar columns — it will expand into the submenu's space. Each sidebar column's width comes from its splitContainer entry.",
+    "token filed must be generated as a variable (colors, shadows, fonts, etc.) and the token field must be displayed in the comment",
+    "componentDocumentLinks is a list of frontend component documentation links. When it exists and is not empty, use mcp__getComponentLink to get the documentation.",
+    "",
+    "CRITICAL — SVG FROM PATH NODES (MUST FOLLOW): Every PATH node has a `svgShortKey` field (a short sequential ID like `S0#0`, `S0#1`). The SVG markup is NOT in the DSL. You MUST place a placeholder `@@SVG:{svgShortKey}@@` where each icon goes, then call `mcp__applyDesign` at the end to inject the real high-precision SVG. NEVER hand-write `<path d=\"...\">` — the DSL does NOT contain path data. NEVER leave a PATH node unrendered — every icon MUST have a `@@SVG:{svgShortKey}@@` placeholder.",
+    "CRITICAL — RENDER EVERY ICON IN PATH NODES: Every PATH node has a `svgShortKey`. Place `@@SVG:{svgShortKey}@@` for each — sidebar menu icons, table header sort/filter/search icons, pagination prev/next/refresh icons, and action buttons. A header cell or menu item showing only plain text is a fidelity defect. After ALL placeholders are placed, call `mcp__applyDesign` to replace them with real SVG.",
+    "",
+    "CRITICAL — _placeholder TEXT handling: TEXT nodes with `_placeholder: true` (name==text) are listed in `dsl.placeholderTexts`. These are component-library boilerplate — NOT real column headers, labels, or data. Do NOT render them as table headers, column names, or visible UI labels. They appear alongside real text in the same section (e.g. a header cell has both realTitle='用户名称' and placeholder='Hillstone Design') — render ONLY the real title, omit the placeholder. EXCEPTION: if a placeholder text is the SOLE text in its section AND it reads as a legitimate brand name or page title (e.g. '智源智能安全运营平台'), it may be real content — render it in its proper context (logo area, page title), never as a table header.",
+    "CRITICAL — CLOSED-SET TEXT: the section LIST response carries `rootMetadata.allTexts` — the complete whitelist of text strings in this design (including placeholder strings). Any visible string NOT in allTexts is a hallucination and MUST be removed. Use `dsl.placeholderTexts` in each section to identify which strings are component-library boilerplate.",
+    "",
+    "CRITICAL — INSTANCE fill color: when an INSTANCE has both `fill` and `_color`, use `_color` directly as the CSS value. Do NOT guess colors from _variantProps semantics.",
+    "CRITICAL — INSTANCE _variantProps: compare across siblings for selected/hovered/disabled. Active class MUST match DSL variant state, NOT a default index.",
+    "CRITICAL — Render count = structureSiblingCount: if ssc=1, that single instance IS complete — do NOT fabricate extra rows/items.",
+    "CRITICAL — BACKGROUND FROM splitContainers: splitContainers[].background IS the exact CSS background-color. Copy verbatim, no changes.",
+    "CRITICAL — FRAME/GROUP opacity: translate to rgba() on background only, NOT CSS opacity (would make children translucent).",
+    "CRITICAL — rowTexts: each entry has parentType/parentName for context and `_placeholder: true` if boilerplate. Use parentName to place text correctly; skip _placeholder entries. IMPORTANT: if a short numeric text (like '8') has parentName matching a button INSTANCE (e.g. '分类[a3]=文本按钮,类型[aI]=危险'), it is likely a badge/count indicator overlaid on that button — NOT part of the button label. Do NOT render it inside the button text; render it as a separate badge element positioned on the button corner, OR omit it if the design does not show a visible badge on that specific button instance.",
+    "Render ALL nodes recursively. Section root layoutStyle.width = section width. Do not call mcp__getDsl after completing section workflow.",
+    "CRITICAL — ICON-TO-NODE BINDING: match PATH nodes to their UI position by the node's ancestor name. A PATH node under a menu item belongs in that menu's icon slot; one under a button/refresh belongs in that button. NEVER substitute a memorized icon — use the exact `@@SVG:{svgShortKey}@@` from the PATH node in its section. NEVER reuse a svgShortKey from a different section.",
+    "CRITICAL — TEXT PROVENANCE SELF-CHECK: before finalizing output, verify every visible text string exists in allTexts. If you emit MORE distinct strings than allTexts.length, you are hallucinating. Typical hallucinations: fabricated table headers, invented data, brand tokens, generic labels not in the design.",
+    "CRITICAL — DO NOT SKIP SECTION DSL FETCH: the section LIST response is ONLY a directory (id/name/nodeCount/textPreview). It does NOT contain DSL nodes, rowTexts, or any rendering data. You CANNOT generate correct HTML from the list alone. You MUST call mcp__getDesignSections with sectionIndex=0, then 1, ... up to totalSections-1 to get each section's DSL. Generating HTML without fetching ALL section DSLs will produce missing content (menus, table data, icons) and incorrect SVGs — this is the #1 cause of broken output."
+  ]
+}

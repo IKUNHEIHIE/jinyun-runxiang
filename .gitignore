@@ -12,6 +12,8 @@ venv/
 # Build outputs
 dist/
 build/
+!admin-web/build/
+!admin-web/build/*.ts
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
@@ -34,3 +36,11 @@ admin-web-legacy/
 
 # Logs
 *.log
+
+# Local Android development data, credentials, evidence and generated artifacts
+.local/
+artifacts/
+user-web/android/local.properties
+user-web/android/.gradle/
+user-web/android/capacitor-cordova-android-plugins/
+user-web/android/app/src/main/assets/

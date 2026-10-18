@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { noticesData } from "./data";
 import NoticeList from "./components/NoticeList.vue";
 import BellIcon from "~icons/ep/bell";
 
 const noticesNum = ref(0);
-const notices = ref(noticesData);
-const activeKey = ref(noticesData[0]?.key);
+const notices = ref([]);
+const activeKey = ref("");
 
 notices.value.map(v => (noticesNum.value += v.list.length));
 

@@ -1,0 +1,185 @@
+{
+  "sectionIndex": 15,
+  "section": {
+    "id": "5:8141",
+    "name": "组 10404",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2862px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "effect_5:5816": {
+        "value": [
+          "box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);",
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);",
+          "box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);"
+        ]
+      },
+      "font_5:4244": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 14,
+          "style": "SemiBold",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "20",
+          "letterSpacing": "auto",
+          "weight": "600"
+        }
+      },
+      "paint_5:4780": {
+        "value": [
+          "#FFFFFF"
+        ]
+      },
+      "paint_5:7355": {
+        "value": [
+          "#5A7D4A"
+        ]
+      },
+      "paint_5:7363": {
+        "value": [
+          "#5A7D4A"
+        ]
+      },
+      "paint_5:8142": {
+        "value": [
+          "rgba(90, 125, 74, 0.3)"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:8141",
+        "name": "组 10404",
+        "layoutStyle": {
+          "width": 335,
+          "height": 52,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "fill": "paint_5:4780",
+        "_color": "#FFFFFF",
+        "strokeColor": "paint_5:8142",
+        "strokeType": "solid",
+        "strokeAlign": "inside",
+        "strokeWidth": "2px",
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:8147",
+            "name": "容器 27",
+            "layoutStyle": {
+              "width": 112,
+              "height": 20,
+              "relativeX": 99.5,
+              "relativeY": 16
+            },
+            "children": [
+              {
+                "type": "TEXT",
+                "id": "5:8148",
+                "name": "文本 72",
+                "layoutStyle": {
+                  "width": 120,
+                  "height": 20,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "fill": "paint_5:7363",
+                "_color": "#5A7D4A",
+                "text": [
+                  {
+                    "text": "浏览更多文创商品",
+                    "font": "font_5:4244"
+                  }
+                ],
+                "textColor": [
+                  {
+                    "start": 0,
+                    "end": 8,
+                    "color": "paint_5:7363"
+                  }
+                ],
+                "textAlign": "left",
+                "textMode": "single-line"
+              }
+            ]
+          },
+          {
+            "type": "FRAME",
+            "id": "5:8144",
+            "name": "组 10406",
+            "layoutStyle": {
+              "width": 16,
+              "height": 16,
+              "relativeX": 219.5,
+              "relativeY": 18
+            },
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:8145",
+                "name": "图标 25",
+                "layoutStyle": {
+                  "width": 16,
+                  "height": 16,
+                  "relativeX": 0,
+                  "relativeY": 0
+                },
+                "children": [
+                  {
+                    "type": "PATH",
+                    "id": "5:8146",
+                    "name": "组 59",
+                    "layoutStyle": {
+                      "width": 9.333333969116211,
+                      "height": 4.666666507720947,
+                      "relativeX": 3.3333334922790527,
+                      "relativeY": 5.999999523162842
+                    },
+                    "svgKey": "S15:图标 25|5:8146",
+                    "svgShortKey": "S15#0",
+                    "svgName": "图标 25"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "effect": "effect_5:5816",
+        "flexContainerInfo": {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "alignItems": "center",
+          "mainSizing": "fixed",
+          "crossSizing": "fixed",
+          "gap": "8px 8px",
+          "padding": "14px 0px"
+        },
+        "borderRadius": "16px"
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "浏览更多文创商品",
+        "parentType": "FRAME",
+        "parentName": "容器 27"
+      }
+    ]
+  },
+  "nodeCount": 6,
+  "svgNodeCount": 1,
+  "hasStrippedSvgs": true,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 16/20. MISSING 4 sections: [16,17,18,19]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

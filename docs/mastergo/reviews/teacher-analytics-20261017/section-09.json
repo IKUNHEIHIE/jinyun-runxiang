@@ -1,0 +1,112 @@
+{
+  "sectionIndex": 9,
+  "section": {
+    "id": "5:4469",
+    "name": "组 4133",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2665px",
+    "background": "rgba(128, 24, 24, 0.2)",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "effect_5:3192": {
+        "value": []
+      },
+      "font_5:3213": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 12,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "16",
+          "letterSpacing": "auto",
+          "weight": "400"
+        }
+      },
+      "paint_5:3878": {
+        "value": [
+          "#8B6B6B"
+        ]
+      },
+      "paint_5:3881": {
+        "value": [
+          "#FCE8E8"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:4469",
+        "name": "组 4133",
+        "layoutStyle": {
+          "width": 293,
+          "height": 41,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "LAYER",
+            "id": "5:4470",
+            "name": "矩形 4",
+            "layoutStyle": {
+              "width": 293,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "fill": "paint_5:3881",
+            "_color": "#FCE8E8",
+            "effect": "effect_5:3192"
+          },
+          {
+            "type": "TEXT",
+            "id": "5:4471",
+            "name": "文本 21",
+            "layoutStyle": {
+              "width": 167.0399932861328,
+              "height": 17,
+              "relativeX": 62.97999954223633,
+              "relativeY": 21.5
+            },
+            "fill": "paint_5:3878",
+            "_color": "#8B6B6B",
+            "text": [
+              {
+                "text": "共 42 名学生 · 平均进度 87%",
+                "font": "font_5:3213"
+              }
+            ],
+            "textColor": [
+              {
+                "start": 0,
+                "end": 19,
+                "color": "paint_5:3878"
+              }
+            ],
+            "textAlign": "center",
+            "textMode": "single-line"
+          }
+        ]
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "共 42 名学生 · 平均进度 87%",
+        "parentType": "FRAME",
+        "parentName": "组 4133"
+      }
+    ]
+  },
+  "nodeCount": 3,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 10/28. MISSING 18 sections: [10,11,12,13,14,15,16,17,18,19... +8 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

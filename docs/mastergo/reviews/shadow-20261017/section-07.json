@@ -1,0 +1,76 @@
+{
+  "sectionIndex": 7,
+  "section": {
+    "id": "5:3673",
+    "name": "文本 6",
+    "type": "TEXT"
+  },
+  "rootContainer": {
+    "width": "446px",
+    "minHeight": "2325px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_5:3676": {
+        "value": {
+          "family": "Ma Shan Zheng",
+          "size": 48,
+          "style": "Regular",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "60",
+          "letterSpacing": "auto",
+          "weight": "400"
+        }
+      },
+      "paint_5:3678": {
+        "value": [
+          "#A8800F"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "TEXT",
+        "id": "5:3673",
+        "name": "文本 6",
+        "layoutStyle": {
+          "width": 159.413818359375,
+          "height": 48,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "fill": "paint_5:3678",
+        "_color": "#A8800F",
+        "text": [
+          {
+            "text": "AI皮影",
+            "font": "font_5:3676"
+          }
+        ],
+        "textColor": [
+          {
+            "start": 0,
+            "end": 4,
+            "color": "paint_5:3678"
+          }
+        ],
+        "textAlign": "left",
+        "textMode": "single-line"
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "AI皮影"
+      }
+    ]
+  },
+  "nodeCount": 1,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 8/31. MISSING 23 sections: [8,9,10,11,12,13,14,15,16,17... +13 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

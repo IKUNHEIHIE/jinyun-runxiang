@@ -1,0 +1,139 @@
+{
+  "sectionIndex": 4,
+  "section": {
+    "id": "5:3637",
+    "name": "组 7469",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "446px",
+    "minHeight": "2325px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_5:3643": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 10,
+          "style": "Bold",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "15",
+          "letterSpacing": "-0.8999999761581421px",
+          "weight": "700"
+        }
+      },
+      "paint_5:3236": {
+        "value": [
+          "rgba(201, 168, 76, 0.4)"
+        ]
+      },
+      "paint_5:3645": {
+        "value": [
+          "#99854B"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:3637",
+        "name": "组 7469",
+        "layoutStyle": {
+          "width": 275.1569519042969,
+          "height": 33,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:3638",
+            "name": "容器 1",
+            "layoutStyle": {
+              "width": 51.689998626708984,
+              "height": 33,
+              "relativeX": 0,
+              "relativeY": 0
+            },
+            "children": [
+              {
+                "type": "FRAME",
+                "id": "5:3639",
+                "name": "组 7470",
+                "layoutStyle": {
+                  "width": 51.689998626708984,
+                  "height": 25,
+                  "relativeX": 0,
+                  "relativeY": 8
+                },
+                "strokeColor": "paint_5:3236",
+                "strokeType": "solid",
+                "strokeAlign": "inside",
+                "strokeWidth": "1px",
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "id": "5:3640",
+                    "name": "文本 5",
+                    "layoutStyle": {
+                      "width": 33.68000030517578,
+                      "height": 10,
+                      "relativeX": 9,
+                      "relativeY": 4.5
+                    },
+                    "fill": "paint_5:3645",
+                    "_color": "#99854B",
+                    "text": [
+                      {
+                        "text": "AI赋能",
+                        "font": "font_5:3643"
+                      }
+                    ],
+                    "textColor": [
+                      {
+                        "start": 0,
+                        "end": 4,
+                        "color": "paint_5:3645"
+                      }
+                    ],
+                    "textAlign": "left",
+                    "textMode": "single-line"
+                  }
+                ],
+                "borderRadius": "4px"
+              }
+            ],
+            "flexContainerInfo": {
+              "flexDirection": "row",
+              "mainSizing": "fixed",
+              "crossSizing": "fixed",
+              "padding": "8px 0px 0px"
+            }
+          }
+        ],
+        "flexContainerInfo": {
+          "flexDirection": "row",
+          "mainSizing": "fixed",
+          "crossSizing": "fixed",
+          "gap": "8px 8px"
+        }
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "AI赋能",
+        "parentType": "FRAME",
+        "parentName": "组 7470"
+      }
+    ]
+  },
+  "nodeCount": 4,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 5/31. MISSING 26 sections: [5,6,7,8,9,10,11,12,13,14... +16 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

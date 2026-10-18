@@ -6,11 +6,15 @@ class ApiClient {
 
   late final Dio dio;
   String? _token;
+  int? userId;
+  void Function()? onUnauthorized;
+  String? roleCode;
+  static const apiBaseUrl = String.fromEnvironment('API_BASE_URL');
 
   ApiClient._internal() {
     dio = Dio(
       BaseOptions(
-        baseUrl: 'http://127.0.0.1:8000/api',
+        baseUrl: apiBaseUrl,
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 15),
         headers: {
@@ -29,6 +33,10 @@ class ApiClient {
           return handler.next(options);
         },
         onError: (DioException e, handler) {
+          if (e.response?.statusCode == 401) {
+            clearToken();
+            onUnauthorized?.call();
+          }
           // 统一错误处理与弱网映射
           return handler.next(e);
         },
@@ -36,11 +44,15 @@ class ApiClient {
     );
   }
 
-  void setToken(String token) {
+  void setToken(String token, int id, String role) {
     _token = token;
+    userId = id;
+    roleCode = role;
   }
 
   void clearToken() {
     _token = null;
+    userId = null;
+    roleCode = null;
   }
 }

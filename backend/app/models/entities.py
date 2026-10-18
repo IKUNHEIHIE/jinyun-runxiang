@@ -1,8 +1,7 @@
-import json
 from datetime import datetime
 from sqlalchemy import (
     Column, BigInteger, Integer, String, Text, DateTime,
-    Boolean, JSON, Numeric, ForeignKey
+    Boolean, JSON, Numeric, UniqueConstraint, Index
 )
 from app.core.database import Base
 
@@ -12,6 +11,7 @@ class SysUser(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     username = Column(String(64), unique=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
+    token_version = Column(Integer, nullable=False, default=0)
     nickname = Column(String(64), nullable=False)
     avatar_url = Column(String(500))
     role_code = Column(String(32), default="STUDENT", nullable=False)
@@ -40,6 +40,7 @@ class UserGrowth(Base):
 
 class GrowthEvent(Base):
     __tablename__ = "growth_event"
+    __table_args__ = (UniqueConstraint("user_id", "event_type", "ref_id", name="uk_event_ref"),)
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     user_id = Column(BigInteger, nullable=False)
     event_type = Column(String(32), nullable=False)
@@ -59,6 +60,7 @@ class Badge(Base):
 
 class UserBadge(Base):
     __tablename__ = "user_badge"
+    __table_args__ = (UniqueConstraint("user_id", "badge_id", name="uk_user_badge"),)
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     user_id = Column(BigInteger, nullable=False)
     badge_id = Column(BigInteger, nullable=False)
@@ -307,6 +309,7 @@ class Assignment(Base):
     description = Column(Text, nullable=False)
     rubric_json = Column(JSON)
     status = Column(String(16), default="PUBLISHED")
+    contest_id = Column(BigInteger)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 class AssignmentSubmission(Base):
@@ -329,6 +332,43 @@ class AssignmentReview(Base):
     comment = Column(Text)
     ai_suggestion_json = Column(JSON)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+class Contest(Base):
+    __tablename__ = "contest"
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    teacher_id = Column(BigInteger, nullable=False)
+    title = Column(String(128), nullable=False)
+    description = Column(Text, nullable=False)
+    tool_type = Column(String(32))
+    home_class_id = Column(BigInteger, nullable=False)
+    away_class_id = Column(BigInteger, nullable=False)
+    home_assignment_id = Column(BigInteger)
+    away_assignment_id = Column(BigInteger)
+    round_no = Column(Integer, nullable=False, default=1)
+    scoring_mode = Column(String(16), nullable=False, default="TOTAL")
+    deadline = Column(DateTime, nullable=False)
+    status = Column(String(16), nullable=False, default="OPEN")
+    result_json = Column(JSON)
+    published_at = Column(DateTime)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    __table_args__ = (
+        Index("idx_contest_teacher_status", "teacher_id", "status"),
+        Index("idx_contest_classes", "home_class_id", "away_class_id"),
+    )
+
+class ContestEntry(Base):
+    __tablename__ = "contest_entry"
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    contest_id = Column(BigInteger, nullable=False)
+    class_id = Column(BigInteger, nullable=False)
+    student_id = Column(BigInteger, nullable=False)
+    assignment_id = Column(BigInteger, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    __table_args__ = (
+        UniqueConstraint("contest_id", "student_id", name="uk_contest_student"),
+        Index("idx_contest_entry_student", "student_id"),
+        Index("idx_contest_entry_contest_class", "contest_id", "class_id"),
+    )
 
 # 6. 活动与文旅地标
 class HeritageLandmark(Base):
@@ -370,6 +410,7 @@ class ActivityReservation(Base):
 
 class ActivityCheckin(Base):
     __tablename__ = "activity_checkin"
+    __table_args__ = (Index("idx_user_landmark", "user_id", "landmark_id"),)
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     activity_id = Column(BigInteger)
     landmark_id = Column(BigInteger, nullable=False)
@@ -377,6 +418,8 @@ class ActivityCheckin(Base):
     latitude = Column(Numeric(10, 6), nullable=False)
     longitude = Column(Numeric(10, 6), nullable=False)
     distance_meters = Column(Integer, nullable=False)
+    location_accuracy_meters = Column(Numeric(10, 2))
+    geofence_status = Column(String(16))
     checked_at = Column(DateTime, default=datetime.utcnow)
 
 # 7. 电商助农与基金
@@ -404,6 +447,7 @@ class OrderMain(Base):
     __tablename__ = "order_main"
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     order_no = Column(String(64), unique=True, nullable=False)
+    client_request_id = Column(String(64), unique=True)
     user_id = Column(BigInteger, nullable=False)
     total_amount_cents = Column(Integer, default=0)
     fund_amount_cents = Column(Integer, default=0)
@@ -413,6 +457,19 @@ class OrderMain(Base):
     receiver_address = Column(String(255))
     pay_time = Column(DateTime)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+class OrderItem(Base):
+    __tablename__ = "order_item"
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    order_id = Column(BigInteger, nullable=False, index=True)
+    product_id = Column(BigInteger, nullable=False)
+    sku_id = Column(BigInteger, nullable=False)
+    product_name = Column(String(128), nullable=False)
+    sku_name = Column(String(128), nullable=False)
+    price_cents = Column(Integer, nullable=False)
+    quantity = Column(Integer, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
 
 class FundRecord(Base):
     __tablename__ = "fund_record"

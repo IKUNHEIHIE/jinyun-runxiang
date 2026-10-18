@@ -1,0 +1,76 @@
+{
+  "sectionIndex": 24,
+  "section": {
+    "id": "5:3438",
+    "name": "文本 56",
+    "type": "TEXT"
+  },
+  "rootContainer": {
+    "width": "446px",
+    "minHeight": "2325px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "font_5:3427": {
+        "value": {
+          "family": "Noto Serif SC",
+          "size": 14,
+          "style": "Bold",
+          "decoration": "none",
+          "case": "none",
+          "lineHeight": "20",
+          "letterSpacing": "2.240000009536743px",
+          "weight": "700"
+        }
+      },
+      "paint_5:3215": {
+        "value": [
+          "#2C1810"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "TEXT",
+        "id": "5:3438",
+        "name": "文本 56",
+        "layoutStyle": {
+          "width": 284.48431396484375,
+          "height": 20,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "fill": "paint_5:3215",
+        "_color": "#2C1810",
+        "text": [
+          {
+            "text": "汉⁠代⁠起⁠源",
+            "font": "font_5:3427"
+          }
+        ],
+        "textColor": [
+          {
+            "start": 0,
+            "end": 7,
+            "color": "paint_5:3215"
+          }
+        ],
+        "textAlign": "left",
+        "textMode": "single-line"
+      }
+    ],
+    "components": [],
+    "rowTexts": [
+      {
+        "text": "汉⁠代⁠起⁠源"
+      }
+    ]
+  },
+  "nodeCount": 1,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 25/31. MISSING 6 sections: [25,26,27,28,29,30]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

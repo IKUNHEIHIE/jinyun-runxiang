@@ -1,0 +1,299 @@
+{
+  "sectionIndex": 2,
+  "section": {
+    "id": "5:8153",
+    "name": "组 10263",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "2862px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 1,
+  "dsl": {
+    "styles": {
+      "paint_5:7314": {
+        "value": [
+          "#C4A35A"
+        ]
+      },
+      "paint_5:7363": {
+        "value": [
+          "#5A7D4A"
+        ]
+      },
+      "paint_5:7798": {
+        "value": [
+          "#D4B76A"
+        ]
+      },
+      "paint_5:8155": {
+        "value": [
+          "#7A9D6A"
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "5:8153",
+        "name": "组 10263",
+        "layoutStyle": {
+          "width": 375,
+          "height": 707,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "children": [
+          {
+            "type": "FRAME",
+            "id": "5:8157",
+            "name": "组 10264",
+            "layoutStyle": {
+              "width": 3.880000114440918,
+              "height": 3.880000114440918,
+              "relativeX": 47.029998779296875,
+              "relativeY": -12.859999656677246
+            },
+            "opacity": 0.7180190086364746,
+            "fill": "paint_5:7798",
+            "_color": "rgba(212, 183, 106, 0.72)",
+            "children": [],
+            "borderRadius": "2px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:8165",
+            "name": "组 10265",
+            "layoutStyle": {
+              "width": 6.130000114440918,
+              "height": 6.130000114440918,
+              "relativeX": 352.8500061035156,
+              "relativeY": 80.30999755859375
+            },
+            "opacity": 0.6901310086250305,
+            "fill": "paint_5:7798",
+            "_color": "rgba(212, 183, 106, 0.69)",
+            "children": [],
+            "borderRadius": "9999px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:8169",
+            "name": "组 10266",
+            "layoutStyle": {
+              "width": 6.96999979019165,
+              "height": 6.96999979019165,
+              "relativeX": 313.989990234375,
+              "relativeY": 293.2300109863281
+            },
+            "opacity": 0.6127259731292725,
+            "fill": "paint_5:7798",
+            "_color": "rgba(212, 183, 106, 0.61)",
+            "children": [],
+            "borderRadius": "2px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:8163",
+            "name": "组 10267",
+            "layoutStyle": {
+              "width": 6.360000133514404,
+              "height": 6.360000133514404,
+              "relativeX": 198.92999267578125,
+              "relativeY": 95.37000274658203
+            },
+            "opacity": 0.41907799243927,
+            "fill": "paint_5:8155",
+            "_color": "rgba(122, 157, 106, 0.42)",
+            "children": [],
+            "borderRadius": "9999px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:8166",
+            "name": "组 10268",
+            "layoutStyle": {
+              "width": 8.25,
+              "height": 8.25,
+              "relativeX": 275.04998779296875,
+              "relativeY": 147.32000732421875
+            },
+            "opacity": 0.6017760038375854,
+            "fill": "paint_5:7798",
+            "_color": "rgba(212, 183, 106, 0.6)",
+            "children": [],
+            "borderRadius": "2px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:8164",
+            "name": "组 10269",
+            "layoutStyle": {
+              "width": 6.800000190734863,
+              "height": 6.800000190734863,
+              "relativeX": 56.04999923706055,
+              "relativeY": 300.1000061035156
+            },
+            "opacity": 0.328000009059906,
+            "fill": "paint_5:7314",
+            "_color": "rgba(196, 163, 90, 0.33)",
+            "children": [],
+            "borderRadius": "2px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:8168",
+            "name": "组 10270",
+            "layoutStyle": {
+              "width": 8.050000190734863,
+              "height": 8.050000190734863,
+              "relativeX": 151.75999450683594,
+              "relativeY": 193.6699981689453
+            },
+            "opacity": 0.7408329844474792,
+            "fill": "paint_5:7798",
+            "_color": "rgba(212, 183, 106, 0.74)",
+            "children": [],
+            "borderRadius": "9999px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:8167",
+            "name": "组 10271",
+            "layoutStyle": {
+              "width": 3.2200000286102295,
+              "height": 3.2200000286102295,
+              "relativeX": 116.5999984741211,
+              "relativeY": 475.3699951171875
+            },
+            "opacity": 0.671118974685669,
+            "fill": "paint_5:8155",
+            "_color": "rgba(122, 157, 106, 0.67)",
+            "children": [],
+            "borderRadius": "2px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:8170",
+            "name": "组 10272",
+            "layoutStyle": {
+              "width": 3.2200000286102295,
+              "height": 3.2200000286102295,
+              "relativeX": 8.729999542236328,
+              "relativeY": 140.6999969482422
+            },
+            "opacity": 0.6617029905319214,
+            "fill": "paint_5:7798",
+            "_color": "rgba(212, 183, 106, 0.66)",
+            "children": [],
+            "borderRadius": "9999px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:8161",
+            "name": "组 10273",
+            "layoutStyle": {
+              "width": 3.7799999713897705,
+              "height": 3.7799999713897705,
+              "relativeX": 315.5,
+              "relativeY": -9.34000015258789
+            },
+            "opacity": 0.6821630001068115,
+            "fill": "paint_5:8155",
+            "_color": "rgba(122, 157, 106, 0.68)",
+            "children": [],
+            "borderRadius": "9999px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:8160",
+            "name": "组 10274",
+            "layoutStyle": {
+              "width": 4.730000019073486,
+              "height": 4.730000019073486,
+              "relativeX": 125.41999816894531,
+              "relativeY": -4.039999961853027
+            },
+            "opacity": 0.7008110284805298,
+            "fill": "paint_5:7363",
+            "_color": "rgba(90, 125, 74, 0.7)",
+            "children": [],
+            "borderRadius": "2px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:8162",
+            "name": "组 10275",
+            "layoutStyle": {
+              "width": 5.329999923706055,
+              "height": 5.329999923706055,
+              "relativeX": 101.33999633789062,
+              "relativeY": 187.6999969482422
+            },
+            "opacity": 0.5496990084648132,
+            "fill": "paint_5:7798",
+            "_color": "rgba(212, 183, 106, 0.55)",
+            "children": [],
+            "borderRadius": "2px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:8154",
+            "name": "组 10276",
+            "layoutStyle": {
+              "width": 3.630000114440918,
+              "height": 3.630000114440918,
+              "relativeX": 94.37000274658203,
+              "relativeY": 102.62000274658203
+            },
+            "opacity": 0.48266100883483887,
+            "fill": "paint_5:8155",
+            "_color": "rgba(122, 157, 106, 0.48)",
+            "children": [],
+            "borderRadius": "2px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:8159",
+            "name": "组 10277",
+            "layoutStyle": {
+              "width": 8.420000076293945,
+              "height": 8.420000076293945,
+              "relativeX": 283.17999267578125,
+              "relativeY": 204.9499969482422
+            },
+            "opacity": 0.3429790139198303,
+            "fill": "paint_5:7798",
+            "_color": "rgba(212, 183, 106, 0.34)",
+            "children": [],
+            "borderRadius": "2px"
+          },
+          {
+            "type": "FRAME",
+            "id": "5:8158",
+            "name": "组 10278",
+            "layoutStyle": {
+              "width": 3.5299999713897705,
+              "height": 3.5299999713897705,
+              "relativeX": 49.209999084472656,
+              "relativeY": 93.61000061035156
+            },
+            "opacity": 0.4421730041503906,
+            "fill": "paint_5:7798",
+            "_color": "rgba(212, 183, 106, 0.44)",
+            "children": [],
+            "borderRadius": "2px"
+          }
+        ]
+      }
+    ],
+    "components": []
+  },
+  "nodeCount": 16,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 3/20. MISSING 17 sections: [3,4,5,6,7,8,9,10,11,12... +7 more]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

@@ -1,0 +1,56 @@
+{
+  "sectionIndex": 4,
+  "section": {
+    "id": "40:46924",
+    "name": "图片 9",
+    "type": "FRAME"
+  },
+  "rootContainer": {
+    "width": "375px",
+    "minHeight": "1866px",
+    "background": "transparent",
+    "overflow": "hidden",
+    "position": "relative"
+  },
+  "structureSiblingCount": 2,
+  "dsl": {
+    "styles": {
+      "paint_40:34491": {
+        "value": [
+          "#4A7C6F"
+        ]
+      },
+      "paint_40:38604": {
+        "value": [
+          {
+            "url": "https://image-resource.mastergo.com/175711820692373/175711820692375/f0cbd2ca40a01e40b141b8ba8b3b6996.png"
+          }
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "type": "FRAME",
+        "id": "40:46924",
+        "name": "图片 9",
+        "layoutStyle": {
+          "width": 12,
+          "height": 32,
+          "relativeX": 0,
+          "relativeY": 0
+        },
+        "opacity": 0.5,
+        "fill": "paint_40:38604",
+        "strokeColor": "paint_40:34491",
+        "strokeType": "solid",
+        "strokeAlign": "inside",
+        "strokeWidth": "0px 2px 2px 0px",
+        "children": []
+      }
+    ],
+    "components": []
+  },
+  "nodeCount": 1,
+  "componentDocumentLinks": [],
+  "fetchProgress": "Fetched 5/7. MISSING 2 sections: [5,6]. You MUST fetch ALL remaining sections before generating HTML. Do NOT stop early."
+}

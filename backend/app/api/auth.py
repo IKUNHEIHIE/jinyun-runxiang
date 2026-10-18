@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
 from typing import Optional
@@ -14,19 +14,19 @@ from app.models.entities import SysUser, UserProfile, UserGrowth, Badge, UserBad
 router = APIRouter(prefix="/auth", tags=["认证与授权"])
 
 class LoginRequest(BaseModel):
-    username: str
-    password: str
+    username: str = Field(..., min_length=3, max_length=64)
+    password: str = Field(..., min_length=1, max_length=128)
 
 class RegisterRequest(BaseModel):
     username: str = Field(..., min_length=3, max_length=32, description="用户名(3-32位)")
-    password: str = Field(..., min_length=6, max_length=64, description="密码(至少6位)")
+    password: str = Field(..., min_length=8, max_length=128, description="密码(至少8位)")
     nickname: str = Field(..., min_length=1, max_length=32, description="用户昵称")
     role_code: Optional[str] = "STUDENT"
     grade: Optional[str] = "小学三年级"
 
 @router.post("/login")
 def login(req: LoginRequest, db: Session = Depends(get_db)):
-    user = db.query(SysUser).filter(SysUser.username == req.username).first()
+    user = db.query(SysUser).filter(SysUser.username == req.username).with_for_update().first()
     if not user:
         return error_response(code=4010, message="用户不存在或密码错误")
     
@@ -36,6 +36,10 @@ def login(req: LoginRequest, db: Session = Depends(get_db)):
     if user.status != "ACTIVE":
         return error_response(code=4030, message="账号已被禁用，请联系管理员")
         
+    if not user.password_hash.startswith("pbkdf2_sha256$"):
+        user.password_hash = hash_password(req.password)
+        db.commit()
+
     growth = db.query(UserGrowth).filter(UserGrowth.user_id == user.id).first()
     energy = growth.energy_value if growth else 0
     level = growth.level_code if growth else "LV1_APPRENTICE"
@@ -45,7 +49,8 @@ def login(req: LoginRequest, db: Session = Depends(get_db)):
         "user_id": user.id,
         "username": user.username,
         "role_code": user.role_code,
-        "nickname": user.nickname
+        "nickname": user.nickname,
+        "token_version": user.token_version
     }
     access_token = create_access_token(token_payload)
 
@@ -82,8 +87,7 @@ def register(req: RegisterRequest, db: Session = Depends(get_db)):
         status="ACTIVE"
     )
     db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
+    db.flush()
     
     # 建立默认画像与成长主表
     db.add(UserProfile(user_id=new_user.id, bio="热爱天津非遗的美育小学徒"))
@@ -95,7 +99,8 @@ def register(req: RegisterRequest, db: Session = Depends(get_db)):
         "user_id": new_user.id,
         "username": new_user.username,
         "role_code": new_user.role_code,
-        "nickname": new_user.nickname
+        "nickname": new_user.nickname,
+        "token_version": new_user.token_version
     }
     access_token = create_access_token(token_payload)
 
@@ -154,3 +159,12 @@ def get_permissions(user_dict: dict = Depends(get_current_user)):
     else:
         perms = ["student:course", "student:ai_workshop", "student:community", "student:profile", "student:checkin"]
     return success_response({"role": role, "permissions": perms})
+
+
+@router.post("/logout")
+def logout(current_user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
+    db.query(SysUser).filter(SysUser.id == current_user["user_id"]).update(
+        {"token_version": SysUser.token_version + 1}
+    )
+    db.commit()
+    return success_response(message="已退出登录")

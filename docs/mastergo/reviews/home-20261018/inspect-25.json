@@ -1,0 +1,39 @@
+[
+  {
+    "id": "5:02271",
+    "type": "FRAME",
+    "depth": 0,
+    "name": "组 2248",
+    "layout": {
+      "width": 11,
+      "height": 11,
+      "relativeX": 0,
+      "relativeY": 0
+    }
+  },
+  {
+    "id": "5:02272",
+    "type": "FRAME",
+    "depth": 1,
+    "name": "图标 20",
+    "layout": {
+      "width": 11.0024995803833,
+      "height": 9.779999732971191,
+      "relativeX": 0,
+      "relativeY": 0.6100000143051147
+    }
+  },
+  {
+    "id": "5:02273",
+    "type": "PATH",
+    "depth": 2,
+    "name": "组 23",
+    "layout": {
+      "width": 10.509123802185059,
+      "height": 10.039837837219238,
+      "relativeX": 0.248382568359375,
+      "relativeY": -0.6112060546875
+    },
+    "svgShortKey": "S25#0"
+  }
+]
