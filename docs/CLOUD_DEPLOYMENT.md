@@ -50,6 +50,17 @@ npm run build          # .env.production 中 VITE_PUBLIC_PATH=/
 - Nginx：[deploy/nginx/jinyun.conf](../deploy/nginx/jinyun.conf)
 - systemd：[deploy/systemd/jinyun-backend.service](../deploy/systemd/jinyun-backend.service)
 
+## 开发测试数据同步与演示内容（2026-10-18）
+
+- 将本地 WSL 开发库 `jinyun_android_dev` 全量导出并导入云端 `jinyun_runxiang`；MySQL 8 的 `utf8mb4_0900_*` 排序规则转换为 MariaDB 10.11 支持的 `utf8mb4_unicode_ci` 后导入成功。
+- 云端现有：4 个账号、6 门课程/6 个章节、5 条非遗、3 个地标、8 条社区作品、11 条评论、9 个 AI 任务、10 个商品、7 件收藏、2 个订单、3 条学习日记录。
+- 额外补充 4 条社区作品（风筝/年画/皮影/青花）及详情、8 条评论；为 `student_demo` 补充今日学习记录和 7 件收藏，首页/社区/个人中心不再空态。
+- 小课堂演示视频使用外链，不下载到服务器：
+  - `https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4`（CC0）
+  - `https://media.w3.org/2010/05/sintel/trailer.mp4`（Sintel，CC BY 3.0）
+- 云端学生 28 条路由审计：破图 0、横向溢出 0、未捕获异常 0、失败请求 0（`.local/deploy/cloud-route-audit-student2.json`）；新增作品详情 `/community/5` 9 张图片无缺失；课程播放器读取到外链视频且 `readyState=1`。
+- 当前云端库为开发/测试数据，正式运营前仍需替换账号密码、清理演示统计并配置备份。
+
 ## 已验证
 
 - 2026-10-18：`https://core.wentian.org/health` 200；`https://admin.wentian.org/` 200；TLS 证书签发成功。

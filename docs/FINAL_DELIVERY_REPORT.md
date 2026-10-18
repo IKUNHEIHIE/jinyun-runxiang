@@ -230,6 +230,14 @@ F08B64DC…包实际完成教师开发账号当天签到100→110；重复接口
 - 数据库：schema + seed + V17 + 本地 `heritage_entry` 5 条内容已导入；当前为隔离演示数据，正式运营前需替换。
 - 详细步骤与配置副本见 [CLOUD_DEPLOYMENT.md](CLOUD_DEPLOYMENT.md)、[deploy/nginx/jinyun.conf](../deploy/nginx/jinyun.conf)、[deploy/systemd/jinyun-backend.service](../deploy/systemd/jinyun-backend.service)。
 
+## 2026-10-18 开发测试数据上云与演示内容
+
+- 本地 WSL 开发库全量同步到云端 MariaDB；排序规则从 MySQL 8 `utf8mb4_0900_*` 转为 MariaDB `utf8mb4_unicode_ci` 后导入成功。
+- 云端五板块内容：首页 5 条非遗推荐、6 门课程；AI 工坊 9 个任务；社区 8 条作品/11 条评论；我的 7 件收藏、今日修习、徽章与订单。
+- 小课堂章节视频改为外链（MDN CC0 花视频、Sintel CC BY 3.0 预告片），未新增本地演示视频文件。
+- 云端学生 28 条路由审计：破图/溢出/异常/失败均为 0；`/community/5` 详情 9 张图片无缺失；课程播放器读取外链视频，`readyState=1`。
+- 证据：`.local/deploy/cloud-data-sync.txt`、`cloud-route-audit-student2.json`、`cloud-community2.png`、`cloud-profile2.png`、`cloud-app-home.png`、`cloud-community-detail5.png`。当前为测试数据，正式运营前需替换演示账号/统计并配置备份。
+
 ## 2026-10-18 首页入口、动效与高清封面（final30）
 
 - 首页在分类标签下新增两个入口卡：“行走的美育地图”（`/landmarks`）与“非遗文创共创市集”（`/mall`），使用 1280×720 地图图与 1779×1920 文创图，带渐变遮罩和按压反馈。

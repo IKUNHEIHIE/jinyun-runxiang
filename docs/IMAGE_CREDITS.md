@@ -15,3 +15,9 @@
 刺绣课程封面 `eec3a340b7fb8b4ddf620f715bb9ebeb.png` 使用仓库内已有高清刺绣文创图片 `/design/images/932a2b36d6aa7e0ce9cad890d15e4771.png`，未新增外部来源。
 
 CC BY-SA 图片的署名与相同方式共享要求适用于对应图片及其裁切版本；发布或再分发时请保留本页与许可链接。
+
+## 演示视频外链
+
+- [MDN flower sample](https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4)：CC0，用于部分课程章节。
+- [Sintel trailer](https://media.w3.org/2010/05/sintel/trailer.mp4)：Sintel，CC BY 3.0，用于部分课程章节。
+- 视频不下载到服务器，由客户端直接访问上述 HTTPS 地址。
