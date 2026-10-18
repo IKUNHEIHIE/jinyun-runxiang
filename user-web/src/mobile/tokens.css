@@ -43,8 +43,37 @@
 * {
   box-sizing: border-box;
 }
+html {
+  scroll-behavior: smooth;
+}
 body {
   margin: 0;
+  overscroll-behavior-y: none;
+  -webkit-text-size-adjust: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+button,
+a {
+  touch-action: manipulation;
+}
+.recommendation-card,
+.course-card {
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.recommendation-card:active,
+.course-card:active {
+  transform: scale(0.98);
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .recommendation-card,
+  .course-card {
+    transition: none;
+  }
 }
 button,
 input,
@@ -365,6 +394,13 @@ legend {
   overflow: auto;
   scrollbar-width: none;
   padding: 0 0 8px;
+  scroll-behavior: smooth;
+  scroll-snap-type: x proximity;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.recommendation-card {
+  scroll-snap-align: start;
 }
 .recommendation-card {
   flex: 0 0 140px;

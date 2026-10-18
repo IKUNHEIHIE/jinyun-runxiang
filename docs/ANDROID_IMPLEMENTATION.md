@@ -218,6 +218,13 @@ final26 APK 274,718,814 字节，SHA256 `53d8f10ab931db5d0833ce6a3c3c2b01299d776
 
 新建 `jinyun_api30` AVD（Android 11/API 30，1080×2280，WebView 83.0.4103.120），安装 final28 APK 成功。首页 55 张图片无破图、视口/文档宽 393；学生 28 条、教师 10 条路由在 373dp 无破图/溢出/未捕获异常/控制台 error/失败请求（`/contests/1` 的 2 个 403 为权限预期）。证据 `.local/android/final28-android11-verify.txt`、`route-audit-student-api30.json`、`route-audit-teacher-api30.json`、`final28-api30-home.png`、`final28-api30-profile.png`、`final28-api30-native.png`。CDP 辅助脚本已支持 `CDP_PORT`。API 24-28 与实体设备仍未测。
 
+## final30 首页入口、动效与高清封面（2026-10-18）
+
+- `HomePage.vue` 在分类标签下新增两张入口卡，分别跳转 `/landmarks` 与 `/mall`，使用 `562642…png`（1280×720）与 `5014bb…png`（1779×1920）作背景，带渐变遮罩和按压缩放。
+- `MobileApp.vue` 为 `RouterView` 增加 `Transition`（fade/push/pop，160–200ms，transform+opacity，reduced-motion 可禁用）；`tokens.css` 增加全局平滑滚动、惯性滚动、`overscroll-behavior` 与卡片按压反馈；首页推荐、个人收藏、市集/地图横向列表补充 scroll-snap/平滑滚动。
+- 8 张 51–160px 设计占位封面替换为 800px 宽高清图（7 张 Wikimedia Commons + 1 张仓库高清图）；`mediaUrl` 对 `/static/design/` 自动追加 `?v=hd1`，来源与许可见 `docs/IMAGE_CREDITS.md`。
+- final30 APK 278,116,613 字节，SHA256 `721763b6683424b10bb7ce437ad234a3fd2856cb7f06fb7f352fc98c275e5ab0`，构建日志 `.local/release/build-apk-final30.log`；首页入口/推荐封面 naturalWidth 1280/1779/800，过渡类 `page-fade-*` 实测触发；学生 28 条 373dp 无破图/溢出/异常/失败（`route-audit-student-final30.json`）。
+
 ## final29 Android 9/WebView 66 兼容修复（2026-10-18）
 
 final28 在 Android 9（API 28，AOSP WebView 66.0.3359.158）上为空白页，`bodyText=0`、无 `h1`、无图片；根因是构建产物含 ES2020 语法。将 `user-web/vite.config.ts` 的 `build.target` 设为 `es2017` 后重建为 final29，API 28 首页恢复正常（55 图、破图 0、393 视口无溢出），非遗详情与个人中心单页可打开，个人中心头图 500×867 加载、收藏横滑可用。快速连跑 28 条路由时旧 WebView 渲染进程崩溃（`FATAL:aw_browser_terminator.cc`），3GB 内存重试仍复现 code 4，应用随之中止，故不能宣称 API 28 全量兼容（属 WebView 66 稳定边界）。final29 APK 274,804,557 字节，SHA256 `abcdcc5ef475f0504b2198a4309cdb90360b578816381633b1325a58e3584d7c`，构建日志 `.local/android/build-apk-final29.log`，设备内 base.apk 散列一致，lastUpdateTime=2026-10-18 07:48:04；Android 36 学生 28 条路由 0 问题（`route-audit-student-final29.json`）。API 28 证据 `.local/android/final29-apk-verify.txt`、`final29-api28-profile.png`。final29 已在 API 30 复跑：学生 28 条、教师 10 条路由 0 破图/溢出/异常/失败（教师 `/contests/1` 的 2 个 403 为权限预期），证据 `route-audit-student-final29-api30.json`、`route-audit-teacher-final29-api30.json`、`final29-api30-home.png`。final28 的个人中心/教师断网修复保留。final27 为中间构建，已被 final28 取代；本轮未改后端。

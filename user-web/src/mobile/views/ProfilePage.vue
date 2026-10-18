@@ -1065,6 +1065,8 @@ function targetUrl(item: any) {
   margin-right: -20px;
   padding-right: 20px;
   scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
 }
 .collection-grid::-webkit-scrollbar {

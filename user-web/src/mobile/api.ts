@@ -27,7 +27,12 @@ export const apiOrigin = /^https?:/.test(apiBase)
 export function mediaUrl(value?: string) {
   if (!value) return "";
   if (value.startsWith("/design/")) return value;
-  if (value.startsWith("/")) return apiOrigin + value;
+  if (value.startsWith("/")) {
+    const cache = value.startsWith("/static/design/")
+      ? (value.includes("?") ? "&" : "?") + "v=hd1"
+      : "";
+    return apiOrigin + value + cache;
+  }
   if (/^https?:\/\//.test(value)) return value;
   return "";
 }

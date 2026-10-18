@@ -246,6 +246,32 @@ onUnmounted(() => {
           {{ c.label }}
         </button>
       </div>
+      <div class="home-hubs">
+        <RouterLink to="/landmarks" class="home-hub home-hub-map">
+          <img
+            src="/design/images/562642870bc0dbb9f77e661a544aed0e.png"
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+          <div>
+            <strong>行走的美育地图</strong>
+            <span>打卡非遗地标</span>
+          </div>
+        </RouterLink>
+        <RouterLink to="/mall" class="home-hub home-hub-mall">
+          <img
+            src="/design/images/5014bb9cd66ab39383dcfab1e6326c39.png"
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+          <div>
+            <strong>非遗文创共创市集</strong>
+            <span>文创与农产</span>
+          </div>
+        </RouterLink>
+      </div>
       <div class="section-heading">
         <h2>今日推荐</h2>
         <RouterLink to="/heritage"
@@ -264,7 +290,12 @@ onUnmounted(() => {
               :key="entry.id"
               :to="'/heritage/' + entry.id"
               class="recommendation-card corner-card"
-              ><img :src="mediaUrl(entry.cover_url)" :alt="entry.title" />
+              ><img
+                :src="mediaUrl(entry.cover_url)"
+                :alt="entry.title"
+                loading="lazy"
+                decoding="async"
+              />
               <h3>{{ entry.title }}</h3>
               <p>
                 {{ entry.era || categoryName(entry.category) }}
@@ -400,6 +431,70 @@ onUnmounted(() => {
 .home-content > .section-heading > a img {
   width: 5.0009765625px;
   height: 8.7529296875px;
+}
+.home-hubs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0 4px;
+}
+.home-hub {
+  position: relative;
+  height: 112px;
+  overflow: hidden;
+  border-radius: 14px;
+  color: #fffdf8;
+  box-shadow: 0 8px 20px rgba(76, 46, 26, 0.14);
+  -webkit-tap-highlight-color: transparent;
+}
+.home-hub img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.home-hub::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(24, 12, 8, 0.04) 20%,
+    rgba(24, 12, 8, 0.74) 100%
+  );
+}
+.home-hub > div {
+  position: absolute;
+  z-index: 1;
+  right: 12px;
+  bottom: 10px;
+  left: 12px;
+}
+.home-hub strong {
+  display: block;
+  font: 600 15px/21px var(--serif);
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+.home-hub span {
+  display: block;
+  margin-top: 1px;
+  font: 400 10px/15px var(--serif);
+  opacity: 0.92;
+}
+.home-hub:active img {
+  transform: scale(1.04);
+}
+@media (max-width: 360px) {
+  .home-hub {
+    height: 102px;
+  }
+  .home-hub strong {
+    font-size: 13px;
+    line-height: 19px;
+  }
 }
 .home-recommendations {
   min-height: 170px;

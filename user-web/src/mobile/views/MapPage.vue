@@ -446,7 +446,12 @@ onUnmounted(() => {
           {{ locationError }}
         </p>
         <article v-if="selected" class="selected-landmark">
-          <img :src="mediaUrl(selected.cover_url)" :alt="selected.name" />
+          <img
+            :src="mediaUrl(selected.cover_url)"
+            :alt="selected.name"
+            loading="lazy"
+            decoding="async"
+          />
           <div class="selected-content">
             <h3>{{ selected.name }} <span>{{ selected.category }}</span></h3>
             <p class="landmark-description">{{ selected.description }}</p>
@@ -490,7 +495,12 @@ onUnmounted(() => {
                 :key="product.id"
                 class="district-product"
               >
-                <img :src="mediaUrl(product.cover_url)" :alt="product.name" />
+                <img
+                  :src="mediaUrl(product.cover_url)"
+                  :alt="product.name"
+                  loading="lazy"
+                  decoding="async"
+                />
                 <div>
                   <h4>{{ product.name }}</h4>
                   <strong
@@ -537,7 +547,12 @@ onUnmounted(() => {
             class="footprint-row"
             @click="selectRecord(record)"
           >
-            <img :src="mediaUrl(record.cover_url)" alt="" /><span
+            <img
+              :src="mediaUrl(record.cover_url)"
+              alt=""
+              loading="lazy"
+              decoding="async"
+            /><span
               ><strong
                 >{{ session.profile?.nickname }}
                 <i
@@ -874,6 +889,9 @@ onUnmounted(() => {
   overflow-x: auto;
   margin: 16px 0;
   scrollbar-width: none;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
 }
 .map-categories button {
   flex: none;
@@ -1381,6 +1399,9 @@ onUnmounted(() => {
   overflow-x: auto;
   padding: 0 20px 8px;
   scrollbar-width: none;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
 }
 .season-cards > button {
   width: 256px;

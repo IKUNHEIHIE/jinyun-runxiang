@@ -6,10 +6,10 @@
 
 - APK：D:/admin/desktop/codex/school/smxc/jinyun-runxiang/.local/android/artifacts/jinyun-runxiang-debug.apk
 - 包名：com.jinyun.runxiang
-- 大小：274,804,557 字节
-- SHA-256：abcdcc5ef475f0504b2198a4309cdb90360b578816381633b1325a58e3584d7c
+- 大小：278,116,613 字节
+- SHA-256：721763b6683424b10bb7ce437ad234a3fd2856cb7f06fb7f352fc98c275e5ab0
 - 已安装到 emulator-5554，设备中 APK 与交付文件的 SHA-256 相同。
-- 构建记录：.local/android/build-apk-final29.log，包含 vue-tsc、Vite、Capacitor 与 Gradle 构建。final29 在 final28 基础上把构建目标降到 ES2017，修复 Android 9（WebView 66）空白页；保留 final28 的个人中心头图/收藏横滑与教师断网空态修复。final29 取代 final28/final27/final26/final25/final24/final23/final21；final22 只改后台与遗留页，未重建 APK。
+- 构建记录：.local/android/build-apk-final30.log，包含 vue-tsc、Vite、Capacitor 与 Gradle 构建。final30 在 final29 基础上增加首页地图/市集入口、页面切换与滚动动效，并把 8 张 51–160px 低清封面替换为 800px 高清图。final30 取代 final29/final28/final27/final26/final25/final24/final23/final21；final22 只改后台与遗留页，未重建 APK。
 - GitHub Release：`v1.0.0-beta.2`，标签提交 `002a5f3`，https://github.com/IKUNHEIHIE/jinyun-runxiang/releases/tag/v1.0.0-beta.2
 - 运行方式与配置见 [Android 部署说明](ANDROID_DEPLOYMENT.md)。该包使用开发 API；正式发布还需服务地址、签名及设备兼容性验证。
 
@@ -219,6 +219,13 @@ F08B64DC…包实际完成教师开发账号当天签到100→110；重复接口
 - 已发布 prerelease `v1.0.0-beta.2`（tag 提交 `002a5f3`）：https://github.com/IKUNHEIHIE/jinyun-runxiang/releases/tag/v1.0.0-beta.2。资产包括 final29 APK（274,804,557 字节，SHA256 `abcdcc5e…`）、教师后台 dist zip（1,249,388 字节）、后端源码包（73,443,717 字节）和 `SHA256SUMS-beta.2.txt`；`gh release view` 确认 4 个资产均为 `uploaded`。
 - 清理上传：删除 3 个 79 字节、数据库中完全无引用的 SVG；备份与记录在 `.local/release/deleted-uploads-20261018/`。此前被列为“未引用”的资产 2/3 实际被 `community_post_detail` 作品 1 的 `gallery_json` 引用，已保留；`scripts/prune_orphan_assets.py` 已补上该 JSON 检查，避免后续误删。
 - 按用户决定，API 24-27、实体真机、自然内存压力/跨日等其余兼容性测试暂缓，列为已知限制；不因此宣称这些环境已通过。
+
+## 2026-10-18 首页入口、动效与高清封面（final30）
+
+- 首页在分类标签下新增两个入口卡：“行走的美育地图”（`/landmarks`）与“非遗文创共创市集”（`/mall`），使用 1280×720 地图图与 1779×1920 文创图，带渐变遮罩和按压反馈。
+- 页面切换加入 `page-fade`/`page-push`/`page-pop` 过渡（160–200ms，transform+opacity），并支持 `prefers-reduced-motion`；全局启用平滑滚动、横向滚动的惯性滚动与 `overscroll-behavior` 限制，横向卡片增加 `scroll-snap` 与按压缩放。
+- 替换 8 张低清封面：泥人、风筝、年画、皮影、剪纸、青花瓷、戏曲服饰 7 张来自 Wikimedia Commons，刺绣课使用仓库已有高清图；均输出 800px 宽并保留 `?v=hd1` 缓存失效参数。许可与署名见 [IMAGE_CREDITS.md](IMAGE_CREDITS.md)。
+- final30 APK 278,116,613 字节，SHA256 `721763b6683424b10bb7ce437ad234a3fd2856cb7f06fb7f352fc98c275e5ab0`，构建日志 `.local/release/build-apk-final30.log`；安装后首页入口与封面实测：两张入口图 naturalWidth 1280/1779，推荐封面 800px，过渡类 `page-fade-*` 实测触发。学生 28 条路由 373dp 无破图/溢出/异常/失败（`.local/android/route-audit-student-final30.json`），截图 `.local/android/final30-home.png`、`final30-home-recommend.png`、`final30-map.png`、`final30-mall.png`。
 
 ## 尚未完成的核心工作
 

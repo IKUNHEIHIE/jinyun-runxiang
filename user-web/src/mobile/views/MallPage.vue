@@ -1143,6 +1143,9 @@ watch(
   padding: 0 20px 12px;
   min-height: 265px;
   scrollbar-width: none;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
 }
 .creator-story {
   flex: 0 0 170px;
@@ -1637,6 +1640,9 @@ watch(
   margin-top: 20px;
   min-height: 217px;
   scrollbar-width: none;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
 }
 .exchange-products article {
   flex: 0 0 150px;

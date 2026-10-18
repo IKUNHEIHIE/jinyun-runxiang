@@ -25,6 +25,14 @@ const walkingIcons: Record<string, string> = {
   community: "40:12010",
   profile: "40:12024",
 };
+const pageTransition = computed(() => {
+  const depth = (path: string) => path.split("/").filter(Boolean).length;
+  const back = String(window.history.state?.back || "").replace(/^#/, "");
+  const current = depth(route.path);
+  const previous = depth(back);
+  if (!previous || previous === current) return "page-fade";
+  return current > previous ? "page-push" : "page-pop";
+});
 const surface = computed(() =>
   route.params.tool === "bronze"
     ? "#f5f0e6"
@@ -146,9 +154,11 @@ onUnmounted(() => {
       :style="{ background: surface || 'var(--paper)' }"
       aria-hidden="true"
     />
-    <RouterView v-slot="{ Component }"
-      ><component :is="Component"
-    /></RouterView>
+    <RouterView v-slot="{ Component, route: viewRoute }">
+      <Transition :name="pageTransition" mode="out-in">
+        <component :is="Component" :key="viewRoute.path" />
+      </Transition>
+    </RouterView>
     <nav
       v-if="showTabs"
       class="bottom-nav"
@@ -213,5 +223,47 @@ onUnmounted(() => {
 .walking-nav a.active {
   color: #6b8e6b;
   font-weight: 400;
+}
+.page-fade-enter-active,
+.page-fade-leave-active,
+.page-push-enter-active,
+.page-push-leave-active,
+.page-pop-enter-active,
+.page-pop-leave-active {
+  transition:
+    opacity 0.16s ease,
+    transform 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: opacity, transform;
+}
+.page-fade-enter-from,
+.page-fade-leave-to {
+  opacity: 0;
+  transform: translate3d(0, 4px, 0);
+}
+.page-push-enter-from {
+  opacity: 0;
+  transform: translate3d(16px, 0, 0);
+}
+.page-push-leave-to {
+  opacity: 0;
+  transform: translate3d(-10px, 0, 0);
+}
+.page-pop-enter-from {
+  opacity: 0;
+  transform: translate3d(-14px, 0, 0);
+}
+.page-pop-leave-to {
+  opacity: 0;
+  transform: translate3d(10px, 0, 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-fade-enter-active,
+  .page-fade-leave-active,
+  .page-push-enter-active,
+  .page-push-leave-active,
+  .page-pop-enter-active,
+  .page-pop-leave-active {
+    transition: none;
+  }
 }
 </style>
