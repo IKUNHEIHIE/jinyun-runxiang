@@ -2,7 +2,7 @@
 
 本说明对应隔离开发环境；不覆盖已有生产部署。开发数据不会自动清空。正式教学内容、支付、模型服务、远程课堂视频均需要独立配置。
 
-截至2026-10-18，最新开发包为 final31 `2beec6f2…`（云端 API），完整产物、测试和迁移范围见文末。下列按日期保留的包均为历史记录。云端部署与域名切换见 [CLOUD_DEPLOYMENT.md](CLOUD_DEPLOYMENT.md)。
+截至2026-10-18，最新开发包为 final31 `2beec6f2…`（云端 API），已发布 GitHub prerelease `v1.0.0-beta.4`（tag `3f4516d`，https://github.com/IKUNHEIHIE/jinyun-runxiang/releases/tag/v1.0.0-beta.4 ）。完整产物、测试和迁移范围见文末。云端部署与域名切换见 [CLOUD_DEPLOYMENT.md](CLOUD_DEPLOYMENT.md)。下列按日期保留的包均为历史记录。
 
 ## 当前环境
 

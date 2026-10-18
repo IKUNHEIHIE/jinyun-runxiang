@@ -10,7 +10,7 @@
 - SHA-256：2beec6f21ffbfcd70ff41457dbf49abf146b17c9b42027f94294e408e3cdc55d
 - 已安装到 emulator-5554，连接云端 API `https://admin.wentian.org/api` 验证。
 - 构建记录：.local/deploy/build-apk-final31.log，包含 vue-tsc、Vite、Capacitor 与 Gradle 构建。final31 在 final30 基础上把 API 地址切到云端 admin 域名，并保留首页入口、页面动效与高清封面。final31 取代 final30/final29/final28/final27/final26/final25/final24/final23/final21。
-- GitHub Release：`v1.0.0-beta.3`，标签提交 `bf576c1`，https://github.com/IKUNHEIHIE/jinyun-runxiang/releases/tag/v1.0.0-beta.3
+- GitHub Release：`v1.0.0-beta.4`，标签提交 `3f4516d`，https://github.com/IKUNHEIHIE/jinyun-runxiang/releases/tag/v1.0.0-beta.4
 - 运行方式与配置见 [Android 部署说明](ANDROID_DEPLOYMENT.md)。该包使用开发 API；正式发布还需服务地址、签名及设备兼容性验证。
 
 ## 八项交付要求的当前证据
