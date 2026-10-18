@@ -109,7 +109,7 @@ Android 教师端已实测列表、胜者/班级排名/分数/评语与锁定状
 
 `/contests/:id` 现会在加载后自动打开对应详情弹层；Android 实测从作业卡进入后直接显示状态、两班汇总、胜者、本人作品、得分/班内名次与评语（`.local/android/screenshots/final-student-contest-clean.png`）。手机教师端详情新增“编辑参赛名单”，保存调用 `PUT /teacher/contests/{id}/entries`，已有提交/截止/公布后由后端 409 拒绝；实测保存提示“参赛名单已更新”（`.local/android/screenshots/final-roster-editor-final.png`）。教师后台详情同步提供名单编辑对话框。
 
-最终 Debug 包 274,763,236 字节，SHA256 `bfe844ee2b67bfe24e8885d816930bd106576b6edc2af0cdd35bf9e57c4563b8`，构建日志 `.local/android/build-final17.log`，已安装 emulator-5554 且设备内散列一致。后端全量回归 133 项通过（`.local/android/test-final17-full.log`，含名单增删/重复/公布后锁定及非遗收藏状态回读）；前端 `vue-tsc --noEmit` 通过（`.local/android/typecheck-final17.log`）；教师后台类型检查与生产构建通过。设计基准通过 `python scripts/render_design_baselines.py` 从 `docs/mastergo/*.html` 离线渲染到 `.local/design-baselines/`，同宽 WebView 对照修复了非遗主视觉、课程横幅、首页横幅/胶囊、天津地图底图、后母戊鼎封面/深色详情、教师实时数据页粉色蒙层，以及课程播放页、教师中心底栏、备课页印记和百科顶部检索。用于名单编辑验收的临时 OPEN 轮次（0 提交）已从隔离开发库清理。
+最终 Debug 包 274,763,249 字节，SHA256 `5280ae68767cf1b9d7df0730ce0b18cc92f5dd643bc6775cd105d6b1aaa23e93`，构建日志 `.local/android/build-final18.log`，已安装 emulator-5554 且设备内散列一致。后端全量回归 133 项通过（`.local/android/test-final18-full.log`，含名单增删/重复/公布后锁定、非遗收藏状态回读及首页资源统计）；前端 `vue-tsc --noEmit` 通过（`.local/android/typecheck-final18.log`）；教师后台类型检查与生产构建通过。设计基准通过 `python scripts/render_design_baselines.py` 从 `docs/mastergo/*.html` 离线渲染到 `.local/design-baselines/`，同宽 WebView 对照修复了非遗主视觉、课程横幅、首页横幅/胶囊、天津地图底图、后母戊鼎封面/深色详情、教师实时数据页粉色蒙层，以及课程播放页、教师中心底栏、备课页印记和百科顶部检索。用于名单编辑验收的临时 OPEN 轮次（0 提交）已从隔离开发库清理。
 
 ## 课程播放页/教师中心/备课页/百科检索/非遗长文终验（2026-10-18，final14）
 
@@ -120,3 +120,5 @@ Android 教师端已实测列表、胜者/班级排名/分数/评语与锁定状
 final16 补充（2026-10-18）：非遗详情主视觉优先使用 `content.hero_url`，杨柳青年画改用设计长图 `1d09...webp`（不再以首页封面裁切），页头补齐收藏星标并保留缩放/复位；实测截图 `.local/design-baselines/app-heritage-detail-final16.png`。同包已做全路由冒烟：学生 28 条、教师 9 条路由均无破图、无未捕获异常、无本地请求失败，`/classroom` 与 `/classroom/1` 在两端通过；教师访问学生专属 `/contests/:id` 的 403 为权限预期（`.local/android/route-audit-student.json`、`route-audit-teacher.json`）。
 
 final17 补充（2026-10-18）：非遗详情接口在登录态返回 `collected`，详情页加载时回填收藏星标与底部收藏按钮。实机验证收藏后刷新仍为 ★、取消后刷新仍为 ☆（截图 `.local/design-baselines/app-heritage-collected-final17.png`）。后端新增收藏状态回读测试，全量 133 项通过；final17 设备内散列与产物一致，全路由冒烟结果同 final16。
+
+final18 补充（2026-10-18）：非遗首页按设计补上 hero 资源统计条（非遗项目 / 教学资源），数字来自已发布非遗条目与已发布课程的真实计数（开发库 5 / 6），草稿与下线内容不计入，不使用设计示例值。`/api/mobile/heritage` 返回 `stats` 并有隔离库断言；实机截图 `.local/design-baselines/app-heritage-stats-final18.png`。final18 全路由冒烟（学生 28 条、教师 9 条）无破图、无未捕获异常、无本地请求失败。

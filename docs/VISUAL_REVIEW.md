@@ -274,7 +274,7 @@ MasterGo 现有画板未包含对抗赛管理/成绩页。本轮沿用教师页�
 
 Android 实测：教师对抗赛列表显示状态、轮次、两班对阵、提交数与胜者；详情显示班级名次、总分/平均分、学生得分/评语和“成绩已公布，评分与名单已锁定”。学生页显示我方/对手汇总、胜者、本人作品、得分与班内名次。截图为 `.local/android/screenshots/teacher-contests.png`、`teacher-contest-detail.png`、`student-contest.png`、`student-contest-detail.png`。
 
-终验补充（2026-10-18）：`/contests/:id` 深链会直接打开详情弹层，学生实测截图 `.local/android/screenshots/final-student-contest-clean.png`；手机教师端与后台均新增截止/公布前的名单编辑，手机实测保存成功，截图 `.local/android/screenshots/final-roster-editor-final.png`。最终包（final17，含非遗详情设计长图、收藏星标及收藏状态回读）274,763,236 字节，SHA256 `bfe844ee2b67bfe24e8885d816930bd106576b6edc2af0cdd35bf9e57c4563b8`，构建日志 `.local/android/build-final17.log`。
+终验补充（2026-10-18）：`/contests/:id` 深链会直接打开详情弹层，学生实测截图 `.local/android/screenshots/final-student-contest-clean.png`；手机教师端与后台均新增截止/公布前的名单编辑，手机实测保存成功，截图 `.local/android/screenshots/final-roster-editor-final.png`。最终包（final18，含非遗详情设计长图、收藏状态回读及首页资源统计条）274,763,249 字节，SHA256 `5280ae68767cf1b9d7df0730ce0b18cc92f5dd643bc6775cd105d6b1aaa23e93`，构建日志 `.local/android/build-final18.log`。
 
 该页面属于设计稿之外新增的业务入口；其视觉验收只覆盖现有设计 token 的一致性和两种内容状态（进行中/已公布），不纳入原画板逐页像素对照。
 
@@ -288,7 +288,7 @@ Android 实测：教师对抗赛列表显示状态、轮次、两班对阵、提
 |---|---|---|
 | 首页 `home` 373×1394 | 结构、配色、信息层级接近 | 百科入口改为设计稿 56px 直角横幅；分类胶囊由 37px 收紧到 31px；课程卡星评为无真实评分状态 |
 | 小课堂 `40-32392` 373×1248 | 顶部横幅、筛选、双列课程卡结构一致 | 横幅改为全宽无缝、去圆角；卡片评分/课时仍为真实数据 |
-| 非遗百科 `40-32437` 375×3194 | 标题/按钮/搜索/卡片结构可辨 | 主视觉原为空白色装饰图，现改为设计画作背景并左对齐；本轮补上顶部悬浮搜索并与页内检索共用关键词，热门词可命中年代/类别；设计中的营销统计条未用虚构数字填充 |
+| 非遗百科 `40-32437` 375×3194 | 标题/按钮/搜索/卡片结构可辨 | 主视觉原为空白色装饰图，现改为设计画作背景并左对齐；顶部悬浮搜索与页内检索共用关键词，热门词可命中年代/类别；hero 资源统计条已补上，数字取自已发布非遗条目与课程的真实计数（开发库 5/6），不使用设计示例的 128/56；实机截图 `.local/design-baselines/app-heritage-stats-final18.png` |
 | 青铜沉浸详情 `40-32808` 375×1992 | 深色背景、金色标题、器物大图、核心数据 | 原封面误用 341×1 分隔线导致全黑，现改用 934×1200 器物图并重做深色页头/卡片；三维模型仍以高清图替代 |
 | 行走的美育地图 `40-11915` 375×2818 | 统计、地图、基地卡、商品卡结构接近 | 设计底图实为美国地图，现替换为天津行政区 SVG；打卡点按真实经纬度投影；设计营销统计不伪造 |
 | 文创市集 `5-7245` 375×2862 | 横幅、统计、创作者、四步说明、商品卡接近 | 设计导出存在 `@SVGundefined@` 占位；授权/生产者仍无真实数据 |
@@ -304,4 +304,4 @@ Android 实测：教师对抗赛列表显示状态、轮次、两班对阵、提
 
 设计导出 HTML 是 DSL 重建页而非 MasterGo 导出的原始位图，因此上述结论用于结构/尺寸/层级对照，不等同于逐像素验收；购物/AI 工坊导出中的 `@SVGundefined@` 也说明导出本身存在缺图。当前最终包与截图见 `FINAL_DELIVERY_REPORT.md` 的同日章节。
 
-final17 终验补充（2026-10-18）：课程播放页实际 APK 截图 `.local/design-baselines/app-course-player-final9.png`，答题提交态 `.local/design-baselines/app-course-quiz-result-final8b.png`（选 A 后“鉴赏通过 · 10分”）；教师个人中心 `.local/design-baselines/app-teacher-final9.png`；智能备课 `.local/design-baselines/app-lesson-plan-final9.png`；作品详情 `.local/design-baselines/app-community-detail-final8b.png`；百科顶部检索 `.local/design-baselines/app-heritage-top-final12.png`；非遗详情设计长图与收藏星标 `.local/design-baselines/app-heritage-detail-final16.png`，收藏后刷新仍保持 ★ 的实机画面 `.local/design-baselines/app-heritage-collected-final17.png`。终验包 274,763,236 字节，SHA256 `bfe844ee2b67bfe24e8885d816930bd106576b6edc2af0cdd35bf9e57c4563b8`，构建日志 `.local/android/build-final17.log`，设备内散列一致，前端类型检查退出码 0（`.local/android/typecheck-final17.log`），后端 133 项通过（`.local/android/test-final17-full.log`）。同包全路由冒烟（学生 28 条、教师 9 条）无破图、无未捕获异常、无本地请求失败；教师打开学生专属 `/contests/:id` 返回 403 属权限预期（`.local/android/route-audit-student.json`、`route-audit-teacher.json`）。
+final18 终验补充（2026-10-18）：课程播放页实际 APK 截图 `.local/design-baselines/app-course-player-final9.png`，答题提交态 `.local/design-baselines/app-course-quiz-result-final8b.png`（选 A 后“鉴赏通过 · 10分”）；教师个人中心 `.local/design-baselines/app-teacher-final9.png`；智能备课 `.local/design-baselines/app-lesson-plan-final9.png`；作品详情 `.local/design-baselines/app-community-detail-final8b.png`；百科顶部检索 `.local/design-baselines/app-heritage-top-final12.png`，首页资源统计条 `.local/design-baselines/app-heritage-stats-final18.png`；非遗详情设计长图与收藏星标 `.local/design-baselines/app-heritage-detail-final16.png`，收藏后刷新仍保持 ★ 的实机画面 `.local/design-baselines/app-heritage-collected-final17.png`。终验包 274,763,249 字节，SHA256 `5280ae68767cf1b9d7df0730ce0b18cc92f5dd643bc6775cd105d6b1aaa23e93`，构建日志 `.local/android/build-final18.log`，设备内散列一致，前端类型检查退出码 0（`.local/android/typecheck-final18.log`），后端 133 项通过（`.local/android/test-final18-full.log`）。同包全路由冒烟（学生 28 条、教师 9 条）无破图、无未捕获异常、无本地请求失败；教师打开学生专属 `/contests/:id` 返回 403 属权限预期（`.local/android/route-audit-student.json`、`route-audit-teacher.json`）。
