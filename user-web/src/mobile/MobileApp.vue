@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch, onMounted, onUnmounted } from "vue";
+import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Capacitor, SystemBars, SystemBarsStyle } from "@capacitor/core";
 import { App } from "@capacitor/app";
@@ -25,14 +25,14 @@ const walkingIcons: Record<string, string> = {
   community: "40:12010",
   profile: "40:12024",
 };
-const pageTransition = computed(() => {
+const pageTransition = ref("page-fade");
+function updatePageTransition(next: string, previous: string) {
   const depth = (path: string) => path.split("/").filter(Boolean).length;
-  const back = String(window.history.state?.back || "").replace(/^#/, "");
-  const current = depth(route.path);
-  const previous = depth(back);
-  if (!previous || previous === current) return "page-fade";
-  return current > previous ? "page-push" : "page-pop";
-});
+  const isTab = (path: string) => path === "/teacher" || tabs.some((tab) => tab.path === path);
+  const currentDepth = depth(next), previousDepth = depth(previous);
+  pageTransition.value = (isTab(next) && isTab(previous)) || currentDepth === previousDepth
+    ? "page-fade" : currentDepth > previousDepth ? "page-push" : "page-pop";
+}
 const surface = computed(() =>
   route.params.tool === "bronze"
     ? "#f5f0e6"
@@ -94,6 +94,7 @@ function reconnect() {
   void refreshAndSync();
 }
 watch(() => route.path, reconnect);
+watch(() => route.path, updatePageTransition, { flush: "sync" });
 onMounted(async () => {
   window.addEventListener("online", reconnect);
   timer = setInterval(() => {
@@ -145,6 +146,8 @@ onUnmounted(() => {
   <div
     class="mobile-app"
     :class="{ 'no-tabs': !showTabs }"
+    :inert="session.authVisible || undefined"
+    :aria-hidden="session.authVisible || undefined"
     :style="{
       background: surface,
     }"
@@ -156,7 +159,7 @@ onUnmounted(() => {
     />
     <RouterView v-slot="{ Component, route: viewRoute }">
       <Transition :name="pageTransition" mode="out-in">
-        <component :is="Component" :key="viewRoute.path" />
+        <component :is="Component" :key="viewRoute.path" :data-route-view="viewRoute.fullPath" />
       </Transition>
     </RouterView>
     <nav

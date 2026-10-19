@@ -26,7 +26,8 @@ vm.runInNewContext(compiled, {
       ref: (value) => ({ value }), computed: (fn) => ({ get value() { return fn(); } }),
       watch: () => {}, onUnmounted: (fn) => unmounts.push(fn),
     };
-    if (name === "vue-router") return { useRoute: () => route };
+    if (name === "vue-router") return { useRoute: () => route, useRouter: () => ({ back() {}, replace() {} }) };
+    if (name === "../design") return { designImage: () => "", designIcon: () => "", categoryName: value => value };
     if (name === "../api") return { session, api: (...args) => request(...args), mediaUrl: (url) => url };
     if (name === "../progress") return {
       progressState: {}, syncProgress: async () => {},

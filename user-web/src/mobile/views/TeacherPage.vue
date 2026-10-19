@@ -176,7 +176,7 @@ watch(
 );
 </script>
 <template>
-  <div class="teacher-profile" data-design-node="40:8834">
+  <div class="teacher-profile" data-design-node="40:8834" :data-page-ready="!loading">
     <header class="teacher-profile-hero">
       <div
         class="teacher-hero-background"

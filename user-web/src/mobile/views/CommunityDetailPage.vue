@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import { api, post, mediaUrl, requireSession, notify, session } from "../api";
 import { categoryName, designIcon } from "../design";
@@ -44,6 +44,12 @@ const gallery = computed<string[]>(() =>
 );
 let loadVersion = 0,
   swipeStart: { x: number; y: number } | undefined;
+let alive = true;
+function context() {
+  const version = loadVersion, token = session.token, id = String(route.params.id);
+  return () => alive && version === loadVersion && token === session.token && id === String(route.params.id);
+}
+onUnmounted(() => { alive = false; ++loadVersion; });
 function photoSwipe(event: PointerEvent) {
   if (!swipeStart) return;
   const dx = event.clientX - swipeStart.x,
@@ -60,14 +66,14 @@ function photoSwipe(event: PointerEvent) {
 }
 async function loadComments(page = 1) {
   if (moreLoading.value) return;
-  const id = String(route.params.id),
-    version = loadVersion;
+  const id = String(route.params.id);
+  const current = context();
   moreLoading.value = true;
   try {
     const result = await api(
       `/community/posts/${id}/comments?page=${page}&pageSize=20`,
     );
-    if (version !== loadVersion || id !== String(route.params.id)) return;
+    if (!current()) return;
     comments.value =
       page === 1
         ? result.list
@@ -82,20 +88,22 @@ async function loadComments(page = 1) {
     commentPage.value = page;
     artwork.value.comment_count = result.total;
   } catch (e) {
-    notify((e as Error).message);
+    if (current()) notify((e as Error).message);
   } finally {
-    moreLoading.value = false;
+    if (current()) moreLoading.value = false;
   }
 }
 async function likeComment(record: any) {
   if (!requireSession() || likingComment.value) return;
+  const current = context();
   likingComment.value = record.id;
   try {
-    Object.assign(record, await post(`/community/comments/${record.id}/like`));
+    const result = await post(`/community/comments/${record.id}/like`);
+    if (current()) Object.assign(record, result);
   } catch (e) {
-    notify((e as Error).message);
+    if (current()) notify((e as Error).message);
   } finally {
-    likingComment.value = undefined;
+    if (current()) likingComment.value = undefined;
   }
 }
 function reply(record: any) {
@@ -104,22 +112,23 @@ function reply(record: any) {
   commentField.value?.focus();
 }
 async function loadRelated() {
-  const version = loadVersion,
-    id = artwork.value?.id;
+  const current = context(), id = artwork.value?.id;
   if (!id || artwork.value.status !== "APPROVED") return;
   relatedError.value = "";
   try {
     const rows = await api(`/community/posts/${id}/related`);
-    if (version === loadVersion) related.value = rows;
+    if (current()) related.value = rows;
   } catch (e) {
-    if (version === loadVersion) relatedError.value = (e as Error).message;
+    if (current()) relatedError.value = (e as Error).message;
   }
 }
 async function load() {
-  const version = ++loadVersion;
+  ++loadVersion;
+  const current = context();
   loading.value = true;
   error.value = "";
   galleryIndex.value = 0;
+  galleryLandscape.value = false;
   collected.value = false;
   following.value = false;
   comments.value = [];
@@ -127,9 +136,11 @@ async function load() {
   relatedError.value = "";
   replyTo.value = undefined;
   replyName.value = "";
+  moreLoading.value = false; likingComment.value = undefined; busy.value = false;
+  reportVisible.value = false;
   try {
     const detail = await api("/community/posts/" + route.params.id);
-    if (version !== loadVersion) return;
+    if (!current()) return;
     artwork.value = detail;
     comments.value = detail.comments;
     commentTotal.value = detail.comment_count;
@@ -138,68 +149,74 @@ async function load() {
     following.value = detail.is_following;
     void loadRelated();
   } catch (e) {
-    if (version === loadVersion) error.value = (e as Error).message;
+    if (current()) error.value = (e as Error).message;
   } finally {
-    if (version === loadVersion) loading.value = false;
+    if (current()) loading.value = false;
   }
 }
 async function like() {
   if (!requireSession() || busy.value) return;
+  const current = context();
   busy.value = true;
   try {
     const r = await post("/community/posts/" + artwork.value.id + "/like");
+    if (!current()) return;
     artwork.value.is_liked = r.is_liked;
     artwork.value.like_count = r.like_count;
   } catch (e) {
-    notify((e as Error).message);
+    if (current()) notify((e as Error).message);
   } finally {
-    busy.value = false;
+    if (current()) busy.value = false;
   }
 }
 async function collect() {
   if (!requireSession() || busy.value) return;
+  const current = context();
   busy.value = true;
   try {
-    collected.value = (
-      await post("/mobile/collections/POST/" + artwork.value.id)
-    ).collected;
+    const result = await post("/mobile/collections/POST/" + artwork.value.id);
+    if (!current()) return;
+    collected.value = result.collected;
     notify(collected.value ? "已收藏作品" : "已取消收藏");
   } catch (e) {
-    notify((e as Error).message);
+    if (current()) notify((e as Error).message);
   } finally {
-    busy.value = false;
+    if (current()) busy.value = false;
   }
 }
 async function follow() {
   if (!requireSession() || busy.value) return;
+  const current = context();
   busy.value = true;
   try {
-    following.value = (
-      await post("/mobile/users/" + artwork.value.author.id + "/follow")
-    ).following;
+    const result = await post("/mobile/users/" + artwork.value.author.id + "/follow");
+    if (current()) following.value = result.following;
   } catch (e) {
-    notify((e as Error).message);
+    if (current()) notify((e as Error).message);
   } finally {
-    busy.value = false;
+    if (current()) busy.value = false;
   }
 }
 async function sendComment() {
   if (!requireSession() || busy.value) return;
+  if (!comment.value.trim()) { notify("请先写下你的想法"); return; }
+  const current = context();
   busy.value = true;
   try {
     await post("/community/posts/" + artwork.value.id + "/comments", {
-      content: comment.value,
+      content: comment.value.trim(),
       reply_to_id: replyTo.value,
     });
+    if (!current()) return;
     comment.value = "";
     replyTo.value = undefined;
     replyName.value = "";
     await loadComments(1);
-    notify("评论已发布");
+    if (current()) notify("评论已发布");
   } catch (e) {
-    notify((e as Error).message);
+    if (current()) notify((e as Error).message);
   } finally {
-    busy.value = false;
+    if (current()) busy.value = false;
   }
 }
 function openComments() {
@@ -236,19 +253,27 @@ async function share() {
   }
 }
 async function report() {
-  if (!requireSession()) return;
+  if (!requireSession() || busy.value) return;
+  const current = context();
+  busy.value = true;
   try {
     await post("/community/reports", {
       post_id: artwork.value.id,
       reason: reason.value,
     });
+    if (!current()) return;
     reportVisible.value = false;
     notify("举报已提交审核");
   } catch (e) {
-    notify((e as Error).message);
+    if (current()) notify((e as Error).message);
+  } finally {
+    if (current()) busy.value = false;
   }
 }
-watch(() => route.params.id, load, { immediate: true });
+watch(() => [route.params.id, session.token], () => {
+  comment.value = ""; editingComment.value = false;
+  void load();
+}, { immediate: true });
 </script>
 <template>
   <div
@@ -541,10 +566,11 @@ watch(() => route.params.id, load, { immediate: true });
             <label
               >举报原因<textarea
                 v-model.trim="reason"
+              :disabled="busy"
                 required
                 maxlength="64"
               /></label
-            ><button class="outline-button">提交举报</button>
+            ><button class="outline-button" :disabled="busy">{{ busy ? '正在提交…' : '提交举报' }}</button>
           </form>
         </div></template
       ></AsyncState

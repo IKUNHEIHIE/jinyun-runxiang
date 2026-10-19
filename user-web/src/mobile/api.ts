@@ -41,6 +41,7 @@ export const session = reactive({
   profile: null as Profile | null,
   token: localStorage.getItem("jinyun_user_token") || "",
   authVisible: false,
+  authRedirect: "",
   notice: "",
 });
 let noticeTimer: ReturnType<typeof setTimeout>;
@@ -49,10 +50,11 @@ export function notify(message: string) {
   clearTimeout(noticeTimer);
   noticeTimer = setTimeout(() => {
     session.notice = "";
-  }, 4000);
+  }, Math.min(10000, Math.max(4000, message.length * 90)));
 }
-export function requireSession() {
+export function requireSession(redirectTo = "") {
   if (session.token) return true;
+  session.authRedirect = redirectTo;
   session.authVisible = true;
   return false;
 }
@@ -79,7 +81,6 @@ export async function api<T = any>(
       headers,
       signal: controller.signal,
     });
-    const result = await response.json();
     if (response.status === 401 && requestToken === session.token) {
       session.token = "";
       session.profile = null;
@@ -87,8 +88,24 @@ export async function api<T = any>(
       localStorage.removeItem("jinyun_user_info");
       session.authVisible = true;
     }
+    let result;
+    try {
+      result = await response.json();
+    } catch {
+      throw new Error("服务暂时无法响应，请稍后重试");
+    }
+    if (!result || typeof result !== "object" || (response.ok && !("code" in result)))
+      throw new Error("服务返回异常，请稍后重试");
     if (!response.ok || result.code !== 0)
-      throw new Error(result.message || "操作失败，请稍后重试");
+      throw new Error(
+        result.message ||
+          (typeof result.detail === "string" ? result.detail : "") ||
+          (response.status === 429
+            ? "操作有些频繁，请稍后再试"
+            : response.status === 422
+              ? "请检查填写的信息后重试"
+              : "操作失败，请稍后重试"),
+      );
     return result.data as T;
   } catch (error) {
     if (error instanceof Error && error.name === "AbortError")

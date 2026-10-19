@@ -45,10 +45,7 @@ user-web/android/.gradle/
 user-web/android/capacitor-cordova-android-plugins/
 user-web/android/app/src/main/assets/
 
-# Runtime uploads and generated raster images (keep tracked design fixtures)
+# Runtime uploads and generated works (keep tracked design fixtures)
 backend/static/uploads/
-backend/static/generated/*.png
-backend/static/generated/*.jpg
-backend/static/generated/*.jpeg
-backend/static/generated/*.webp
+backend/static/generated/
 /*.apk

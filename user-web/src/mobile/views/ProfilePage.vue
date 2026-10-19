@@ -333,7 +333,7 @@ function targetUrl(item: any) {
         <template v-if="session.token">{{
           session.profile?.nickname || "非遗研习者"
         }}</template
-        ><button v-else @click="requireSession">点击登录</button>
+        ><button v-else @click="requireSession()">点击登录</button>
       </h1>
       <span class="profile-level">{{
         !session.token

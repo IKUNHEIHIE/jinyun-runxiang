@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
-import { api, post, mediaUrl, notify } from "../api";
+import { ref, computed, watch, onUnmounted } from "vue";
+import { useRouter, onBeforeRouteLeave } from "vue-router";
+import { api, post, mediaUrl, notify, session } from "../api";
 import { categories } from "../design";
 import PageHeader from "../components/PageHeader.vue";
 const router = useRouter(),
@@ -19,6 +19,24 @@ const specifications = ref([
   { label: "艺术流派", value: "" },
 ]);
 const appreciation = ref<Array<{ title: string; body: string }>>([]);
+const uploading = ref(false), uploaded = ref(0), uploadTotal = ref(0);
+let alive = true, version = 0, submitted = false;
+let controller: AbortController | undefined;
+const dirty = computed(() => !!(title.value || content.value || gallery.value.length ||
+  specifications.value.some((spec) => spec.value) || appreciation.value.length));
+function context() {
+  const request = ++version, token = session.token;
+  return () => alive && request === version && token === session.token;
+}
+watch(() => session.token, () => {
+  ++version; controller?.abort();
+  title.value = ""; content.value = ""; gallery.value = [];
+  specifications.value.forEach((spec) => { spec.value = ""; });
+  appreciation.value = []; error.value = ""; busy.value = false; uploading.value = false;
+});
+onUnmounted(() => { alive = false; ++version; controller?.abort(); });
+onBeforeRouteLeave(() => !session.token || submitted || !dirty.value ||
+  window.confirm("作品还未提交，确定离开吗？留在此页可以继续编辑。"));
 async function upload(event: Event) {
   const input = event.target as HTMLInputElement;
   const files = [...(input.files || [])];
@@ -30,8 +48,17 @@ async function upload(event: Event) {
   }
   if (files.some((file) => file.size > 20 * 1024 * 1024)) {
     error.value = "请选择20MB以内的图片";
+    input.value = "";
     return;
   }
+  if (files.some((file) => file.type ? !["image/png", "image/jpeg", "image/webp"].includes(file.type) : !/\.(png|jpe?g|webp)$/i.test(file.name))) {
+    error.value = "请选择 PNG、JPEG 或 WebP 图片";
+    input.value = "";
+    return;
+  }
+  const current = context();
+  controller = new AbortController();
+  uploading.value = true; uploaded.value = 0; uploadTotal.value = files.length;
   busy.value = true;
   error.value = "";
   try {
@@ -41,18 +68,25 @@ async function upload(event: Event) {
       const result = await api("/ai/assets/upload", {
         method: "POST",
         body: data,
+        signal: controller.signal,
       });
+      if (!current()) return;
       gallery.value.push(result.file_url || result.url);
+      uploaded.value++;
     }
   } catch (e) {
-    error.value = (e as Error).message;
+    if (current()) error.value = (e as Error).message;
   } finally {
-    busy.value = false;
+    if (current()) { busy.value = false; uploading.value = false; }
     input.value = "";
   }
 }
 async function publish() {
   if (busy.value) return;
+  if (!title.value.trim() || !content.value.trim()) {
+    error.value = "请填写作品名称和创作故事";
+    return;
+  }
   if (!cover.value) {
     error.value = "请先上传作品图片";
     return;
@@ -65,6 +99,7 @@ async function publish() {
     error.value = "请填写鉴赏要点的标题与内容，或移除未完成的要点";
     return;
   }
+  const current = context();
   busy.value = true;
   error.value = "";
   try {
@@ -77,23 +112,25 @@ async function publish() {
       specifications: specifications.value.filter((spec) => spec.value.trim()),
       appreciation: appreciation.value,
     });
+    if (!current()) return;
+    submitted = true;
     notify(
       result.status === "APPROVED" ? "作品发布成功" : "作品已提交，等待审核",
     );
-    router.replace(
+    await router.replace(
       result.status === "APPROVED" ? "/community/" + result.id : "/me/posts",
     );
   } catch (e) {
-    error.value = (e as Error).message;
+    if (current()) error.value = (e as Error).message;
   } finally {
-    busy.value = false;
+    if (current()) busy.value = false;
   }
 }
 </script>
 <template>
   <div>
     <PageHeader title="发布作品" />
-    <form class="page-padding" @submit.prevent="publish">
+    <form class="page-padding" :aria-busy="busy" @submit.prevent="publish">
       <label
         >作品图片<input
           type="file"
@@ -102,6 +139,8 @@ async function publish() {
           :disabled="busy"
           @change="upload"
       /></label>
+      <p class="subtle">最多 10 张，每张不超过 20MB。第一张作为封面，上传后可调整。</p>
+      <p v-if="uploading" class="upload-progress" role="status">正在上传 {{ uploaded + 1 }} / {{ uploadTotal }} 张，请稍候…</p>
       <div v-if="gallery.length" class="publish-gallery">
         <article v-for="(image, index) in gallery" :key="image">
           <img :src="mediaUrl(image)" :alt="'作品图片' + (index + 1)" /><span
@@ -112,6 +151,7 @@ async function publish() {
             v-else
             type="button"
             class="text-button"
+            :disabled="busy"
             @click="
               gallery = [image, ...gallery.filter((url) => url !== image)]
             "
@@ -129,9 +169,9 @@ async function publish() {
         </article>
       </div>
       <label
-        >作品名称<input v-model.trim="title" required maxlength="128" /></label
+        >作品名称<input v-model.trim="title" :disabled="busy" required maxlength="128" placeholder="为你的作品起一个名字" /></label
       ><label
-        >非遗分类<select v-model="category">
+        >非遗分类<select v-model="category" :disabled="busy">
           <option
             v-for="item in categories.filter((c) => c.value)"
             :key="item.value"
@@ -143,6 +183,7 @@ async function publish() {
       ><label
         >创作故事<textarea
           v-model.trim="content"
+          :disabled="busy"
           required
           maxlength="5000"
           placeholder="介绍灵感、制作过程与非遗文化内涵"
@@ -151,22 +192,24 @@ async function publish() {
       <fieldset class="artwork-spec-fields">
         <legend>作品规格（选填）</legend>
         <label v-for="spec in specifications" :key="spec.label"
-          >{{ spec.label }}<input v-model.trim="spec.value" maxlength="128"
+          >{{ spec.label }}<input v-model.trim="spec.value" :disabled="busy" maxlength="128"
         /></label>
       </fieldset>
       <fieldset class="appreciation-fields">
         <legend>鉴赏要点（选填）</legend>
         <article v-for="(point, index) in appreciation" :key="index">
           <label
-            >要点标题<input v-model.trim="point.title" maxlength="64" /></label
+            >要点标题<input v-model.trim="point.title" :disabled="busy" maxlength="64" /></label
           ><label
             >要点内容<textarea
               v-model.trim="point.body"
+              :disabled="busy"
               maxlength="2000"
             /></label
           ><button
             type="button"
             class="text-button"
+            :disabled="busy"
             @click="appreciation.splice(index, 1)"
           >
             移除要点
@@ -176,6 +219,7 @@ async function publish() {
           v-if="appreciation.length < 10"
           type="button"
           class="outline-button"
+          :disabled="busy"
           @click="appreciation.push({ title: '', body: '' })"
         >
           添加鉴赏要点
@@ -183,7 +227,7 @@ async function publish() {
       </fieldset>
       <p v-if="error" class="form-error" role="alert">{{ error }}</p>
       <button class="primary-button" :disabled="busy">
-        {{ busy ? "处理中…" : "发布作品" }}
+        {{ uploading ? "图片上传中…" : busy ? "正在提交…" : "提交作品审核" }}
       </button>
     </form>
   </div>

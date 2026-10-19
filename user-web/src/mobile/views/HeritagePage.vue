@@ -33,9 +33,12 @@ async function search(value?: string) {
 }
 async function quickSearch() {
   await search();
+  explore();
+}
+function explore() {
   document
     .getElementById("heritage-results")
-    ?.scrollIntoView({ block: "start", behavior: "smooth" });
+    ?.scrollIntoView({ block: "start", behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? "instant" : "smooth" });
 }
 function back() {
   window.history.state?.back ? router.back() : router.replace("/");
@@ -73,7 +76,7 @@ onMounted(() => search());
       <p class="subtle">
         图文探索天津非物质文化遗产，从青铜器纹样到皮影戏光影，<br />让传统美学融入现代教育，传承津门文化根脉。
       </p>
-      <a class="primary-button" href="#heritage-results">开始探索</a
+      <button class="primary-button" type="button" @click="explore">开始探索</button
       ><RouterLink class="text-button" to="/teacher/lesson-plan"
         >浏览教案</RouterLink
       >

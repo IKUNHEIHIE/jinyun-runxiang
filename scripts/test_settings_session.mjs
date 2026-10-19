@@ -1,0 +1,35 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+import {createRequire} from 'node:module';
+const requireApp=createRequire(new URL('../user-web/package.json',import.meta.url)),ts=requireApp('typescript'),vue=requireApp('vue');
+const source=fs.readFileSync(new URL('../admin-web/src/views/settings/SettingsView.vue',import.meta.url),'utf8').match(/<script setup lang="ts">([\s\S]*?)<\/script>/)[1];
+const compiled=ts.transpileModule(source+'\nexport {fetchSettings,handleSaveAll,handleTestImage,llmForm,siteForm,dirty,settingsReady,loadError,imageTestResult};',
+  {compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+let get=async()=>{throw Error('Offline');},post=async()=>{},writes=0;
+const exports={};
+vm.runInNewContext(compiled,{exports,require(name){
+  if(name==='vue')return {...vue,onMounted(){}};
+  if(name==='element-plus')return {ElMessage:{success(){},error(){},info(){},warning(){}}};
+  if(name==='@element-plus/icons-vue')return {};
+  if(name==='@/api/request')return {default:{get:(...args)=>get(...args),post:(...args)=>{writes++;return post(...args);}}};
+  throw Error('Unexpected dependency '+name);
+}});
+await exports.fetchSettings();assert.equal(exports.settingsReady.value,false);
+await exports.handleSaveAll();assert.equal(writes,0,'A failed initial load must never permit saving default settings');
+get=async()=>({llm_settings:{model_name:'configured-text',api_key:'********'},site_settings:{site_subtitle:'Existing subtitle'}});
+await exports.fetchSettings();assert.equal(exports.settingsReady.value,true);assert.equal(exports.dirty.value,false);
+exports.siteForm.value.site_subtitle='Updated subtitle';assert.equal(exports.dirty.value,true);
+exports.llmForm.value.image_generation.api_key='test-image-key';
+let complete;
+post=()=>new Promise(resolve=>{complete=resolve;});const save=exports.handleSaveAll();
+await exports.handleSaveAll();assert.equal(writes,1,'Repeated save clicks must not create duplicate requests');
+complete({});await save;
+assert.equal(exports.dirty.value,false);assert.equal(exports.llmForm.value.image_generation.api_key,'********');
+post=()=>new Promise(resolve=>{complete=resolve;});const probe=exports.handleTestImage();
+exports.llmForm.value.image_generation.model_name='changed-model';
+complete({message:'Old model is available'});await probe;
+assert.equal(exports.imageTestResult.value,'','A result for edited-away settings must not validate the new model');
+get=async()=>{throw Error('Offline again');};await exports.fetchSettings();const before=writes;
+await exports.handleSaveAll();assert.equal(writes,before,'Reload failure must keep saving disabled even after an earlier successful load');
+console.log('PASS: settings load failure blocks default overwrites, duplicate saves are ignored, saved keys become masks, and edited parameters invalidate old probe results.');

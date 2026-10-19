@@ -584,7 +584,7 @@ onUnmounted(() => {
         "
         class="local-generation-note"
       >
-        当前结果由本地工艺规则生成；外部模型尚未配置。
+        本次采用本地纹样模板生成，可导出或收藏作品。
       </p>
       <p v-if="readyResult?.generation_method === 'ai_image'" class="local-generation-note">{{ readyResult.description }}</p>
       <div v-if="elements.length || readyResult" class="result-actions">

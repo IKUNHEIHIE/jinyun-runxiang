@@ -1,5 +1,7 @@
 # Android 重构实施与验收记录
 
+最新补充（2026-10-19）：个人中心专用的 `profile-scroll.ts` 已推广为 `page-scroll.ts`，在目标页出现、过渡完成以及返回时内容就绪后恢复位置，切号/新导航/用户操作会取消等待。登录、社区筛选与表单、漆绣快捷入口、设置页同步反馈等打磨及最新线上包详见 [体验打磨记录](POLISH_20261019.md)。最新包 `jinyun-polish-cloud-debug.apk` 连接正式服务，56,001,223 字节，SHA256 `A7F4FDED2A1476FFF8D6255F367158A9453D9D1C669D56D952BA843BA00C20A2`；18 个客户端专项、56 次实际小屏页面检查及 Android 模拟器重点流程验证通过，未重新验证实体设备或旧 Android。
+
 ## 目标与边界
 
 以 https://mastergo.com/file/201619411459855?fileOpenFrom=project&page_id=M 为唯一视觉基线，交付完整用户客户端、必要后端与教师端适配、可安装且经过 Android 运行验证的 Debug APK。保留任务开始前已有的未提交修改。

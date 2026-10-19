@@ -575,7 +575,7 @@ onUnmounted(() => {
               session.token
                 ? "还没有探访记录，选择基地开启第一站吧"
                 : "登录后查看自己的探访记录"
-            }}<button v-if="!session.token" @click="requireSession">
+            }}<button v-if="!session.token" @click="requireSession()">
               登录
             </button>
           </p>

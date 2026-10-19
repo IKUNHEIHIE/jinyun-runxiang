@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, watch, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { api, post, notify, session } from "../api";
 import PageHeader from "../components/PageHeader.vue";
@@ -17,51 +17,68 @@ const creating = ref(false),
   title = ref(""),
   streamUrl = ref(""),
   busy = ref(false);
+let version = 0, alive = true;
+onUnmounted(() => { alive = false; ++version; });
 async function load() {
+  const request = ++version, token = session.token;
+  const current = () => alive && request === version && token === session.token;
   loading.value = true;
   error.value = "";
   try {
-    classes.value = await api(
+    const rows = await api(
       teacher.value ? "/teacher/classes" : "/mobile/me/classes",
     );
+    if (!current()) return;
+    classes.value = rows;
+    if (!classes.value.some((c) => c.id === classId.value)) classId.value = undefined;
     if (!classId.value && classes.value.length)
       classId.value = classes.value[0].id;
-    rooms.value = classId.value
+    const result = classId.value
       ? await api("/mobile/classes/" + classId.value + "/sessions")
       : [];
+    if (current()) rooms.value = result;
   } catch (e) {
-    error.value = (e as Error).message;
+    if (current()) error.value = (e as Error).message;
   } finally {
-    loading.value = false;
+    if (current()) loading.value = false;
   }
 }
 async function create() {
+  if (busy.value) return;
   if (!classId.value) {
     notify("请先选择班级");
     return;
   }
+  if (!title.value.trim()) { notify("请填写课堂主题"); return; }
+  const token = session.token, id = classId.value;
+  const current = () => alive && token === session.token && id === classId.value;
   busy.value = true;
   try {
     const result = await post(
       "/mobile/teacher/classes/" + classId.value + "/sessions",
       { title: title.value, stream_url: streamUrl.value || null },
     );
+    if (!current()) return;
     creating.value = false;
-    router.push("/classroom/" + result.id);
+    await router.push("/classroom/" + result.id);
   } catch (e) {
-    notify((e as Error).message);
+    if (current()) notify((e as Error).message);
   } finally {
-    busy.value = false;
+    if (current()) busy.value = false;
   }
 }
-onMounted(load);
+watch(() => [session.token, teacher.value], () => {
+  ++version; classId.value = undefined; classes.value = []; rooms.value = [];
+  title.value = ""; streamUrl.value = ""; creating.value = false; busy.value = false;
+  void load();
+}, { immediate: true });
 </script>
 <template>
   <div>
     <PageHeader title="在线课堂" subtitle="课堂讨论 · 举手互动答疑" />
     <div class="page-padding">
       <label
-        >选择班级<select v-model="classId" @change="load">
+        >选择班级<select v-model="classId" :disabled="busy" @change="load">
           <option v-for="c in classes" :key="c.id" :value="c.id">
             {{ c.name }}
           </option>
@@ -69,6 +86,7 @@ onMounted(load);
       ><button
         v-if="teacher"
         class="primary-button start-classroom"
+        :disabled="loading || busy || !classId"
         @click="creating = true"
       >
         开启课堂</button

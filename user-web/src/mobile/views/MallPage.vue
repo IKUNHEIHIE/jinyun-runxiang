@@ -308,7 +308,7 @@ watch(
 );
 </script>
 <template>
-  <div class="market-page" data-design-node="5:7245">
+  <div class="market-page" data-design-node="5:7245" :data-page-ready="!loading">
     <header class="market-hero" data-design-node="5:8152">
       <div
         class="hero-background"

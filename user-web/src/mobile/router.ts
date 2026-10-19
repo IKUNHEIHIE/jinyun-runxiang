@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import { session } from "./api";
-import { restoreProfileScroll } from "./profile-scroll";
+import { restorePageScroll } from "./page-scroll";
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
@@ -174,34 +174,23 @@ const router = createRouter({
     { path: "/:pathMatch(.*)*", redirect: "/" },
   ],
   scrollBehavior: (to, from, position) => {
-    if (position && to.path === "/profile") {
-      const token = session.token;
-      return restoreProfileScroll(
-        position,
-        () =>
-          router.currentRoute.value.fullPath === to.fullPath &&
-          token === session.token,
-        (cancel) =>
-          router.beforeEach(() => {
-            cancel();
-          }),
-      );
-    }
-    if (position) return position;
-    if (
-      to.path === from.path &&
-      (to.path === "/" ||
-        to.path === "/profile" ||
-        to.path.startsWith("/ai-workshop/"))
-    )
+    if (!position && to.path === from.path)
       return false;
-    return { top: 0 };
+    const token = session.token;
+    return restorePageScroll(
+      position || { left: 0, top: 0 },
+      to.fullPath,
+      !!position,
+      () => router.currentRoute.value.fullPath === to.fullPath && token === session.token,
+      (cancel) => router.beforeEach(() => { cancel(); }),
+    );
   },
 });
-router.beforeEach((to) => {
+router.beforeEach((to, from) => {
   if ((to.meta.requiresAuth || to.meta.teacher) && !session.token) {
+    session.authRedirect = to.fullPath;
     session.authVisible = true;
-    return false;
+    return from.matched.length ? false : "/profile";
   }
   if (
     to.meta.teacher &&

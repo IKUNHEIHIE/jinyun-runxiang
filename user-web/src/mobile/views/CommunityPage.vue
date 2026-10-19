@@ -1,32 +1,44 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { api, mediaUrl, requireSession } from "../api";
+import { ref, computed, watch, onUnmounted } from "vue";
+import { api, mediaUrl, requireSession, session } from "../api";
 import { categories } from "../design";
 import AsyncState from "../components/AsyncState.vue";
-import { useRouter } from "vue-router";
-const router = useRouter(),
+import { useRoute, useRouter } from "vue-router";
+const router = useRouter(), route = useRoute(),
   posts = ref<any[]>([]),
   loading = ref(true),
-  error = ref(""),
-  category = ref(""),
-  sort = ref("latest");
+  error = ref("");
+const category = computed(() => categories.some((c) => c.value === route.query.category) ? String(route.query.category) : "");
+const sort = computed(() => ["hot", "featured"].includes(String(route.query.sort)) ? String(route.query.sort) : "latest");
+let version = 0;
+let controller: AbortController | undefined;
+function setFilters(nextCategory: string, nextSort = sort.value) {
+  router.replace({ query: { ...route.query, category: nextCategory || undefined, sort: nextSort === "latest" ? undefined : nextSort } });
+}
 async function load() {
+  const request = ++version;
+  const token = session.token;
+  const current = () => request === version && token === session.token;
+  controller?.abort();
+  controller = new AbortController();
   loading.value = true;
   error.value = "";
   try {
     const q = new URLSearchParams({ sort: sort.value, pageSize: "50" });
     if (category.value) q.set("category", category.value);
-    posts.value = (await api("/community/posts?" + q)).list;
+    const result = await api("/community/posts?" + q, { signal: controller.signal });
+    if (current()) posts.value = result.list;
   } catch (e) {
-    error.value = (e as Error).message;
+    if (current()) error.value = (e as Error).message;
   } finally {
-    loading.value = false;
+    if (current()) loading.value = false;
   }
 }
 function publish() {
-  if (requireSession()) router.push("/community/publish");
+  if (requireSession("/community/publish")) router.push("/community/publish");
 }
-onMounted(load);
+watch([category, sort, () => session.token], load, { immediate: true });
+onUnmounted(() => { ++version; controller?.abort(); });
 </script>
 <template>
   <div class="community-page">
@@ -36,20 +48,18 @@ onMounted(load);
       <p class="subtle">在这里，遇见非遗创作的每一种可能</p>
       <button class="outline-button" @click="publish">发布作品 ＋</button>
     </header>
-    <div class="category-tabs">
+    <div class="category-tabs" role="group" aria-label="作品分类">
       <button
         v-for="c in categories"
         :key="c.value"
         :class="{ active: category === c.value }"
-        @click="
-          category = c.value;
-          load();
-        "
+        :aria-pressed="category === c.value"
+        @click="setFilters(c.value)"
       >
         {{ c.label }}
       </button>
     </div>
-    <div class="community-sort">
+    <div class="community-sort" role="group" aria-label="作品排序">
       <button
         v-for="s in [
           { label: '最新', value: 'latest' },
@@ -58,10 +68,8 @@ onMounted(load);
         ]"
         :key="s.value"
         :class="{ active: sort === s.value }"
-        @click="
-          sort = s.value;
-          load();
-        "
+        :aria-pressed="sort === s.value"
+        @click="setFilters(category, s.value)"
       >
         {{ s.label }}
       </button>
@@ -70,7 +78,7 @@ onMounted(load);
       :loading="loading"
       :error="error"
       :empty="!posts.length"
-      empty-text="还没有作品，分享你的第一件非遗创作吧"
+      :empty-text="category ? '这个分类还没有作品，来分享你的非遗创作吧' : '还没有作品，分享你的第一件非遗创作吧'"
       @retry="load"
       ><div class="artwork-grid">
         <RouterLink
@@ -144,8 +152,7 @@ onMounted(load);
 }
 .artwork-card > img {
   width: 100%;
-  min-height: 160px;
-  max-height: 260px;
+  aspect-ratio: 4 / 5;
   object-fit: cover;
 }
 .artwork-card > div {
@@ -154,6 +161,11 @@ onMounted(load);
 .artwork-card h2 {
   font-size: 13px;
   line-height: 1.7;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
 }
 .artwork-card p {
   display: flex;
@@ -163,4 +175,12 @@ onMounted(load);
   color: var(--muted);
   margin-top: 10px;
 }
+.artwork-card p > span:first-child {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.artwork-card p > span:last-child { flex-shrink: 0; font-variant-numeric: tabular-nums; }
 </style>

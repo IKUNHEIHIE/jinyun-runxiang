@@ -2,15 +2,21 @@
   <div class="settings-view">
     <div class="page-header">
       <div class="header-left">
-        <h2 class="title">⚙️ 系统设置与大模型接入 (A-08)</h2>
-        <p class="subtitle">集中配置多模态大语言模型 API 引擎、站点基础元数据、乡村美育运营规则及敏感词过滤风控策略</p>
+        <h2 class="title">系统设置与模型接入</h2>
+        <p class="subtitle">管理创作与教学使用的模型、站点信息及美育规则</p>
       </div>
       <div class="header-actions">
-        <el-button type="primary" :loading="saving" :disabled="loading" @click="handleSaveAll" class="save-btn">
+        <span class="save-status" role="status">{{ loading ? '正在读取设置…' : loadError ? '设置读取失败' : dirty ? '有未保存的修改' : '设置已同步' }}</span>
+        <el-button type="primary" :loading="saving" :disabled="!settingsReady || !dirty" @click="handleSaveAll" class="save-btn">
           <el-icon><Check /></el-icon> 保存全部系统设置
         </el-button>
       </div>
     </div>
+    <el-alert v-if="loadError" type="error" :closable="false" show-icon class="settings-error">
+      <template #title>暂时无法读取设置</template>
+      {{ loadError }}
+      <el-button size="small" text @click="fetchSettings">重新加载</el-button>
+    </el-alert>
 
     <el-tabs v-model="activeTab" class="settings-tabs" type="border-card">
       <!-- Tab 1: 大模型 API 配置 -->
@@ -22,7 +28,7 @@
           </span>
         </template>
 
-        <el-form :model="llmForm" label-width="150px" class="settings-form" v-loading="loading">
+        <el-form :model="llmForm" label-width="150px" class="settings-form" :disabled="!settingsReady || saving" v-loading="loading">
           <div class="section-title">
             <span class="indicator"></span>
             <span>模型引擎服务商与网关配置</span>
@@ -155,7 +161,7 @@
           </el-form-item>
           <el-form-item label="模型访问检查">
             <el-button :loading="testingImage" @click="handleTestImage">检查配置与模型访问</el-button>
-            <div class="form-tip">只查询模型，不生成图片。部分兼容服务未提供模型查询，实际能力请在工坊试生成。</div>
+            <div class="form-tip">检查当前填写的参数，不生成图片。保存后手机端才会使用新配置；部分服务不提供模型查询。</div>
             <div v-if="imageTestResult" role="status">{{ imageTestResult }}</div>
           </el-form-item>
 
@@ -192,7 +198,7 @@
           </div>
 
           <div class="form-footer">
-            <el-button type="primary" :loading="saving" :disabled="loading" @click="handleSaveAll">
+            <el-button type="primary" :loading="saving" :disabled="!settingsReady || !dirty" @click="handleSaveAll">
               保存大模型接入配置
             </el-button>
           </div>
@@ -208,7 +214,7 @@
           </span>
         </template>
 
-        <el-form :model="siteForm" label-width="150px" class="settings-form" v-loading="loading">
+        <el-form :model="siteForm" label-width="150px" class="settings-form" :disabled="!settingsReady || saving" v-loading="loading">
           <div class="section-title">
             <span class="indicator"></span>
             <span>站点品牌标识与公开元信息</span>
@@ -311,7 +317,7 @@
           </el-form-item>
 
           <div class="form-footer">
-            <el-button type="primary" :loading="saving" @click="handleSaveAll">
+            <el-button type="primary" :loading="saving" :disabled="!settingsReady || !dirty" @click="handleSaveAll">
               保存全站运营自定义设置
             </el-button>
           </div>
@@ -414,7 +420,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { Check, Cpu, Setting, Connection, Present } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import request from '@/api/request'
@@ -425,6 +431,11 @@ const saving = ref(false)
 const testingLlm = ref(false)
 const testingImage = ref(false)
 const imageTestResult = ref('')
+const loadError = ref('')
+const savedSettings = ref('')
+const settingsReady = computed(() => !loading.value && !loadError.value && !!savedSettings.value)
+const fingerprint = () => JSON.stringify({ llm_settings: llmForm.value, site_settings: siteForm.value })
+const dirty = computed(() => !!savedSettings.value && fingerprint() !== savedSettings.value)
 
 const predefineColors = [
   '#8B4A2F', // 津派赤褐
@@ -468,14 +479,15 @@ function useSenseNova() {
 }
 
 async function handleTestImage() {
-  if (testingImage.value || loading.value) return
+  if (testingImage.value || !settingsReady.value || saving.value) return
+  const tested = fingerprint()
   testingImage.value = true
   imageTestResult.value = ''
   try {
     const result: any = await request.post('/admin/settings/test-image', llmForm.value)
-    imageTestResult.value = result.message
+    if (tested === fingerprint()) imageTestResult.value = result.message
   } catch (error: any) {
-    imageTestResult.value = error.response?.data?.message || error.message || '模型访问检查失败'
+    if (tested === fingerprint()) imageTestResult.value = error.response?.data?.message || error.message || '模型访问检查失败'
   } finally {
     testingImage.value = false
   }
@@ -503,6 +515,10 @@ interface TestResult {
 }
 
 const testResult = ref<TestResult | null>(null)
+watch(() => JSON.stringify(llmForm.value), () => {
+  imageTestResult.value = ''
+  testResult.value = null
+})
 
 // 切换大模型服务商时自动联动建议
 const handleProviderChange = (providerVal: string) => {
@@ -525,8 +541,10 @@ const handleResetSensitiveWords = () => {
 // 获取现有设置
 const fetchSettings = async () => {
   loading.value = true
+  loadError.value = ''
   try {
     const res: any = await request.get('/admin/settings')
+    if (!res?.llm_settings || !res?.site_settings) throw new Error('未能读取完整配置，请重新加载')
     if (res) {
       if (res.llm_settings) {
         llmForm.value = { ...llmForm.value, ...res.llm_settings }
@@ -538,8 +556,10 @@ const fetchSettings = async () => {
         supportedProviders.value = res.supported_providers
       }
     }
+    savedSettings.value = fingerprint()
   } catch (err: any) {
-    ElMessage.error('加载系统设置失败: ' + (err.message || '网络异常'))
+    const detail = err.response?.data?.detail
+    loadError.value = err.response?.data?.message || (typeof detail === 'string' ? detail : '请检查网络连接，稍后重新加载。现有配置将保留。')
   } finally {
     loading.value = false
   }
@@ -547,12 +567,14 @@ const fetchSettings = async () => {
 
 // 探测大模型连通性
 const handleTestLlm = async () => {
+  if (testingLlm.value || !settingsReady.value || saving.value) return
   if (!llmForm.value.api_key) {
     ElMessage.warning('请先填写 API Key 再进行连通性测试')
     return
   }
 
   testingLlm.value = true
+  const tested = fingerprint()
   testResult.value = null
   try {
     const res: any = await request.post('/admin/settings/test-llm', {
@@ -562,6 +584,7 @@ const handleTestLlm = async () => {
       model_name: llmForm.value.model_name
     })
 
+    if (tested !== fingerprint()) return
     testResult.value = {
       success: true,
       message: res.is_real_call ? '服务商接口真实调用成功' : '连通性测试通过',
@@ -570,6 +593,7 @@ const handleTestLlm = async () => {
     }
     ElMessage.success('大模型 API 连通探测正常！')
   } catch (err: any) {
+    if (tested !== fingerprint()) return
     testResult.value = {
       success: false,
       message: err.message || '连通性测试失败，请检查 API Base 与 API Key 是否有效。'
@@ -581,14 +605,15 @@ const handleTestLlm = async () => {
 
 // 保存全部配置
 const handleSaveAll = async () => {
-  if (saving.value || loading.value) return
+  if (saving.value || !settingsReady.value || !dirty.value) return
+  const payload = JSON.parse(fingerprint())
   saving.value = true
   try {
-    await request.post('/admin/settings', {
-      llm_settings: llmForm.value,
-      site_settings: siteForm.value
-    })
-    ElMessage.success('系统设置与大模型参数已成功保存并实时生效！')
+    await request.post('/admin/settings', payload)
+    if (llmForm.value.api_key) llmForm.value.api_key = '********'
+    if (llmForm.value.image_generation.api_key) llmForm.value.image_generation.api_key = '********'
+    savedSettings.value = fingerprint()
+    ElMessage.success('设置已保存')
   } catch (err: any) {
     ElMessage.error('保存失败: ' + (err.message || '系统错误'))
   } finally {
@@ -665,6 +690,7 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 20px;
   margin-bottom: 20px;
   background: #FFFFFF;
   padding: 20px 24px;
@@ -734,6 +760,8 @@ onMounted(() => {
 }
 
 .form-tip {
+  flex-basis: 100%;
+  min-width: 0;
   font-size: 12px;
   color: #8C827A;
   margin-top: 4px;
@@ -865,5 +893,32 @@ onMounted(() => {
   padding-top: 20px;
   border-top: 1px solid #F0ECE4;
   text-align: left;
+}
+.header-actions {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.save-status { font-size: 12px; color: #8C827A; }
+.settings-error { margin-bottom: 16px; }
+.settings-form :deep(.el-form-item__content) { min-width: 0; }
+.test-header { gap: 16px; flex-wrap: wrap; }
+@media (max-width: 1100px) {
+  .settings-form :deep(.el-row) > .el-col { max-width: 100%; flex: 0 0 100%; }
+}
+@media (max-width: 768px) {
+  .page-header { align-items: flex-start; flex-direction: column; padding: 18px 16px; }
+  .header-actions { justify-content: flex-start; }
+  .settings-form { padding: 12px 4px; }
+  .settings-form :deep(.el-form-item) { display: block; }
+  .settings-form :deep(.el-form-item__label) {
+    width: auto !important; height: auto; display: block;
+    text-align: left; line-height: 1.6; padding: 0 0 6px;
+  }
+  .settings-form :deep(.el-form-item__content) { margin-left: 0 !important; }
+  .tab-label { font-size: 13px; padding: 4px 0; }
 }
 </style>

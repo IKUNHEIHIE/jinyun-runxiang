@@ -1,0 +1,27 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+import {createRequire} from 'node:module';
+const ts=createRequire(new URL('../user-web/package.json',import.meta.url))('typescript');
+const source=fs.readFileSync(new URL('../user-web/src/mobile/router.ts',import.meta.url),'utf8');
+const compiled=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+const session={token:'T',profile:{role_code:'STUDENT'},authVisible:false,authRedirect:''},guards=[],restores=[];
+let config;
+const router={currentRoute:{value:{fullPath:'/community?sort=hot'}},beforeEach:fn=>{guards.push(fn);return()=>{};},afterEach(){}};
+vm.runInNewContext(compiled,{exports:{},require(name){
+  if(name==='vue-router')return {createWebHashHistory:()=>({}),createRouter:value=>{config=value;return router;}};
+  if(name==='./api')return {session};
+  if(name==='./page-scroll')return {restorePageScroll:async(...args)=>{restores.push(args);return args[0];}};
+  throw Error('Unexpected dependency '+name);
+}});
+assert.equal(config.scrollBehavior({path:'/community',fullPath:'/community?sort=hot'},{path:'/community'},null),false,'Filtering does not move the page back to its heading');
+assert.equal(config.scrollBehavior({path:'/courses',fullPath:'/courses?category=BRONZE'},{path:'/courses'},null),false,'Course filters retain their viewport position');
+const saved={left:0,top:800};
+assert.equal(await config.scrollBehavior({path:'/profile',fullPath:'/profile'},{path:'/profile'},saved),saved,'History restoration still applies even on a same-path navigation');
+assert.equal(restores.at(-1)[2],true);
+session.token='';
+assert.equal(guards[0]({meta:{requiresAuth:true},fullPath:'/community/publish'},{matched:[]}),'/profile');
+assert.equal(session.authVisible,true);assert.equal(session.authRedirect,'/community/publish');
+session.token='T';
+assert.equal(guards[0]({meta:{teacher:true},fullPath:'/teacher'},{matched:[{}]}),'/profile');
+console.log('PASS: filters retain their viewport, saved history positions remain restorable, and protected initial links keep a usable login destination.');

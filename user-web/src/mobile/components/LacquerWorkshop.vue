@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, onMounted, onUnmounted } from "vue";
 import { designIcon, designImage } from "../design";
 import { mediaUrl, notify, requireSession, session } from "../api";
 
@@ -31,6 +31,20 @@ const pattern = defineModel<string>("pattern", { required: true });
 const sketch = defineModel<string>("sketch", { required: true });
 const editorOpen = ref(false),
   input = ref<HTMLInputElement>();
+const workbench = ref<HTMLElement>(), showShortcut = ref(true);
+let workbenchObserver: IntersectionObserver | undefined;
+onMounted(() => {
+  if (!workbench.value || typeof IntersectionObserver === "undefined") return;
+  workbenchObserver = new IntersectionObserver(([entry]) => {
+    showShortcut.value = !entry.isIntersecting;
+  }, { rootMargin: "0px 0px -80px 0px" });
+  workbenchObserver.observe(workbench.value);
+});
+onUnmounted(() => workbenchObserver?.disconnect());
+function openWorkbench() {
+  workbench.value?.scrollIntoView({ block: "start", behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? "instant" : "smooth" });
+  workbench.value?.focus({ preventScroll: true });
+}
 watch(
   () => session.token,
   () => {
@@ -54,6 +68,16 @@ const palette = [
   { name: "草绿", value: "#4A6741" },
   { name: "泥金", value: "#D4AF37" },
 ];
+const patternOptions = [
+  { value: "FLORAL", label: "花鸟纹样" },
+  { value: "GEOMETRIC", label: "几何纹样" },
+  { value: "AUSPICIOUS", label: "吉祥文字" },
+];
+function choosePattern(value: string) {
+  if (disabled.value || !requireSession()) return;
+  pattern.value = value;
+  editorOpen.value = true;
+}
 const intro =
   "宁氏漆艺镶嵌与联升斋刺\n绣，均为津门非遗工艺。\n以数字化纹样辅助设计，\n让传统工艺在当下焕发新\n生。";
 function chooseUpload() {
@@ -286,7 +310,10 @@ function generate() {
         <img :src="designImage(screen, '5:00268')" alt="" /><span>◆</span>
       </div>
     </div>
-    <section class="workbench" aria-label="漆绣创作">
+    <Teleport to="body"><button v-if="showShortcut && !editorOpen && !session.authVisible" type="button" class="creation-shortcut" aria-controls="lacquer-workbench" @click="openWorkbench">
+      前往纹样创作 <span aria-hidden="true">↓</span>
+    </button></Teleport>
+    <section ref="workbench" id="lacquer-workbench" class="workbench" tabindex="-1" aria-label="漆绣创作">
       <img
         class="halo second-halo"
         :src="designImage(screen, '5:9686')"
@@ -294,21 +321,23 @@ function generate() {
       />
       <div class="workbench-heading">
         <span class="section-number">陆</span>
-        <h2 class="section-tag">AI智能补全<span>◆</span></h2>
-        <small>尚未开放</small>
+        <h2 class="section-tag">纹样创作<span>◆</span></h2>
+        <small>灵感成形</small>
       </div>
       <div class="workbench-grid">
         <div class="workbench-description">
           <p>
-            以丝为墨，以针为笔。选择纹样与配色，通过本地模板或 AI 图像生成创作；支持的模型可按草图重绘。LoRA 尚未接入。
+            以丝为墨，以针为笔。选择纹样与配色，用本地模板或 AI 图像生成创作。上传参考图后，可使用支持图片编辑的模型重绘。
           </p>
-          <div class="model-options" aria-label="未接入的模型风格">
+          <div class="model-options" role="group" aria-label="选择漆绣纹样">
             <button
-              v-for="label in ['花鸟LoRA', '几何LoRA', '吉祥文字LoRA']"
-              :key="label"
-              disabled
+              v-for="item in patternOptions"
+              :key="item.value"
+              :disabled="disabled"
+              :aria-pressed="pattern === item.value"
+              @click="choosePattern(item.value)"
             >
-              {{ label }}
+              {{ item.label }}
             </button>
           </div>
         </div>
@@ -483,9 +512,7 @@ function generate() {
             <slot name="generation-mode" />
             <label
               >纹样类型<select v-model="pattern" :disabled="disabled">
-                <option value="FLORAL">花鸟纹样</option>
-                <option value="GEOMETRIC">几何纹样</option>
-                <option value="AUSPICIOUS">吉祥文字</option>
+                <option v-for="item in patternOptions" :key="item.value" :value="item.value">{{ item.label }}</option>
               </select></label
             ><label
               >文字描述<textarea
@@ -1100,7 +1127,8 @@ function generate() {
   margin-top: 12px;
 }
 .model-options button {
-  padding: 4px 10px;
+  min-height: 36px;
+  padding: 7px 10px;
   border: 0;
   border-radius: 99px;
   background: rgba(45, 74, 62, 0.05);
@@ -1119,6 +1147,19 @@ function generate() {
 .model-options button:disabled {
   opacity: 0.6;
 }
+.model-options button[aria-pressed="true"] { box-shadow: inset 0 0 0 1px currentColor; }
+.creation-shortcut {
+  position: fixed; z-index: 40;
+  left: 50%; transform: translateX(-50%);
+  bottom: calc(16px + var(--safe-bottom));
+  width: min(calc(100% - 32px), 448px); min-height: 46px;
+  display: flex; align-items: center; justify-content: center; gap: 18px;
+  padding: 10px 20px; border-radius: 12px;
+  border: 1px solid #b8a67a;
+  background: #2d4a3e; color: #faf7ee;
+  font: 15px var(--serif); box-shadow: 0 4px 16px #2d4a3e24;
+}
+.workbench { scroll-margin-top: calc(20px + var(--safe-top)); }
 .workbench-images {
   display: flex;
   flex-direction: column;
