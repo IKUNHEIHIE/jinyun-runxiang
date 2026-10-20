@@ -434,3 +434,12 @@ AI 工坊首页新增黑漆描金风格 3D 入口，`/ai-workshop/3d` 页面接�
 - 教师后台：生成漏斗面板已上线并核对，但其余后台页面本轮未做全量回归；`/ai/stats` 的历史耗时统计口径含旧数据（0.0 秒多为导入种子行 `created_at == updated_at`）。
 - 测试脚手架：`#/ai-workshop/shadow` 这类动态路由在设备 WebView 里用 `location.hash` 直接赋值会被弹回 `#/`，需通过界面点击；router-link 的 touch→click 在该 WebView 下不总触发，故驱动脚本对 `<a>` 额外补发 click。这属于测试脚手架适配，未改动产品代码。
 - 本地壳行为：签名 URL 在设备里由 `mediaUrl()` 前缀成绝对地址后加载正常，但直接用相对路径 fetch 会被 Capacitor 的 `shouldInterceptRequest` 以 404/空响应拦下，这是本地壳行为不是服务端故障。
+
+## 2026-10-21 凌晨（续）：生成剧场等待真实结果 + 成品自动定位
+
+- 生成剧场新增 `waiting`：三步/四步动画播完后不再直接揭幕，而是停在「正在合成成品」，等 `working` 转 false（任务成功）后才显示「已交付」，并有 15 秒保底；失败/取消仍立即关闭遮罩。青铜、皮影、漆绣、剪影、数字沙盘五个模块全部传入 `waiting`。
+- 皮影默认预览改为「彩色皮影」（原为镂空轮廓）；青铜/皮影/漆器预置可编辑的演示描述，分别对应饕餮宫灯、提灯旦角、缠枝莲团盒。
+- 剧场预览修复：长图（如皮影 540×760）此前被按宽度撑到 326×459、再被 190px 舞台裁掉大半，只露头顶；改为绝对定位 + `object-fit: contain`，并加同图模糊底衬，成品在舞台上完整可读。
+- 交付后自动定位成品：皮影/漆绣滚到预览卡片，青铜滚到画布，数字沙盘滚到展台，剪影滚到剪影结果，避免"生成完还停在表单底部"。
+- 验证：`vue-tsc --noEmit` 0 错误；`vite build --mode android` 通过。新 APK 56,109,796 B，SHA256 `627576DC7CFB7009E90F2F1271060D466F901078288A2C3EE4784CFFF6C80ABB`（2026-10-21 04:13 构建，API 仍为 `https://admin.wentian.org/api`），`adb install -r` 后逐模块实测：数字沙盘渲染琉璃蟠龙（HUD 9.1 万面/6.1 MB、自动巡游/线框/重置视角可用）；皮影剧场 3.3 秒（0.04s 开场 → 2.39s「已交付」→ 3.3s 收起）并滚到预览（scrollY 326）；漆绣 2.0 秒交付并滚到成品（scrollY 1527）；青铜 2.4 秒交付，统计「1 组 / 3 层 / 600×600」正常；剪影交付后滚到剪影卡（scrollY 1207）。证据 `.local/deploy/device-theater-mid2.png`、`device-shadow-result2.png`、`device-lacquer-theater.png`、`device-bronze-theater2.png`、`device-model3d-after.png`、`device-shadow3d-after.png`。
+- 代码提交：`bcb7af0`（等待结果 + 默认值）、`9e351eb`（预览不裁切 + 自动定位）。**尚未推送**：本机 Git Credential Manager 缓存已失效，`git push` 卡在凭据提示；两笔提交仅在本地 `master`，待重新登录 GitHub 后补推。
