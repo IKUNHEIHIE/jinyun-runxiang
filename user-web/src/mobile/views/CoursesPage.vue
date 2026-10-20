@@ -9,8 +9,16 @@ import SectionCard from "../components/SectionCard.vue";
 import CourseCard from "../components/CourseCard.vue";
 import PagerBar from "../components/PagerBar.vue";
 import PullToRefresh from "../components/PullToRefresh.vue";
+import BannerCarousel from "../components/BannerCarousel.vue";
 const route = useRoute(), router = useRouter();
 const PAGE_SIZE = 20;
+const banners = [
+  { src: designImage("layer-40-32392", "5:06022/5:05671"), alt: "津门非遗课堂", caption: "首讲 · 走进津门非遗" },
+  { src: "/design/banners/banner-shadow.webp", alt: "皮影戏人物", caption: "皮影 · 灯影成戏" },
+  { src: "/design/banners/banner-kite.webp", alt: "潍坊国际风筝会", caption: "风筝 · 一线扶摇" },
+  { src: "/design/banners/banner-porcelain.webp", alt: "瓷器陈列", caption: "瓷器 · 青花入釉" },
+  { src: "/design/banners/banner-embroidery.webp", alt: "刺绣龙袍", caption: "苏绣 · 金线盘龙" },
+];
 const courses = ref<any[]>([]),
   loading = ref(false),
   error = ref("");
@@ -80,21 +88,7 @@ onMounted(() => {
     <PullToRefresh :on-refresh="refresh" />
     <PageHeader title="小课堂" subtitle="非遗美育课程" :back="false" />
     <div class="courses-body">
-      <section
-        class="course-banner corner-card"
-        :style="{
-          backgroundImage:
-            'url(' +
-            designImage('layer-40-32392', '5:06022/5:05686') +
-            '),linear-gradient(rgba(107,42,42,.19),rgba(107,42,42,.19)),url(' +
-            designImage('layer-40-32392', '5:06022/5:05671') +
-            ')',
-        }"
-      >
-        <p>非遗美育课程</p>
-        <h2>津门非遗 · 线上小课</h2>
-        <span>按学段选课，观看视频并完成随堂鉴赏</span>
-      </section>
+      <BannerCarousel :slides="banners" />
       <SectionCard title="非遗典藏 · 小课">
         <template #meta>
           <div class="course-tools">
@@ -177,19 +171,7 @@ onMounted(() => {
 .courses-body {
   padding: 14px 16px 24px;
 }
-.course-banner {
-  height: 148px;
-  margin-bottom: 14px;
-  padding: 18px 16px;
-  border-radius: 14px;
-  background-color: #6b2a2a;
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-}
+
 .course-banner > p {
   padding: 2px 10px;
   border: 1px solid rgba(200, 169, 110, 0.4);

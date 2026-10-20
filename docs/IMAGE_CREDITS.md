@@ -50,3 +50,16 @@ CC BY-SA 图片的署名与相同方式共享要求适用于对应图片及其�
 | `lantern.glb` | 木构灯彩 | [Poly Haven · Wooden Lantern 01](https://polyhaven.com/a/wooden_lantern_01) | CC0 1.0 |
 
 Poly Haven 素材按 CC0 发布；Khronos 模型目录的整体许可为 CC0（元数据文档为 CC BY 4.0）。模型经 `gltf-transform copy` 打包为单文件 GLB，纹理降为 1K 以控制移动端加载体积。
+
+## 小课堂轮播图（2026-10-21）
+
+小课堂顶部横幅改为 5 张轮播，其中 4 张来自 Wikimedia Commons，1 张复用仓库内已有的设计图（设计节点 `5:06022/5:05671`，无需新增署名）。图片均转为 WebP（最长边 1600、q80）。
+
+| 位置 | 文件 | 来源页 | 许可 |
+|---|---|---|---|
+| 第 2 张 · 皮影 | `user-web/public/design/banners/banner-shadow.webp` | [Chinese shadow puppetry](https://commons.wikimedia.org/wiki/File:Chinese_shadow_puppetry.jpg) | CC BY-SA 4.0 |
+| 第 3 张 · 风筝 | `banner-kite.webp` | [第42届潍坊国际风筝会01](https://commons.wikimedia.org/wiki/File:%E7%AC%AC42%E5%B1%8A%E6%BD%8D%E5%9D%8A%E5%9B%BD%E9%99%85%E9%A3%8E%E7%AD%9D%E4%BC%9A01.jpg) | CC BY-SA 4.0 |
+| 第 4 张 · 瓷器 | `banner-porcelain.webp` | [Display of mounted porcelain, V&A London](https://commons.wikimedia.org/wiki/File:Display_of_mounted_porcelain,_V%26A_London.jpg) | CC0 |
+| 第 5 张 · 刺绣 | `banner-embroidery.webp` | [Emperor's 12-sign semiformal dragon robe, view 1](https://commons.wikimedia.org/wiki/File:Emperor%27s_12-sign_semiformal_dragon_robe,_view_1,_China,_18th_century,_silk,_gold_thread,_embroidery_-_Royal_Ontario_Museum_-_DSC04462.JPG) | CC0 |
+
+CC BY-SA 图片的署名与相同方式共享要求适用于对应图片及其裁切版本；发布或再分发时请保留本页与许可链接。
