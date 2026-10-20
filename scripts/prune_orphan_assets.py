@@ -1,14 +1,15 @@
-"""Report or delete uploaded assets no longer referenced anywhere.
+"""Report or delete uploaded and generated assets no longer referenced anywhere.
 
 Dry-run by default. Use --delete only after reviewing the JSON report.
-Only rows under backend/static/uploads and older than the cutoff are eligible.
+Only rows under backend/static/uploads or backend/static/generated and older than the
+cutoff are eligible; anything still referenced by a task, collection or post is kept.
 """
 import argparse
 import json
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from sqlalchemy import String, cast
+from sqlalchemy import String, cast, or_
 
 from app.core.database import SessionLocal
 from app.models.entities import (
@@ -16,10 +17,11 @@ from app.models.entities import (
     CommunityTopic, Course, CourseChapter, FolkFestival, HeritageLandmark,
     PhilanthropySupply, Product, SysUser, UserProfile,
 )
-from app.models.mobile import CommunityPostDetail, ExchangeItem, HeritageEntry
+from app.models.mobile import CommunityPostDetail, ExchangeItem, HeritageEntry, UserCollection
 
 ROOT = Path(__file__).resolve().parents[1]
 UPLOADS = (ROOT / "backend" / "static" / "uploads").resolve()
+GENERATED = (ROOT / "backend" / "static" / "generated").resolve()
 
 URL_REFERENCES = (
     (SysUser, SysUser.avatar_url),
@@ -52,6 +54,8 @@ JSON_REFERENCES = (
 def is_referenced(db, asset):
     if not asset.file_url:
         return True
+    if db.query(UserCollection).filter_by(target_type="ASSET", target_id=asset.id).first():
+        return True
     for model, column in URL_REFERENCES:
         if db.query(model.id).filter(column == asset.file_url).first():
             return True
@@ -66,10 +70,11 @@ def is_referenced(db, asset):
 
 def file_path(asset):
     key = asset.object_key or ""
-    if not key.startswith("uploads/"):
-        return None
-    path = (UPLOADS / key[len("uploads/"):]).resolve()
-    return path if UPLOADS in path.parents else None
+    for prefix, root in (("uploads/", UPLOADS), ("generated/", GENERATED)):
+        if key.startswith(prefix):
+            path = (root / key[len(prefix):]).resolve()
+            return path if root in path.parents else None
+    return None
 
 
 def main():
@@ -84,7 +89,8 @@ def main():
     report = {"cutoff": cutoff.isoformat() + "Z", "dry_run": not args.delete,
               "scanned": 0, "referenced": 0, "unsafe": 0, "orphans": [], "deleted": 0, "errors": []}
     with SessionLocal() as db:
-        query = db.query(Asset).filter(Asset.object_key.like("uploads/%"),
+        query = db.query(Asset).filter(or_(Asset.object_key.like("uploads/%"),
+                                           Asset.object_key.like("generated/%")),
                                        Asset.created_at <= cutoff).order_by(Asset.id)
         if args.id:
             query = query.filter(Asset.id.in_(args.id))

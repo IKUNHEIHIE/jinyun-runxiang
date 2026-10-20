@@ -34,3 +34,19 @@ CC BY-SA 图片的署名与相同方式共享要求适用于对应图片及其�
 - [MDN flower sample](https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4)：CC0，用于部分课程章节。
 - [Sintel trailer](https://media.w3.org/2010/05/sintel/trailer.mp4)：Sintel，CC BY 3.0，用于部分课程章节。
 - 视频不下载到服务器，由客户端直接访问上述 HTTPS 地址。
+
+## AI 工坊 3D 馆藏模型（2026-10-19）
+
+三维数字孪生实验室使用以下成品 GLB 模型，均在仓库 `backend/static/models/heritage3d/` 内，不上传第三方账号或密钥：
+
+| 文件 | 展示名 | 来源 | 许可 |
+|---|---|---|---|
+| `panlong.glb` | 琉璃蟠龙 | [Khronos glTF Sample Assets · DragonAttenuation](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/DragonAttenuation) | CC0 1.0 |
+| `chandelier.glb` | 六方宫灯 | [Poly Haven · Chinese Chandelier](https://polyhaven.com/a/chinese_chandelier) | CC0 1.0 |
+| `screen.glb` | 雀羽屏风 | [Poly Haven · Chinese Screen Panels](https://polyhaven.com/a/chinese_screen_panels) | CC0 1.0 |
+| `vase.glb` | 青花瓷韵 | [Poly Haven · Antique Ceramic Vase 01](https://polyhaven.com/a/antique_ceramic_vase_01) | CC0 1.0 |
+| `teatable.glb` | 津门茶案 | [Poly Haven · Chinese Tea Table](https://polyhaven.com/a/chinese_tea_table) | CC0 1.0 |
+| `armchair.glb` | 津作圈椅 | [Poly Haven · Chinese Armchair](https://polyhaven.com/a/chinese_armchair) | CC0 1.0 |
+| `lantern.glb` | 木构灯彩 | [Poly Haven · Wooden Lantern 01](https://polyhaven.com/a/wooden_lantern_01) | CC0 1.0 |
+
+Poly Haven 素材按 CC0 发布；Khronos 模型目录的整体许可为 CC0（元数据文档为 CC BY 4.0）。模型经 `gltf-transform copy` 打包为单文件 GLB，纹理降为 1K 以控制移动端加载体积。

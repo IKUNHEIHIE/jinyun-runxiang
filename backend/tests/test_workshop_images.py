@@ -10,6 +10,7 @@ from openai import OpenAI
 from PIL import Image
 
 from test_mobile_client import client, auth
+from asset_urls import generated_file
 from app.api import ai_workshop
 from app.core import files, image_generation
 from app.models.entities import AiTask, Asset, GrowthEvent, SysConfig, UserGrowth
@@ -64,7 +65,7 @@ def test_real_sdk_contract_save_collect_read_publish_and_retry_once(client, gate
     assert result["result"]["vector_svg_url"] is None
     assert result["result"]["print_template_url"] is None
     url = result["result"]["colored_image_url"]
-    assert (root / "generated" / url.split("/")[-1]).read_bytes() == png()
+    assert generated_file(root / "generated", url).read_bytes() == png()
     for _ in range(2):
         assert create(client, tool).json()["data"]["task_id"] == task_id
         assert client.post(f"/api/ai/tasks/{task_id}/favorite", headers=auth(), json={"collected": True}).json()["data"]["collected"]

@@ -4,6 +4,7 @@ import { useRoute } from "vue-router";
 import { api, post, notify } from "../api";
 import PageHeader from "../components/PageHeader.vue";
 import AsyncState from "../components/AsyncState.vue";
+import SectionCard from "../components/SectionCard.vue";
 
 const contests = ref<any[]>([]);
 const detail = ref<any>(null);
@@ -75,11 +76,10 @@ async function init() {
 
 init();
 </script>
-
 <template>
-  <div>
+  <div class="contest-page">
     <PageHeader title="班级对抗赛" subtitle="与对手班级同题创作" />
-    <div class="page-padding">
+    <div class="contest-body">
       <AsyncState
         :loading="loading"
         :error="error"
@@ -104,9 +104,12 @@ init();
             <p class="versus">
               {{ item.my_class.name }} <b>VS</b> {{ item.opponent_class.name }}
             </p>
-            <p class="subtle">
+            <p class="contest-note" :class="{ submitted: item.submitted }">
+              <i aria-hidden="true" />
               {{ item.submitted ? "已提交作品" : "待提交作品" }}
-              <template v-if="item.score != null"> · 得分 {{ item.score }}</template>
+              <template v-if="item.score != null">
+                · 得分 {{ item.score }}</template
+              >
             </p>
           </button>
         </div>
@@ -129,12 +132,12 @@ init();
             ×
           </button>
           <h2 id="student-contest-title">{{ detail.title }}</h2>
-          <p class="subtle">
+          <p class="subtle contest-meta">
             第 {{ detail.round_no }} 轮 ·
             {{ statusText[detail.status] || detail.status }} · 截止
             {{ detail.deadline?.slice(0, 16).replace("T", " ") }}
           </p>
-          <p class="versus">
+          <p class="versus versus-sheet">
             {{ detail.my_class.name }} <b>VS</b> {{ detail.opponent_class.name }}
           </p>
 
@@ -180,11 +183,19 @@ init();
               {{ detail.my_entry.content || "已提交作品" }}
             </p>
             <p v-else class="subtle">尚未提交</p>
-            <p v-if="detail.published && detail.my_entry.score != null" class="score-line">
+            <p
+              v-if="detail.published && detail.my_entry.score != null"
+              class="score-line"
+            >
               得分 {{ detail.my_entry.score }} 分
-              <span v-if="detail.my_entry.rank"> · 班级第 {{ detail.my_entry.rank }} 名</span>
+              <span v-if="detail.my_entry.rank">
+                · 班级第 {{ detail.my_entry.rank }} 名</span
+              >
             </p>
-            <p v-if="detail.published && detail.my_entry.comment" class="subtle">
+            <p
+              v-if="detail.published && detail.my_entry.comment"
+              class="subtle"
+            >
               教师评语：{{ detail.my_entry.comment }}
             </p>
             <template v-if="detail.status === 'OPEN'">
@@ -197,7 +208,13 @@ init();
                 />
               </label>
               <button class="primary-button" :disabled="busy" @click="submit">
-                {{ busy ? "提交中…" : detail.my_entry.submitted ? "重新提交" : "提交作品" }}
+                {{
+                  busy
+                    ? "提交中…"
+                    : detail.my_entry.submitted
+                      ? "重新提交"
+                      : "提交作品"
+                }}
               </button>
             </template>
             <p v-else-if="!detail.published" class="subtle">
@@ -211,130 +228,219 @@ init();
 </template>
 
 <style scoped>
-.page-padding {
-  padding: 0 20px 40px;
+.contest-page {
+  min-height: 100dvh;
+  padding-bottom: 12px;
+  background: #f5ede4;
+  color: #2d1810;
+}
+.contest-body {
+  padding: 14px 16px 24px;
 }
 .contest-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 .contest-card {
   display: block;
   width: 100%;
-  text-align: left;
+  padding: 16px 14px;
   border: 0;
-  padding: 20px 18px;
-  background: var(--paper, #fffaf4);
+  background: #fdf9f2;
+  color: #2d1810;
+  text-align: left;
+}
+.contest-card:active {
+  background: #fbf4ea;
 }
 .card-head {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 .status-chip {
-  font-size: 11px;
-  padding: 3px 8px;
+  padding: 2px 9px;
+  border: 1px solid rgba(200, 169, 110, 0.55);
   border-radius: 999px;
-  background: #efe4d4;
-  color: #7a5b3c;
+  background: rgba(200, 169, 110, 0.12);
+  color: #8a6125;
+  font: 400 10px/1.6 var(--sans);
+  letter-spacing: 0.5px;
 }
 .status-chip.open {
-  background: #e3efe0;
-  color: #3f6b3b;
+  border-color: rgba(139, 26, 26, 0.32);
+  background: #fff0f0;
+  color: #8b1a1a;
 }
 .status-chip.scoring {
-  background: #f6e8c8;
-  color: #8a5b13;
+  border-color: rgba(200, 169, 110, 0.65);
+  background: #fbf0d9;
+  color: #8a6125;
 }
 .status-chip.published {
-  background: #ead7d4;
-  color: #8a2b2b;
+  border-color: transparent;
+  background: #8b1a1a;
+  color: #f6ead9;
 }
 .round {
-  font-size: 11px;
-  color: var(--clay, #9b7a5c);
+  color: #8a7a70;
+  font: 400 10px/1.6 var(--sans);
+  letter-spacing: 1px;
 }
 .contest-card h2 {
-  margin: 12px 0 8px;
-  font-size: 19px;
+  margin: 10px 0 8px;
+  color: #2d1810;
+  font: 500 16px/1.45 var(--serif);
+  letter-spacing: 1.2px;
+  overflow-wrap: anywhere;
 }
 .versus {
-  font-size: 14px;
-  margin: 6px 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(200, 169, 110, 0.1);
+  color: #5a3e36;
+  font: 400 13px/1.5 var(--sans);
 }
 .versus b {
-  color: var(--cinnabar, #a33);
-  margin: 0 6px;
+  flex-shrink: 0;
+  color: #8b1a1a;
+  font: 500 12px/1 var(--serif);
+  letter-spacing: 1px;
+}
+.contest-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  color: #8a7a70;
+  font: 400 10px/1.6 var(--sans);
+  letter-spacing: 0.5px;
+}
+.contest-note i {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #c8a96e;
+}
+.contest-note.submitted {
+  color: #8b1a1a;
+}
+.contest-note.submitted i {
+  background: #8b1a1a;
 }
 .contest-sheet {
   max-height: 88vh;
   overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.contest-sheet h2 {
+  margin: 4px 0 6px;
+  color: #2d1810;
+  font: 500 20px/1.35 var(--serif);
+  letter-spacing: 1.5px;
+}
+.contest-meta {
+  color: #8a7a70;
+  font: 400 11px/1.7 var(--sans);
+}
+.contest-sheet .versus {
+  margin-top: 10px;
 }
 .summary-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 10px;
   margin: 14px 0;
 }
 .summary-card {
   padding: 12px;
+  border: 1px solid rgba(200, 169, 110, 0.28);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.6);
+  background: #fffdf8;
 }
 .summary-card h3 {
-  font-size: 14px;
   margin-bottom: 6px;
+  color: #5a3e36;
+  font: 500 12px/1.55 var(--sans);
 }
 .summary-card p {
-  font-size: 12px;
-  color: var(--clay, #9b7a5c);
   margin: 3px 0;
+  color: #8a7a70;
+  font: 400 10px/1.6 var(--sans);
 }
 .published-banner {
   margin: 12px 0;
   padding: 10px 12px;
-  border-radius: 8px;
-  background: #f3e3df;
-  color: #8a2b2b;
-  font-size: 13px;
+  border-left: 2px solid #8b1a1a;
+  border-radius: 0 8px 8px 0;
+  background: #fff0f0;
+  color: #8b1a1a;
+  font: 400 12px/1.7 var(--sans);
 }
 .my-work {
-  margin-top: 16px;
+  margin-top: 14px;
   padding: 14px;
+  border: 1px solid rgba(200, 169, 110, 0.28);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.6);
+  background: #fffdf8;
 }
 .my-work h3 {
-  font-size: 15px;
   margin-bottom: 8px;
+  color: #2d1810;
+  font: 500 14px/1.5 var(--serif);
+  letter-spacing: 1px;
 }
 .work-content {
-  font-size: 13px;
-  line-height: 1.9;
+  color: #4a3228;
+  font: 400 13px/1.85 var(--sans);
   white-space: pre-line;
+  overflow-wrap: anywhere;
 }
 .score-line {
   margin-top: 8px;
-  color: #8a2b2b;
-  font-size: 14px;
+  color: #8b1a1a;
+  font: 500 14px/1.5 var(--serif);
+}
+.score-line span {
+  color: #8a6125;
+  font: 400 11px/1.5 var(--sans);
 }
 .work-input {
   display: block;
   margin-top: 12px;
+  gap: 6px;
+  color: #8a7a70;
+  font: 400 11px/1.4 var(--sans);
+  letter-spacing: 1px;
 }
 .work-input textarea {
   width: 100%;
   min-height: 110px;
   margin-top: 6px;
-  padding: 10px;
-  border: 1px solid #d9c7b5;
-  border-radius: 8px;
-  background: #fff;
-  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid rgba(200, 169, 110, 0.45);
+  border-radius: 10px;
+  background: #fffdf8;
+  color: #2d1810;
+  font: 400 14px/1.7 var(--sans);
 }
 .my-work .primary-button {
-  margin-top: 12px;
   width: 100%;
+  min-height: 44px;
+  margin-top: 12px;
+  border: 1px solid rgba(232, 217, 168, 0.55);
+  border-radius: 10px;
+  background: #8b1a1a;
+  color: #f6ead9;
+  font: 500 13px/1.4 var(--sans);
+  letter-spacing: 2px;
 }
 </style>
+

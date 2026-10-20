@@ -7,12 +7,12 @@ const router = createRouter({
     {
       path: "/",
       component: () => import("./views/HomePage.vue"),
-      meta: { tab: "home", title: "首页" },
+      meta: { tab: "home", title: "首页", surface: "#f5ede4" },
     },
     {
       path: "/courses",
       component: () => import("./views/CoursesPage.vue"),
-      meta: { tab: "courses", title: "小课堂", surface: "#f5f0e6" },
+      meta: { tab: "courses", title: "小课堂", surface: "#f5ede4" },
     },
     {
       path: "/courses/:id",
@@ -35,8 +35,7 @@ const router = createRouter({
       meta: {
         tab: "profile",
         title: "我的",
-        surface:
-          "linear-gradient(#c5aaa1 0px, #c5aaa1 calc(var(--safe-top) + 305px), #f5ede4 calc(var(--safe-top) + 305px))",
+        surface: "#f5ede4",
       },
     },
     {
@@ -54,7 +53,22 @@ const router = createRouter({
     {
       path: "/ai-workshop",
       component: () => import("./views/WorkshopPage.vue"),
-      meta: { tab: "workshop", title: "AI工坊", surface: "#ebe3d5" },
+      meta: { tab: "workshop", title: "AI工坊", surface: "#f5ede4" },
+    },
+    {
+      path: "/ai-workshop/shadow-3d",
+      component: () => import("./views/Shadow3DPage.vue"),
+      meta: { hideTabs: true, title: "皮影三维营造", surface: "#efe6d6" },
+    },
+    {
+      path: "/ai-workshop/3d",
+      component: () => import("./views/Model3DPage.vue"),
+      meta: { hideTabs: true, title: "三维数字沙盘", surface: "#efe6d6" },
+    },
+    {
+      path: "/ai-workshop/works",
+      component: () => import("./views/WorkshopWorksPage.vue"),
+      meta: { hideTabs: true, title: "我的工坊作品", surface: "#f5ede4" },
     },
     {
       path: "/ai-workshop/:tool(bronze|shadow|lacquer)",
@@ -64,7 +78,7 @@ const router = createRouter({
     {
       path: "/community",
       component: () => import("./views/CommunityPage.vue"),
-      meta: { tab: "community", title: "社区" },
+      meta: { tab: "community", title: "社区", surface: "#f5ede4" },
     },
     {
       path: "/community/publish",

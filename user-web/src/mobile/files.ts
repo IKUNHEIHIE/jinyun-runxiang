@@ -69,12 +69,20 @@ export async function saveBlob(
   }
   return true;
 }
-export async function saveAsset(url: string, filename: string) {
+const KNOWN_CONTAINER = /\.(svg|png|jpe?g|webp|glb|mp4)$/i;
+export async function saveAsset(
+  url: string,
+  filename: string,
+  title?: string,
+) {
   const response = await fetch(mediaUrl(url), {
     signal: AbortSignal.timeout(20000),
   });
   if (!response.ok) throw new Error("文件暂时无法下载");
-  await saveBlob(await response.blob(), filename);
+  // A capability URL hides its container behind ?exp=&sig=, and callers often guess ".png".
+  const container = url.split("?")[0].match(KNOWN_CONTAINER)?.[0];
+  const name = container ? filename.replace(KNOWN_CONTAINER, "") + container : filename;
+  await saveBlob(await response.blob(), name, title || "津韵润乡作品");
 }
 export async function saveApiFile(
   path: string,

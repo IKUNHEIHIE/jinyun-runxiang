@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onUnmounted, computed } from "vue";
+import { ref, watch, onUnmounted, onMounted, onBeforeUnmount, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import {
   api,
@@ -14,6 +14,10 @@ import {
 import { designIcon, designImage } from "../design";
 import { formatDate } from "../dates";
 import AsyncState from "../components/AsyncState.vue";
+import SectionCard from "../components/SectionCard.vue";
+import CellGroup from "../components/CellGroup.vue";
+import CellRow from "../components/CellRow.vue";
+import SkeletonImage from "../components/SkeletonImage.vue";
 const profileRoute = useRoute(),
   profileRouter = useRouter();
 const badgeDesigns: Record<
@@ -60,9 +64,72 @@ const editing = ref(false),
     bio: "",
     school_name: "",
     district: "",
+    avatar_url: "",
   }),
   saving = ref(false),
   signingOut = ref(false);
+const AVATAR_TYPES = ["image/png", "image/jpeg", "image/webp"],
+  AVATAR_MAX_BYTES = 5 * 1024 * 1024;
+const avatarInput = ref<HTMLInputElement | null>(null),
+  avatarUploading = ref(false),
+  avatarPreview = ref("");
+let avatarObjectUrl = "";
+const avatarInitial = computed(
+  () =>
+    (form.value.nickname || session.profile?.nickname || "学").slice(0, 1),
+);
+const avatarAlt = computed(
+  () => (form.value.nickname || session.profile?.nickname || "用户") + "的头像",
+);
+function clearAvatarPreview() {
+  if (avatarObjectUrl) URL.revokeObjectURL(avatarObjectUrl);
+  avatarObjectUrl = "";
+  avatarPreview.value = "";
+}
+function chooseAvatar() {
+  if (avatarUploading.value || saving.value) return;
+  avatarInput.value?.click();
+}
+async function uploadAvatar(event: Event) {
+  const input = event.target as HTMLInputElement,
+    file = input.files?.[0];
+  input.value = "";
+  if (!file || avatarUploading.value || saving.value) return;
+  if (!AVATAR_TYPES.includes(file.type)) {
+    notify("头像仅支持 PNG、JPEG 或 WebP 格式");
+    return;
+  }
+  if (file.size > AVATAR_MAX_BYTES) {
+    notify("头像图片不能超过 5MB");
+    return;
+  }
+  const version = editVersion;
+  clearAvatarPreview();
+  avatarObjectUrl = URL.createObjectURL(file);
+  avatarPreview.value = avatarObjectUrl;
+  avatarUploading.value = true;
+  try {
+    const body = new FormData();
+    body.append(
+      "file",
+      file,
+      file.name || "avatar." + (file.type.split("/")[1] || "png"),
+    );
+    const result = await api<{ file_url: string }>("/ai/assets/upload", {
+      method: "POST",
+      body,
+    });
+    if (version !== editVersion || !editing.value) return;
+    if (result?.file_url) form.value.avatar_url = result.file_url;
+  } catch (e) {
+    if (version === editVersion && editing.value) {
+      notify((e as Error).message);
+      clearAvatarPreview();
+    }
+  } finally {
+    if (version === editVersion) avatarUploading.value = false;
+  }
+}
 const activeBadge = ref<any>();
 const todayLearning = computed(() => {
   const day = formatDate(new Date().toISOString(), false);
@@ -149,6 +216,33 @@ async function load() {
       loading.value = false;
   }
 }
+const heroRef = ref<HTMLElement | null>(null);
+const compact = ref(false);
+const compactLevel = computed(() =>
+  !session.token
+    ? "入馆开启非遗修习"
+    : session.profile?.level_code === "LV1_APPRENTICE"
+      ? "典藏学徒"
+      : "非遗研习者",
+);
+let compactFrame = 0;
+function syncCompact() {
+  compactFrame = 0;
+  compact.value = (heroRef.value?.getBoundingClientRect().top ?? 0) < -140;
+}
+function onPageScroll() {
+  if (compactFrame) return;
+  compactFrame = requestAnimationFrame(syncCompact);
+}
+onMounted(() => {
+  syncCompact();
+  window.addEventListener("scroll", onPageScroll, { passive: true, capture: true });
+});
+onBeforeUnmount(() => {
+  window.removeEventListener("scroll", onPageScroll, { capture: true });
+  if (compactFrame) cancelAnimationFrame(compactFrame);
+});
+
 function edit() {
   if (!requireSession()) return;
   if (!session.profile) {
@@ -156,23 +250,31 @@ function edit() {
     return;
   }
   editVersion++;
+  clearAvatarPreview();
+  avatarUploading.value = false;
   form.value = {
     nickname: session.profile?.nickname || "",
     grade: session.profile?.grade || "",
     bio: session.profile?.bio || "",
     school_name: session.profile?.school_name || "",
     district: session.profile?.district || "",
+    avatar_url: session.profile?.avatar_url?.startsWith("/static/uploads/")
+      ? session.profile.avatar_url
+      : "",
   };
   editing.value = true;
 }
 function closeEdit() {
   editVersion++;
+  clearAvatarPreview();
+  avatarUploading.value = false;
   editing.value = false;
 }
 async function save() {
   if (
     saving.value ||
     signingOut.value ||
+    avatarUploading.value ||
     !editing.value ||
     !requireSession() ||
     !session.profile
@@ -253,7 +355,10 @@ watch(
       bio: "",
       school_name: "",
       district: "",
+      avatar_url: "",
     };
+    clearAvatarPreview();
+    avatarUploading.value = false;
     error.value = "";
     void load();
   },
@@ -263,6 +368,7 @@ onUnmounted(() => {
   mounted = false;
   loadVersion++;
   saveVersion++;
+  clearAvatarPreview();
 });
 watch(
   [() => profileRoute.query.edit, () => session.profile?.id],
@@ -284,6 +390,8 @@ function targetUrl(item: any) {
         BRONZE: "bronze",
         EMBROIDERY: "lacquer",
         LACQUER: "lacquer",
+        MESH_3D: "3d",
+        SILHOUETTE: "shadow-3d",
       } as Record<string, string>
     )[item.tool_type];
     if (tool)
@@ -305,57 +413,64 @@ function targetUrl(item: any) {
     :data-profile-ready="!loading"
     :aria-busy="loading"
   >
-    <header class="profile-hero">
+    <header class="profile-appbar" :class="{ elevated: compact }">
+      <RouterLink to="/" class="appbar-back" aria-label="返回首页"
+        ><img :src="designIcon('layer-5-00420', '5:00505')" alt=""
+      /></RouterLink>
+      <span class="appbar-title">我的</span>
+      <button class="appbar-edit" @click="edit">
+        {{ session.token ? "编辑资料" : "登录" }}
+      </button>
+    </header>
+    <section ref="heroRef" class="profile-hero">
       <img
         class="profile-hero-art"
         :src="designImage('layer-5-00420', '5:00495')"
         alt=""
       />
-      <RouterLink to="/" class="profile-back" aria-label="返回首页"
-        ><img :src="designIcon('layer-5-00420', '5:00505')" alt=""
-      /></RouterLink>
-      <p class="profile-entry-year">美育成长档案 · 研学记录</p>
-      <button
-        class="profile-avatar"
-        aria-label="编辑个人资料或登录"
-        @click="edit"
-      >
-        <img
-          v-if="session.profile?.avatar_url"
-          :src="mediaUrl(session.profile.avatar_url)"
-          alt=""
-        /><span v-else>{{
-          session.profile?.nickname?.slice(0, 1) || "学"
-        }}</span>
-      </button>
-      <div class="profile-avatar-dots" aria-hidden="true"><i /><i /><i /></div>
-      <h1>
-        <template v-if="session.token">{{
-          session.profile?.nickname || "非遗研习者"
-        }}</template
-        ><button v-else @click="requireSession()">点击登录</button>
-      </h1>
-      <span class="profile-level">{{
-        !session.token
-          ? "入馆开启非遗修习"
-          : session.profile?.level_code === "LV1_APPRENTICE"
-            ? "典藏学徒"
-            : "非遗研习者"
-      }}</span>
-      <div class="profile-counters">
-        <RouterLink to="/me/posts"
-          ><strong>{{ profileCount("post_count") }}</strong
-          ><span>作品</span
-          ><small>能量 {{ profileCount("energy_value") }}</small></RouterLink
-        ><RouterLink to="/me/follows"
-          ><strong>{{ profileCount("following_count") }}</strong
-          ><span>关注</span><small>师友同道</small></RouterLink
-        ><RouterLink to="/me/follows?direction=followers"
-          ><strong>{{ profileCount("follower_count") }}</strong
-          ><span>粉丝</span><small>知音共赏</small></RouterLink
-        >
+      <div class="profile-card">
+        <div class="profile-identity">
+          <button
+            class="profile-avatar"
+            aria-label="编辑个人资料或登录"
+            @click="edit"
+          >
+            <img
+              v-if="session.profile?.avatar_url"
+              :src="mediaUrl(session.profile.avatar_url)"
+              alt=""
+            /><span v-else>{{
+              session.profile?.nickname?.slice(0, 1) || "学"
+            }}</span>
+          </button>
+          <div class="profile-identity-copy">
+            <h1 v-if="session.token">
+              {{ session.profile?.nickname || "非遗研习者" }}
+            </h1>
+            <button v-else class="identity-login" @click="requireSession()">
+              点击登录
+            </button>
+            <span class="profile-level">{{ compactLevel }}</span>
+          </div>
+        </div>
+        <p class="profile-caption">美育成长档案 · 研学记录</p>
+        <div class="profile-stats">
+          <RouterLink to="/me/posts"
+            ><strong>{{ profileCount("post_count") }}</strong
+            ><span>作品</span></RouterLink
+          ><RouterLink to="/me/follows"
+            ><strong>{{ profileCount("following_count") }}</strong
+            ><span>关注</span></RouterLink
+          ><RouterLink to="/me/follows?direction=followers"
+            ><strong>{{ profileCount("follower_count") }}</strong
+            ><span>粉丝</span></RouterLink
+          >
+          <div class="stat-energy">
+            <strong>{{ profileCount("energy_value") }}</strong><span>能量</span>
+          </div>
+        </div>
       </div>
-    </header>
+    </section>
     <div class="page-padding">
       <div v-if="loaded && error" class="profile-refresh-error" role="alert">
         <p>暂未更新：{{ error }}</p>
@@ -367,11 +482,7 @@ function targetUrl(item: any) {
         :loading="loading && !loaded"
         :error="loaded ? '' : error"
         @retry="load"
-        ><section class="profile-section">
-          <div class="section-heading">
-            <h2>今日修习</h2>
-            <span>{{ schoolDate() }}</span>
-          </div>
+        ><SectionCard title="今日修习" :meta="schoolDate()">
           <div class="learning-scroll">
             <RouterLink
               v-for="item in todayLearning.slice(0, 3)"
@@ -417,12 +528,11 @@ function targetUrl(item: any) {
           <RouterLink to="/me/learning" class="learning-summary"
             >查看全部学习记录 ›</RouterLink
           >
-        </section>
-        <section class="profile-section">
-          <div class="section-heading">
-            <h2>所获徽章</h2>
-            <span>{{ unlockedBadges }} / {{ badges.length }}</span>
-          </div>
+        </SectionCard>
+        <SectionCard
+          title="所获徽章"
+          :meta="unlockedBadges + ' / ' + badges.length"
+        >
           <div class="badge-wall">
             <button
               v-for="badge in badges"
@@ -462,14 +572,13 @@ function targetUrl(item: any) {
               完成学习与创作，解锁属于你的非遗徽章
             </p>
           </div>
-        </section>
-        <section class="profile-section profile-collections">
-          <div class="section-heading">
-            <h2>我的收藏</h2>
-            <RouterLink to="/me/collections"
+        </SectionCard>
+        <SectionCard title="我的收藏" class="profile-collections">
+          <template #meta>
+            <RouterLink to="/me/collections" class="collection-more"
               >共 {{ summary.collection_count || 0 }} 件 ›</RouterLink
             >
-          </div>
+          </template>
           <div class="collection-grid">
             <RouterLink
               v-for="(item, index) in collections.slice(0, 4)"
@@ -477,7 +586,11 @@ function targetUrl(item: any) {
               :to="targetUrl(item)"
               class="collection-card"
               ><div class="collection-cover">
-                <img :src="mediaUrl(item.cover_url)" :alt="item.title" /><span
+                <SkeletonImage
+                  :src="item.cover_url"
+                  :alt="item.title"
+                  ratio="4 / 3"
+                /><span class="collection-index"
                   >No.{{ String(index + 1).padStart(3, "0") }}</span
                 >
               </div>
@@ -498,7 +611,7 @@ function targetUrl(item: any) {
               在典藏与课程中遇见心仪之作，点击收藏即可保存
             </p>
           </div>
-        </section>
+        </SectionCard>
         <p class="profile-achievements">
           <span
             >已解锁 <strong>{{ unlockedBadges }}</strong> 枚徽章</span
@@ -507,28 +620,30 @@ function targetUrl(item: any) {
             >学习天数 <strong>{{ summary.learning_days || 0 }}</strong> 天</span
           >
         </p>
-        <nav class="profile-services">
-          <RouterLink
+        <CellGroup label="学习与班级">
+          <CellRow
             v-if="
               session.profile?.role_code === 'TEACHER' ||
               session.profile?.role_code === 'ADMIN'
             "
+            label="教学工坊"
             to="/teacher"
-            >教学工坊 <span>›</span></RouterLink
-          ><RouterLink to="/me/assignments"
-            >我的班级与作业 <span>›</span></RouterLink
-          ><RouterLink to="/landmarks">行走的美育地图 <span>›</span></RouterLink
-          ><RouterLink to="/mall">非遗文创共创市集 <span>›</span></RouterLink
-          ><RouterLink to="/me/orders">我的订单 <span>›</span></RouterLink
-          ><RouterLink to="/me/feedback">帮助与反馈 <span>›</span></RouterLink
-          ><button
+          />
+          <CellRow label="我的班级与作业" to="/me/assignments" />
+          <CellRow label="行走的美育地图" to="/landmarks" />
+        </CellGroup>
+        <CellGroup label="服务与设置">
+          <CellRow label="非遗文创共创市集" to="/mall" />
+          <CellRow label="我的订单" to="/me/orders" />
+          <CellRow label="帮助与反馈" to="/me/feedback" />
+          <CellRow
             v-if="session.token"
+            danger
             :disabled="saving || signingOut"
+            :label="signingOut ? '正在退出…' : '退出登录'"
             @click="signout"
-          >
-            {{ signingOut ? "正在退出…" : "退出登录" }}
-          </button>
-        </nav></AsyncState
+          />
+        </CellGroup></AsyncState
       >
     </div>
     <Teleport to="body"
@@ -595,6 +710,39 @@ function targetUrl(item: any) {
           </button>
           <h2 id="edit-profile-title">个人资料</h2>
           <form @submit.prevent="save">
+            <div class="avatar-field">
+              <span class="avatar-field-figure">
+                <img
+                  v-if="avatarPreview || form.avatar_url || session.profile?.avatar_url"
+                  :src="
+                    avatarPreview ||
+                    mediaUrl(form.avatar_url || session.profile?.avatar_url)
+                  "
+                  :alt="avatarAlt"
+                />
+                <span v-else aria-hidden="true">{{ avatarInitial }}</span>
+              </span>
+              <span class="avatar-field-copy"
+                ><span>头像</span
+                ><button
+                  type="button"
+                  class="avatar-change"
+                  :aria-label="avatarUploading ? '头像上传中' : '更换头像'"
+                  :disabled="avatarUploading || saving"
+                  @click="chooseAvatar"
+                >
+                  {{ avatarUploading ? "上传中…" : "更换头像" }}
+                </button></span
+              >
+              <input
+                ref="avatarInput"
+                class="avatar-input"
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                aria-label="选择头像图片"
+                @change="uploadAvatar"
+              />
+            </div>
             <label
               >昵称<input
                 v-model.trim="form.nickname"
@@ -615,7 +763,10 @@ function targetUrl(item: any) {
                 v-model.trim="form.bio"
                 maxlength="255"
               /></label
-            ><button class="primary-button" :disabled="saving">
+            ><button
+              class="primary-button"
+              :disabled="saving || avatarUploading"
+            >
               {{ saving ? "保存中…" : "保存资料" }}
             </button>
           </form>
@@ -636,204 +787,232 @@ function targetUrl(item: any) {
   background: #f5ede4;
   color: #2d1810;
   min-height: 100dvh;
+  padding-bottom: 12px;
+}
+.profile-appbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: calc(var(--safe-top) + 6px) 16px 8px;
+  background: rgba(245, 237, 228, 0.9);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.profile-appbar.elevated {
+  border-bottom-color: rgba(139, 105, 48, 0.14);
+  box-shadow: 0 6px 18px rgba(60, 38, 24, 0.06);
+}
+.appbar-back {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(139, 105, 48, 0.18);
+}
+.appbar-back img {
+  width: 18px;
+  height: 18px;
+}
+.appbar-title {
+  font: 500 16px/1.2 var(--serif);
+  letter-spacing: 3px;
+  color: #2d1810;
+}
+.appbar-edit {
+  margin-left: auto;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(139, 26, 26, 0.22);
+  background: rgba(255, 255, 255, 0.66);
+  color: #8b1a1a;
+  font: 500 11px/1 var(--sans);
+  letter-spacing: 1px;
 }
 .profile-hero {
   position: relative;
-  height: 353px;
-  text-align: center;
+  padding: 92px 16px 8px;
   isolation: isolate;
-}
-.profile-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto;
-  height: 305px;
-  background: #c5aaa1;
-  z-index: -2;
 }
 .profile-hero-art {
   position: absolute;
   inset: 0 0 auto;
   width: 100%;
-  height: 305px;
+  height: 168px;
   object-fit: cover;
   z-index: -1;
   pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, #000 58%, transparent);
+  mask-image: linear-gradient(180deg, #000 58%, transparent);
 }
-.profile-back {
-  position: absolute;
-  left: 10px;
-  top: 16px;
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  background: rgba(240, 230, 208, 0.8);
-  border-radius: 50%;
-  z-index: 1;
+.profile-card {
+  position: relative;
+  margin-top: 0;
+  padding: 16px 16px 6px;
+  border-radius: 20px;
+  background: #fdf9f2;
+  box-shadow: 0 10px 30px rgba(70, 42, 26, 0.12);
 }
-.profile-back img {
-  width: 20px;
-  height: 20px;
-}
-.profile-entry-year {
-  position: absolute;
-  top: 137px;
-  left: 42.46%;
-  height: 30px;
+.profile-identity {
   display: flex;
   align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-  padding: 6px 16px;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 30px;
-  color: #5a3e36;
-  font: 400 12px/16px var(--serif);
-  letter-spacing: 1.53px;
-}
-.profile-entry-year::before,
-.profile-entry-year::after {
-  content: "";
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgba(139, 26, 26, 0.6);
-  flex-shrink: 0;
+  gap: 14px;
 }
 .profile-avatar {
-  position: absolute;
-  top: 24px;
-  left: calc(26.84% - 55px);
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
   display: grid;
   place-items: center;
-  width: 110px;
-  height: 110px;
-  border: 1px solid rgba(200, 169, 110, 0.6);
-  border-radius: 50%;
   overflow: hidden;
-  margin: 0;
-  padding: 0;
-  background: #b85450;
-  color: #fff0f0;
-  font: 400 32px/1 var(--serif);
-  box-shadow:
-    0 0 0 4px rgba(200, 169, 110, 0.2),
-    0 0 0 8px rgba(200, 169, 110, 0.1);
+  border-radius: 50%;
+  border: 2px solid rgba(200, 169, 110, 0.85);
+  background: #8b1a1a;
+  color: #f6ead9;
+  font: 400 26px/1 var(--serif);
+  box-shadow: 0 4px 14px rgba(139, 26, 26, 0.18);
 }
 .profile-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-.profile-avatar-dots {
-  position: absolute;
-  top: 132px;
-  left: calc(26.84% - 15px);
+.avatar-field {
   display: flex;
-  gap: 6px;
+  align-items: center;
+  gap: 14px;
 }
-.profile-avatar-dots i {
-  width: 6px;
-  height: 6px;
+.avatar-field-figure {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
   border-radius: 50%;
-  background: rgba(200, 169, 110, 0.6);
+  border: 2px solid rgba(200, 169, 110, 0.85);
+  background: #8b1a1a;
+  color: #f6ead9;
+  font: 400 22px/1 var(--serif);
 }
-.profile-avatar-dots i:nth-child(2) {
-  background: rgba(139, 26, 26, 0.4);
+.avatar-field-figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
-.profile-hero h1 {
-  position: absolute;
-  top: 167px;
-  left: 30px;
-  right: 18px;
-  height: 42px;
-  font: 400 28px/42px var(--serif);
-  letter-spacing: 5.6px;
+.avatar-field-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 13px;
+  color: #5a3e36;
+}
+.avatar-change {
+  min-height: 32px;
+  padding: 6px 14px;
+  border: 1px solid rgba(139, 26, 26, 0.35);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.66);
+  color: #8b1a1a;
+  font: 500 12px/1 var(--sans);
+}
+.avatar-change:disabled {
+  opacity: 0.6;
+}
+.avatar-input {
+  display: none;
+}
+.profile-identity-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.profile-identity-copy h1,
+.identity-login {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  font: 500 22px/1.25 var(--serif);
+  letter-spacing: 2px;
+  color: #2d1810;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.profile-hero h1 button {
-  font: inherit;
-  letter-spacing: inherit;
-  padding: 0;
+.identity-login {
+  color: #8b1a1a;
 }
 .profile-level {
-  position: absolute;
-  top: 201px;
-  left: 30px;
-  right: 18px;
-  color: #b85450;
-  font: 400 12px/16px var(--serif);
-  letter-spacing: 3.6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: 400 11px/1.4 var(--sans);
+  letter-spacing: 1.4px;
+  color: #8a6125;
 }
-.profile-counters {
-  position: absolute;
-  top: 237px;
-  left: 22px;
-  right: 18px;
+.profile-level::before {
+  content: "";
+  width: 14px;
+  height: 1px;
+  background: #c8a96e;
+}
+.profile-caption {
+  margin: 12px 0 0;
+  font: 400 10px/1.5 var(--sans);
+  letter-spacing: 1.6px;
+  color: #9b8478;
+}
+.profile-stats {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(200, 169, 110, 0.28);
 }
-.profile-counters > a {
-  position: relative;
+.profile-stats > a,
+.profile-stats > .stat-energy {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
+  gap: 2px;
   min-width: 0;
-  height: 104px;
-  padding: 8px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.7);
+  padding: 2px 0 6px;
 }
-.profile-counters > a:nth-child(2) {
-  background: rgba(255, 255, 255, 0.9);
+.profile-stats > a + a,
+.profile-stats > .stat-energy {
+  border-left: 1px solid rgba(200, 169, 110, 0.18);
 }
-.profile-counters > a::before,
-.profile-counters > a::after {
-  content: "";
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  border-color: #c8a96e;
-  border-style: solid;
-  pointer-events: none;
-}
-.profile-counters > a::before {
-  left: 8px;
-  top: 8px;
-  border-width: 1px 0 0 1px;
-}
-.profile-counters > a::after {
-  right: 8px;
-  bottom: 10px;
-  border-width: 0 1px 1px 0;
-}
-.profile-counters strong {
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font: 400 22px/33px var(--serif);
+.profile-stats strong {
+  font: 500 19px/1.25 var(--serif);
   color: #8b1a1a;
 }
-.profile-counters span {
-  font: 500 11px/16px var(--sans);
-  color: #5a3e36;
+.profile-stats span {
+  font: 400 10px/1.4 var(--sans);
+  letter-spacing: 1px;
+  color: #7c665c;
 }
-.profile-counters small {
-  font: 400 10px/15px var(--sans);
-  color: #8b7a72;
-  white-space: nowrap;
+.stat-energy strong {
+  color: #8a6125;
 }
+
 .page-padding {
-  padding: 24px 20px 30px;
+  padding: 14px 16px 24px;
 }
 .profile-section {
-  margin-bottom: 32px;
+  margin-bottom: 14px;
+  padding: 16px 14px;
 }
 .section-heading {
   display: flex;
@@ -991,6 +1170,10 @@ function targetUrl(item: any) {
   gap: 16px;
   overflow: auto;
   padding: 0 2px 8px;
+  scrollbar-width: none;
+}
+.badge-wall::-webkit-scrollbar {
+  display: none;
 }
 .badge-wall button {
   flex: 0 0 56px;
@@ -1072,8 +1255,11 @@ function targetUrl(item: any) {
 .collection-grid::-webkit-scrollbar {
   display: none;
 }
-.profile-collections .section-heading {
-  margin-bottom: 28px;
+.collection-more {
+  font: 400 10px/1.5 var(--sans);
+  letter-spacing: 1px;
+  color: #8a7a70;
+  white-space: nowrap;
 }
 .collection-card {
   flex: 0 0 158px;
@@ -1084,17 +1270,13 @@ function targetUrl(item: any) {
   border: 1px solid rgba(200, 169, 110, 0.3);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.8);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 190px;
 }
 .collection-cover {
   position: relative;
 }
-.collection-cover img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 4/3;
-  object-fit: cover;
-}
-.collection-cover span {
+.collection-cover .collection-index {
   position: absolute;
   top: 8px;
   left: 8px;
@@ -1136,7 +1318,7 @@ function targetUrl(item: any) {
   border-radius: 12px;
   font: 400 12px/16px var(--serif);
   color: #5a3e36;
-  margin: 0 0 24px;
+  margin: 0 0 14px;
   background: rgba(255, 255, 255, 0.3);
 }
 .profile-achievements strong {
@@ -1147,34 +1329,51 @@ function targetUrl(item: any) {
   font-style: normal;
   color: rgba(200, 169, 110, 0.4);
 }
-.profile-services {
-  border-top: 1px solid rgba(200, 169, 110, 0.3);
-  padding-top: 8px;
+.profile-cells {
+  margin-bottom: 14px;
+  padding: 4px 0;
+  overflow: hidden;
 }
-.profile-services > a,
-.profile-services > button {
+.cell {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
   width: 100%;
-  padding: 16px 2px;
-  border-bottom: 1px solid rgba(200, 169, 110, 0.3);
-  font-size: 13px;
-  color: #5a3e36;
+  min-height: 48px;
+  padding: 0 16px;
+  background: none;
+  border: 0;
+  text-align: left;
+  font: 400 14px/1.4 var(--sans);
+  color: #2d1810;
 }
-.profile-services span {
+.cell + .cell {
+  border-top: 1px solid rgba(200, 169, 110, 0.16);
+}
+.cell:active {
+  background: rgba(200, 169, 110, 0.08);
+}
+.cell-mark {
+  width: 4px;
+  height: 14px;
+  border-radius: 2px;
+  background: rgba(139, 26, 26, 0.55);
+  flex-shrink: 0;
+}
+.cell-label {
+  flex: 1;
+  min-width: 0;
+}
+.cell-arrow {
+  color: #b9a48c;
+  font-size: 16px;
+}
+.cell-danger {
+  justify-content: center;
   color: #8b1a1a;
-  font-size: 18px;
 }
+
 @media (max-width: 350px) {
-  .profile-entry-year {
-    left: auto;
-    right: 12px;
-    padding: 6px 10px;
-    letter-spacing: 0.7px;
-  }
-  .profile-counters {
-    gap: 8px;
-  }
   .section-heading {
     gap: 8px;
   }

@@ -7,6 +7,8 @@ import { Capacitor } from "@capacitor/core";
 import { saveAsset } from "../files";
 import AsyncState from "../components/AsyncState.vue";
 import PageHeader from "../components/PageHeader.vue";
+import SectionCard from "../components/SectionCard.vue";
+import SkeletonImage from "../components/SkeletonImage.vue";
 import { formatDate } from "../dates";
 const route = useRoute(),
   artwork = ref<any>(),
@@ -30,11 +32,6 @@ const galleryIndex = ref(0),
   editingComment = ref(false),
   commentField = ref<HTMLTextAreaElement>();
 const relatedError = ref("");
-const galleryLandscape = ref(false);
-function galleryLoaded(event: Event) {
-  const image = event.target as HTMLImageElement;
-  galleryLandscape.value = image.naturalWidth > image.naturalHeight;
-}
 const gallery = computed<string[]>(() =>
   artwork.value?.gallery?.length
     ? artwork.value.gallery
@@ -128,7 +125,6 @@ async function load() {
   loading.value = true;
   error.value = "";
   galleryIndex.value = 0;
-  galleryLandscape.value = false;
   collected.value = false;
   following.value = false;
   comments.value = [];
@@ -281,7 +277,7 @@ watch(() => [route.params.id, session.token], () => {
     :class="{ 'comment-editing': editingComment }"
     data-design-node="5:5591"
   >
-    <PageHeader title="作品详情">
+    <PageHeader title="作品详情" back-to="/community">
       <span v-if="artwork && !loading && !error" class="header-actions">
         <button
           aria-label="收藏作品"
@@ -294,49 +290,54 @@ watch(() => [route.params.id, session.token], () => {
         <button aria-label="分享作品" @click="share">
           <img :src="designIcon('layer-5-5591', '5:6098')" alt="" />
         </button>
-      </span> </PageHeader
-    ><AsyncState :loading="loading" :error="error" @retry="load"
-      ><template v-if="artwork"
-        ><p v-if="artwork.status !== 'APPROVED'" class="private-artwork-note">
-          {{
-            artwork.status === "PENDING_REVIEW"
-              ? "作品审核中，当前为本人预览"
-              : "当前作品尚未公开"
-          }}
-        </p>
-        <div
-          class="artwork-hero"
-          @pointerdown="swipeStart = { x: $event.clientX, y: $event.clientY }"
-          @pointerup="photoSwipe"
-          @pointercancel="swipeStart = undefined"
-        >
-          <img
-            :src="mediaUrl(gallery[galleryIndex])"
-            :class="{ landscape: galleryLandscape }"
-            @load="galleryLoaded"
-            :alt="artwork.title + ' · ' + (galleryIndex + 1)"
-            draggable="false"
-          /><span>{{ galleryIndex + 1 }}/{{ gallery.length }}</span>
-          <template v-if="gallery.length > 1"
-            ><button
-              class="gallery-previous"
-              aria-label="上一张作品图片"
-              :disabled="galleryIndex === 0"
-              @click="galleryIndex--"
-            >
-              ‹</button
-            ><button
-              class="gallery-next"
-              aria-label="下一张作品图片"
-              :disabled="galleryIndex === gallery.length - 1"
-              @click="galleryIndex++"
-            >
-              ›
-            </button></template
+      </span>
+    </PageHeader>
+    <AsyncState :loading="loading" :error="error" @retry="load"
+      ><template v-if="artwork">
+        <div class="artwork-body">
+          <p v-if="artwork.status !== 'APPROVED'" class="private-artwork-note">
+            {{
+              artwork.status === "PENDING_REVIEW"
+                ? "作品审核中，当前为本人预览"
+                : "当前作品尚未公开"
+            }}
+          </p>
+          <div
+            class="artwork-hero corner-card"
+            @pointerdown="
+              swipeStart = { x: $event.clientX, y: $event.clientY }
+            "
+            @pointerup="photoSwipe"
+            @pointercancel="swipeStart = undefined"
           >
-        </div>
-        <div class="page-padding">
-          <header class="artwork-heading">
+            <SkeletonImage
+              :src="gallery[galleryIndex]"
+              :alt="artwork.title + ' · ' + (galleryIndex + 1)"
+              ratio="343 / 420"
+              eager
+              class="artwork-cover"
+            /><span class="gallery-count"
+              >{{ galleryIndex + 1 }}/{{ gallery.length }}</span
+            >
+            <template v-if="gallery.length > 1"
+              ><button
+                class="gallery-previous"
+                aria-label="上一张作品图片"
+                :disabled="galleryIndex === 0"
+                @click="galleryIndex--"
+              >
+                ‹</button
+              ><button
+                class="gallery-next"
+                aria-label="下一张作品图片"
+                :disabled="galleryIndex === gallery.length - 1"
+                @click="galleryIndex++"
+              >
+                ›
+              </button></template
+            >
+          </div>
+          <SectionCard class="artwork-heading">
             <div class="artwork-title-row">
               <h1>{{ artwork.title }}</h1>
               <span class="artwork-category">{{
@@ -385,12 +386,11 @@ watch(() => [route.params.id, session.token], () => {
                 {{ artwork.comment_count }}</button
               ><span>浏览 {{ artwork.view_count }}</span>
             </div>
-          </header>
-          <div class="artwork-information">
-            <section class="artwork-description">
-              <h2>作品简介</h2>
-              <p>{{ artwork.content || "作者尚未填写作品简介" }}</p>
-            </section>
+          </SectionCard>
+          <SectionCard class="artwork-description" title="作品简介">
+            <p class="artwork-description-text">
+              {{ artwork.content || "作者尚未填写作品简介" }}
+            </p>
             <dl
               v-if="artwork.specifications?.length"
               class="artwork-specifications"
@@ -400,36 +400,34 @@ watch(() => [route.params.id, session.token], () => {
                 <dd>{{ spec.value }}</dd>
               </div>
             </dl>
-            <section
-              v-if="artwork.appreciation?.length"
-              class="artwork-appreciation"
+          </SectionCard>
+          <SectionCard
+            v-if="artwork.appreciation?.length"
+            class="artwork-appreciation"
+            title="鉴赏要点"
+          >
+            <article
+              v-for="(point, index) in artwork.appreciation"
+              :key="index"
             >
-              <h2>鉴赏要点</h2>
-              <article
-                v-for="(point, index) in artwork.appreciation"
-                :key="index"
-              >
-                <span>{{ index + 1 }}</span>
-                <p>
-                  <strong>{{ point.title }}：</strong>{{ point.body }}
-                </p>
-              </article>
-            </section>
-          </div>
-          <section id="comments" class="artwork-comments">
-            <div class="section-heading">
-              <h2>
-                评论 <small>({{ artwork.comment_count }})</small>
-              </h2>
+              <span>{{ index + 1 }}</span>
+              <p>
+                <strong>{{ point.title }}：</strong>{{ point.body }}
+              </p>
+            </article>
+          </SectionCard>
+          <SectionCard id="comments" class="artwork-comments" title="评论">
+            <template #meta>
+              <small class="comment-total">({{ artwork.comment_count }})</small>
               <button
                 v-if="comments.length < commentTotal"
-                class="text-button"
+                class="text-button comment-more-link"
                 :disabled="moreLoading"
                 @click="loadComments(commentPage + 1)"
               >
                 {{ moreLoading ? "加载中…" : "查看全部" }}</button
-              ><span v-else>最新留言</span>
-            </div>
+              ><span v-else class="comment-latest">最新留言</span>
+            </template>
             <article v-for="c in comments" :key="c.id" class="comment-row">
               <img
                 v-if="c.user.avatar_url"
@@ -465,7 +463,7 @@ watch(() => [route.params.id, session.token], () => {
                 </button>
               </div>
             </article>
-            <p v-if="!comments.length" class="subtle">
+            <p v-if="!comments.length" class="subtle comment-empty">
               还没有评论，聊聊你的鉴赏感受吧
             </p>
             <button
@@ -478,6 +476,7 @@ watch(() => [route.params.id, session.token], () => {
             </button>
             <form
               v-if="artwork.status === 'APPROVED'"
+              class="comment-form"
               @submit.prevent="sendComment"
             >
               <label
@@ -503,178 +502,159 @@ watch(() => [route.params.id, session.token], () => {
                 取消回复
               </button>
             </form>
-          </section>
-          <section
+          </SectionCard>
+          <SectionCard
             v-if="related.length || relatedError"
             class="related-artworks"
+            title="相关推荐"
           >
-            <h2>相关推荐</h2>
             <p v-if="relatedError" class="form-error">
               {{ relatedError }}
               <button class="text-button" @click="loadRelated">重试</button>
             </p>
-            <div>
+            <div class="related-scroll">
               <RouterLink
                 v-for="item in related"
                 :key="item.id"
                 :to="'/community/' + item.id"
-                ><img :src="mediaUrl(item.cover_url)" :alt="item.title" />
+                ><SkeletonImage
+                  :src="item.cover_url"
+                  :alt="item.title"
+                  class="related-cover"
+                />
                 <h3>{{ item.title }}</h3>
                 <p>{{ item.author }}</p></RouterLink
               >
             </div>
-          </section>
-          <div class="artwork-actions">
-            <button
-              :aria-pressed="artwork.is_liked"
-              :disabled="busy || artwork.status !== 'APPROVED'"
-              @click="like"
-            >
-              <img
-                :src="
-                  designIcon(
-                    'layer-5-5591',
-                    artwork.is_liked ? '5:5793' : '5:6128',
-                  )
-                "
-                alt="点赞"
-              /><span>{{ artwork.like_count }}</span>
-            </button>
-            <button @click="openComments">
-              <img :src="designIcon('layer-5-5591', '5:6116')" alt="" /><span
-                >评论</span
-              >
-            </button>
-            <button :aria-pressed="collected" :disabled="busy" @click="collect">
-              <img :src="designIcon('layer-5-5591', '5:6120')" alt="" /><span>{{
-                collected ? "已收藏" : "收藏"
-              }}</span></button
-            ><button @click="share">
-              <img :src="designIcon('layer-5-5591', '5:6140')" alt="" /><span
-                >分享</span
-              >
-            </button>
-          </div>
+          </SectionCard>
           <button
             v-if="artwork.status === 'APPROVED'"
-            class="text-button"
+            class="text-button report-toggle"
             @click="reportVisible = !reportVisible"
           >
             举报不当内容
           </button>
-          <form v-if="reportVisible" @submit.prevent="report">
+          <form
+            v-if="reportVisible"
+            class="report-form"
+            @submit.prevent="report"
+          >
             <label
               >举报原因<textarea
                 v-model.trim="reason"
-              :disabled="busy"
+                :disabled="busy"
                 required
                 maxlength="64"
               /></label
-            ><button class="outline-button" :disabled="busy">{{ busy ? '正在提交…' : '提交举报' }}</button>
+            ><button class="outline-button" :disabled="busy">{{
+              busy ? "正在提交…" : "提交举报"
+            }}</button>
           </form>
+        </div>
+        <div class="artwork-actions">
+          <button
+            :aria-pressed="artwork.is_liked"
+            :disabled="busy || artwork.status !== 'APPROVED'"
+            @click="like"
+          >
+            <img
+              :src="
+                designIcon(
+                  'layer-5-5591',
+                  artwork.is_liked ? '5:5793' : '5:6128',
+                )
+              "
+              alt="点赞"
+            /><span>{{ artwork.like_count }}</span>
+          </button>
+          <button @click="openComments">
+            <img :src="designIcon('layer-5-5591', '5:6116')" alt="" /><span
+              >评论</span
+            >
+          </button>
+          <button :aria-pressed="collected" :disabled="busy" @click="collect">
+            <img :src="designIcon('layer-5-5591', '5:6120')" alt="" /><span>{{
+              collected ? "已收藏" : "收藏"
+            }}</span></button
+          ><button @click="share">
+            <img :src="designIcon('layer-5-5591', '5:6140')" alt="" /><span
+              >分享</span
+            >
+          </button>
         </div></template
       ></AsyncState
     >
   </div>
 </template>
 <style scoped>
-.artwork-hero {
-  position: relative;
-  background: #fff;
-  margin: 12px 16px;
-  border-radius: 12px;
-  overflow: hidden;
-  touch-action: pan-y;
-}
 .artwork-detail {
-  min-height: calc(100dvh - var(--safe-top));
+  min-height: 100dvh;
   padding-bottom: calc(69px + var(--safe-bottom));
-  background: #e4d4c3;
-  color: #333;
+  background: #f5ede4;
+  color: #2d1810;
 }
-.artwork-detail .page-padding {
-  padding: 0 16px 24px;
-}
-.artwork-detail :deep(.page-header) {
-  height: 49px;
-  padding: 0 16px 0 8px;
-  gap: 0;
-  background: rgba(245, 240, 235, 0.9);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-}
-.artwork-detail :deep(.page-header > div) {
-  flex: 1;
-  text-align: center;
-}
-.artwork-detail :deep(.page-header h1) {
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 24px;
-  letter-spacing: 0.4px;
+.artwork-body {
+  padding: 14px 16px 24px;
 }
 .header-actions {
   display: flex;
-  width: 80px;
+  align-items: center;
+  gap: 4px;
 }
 .header-actions button {
-  width: 40px;
-  height: 40px;
-  padding: 10px;
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+  border: 1px solid rgba(200, 169, 110, 0.45);
+  border-radius: 50%;
+  background: rgba(255, 253, 248, 0.8);
 }
 .header-actions img {
-  width: 20px;
-  height: 20px;
-}
-.artwork-heading,
-.artwork-information,
-.artwork-comments {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-}
-.artwork-information {
-  padding: 16px;
-  margin-top: 12px;
-}
-.artwork-detail h2 {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font: 600 14px/20px var(--serif);
-}
-.artwork-detail h2::before {
-  content: "";
-  width: 4px;
-  height: 16px;
-  border-radius: 4px;
-  background: #8b4513;
+  width: 18px;
+  height: 18px;
 }
 .private-artwork-note {
-  font-size: 12px;
-  line-height: 1.8;
-  padding: 12px 16px;
-  background: var(--gold-light);
+  margin-bottom: 14px;
+  padding: 8px 12px;
+  border: 1px solid rgba(200, 169, 110, 0.35);
+  border-radius: 10px;
+  background: rgba(200, 169, 110, 0.14);
+  color: #8a6125;
+  font: 400 11px/1.7 var(--sans);
 }
-.artwork-hero > img {
-  aspect-ratio: 343 / 420;
-  height: auto;
-  width: 100%;
-  object-fit: cover;
+.artwork-hero {
+  position: relative;
+  margin-bottom: 14px;
+  border-radius: 14px;
+  background: #f1e5d6;
+  touch-action: pan-y;
 }
-.artwork-hero > img.landscape {
-  object-fit: contain;
+.artwork-hero > .artwork-cover {
+  border-radius: 14px;
+}
+.artwork-hero > .gallery-count {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(45, 24, 16, 0.62);
+  color: #f6ead9;
+  font: 400 10px/1.4 var(--sans);
+  letter-spacing: 0.5px;
 }
 .gallery-previous,
 .gallery-next {
   position: absolute;
   top: 45%;
-  width: 32px;
-  height: 42px;
-  border-radius: 8px;
-  background: #3d231466;
-  color: var(--paper);
-  font-size: 27px;
+  width: 30px;
+  height: 40px;
   padding: 0;
+  border-radius: 8px;
+  background: rgba(45, 24, 16, 0.45);
+  color: #f6ead9;
+  font-size: 22px;
+  line-height: 1;
 }
 .gallery-previous {
   left: 10px;
@@ -684,132 +664,10 @@ watch(() => [route.params.id, session.token], () => {
 }
 .gallery-previous:disabled,
 .gallery-next:disabled {
-  opacity: 0.25;
-}
-.artwork-specifications {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  margin: 16px 0 24px;
-}
-.artwork-specifications > div {
-  min-height: 64px;
-  padding: 12px;
-  border-radius: 8px;
-  background: #f5f0eb;
-}
-.artwork-specifications dt {
-  font-size: 12px;
-  color: #999;
-  line-height: 16px;
-  margin-bottom: 4px;
-}
-.artwork-specifications dd {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 20px;
-  overflow-wrap: anywhere;
-}
-.artwork-appreciation {
-  margin: 24px 0 0;
-}
-.artwork-appreciation article {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-top: 12px;
-}
-.artwork-appreciation article > span {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  background: #f5f0eb;
-  font-size: 12px;
-  color: #8b4513;
-}
-.artwork-appreciation p {
-  font-size: 14px;
-  line-height: 22px;
-}
-.artwork-appreciation strong {
-  color: #8b4513;
-  font-weight: 500;
-}
-.comment-row blockquote {
-  margin: 12px 0;
-  padding: 8px 12px;
-  background: var(--track);
-  border-left: 2px solid var(--gold-light);
-  font-size: 11px;
-  line-height: 1.7;
-}
-.comment-row .comment-like {
-  margin-left: 20px;
-}
-.comment-like[aria-pressed="true"] {
-  color: var(--cinnabar);
-}
-.more-comments {
-  display: block;
-  margin: 16px auto;
-}
-.related-artworks {
-  padding: 18px 0 24px;
-}
-.related-artworks > div {
-  display: flex;
-  gap: 12px;
-  overflow: auto;
-  margin-top: 12px;
-}
-.related-artworks a {
-  flex: 0 0 144px;
-  background: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-}
-.related-artworks img {
-  width: 100%;
-  height: 128px;
-  object-fit: cover;
-}
-.related-artworks h3 {
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.8;
-  padding: 10px 8px 0;
-}
-.related-artworks p {
-  padding: 6px 8px 12px;
-  font-size: 10px;
-  color: var(--muted);
-}
-.artwork-hero > span {
-  position: absolute;
-  bottom: 16px;
-  right: 20px;
-  border-radius: 20px;
-  background: rgba(61, 35, 20, 0.6);
-  padding: 5px 12px;
-  color: var(--paper);
-  font-size: 11px;
-}
-.artwork-category {
-  display: inline-block;
-  flex-shrink: 0;
-  font-size: 12px;
-  line-height: 16px;
-  color: #8b4513;
-  padding: 4px 8px;
-  background: #f5f0eb;
-  border-radius: 12px;
+  opacity: 0.3;
 }
 .artwork-heading {
-  padding: 16px 16px 0;
+  padding: 16px 14px 12px;
 }
 .artwork-title-row {
   display: flex;
@@ -818,22 +676,32 @@ watch(() => [route.params.id, session.token], () => {
   gap: 8px;
 }
 .artwork-heading h1 {
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 25px;
   margin: 0;
+  color: #2d1810;
+  font: 500 16px/1.5 var(--serif);
+  letter-spacing: 1px;
   overflow-wrap: anywhere;
+}
+.artwork-category {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border: 1px solid rgba(200, 169, 110, 0.42);
+  border-radius: 999px;
+  background: rgba(200, 169, 110, 0.14);
+  color: #8a6125;
+  font: 400 10px/1.6 var(--sans);
+  white-space: nowrap;
 }
 .artwork-author {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   margin-top: 12px;
 }
 .artwork-author > img,
 .author-initial {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   flex-shrink: 0;
   border-radius: 50%;
   object-fit: cover;
@@ -841,90 +709,162 @@ watch(() => [route.params.id, session.token], () => {
 .author-initial {
   display: grid;
   place-items: center;
-  background: var(--coral);
-  color: var(--paper);
-  font-family: var(--serif);
+  background: #8b1a1a;
+  color: #f6ead9;
+  font: 400 14px/1 var(--serif);
 }
 .artwork-author > div {
   flex: 1;
+  min-width: 0;
 }
 .artwork-author h3 {
-  font: 500 14px/20px var(--sans);
+  color: #2d1810;
+  font: 500 13px/1.4 var(--sans);
 }
 .artwork-author p {
-  font-size: 12px;
-  line-height: 16px;
-  color: #999;
-  margin-top: 4px;
+  margin-top: 2px;
+  color: #8a7a70;
+  font: 400 10px/1.5 var(--sans);
 }
 .artwork-author > .outline-button {
-  min-height: 34px;
-  padding: 6px 16px;
-  font-size: 11px;
-  background: #8b4513;
+  min-height: 28px;
+  padding: 0 12px;
   border: 0;
-  color: #fff;
+  border-radius: 999px;
+  background: #8b1a1a;
+  color: #f6ead9;
+  font: 500 11px/1 var(--sans);
+}
+.artwork-author > .outline-button[aria-pressed="true"] {
+  border: 1px solid rgba(200, 169, 110, 0.5);
+  background: rgba(200, 169, 110, 0.14);
+  color: #8a6125;
 }
 .artwork-counts {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  margin-top: 16px;
-  padding: 16px 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-  font-size: 14px;
-  line-height: 20px;
-  color: #525252;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(200, 169, 110, 0.24);
+  color: #8a7a70;
+  font: 400 11px/1.5 var(--sans);
 }
 .artwork-counts button {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 14px;
+  gap: 5px;
   padding: 0;
+  color: #5a3e36;
+  font: 400 11px/1.5 var(--sans);
 }
 .artwork-counts img {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
 }
 .artwork-counts button[aria-pressed="true"] {
-  color: var(--cinnabar);
+  color: #8b1a1a;
 }
 .artwork-description {
-  margin: 0;
+  padding: 16px 14px 14px;
 }
-.artwork-description p {
-  margin-top: 12px;
-  line-height: 22px;
-  font-size: 14px;
+.artwork-description-text {
+  margin: 0;
+  color: #5a3e36;
+  font: 400 13px/1.9 var(--sans);
   white-space: pre-line;
   overflow-wrap: anywhere;
 }
-.artwork-comments {
-  scroll-margin-top: 24px;
-  padding: 16px;
+.artwork-specifications {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
   margin: 12px 0 0;
 }
-.artwork-comments small {
-  font-size: 11px;
-  color: var(--muted);
+.artwork-specifications > div {
+  min-height: 56px;
+  padding: 9px 10px;
+  border: 1px solid rgba(200, 169, 110, 0.22);
+  border-radius: 10px;
+  background: #fffdf8;
+}
+.artwork-specifications dt {
+  margin-bottom: 3px;
+  color: #8a7a70;
+  font: 400 10px/1.5 var(--sans);
+}
+.artwork-specifications dd {
+  margin: 0;
+  color: #2d1810;
+  font: 500 13px/1.5 var(--sans);
+  overflow-wrap: anywhere;
+}
+.artwork-appreciation article {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 10px;
+}
+.artwork-appreciation article:first-child {
+  margin-top: 0;
+}
+.artwork-appreciation article > span {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(200, 169, 110, 0.18);
+  color: #8a6125;
+  font: 500 10px/1 var(--sans);
+}
+.artwork-appreciation p {
+  color: #5a3e36;
+  font: 400 13px/1.9 var(--sans);
+}
+.artwork-appreciation strong {
+  color: #8b1a1a;
+  font-weight: 500;
+}
+.artwork-comments {
+  scroll-margin-top: 12px;
+}
+.comment-total {
+  flex-shrink: 0;
+  color: #8a7a70;
+  font: 400 10px/1.4 var(--sans);
+}
+.comment-more-link {
+  flex-shrink: 0;
+  padding: 0;
+  color: #8b1a1a;
+  font-size: 10px;
+}
+.comment-latest {
+  flex-shrink: 0;
+  color: #8a7a70;
+  font: 400 10px/1.4 var(--sans);
 }
 .comment-row {
   display: flex;
-  gap: 12px;
-  padding: 18px 0;
-  border-bottom: 1px solid var(--gold-light);
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(200, 169, 110, 0.18);
+}
+.comment-row:last-of-type {
+  border-bottom: 0;
 }
 .comment-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
   display: grid;
   place-items: center;
-  background: var(--gold-light);
-  color: var(--clay);
-  font-size: 12px;
-  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgba(200, 169, 110, 0.18);
+  color: #8a6125;
+  font: 400 11px/1 var(--sans);
   object-fit: cover;
 }
 .comment-row > div {
@@ -932,35 +872,146 @@ watch(() => [route.params.id, session.token], () => {
   min-width: 0;
 }
 .comment-row h3 {
-  font-size: 12px;
-  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #2d1810;
+  font: 500 12px/1.4 var(--sans);
+}
+.comment-row h3 small {
+  padding: 1px 5px;
+  border: 1px solid rgba(139, 26, 26, 0.22);
+  border-radius: 4px;
+  color: #8b1a1a;
+  font: 400 9px/1.4 var(--sans);
+}
+.comment-row small {
+  color: #8a7a70;
+  font: 400 10px/1.4 var(--sans);
+}
+.comment-row blockquote {
+  margin: 6px 0;
+  padding: 6px 10px;
+  border-left: 2px solid rgba(200, 169, 110, 0.55);
+  border-radius: 0 6px 6px 0;
+  background: #f7efe3;
+  color: #8a7a70;
+  font: 400 11px/1.7 var(--sans);
 }
 .comment-row p {
-  font-size: 14px;
-  line-height: 22px;
   margin-top: 4px;
+  color: #5a3e36;
+  font: 400 13px/1.85 var(--sans);
   overflow-wrap: anywhere;
 }
 .comment-row button {
-  font-size: 10px;
-  color: var(--clay);
-  padding: 10px 0 0;
+  padding: 6px 0 0;
+  color: #8a6125;
+  font: 400 10px/1.4 var(--sans);
 }
-.artwork-comments form {
-  margin-top: 24px;
+.comment-row .comment-like {
+  margin-left: 16px;
+}
+.comment-like[aria-pressed="true"] {
+  color: #8b1a1a;
+}
+.comment-empty {
+  padding: 8px 0 12px;
+  text-align: center;
+}
+.more-comments {
+  display: block;
+  margin: 12px auto 0;
+  min-height: 36px;
+  padding: 6px 16px;
+  border-color: rgba(200, 169, 110, 0.5);
+  border-radius: 999px;
+  color: #8a6125;
+  font-size: 11px;
+}
+.comment-form {
+  margin-top: 14px;
+  gap: 10px;
+}
+.comment-form label {
+  color: #5a3e36;
+  font: 400 11px/1.6 var(--sans);
+}
+.comment-form textarea {
+  min-height: 84px;
+  border-color: rgba(200, 169, 110, 0.42);
+  border-radius: 10px;
+  background: #fffdf8;
+  font-size: 13px;
+}
+.comment-form .primary-button {
+  min-height: 40px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: #8b1a1a;
+  color: #f6ead9;
+  font-size: 12px;
+}
+.comment-form .text-button {
+  align-self: center;
+  padding: 4px;
+  color: #8a7a70;
+  font-size: 11px;
+}
+.related-artworks > p {
+  margin-bottom: 8px;
+  font-size: 11px;
+}
+.related-scroll {
+  display: flex;
+  gap: 10px;
+  margin: 0 -14px;
+  padding: 0 14px 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.related-scroll::-webkit-scrollbar {
+  display: none;
+}
+.related-scroll a {
+  flex: 0 0 132px;
+  overflow: hidden;
+  border: 1px solid rgba(200, 169, 110, 0.28);
+  border-radius: 10px;
+  background: #fffdf8;
+}
+.related-scroll .related-cover {
+  height: 108px;
+}
+.related-scroll h3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  padding: 6px 8px 0;
+  color: #2d1810;
+  font: 500 11px/1.6 var(--sans);
+}
+.related-scroll p {
+  padding: 2px 8px 8px;
+  color: #8a7a70;
+  font: 400 10px/1.5 var(--sans);
 }
 .artwork-actions {
-  display: flex;
-  justify-content: space-around;
   position: fixed;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  justify-content: space-around;
   width: min(100%, 480px);
   padding: 6px 16px calc(6px + var(--safe-bottom));
-  background: rgba(255, 255, 255, 0.95);
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-  z-index: 30;
+  background: rgba(250, 245, 240, 0.97);
+  border-top: 1px solid rgba(200, 169, 110, 0.35);
+  box-shadow: 0 -6px 20px rgba(70, 42, 26, 0.07);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 .artwork-actions > * {
   display: flex;
@@ -972,15 +1023,15 @@ watch(() => [route.params.id, session.token], () => {
   height: 44px;
   padding: 0;
   font: 400 10px/15px var(--sans);
-  color: #999;
+  color: #8a7a70;
 }
 .artwork-actions img {
-  width: 20px;
-  height: 20px;
+  width: 19px;
+  height: 19px;
 }
 .artwork-actions [aria-pressed="true"],
 .header-actions [aria-pressed="true"] {
-  color: #8b4513;
+  color: #8b1a1a;
 }
 .artwork-actions [aria-pressed="true"] img,
 .header-actions [aria-pressed="true"] img {
@@ -994,5 +1045,38 @@ watch(() => [route.params.id, session.token], () => {
 }
 .artwork-comments textarea {
   scroll-margin: 24px 0 80px;
+}
+.report-toggle {
+  display: block;
+  margin: 0 auto 14px;
+  padding: 4px;
+  color: #8a7a70;
+  font-size: 11px;
+}
+.report-form {
+  margin-bottom: 14px;
+  padding: 12px;
+  border: 1px solid rgba(200, 169, 110, 0.35);
+  border-radius: 12px;
+  background: #fffdf8;
+  gap: 10px;
+}
+.report-form label {
+  color: #5a3e36;
+  font: 400 11px/1.6 var(--sans);
+}
+.report-form textarea {
+  min-height: 72px;
+  border-color: rgba(200, 169, 110, 0.4);
+  border-radius: 10px;
+  background: #fdf9f2;
+  font-size: 12px;
+}
+.report-form .outline-button {
+  min-height: 38px;
+  border-color: rgba(200, 169, 110, 0.55);
+  border-radius: 10px;
+  color: #8a6125;
+  font-size: 12px;
 }
 </style>

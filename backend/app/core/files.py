@@ -54,11 +54,15 @@ def sanitize_svg(content: bytes | str) -> str:
     return ElementTree.tostring(root, encoding="unicode", short_empty_elements=False)
 
 
-def resolve_static_file(url: str) -> Path:
+def resolve_static_file(url: str, require_signature: bool = False) -> Path:
     parsed = urlsplit(url)
     path = unquote(parsed.path)
-    if parsed.scheme or parsed.netloc or parsed.query or parsed.fragment or not path.startswith("/static/"):
+    if parsed.scheme or parsed.netloc or parsed.fragment or not path.startswith("/static/"):
         raise HTTPException(400, "仅支持本地静态资源")
+    if require_signature and path.startswith("/static/generated/"):
+        from app.core.file_urls import verify
+        if not verify(path, parsed.query):
+            raise HTTPException(403, "作品文件链接无效或已过期，请重新打开作品")
     if "\\" in path or "\x00" in path:
         raise HTTPException(400, "资源路径无效")
     base = STATIC_DIR.resolve()

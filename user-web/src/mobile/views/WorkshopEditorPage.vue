@@ -16,6 +16,7 @@ import BronzeCanvas from "../components/BronzeCanvas.vue";
 import ShadowWorkshop from "../components/ShadowWorkshop.vue";
 import LacquerWorkshop from "../components/LacquerWorkshop.vue";
 import WorkshopGenerationMode from "../components/WorkshopGenerationMode.vue";
+import WorkshopReview from "../components/WorkshopReview.vue";
 const route = useRoute(),
   router = useRouter(),
   type = computed(() => String(route.params.tool));
@@ -50,6 +51,27 @@ const sketch = ref(""),
 const bronzeGenerating = ref(false);
 const generationMode = ref("LOCAL");
 const imageCapabilities = ref({ image_generation: false, image_edit: false });
+const quota = ref<{ used_today: number; remaining_today: number; daily_limit: number } | null>(null);
+const online = ref(typeof navigator === "undefined" ? true : navigator.onLine);
+const setOnline = () => {
+  online.value = navigator.onLine;
+};
+window.addEventListener("online", setOnline);
+window.addEventListener("offline", setOnline);
+const reviewImageUrl = computed(() => {
+  const result = task.value?.result;
+  if (task.value?.status !== "SUCCESS" || !result) return "";
+  return (
+    result.colored_image_url || result.rendered_image_url || result.image_url || ""
+  );
+});
+const reviewTitle = computed(() => task.value?.result?.title || title.value);
+const reviewHeritage = computed(
+  () =>
+    ({ bronze: "BRONZE", shadow: "SHADOW_PUPPET", lacquer: "EMBROIDERY" })[
+      type.value
+    ] || "SHADOW_PUPPET",
+);
 let pendingCreate: { signature: string; requestId: string } | undefined;
 const bronzeRenderStyle = ref("青铜氧化"),
   bronzePattern = ref("饕餮纹");
@@ -117,6 +139,10 @@ async function poll() {
 async function create() {
   if (!requireSession() || working.value || restoring.value || uploading.value)
     return;
+  if (!online.value) {
+    error.value = "当前离线，恢复网络后才能开始创作";
+    return;
+  }
   if (!prompt.value.trim()) {
     error.value = "先写下你的创作灵感吧";
     return;
@@ -154,6 +180,7 @@ async function create() {
     }
     const result = await post("/ai/tasks", { ...body, request_id: pendingCreate.requestId });
     if (!current(c)) return;
+    if (result?.quota) quota.value = result.quota;
     pendingCreate = undefined;
     task.value = result;
     if (route.query.task_id) {
@@ -169,8 +196,12 @@ async function create() {
     if (current(c)) busy.value = false;
   }
 }
-async function cancel() {
-  const c = context(),
+function retry() {
+  error.value = "";
+  if (task.value && ["QUEUED", "RUNNING"].includes(task.value.status)) void poll();
+  else void create();
+}
+async function cancel() {  const c = context(),
     id = task.value?.task_id;
   if (!id) return;
   try {
@@ -239,7 +270,8 @@ async function download() {
     if (url)
       await saveAsset(
         url,
-        "津韵润乡-" + type.value + (url.match(/\.(svg|png|jpe?g|webp)$/i)?.[0] || ".png"),
+        "津韵润乡-" + type.value,
+        title.value,
       );
   } catch (e) {
     notify((e as Error).message);
@@ -360,6 +392,10 @@ async function restore() {
         /^#[0-9a-f]{6}$/i.test(restoredColor)
       )
         color.value = restoredColor;
+      sketch.value =
+        typeof result.input.sketch_url === "string"
+          ? result.input.sketch_url
+          : "";
     }
     if (type.value === "lacquer" && result?.input) {
       prompt.value =
@@ -411,6 +447,8 @@ watch(
 onUnmounted(() => {
   alive = false;
   clearTimeout(pollTimer);
+  window.removeEventListener("online", setOnline);
+  window.removeEventListener("offline", setOnline);
 });
 </script>
 <template>
@@ -420,23 +458,26 @@ onUnmounted(() => {
     v-model:color="color"
     v-model:prompt="prompt"
     v-model:face-style="faceStyle"
+    v-model:sketch="sketch"
     v-model:selected-result="selectedResult"
     :task="task"
     :working="working"
+    :uploading="uploading"
     :loading="restoring"
     :error="error"
     :publishing="publishing"
     :favorite-busy="favoriteBusy"
     :generation-mode="generationMode"
     @back="backToWorkshop"
+    @upload="upload"
     @generate="create"
     @cancel="cancel"
-    @retry="poll"
+    @retry="retry"
     @export="download"
     @favorite="favorite"
     @publish="publish"
   >
-    <template #generation-mode><WorkshopGenerationMode v-model="generationMode" :available="imageCapabilities.image_generation" :editable="imageCapabilities.image_edit" :disabled="working || restoring" /></template>
+    <template #generation-mode><WorkshopGenerationMode v-model="generationMode" :available="imageCapabilities.image_generation" :editable="imageCapabilities.image_edit" :disabled="working || restoring || uploading" /></template>
   </ShadowWorkshop>
   <LacquerWorkshop
     v-else-if="type === 'lacquer'"
@@ -457,7 +498,7 @@ onUnmounted(() => {
     @upload="upload"
     @generate="create"
     @cancel="cancel"
-    @retry="poll"
+    @retry="retry"
     @export="download"
     @favorite="favorite"
     @publish="publish"
@@ -474,7 +515,8 @@ onUnmounted(() => {
         :src="designImage('layer-40-55030', '5:5326')"
         alt=""
       />
-      <p class="eyebrow">武清仿古青铜器经典纹样 · 智能设计平台</p>
+      <span class="bronze-seal" aria-hidden="true">纹</span>
+      <p class="eyebrow">武清仿古青铜器经典纹样 · 非遗数字工坊</p>
       <h1>{{ title }}</h1>
     </header>
     <div class="page-padding">
@@ -534,10 +576,26 @@ onUnmounted(() => {
           >
             重新查询任务状态
           </button>
+          <button
+            v-else-if="error && task?.status === 'FAILED'"
+            class="outline-button"
+            @click="
+              error = '';
+              create();
+            "
+          >
+            重新发起创作
+          </button>
         </section>
       </div>
     </div>
   </div>
+  <WorkshopReview
+    v-if="reviewImageUrl"
+    :image-url="reviewImageUrl"
+    :title="reviewTitle"
+    :heritage-type="reviewHeritage"
+  />
 </template>
 <style scoped>
 .editor-page {
@@ -549,21 +607,26 @@ onUnmounted(() => {
 }
 .bronze-back {
   position: absolute;
-  top: 0;
-  left: 6px;
-  width: 40px;
-  height: 40px;
+  top: 16px;
+  left: 16px;
+  width: 38px;
+  height: 38px;
   padding: 0;
-  z-index: 2;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(139, 105, 48, 0.38);
+  border-radius: 8px;
+  background: rgba(250, 246, 238, 0.9);
 }
 .bronze-back img {
-  width: 40px;
-  height: 40px;
+  width: 16px;
+  height: 16px;
   object-fit: contain;
 }
 .bronze .editor-hero {
-  height: 163px;
-  padding: 54px 16px 0;
+  height: 168px;
+  padding: 56px 20px 0;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -572,20 +635,24 @@ onUnmounted(() => {
 .bronze .editor-hero::before {
   content: "";
   position: absolute;
-  left: 6px;
-  right: 6px;
-  top: 22px;
-  height: 127px;
+  left: 10px;
+  right: 10px;
+  top: 18px;
+  height: 132px;
+  border: 1px solid rgba(201, 168, 76, 0.28);
+  border-radius: 10px;
   background:
-    linear-gradient(rgba(188, 145, 145, 0.2), rgba(188, 145, 145, 0.2)), #f5f0e6;
+    radial-gradient(circle at 82% 20%, rgba(201, 168, 76, 0.18), transparent 55%),
+    linear-gradient(135deg, rgba(201, 168, 76, 0.12), rgba(139, 26, 26, 0.035) 58%, rgba(201, 168, 76, 0.08)),
+    #f5f0e6;
 }
-.bronze .editor-hero > * {
+.bronze .editor-hero > *:not(.bronze-seal) {
   position: relative;
 }
 .bronze .editor-hero .bronze-header-rule {
   position: absolute;
-  left: 6px;
-  top: 22px;
+  left: 10px;
+  top: 18px;
   width: calc(100% - 6px);
   height: 3px;
   margin: 0;
@@ -595,18 +662,36 @@ onUnmounted(() => {
   order: 0;
   margin: 0 0 8px;
   font:
-    400 36px/35px "Ma Shan Zheng",
+    400 35px/36px "Ma Shan Zheng",
     var(--serif);
-  color: #847070;
-  letter-spacing: 2.24px;
+  color: #1a365d;
+  letter-spacing: 2.4px;
 }
 .bronze .editor-hero .eyebrow {
   order: 1;
   font:
-    400 12px/16px "Noto Sans SC",
+    400 11px/16px "Noto Sans SC",
     sans-serif;
-  letter-spacing: 1.8px;
-  color: #6d6d6d;
+  letter-spacing: 1.6px;
+  color: #8a6a37;
+}
+.bronze-seal {
+  position: absolute;
+  right: 22px;
+  top: 34px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid rgba(139, 26, 26, 0.7);
+  border-radius: 3px;
+  color: #8b1a1a;
+  background: rgba(250, 246, 238, 0.65);
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1;
+  transform: rotate(-4deg);
 }
 .bronze .page-padding {
   padding: 0;

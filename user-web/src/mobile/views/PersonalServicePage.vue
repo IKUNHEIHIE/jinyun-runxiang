@@ -4,6 +4,7 @@ import { useRoute } from "vue-router";
 import { api, post, mediaUrl, notify, session } from "../api";
 import PageHeader from "../components/PageHeader.vue";
 import AsyncState from "../components/AsyncState.vue";
+import SectionCard from "../components/SectionCard.vue";
 import { formatDate } from "../dates";
 const route = useRoute(),
   items = ref<any[]>([]),
@@ -145,6 +146,8 @@ function itemUrl(item: any) {
         BRONZE: "bronze",
         EMBROIDERY: "lacquer",
         LACQUER: "lacquer",
+        MESH_3D: "3d",
+        SILHOUETTE: "shadow-3d",
       } as Record<string, string>
     )[item.tool_type];
     if (tool)
@@ -184,14 +187,15 @@ onUnmounted(() => {
 });
 </script>
 <template>
-  <div>
+  <div class="service-page">
     <PageHeader :title="title" />
-    <div class="page-padding">
-      <template v-if="section === 'feedback'"
-        ><section class="service-card corner-card">
-          <h2>让非遗之旅更美好</h2>
-          <p class="subtle">告诉我们你遇到的问题或建议，反馈会保存在平台中。</p>
-          <form @submit.prevent="feedback">
+    <div class="service-body">
+      <template v-if="section === 'feedback'">
+        <SectionCard title="让非遗之旅更美好">
+          <p class="subtle service-intro">
+            告诉我们你遇到的问题或建议，反馈会保存在平台中。
+          </p>
+          <form class="service-form" @submit.prevent="feedback">
             <label
               >反馈内容<textarea
                 v-model.trim="content"
@@ -203,19 +207,19 @@ onUnmounted(() => {
             ><label
               >联系方式（选填）<input
                 v-model.trim="contact"
-                maxlength="128" /></label
-            ><button class="primary-button" :disabled="feedbackBusy">
+                maxlength="128"
+            /></label>
+            <button class="primary-button" :disabled="feedbackBusy">
               {{ feedbackBusy ? "正在提交…" : "提交反馈" }}
             </button>
           </form>
-        </section>
-        <section class="feedback-history">
-          <div class="feedback-heading">
-            <h2>我的反馈</h2>
+        </SectionCard>
+        <SectionCard title="我的反馈">
+          <template #meta>
             <button class="text-link" :disabled="loading" @click="load">
               刷新
             </button>
-          </div>
+          </template>
           <AsyncState
             :loading="loading"
             :error="error"
@@ -223,64 +227,72 @@ onUnmounted(() => {
             empty-text="还没有反馈记录"
             @retry="load"
           >
-            <article
-              v-for="item in items"
-              :key="item.id"
-              class="service-card corner-card"
-            >
-              <p class="service-caption">
-                {{
-                  {
-                    PENDING: "待处理",
-                    PROCESSING: "处理中",
-                    RESOLVED: "已回复",
-                  }[item.status] || item.status
-                }}
-                · {{ formatDate(item.created_at) }}
-              </p>
-              <p class="feedback-content">{{ item.content }}</p>
-              <div v-if="item.reply_text" class="feedback-reply">
-                <b>平台回复</b>
-                <p class="feedback-content">{{ item.reply_text }}</p>
-                <small>{{ formatDate(item.handled_at) }}</small>
-              </div>
-            </article>
+            <div class="feedback-list">
+              <article
+                v-for="item in items"
+                :key="item.id"
+                class="feedback-item"
+              >
+                <div class="feedback-head">
+                  <span class="status-chip">
+                    {{
+                      {
+                        PENDING: "待处理",
+                        PROCESSING: "处理中",
+                        RESOLVED: "已回复",
+                      }[item.status] || item.status
+                    }}
+                  </span>
+                  <span class="feedback-date">{{
+                    formatDate(item.created_at)
+                  }}</span>
+                </div>
+                <p class="feedback-content">{{ item.content }}</p>
+                <div v-if="item.reply_text" class="feedback-reply">
+                  <b>平台回复</b>
+                  <p class="feedback-content">{{ item.reply_text }}</p>
+                  <small>{{ formatDate(item.handled_at) }}</small>
+                </div>
+              </article>
+            </div>
           </AsyncState>
-        </section></template
-      ><template v-else
-        ><form
-          v-if="section === 'assignments'"
-          class="join-form"
-          @submit.prevent="join"
-        >
-          <label
-            >班级邀请码<input
-              v-model.trim="invite"
-              required
-              minlength="4"
-              maxlength="16"
-              placeholder="向老师获取班级邀请码" /></label
-          ><button class="primary-button" :disabled="busy">加入班级</button>
-        </form>
-        <nav
+        </SectionCard>
+      </template>
+      <template v-else>
+        <SectionCard v-if="section === 'assignments'">
+          <form class="join-form" @submit.prevent="join">
+            <label
+              >班级邀请码<input
+                v-model.trim="invite"
+                required
+                minlength="4"
+                maxlength="16"
+                placeholder="向老师获取班级邀请码" /></label
+            ><button class="primary-button" :disabled="busy">加入班级</button>
+          </form>
+        </SectionCard>
+        <div
           v-if="section === 'assignments' && classes.length"
-          class="student-classes"
+          class="class-list"
         >
           <article
             v-for="c in classes"
             :key="c.id"
-            class="service-card corner-card"
+            class="class-card corner-card"
           >
             <h2>{{ c.name }}</h2>
             <p class="subtle">{{ c.grade }}</p>
-            <RouterLink :to="'/notices?class_id=' + c.id" class="outline-button"
-              >班级通知</RouterLink
-            >
-            <RouterLink to="/classroom" class="outline-button"
-              >进入课堂</RouterLink
-            >
+            <div class="class-actions">
+              <RouterLink
+                :to="'/notices?class_id=' + c.id"
+                class="outline-button"
+                >班级通知</RouterLink
+              ><RouterLink to="/classroom" class="outline-button"
+                >进入课堂</RouterLink
+              >
+            </div>
           </article>
-        </nav>
+        </div>
         <AsyncState
           :loading="loading"
           :error="error"
@@ -321,21 +333,24 @@ onUnmounted(() => {
                   <p v-if="item.submission.comment" class="subtle">
                     教师评语：{{ item.submission.comment }}
                   </p></template
-                ><RouterLink
-                  v-if="item.contest"
-                  :to="'/contests/' + item.contest.id"
-                  class="outline-button"
-                  >进入对抗赛</RouterLink
-                ><button
-                  v-if="item.submission?.status !== 'REVIEWED'"
-                  class="outline-button"
-                  @click="
-                    selectedAssignment = item.id;
-                    submission = item.submission?.content || '';
-                  "
                 >
-                  {{ item.submission ? "修改提交" : "提交作业" }}
-                </button>
+                <div class="service-actions">
+                  <RouterLink
+                    v-if="item.contest"
+                    :to="'/contests/' + item.contest.id"
+                    class="outline-button"
+                    >进入对抗赛</RouterLink
+                  ><button
+                    v-if="item.submission?.status !== 'REVIEWED'"
+                    class="outline-button"
+                    @click="
+                      selectedAssignment = item.id;
+                      submission = item.submission?.content || '';
+                    "
+                  >
+                    {{ item.submission ? "修改提交" : "提交作业" }}
+                  </button>
+                </div>
               </article>
               <article
                 v-else-if="section === 'exchanges'"
@@ -361,7 +376,7 @@ onUnmounted(() => {
                 <p v-if="item.handled_at" class="subtle">
                   处理时间：{{ formatDate(item.handled_at) }}
                 </p>
-                <p class="subtle">{{ formatDate(item.created_at) }}</p>
+                <p class="service-caption">{{ formatDate(item.created_at) }}</p>
               </article>
               <article
                 v-else-if="section === 'orders'"
@@ -403,7 +418,7 @@ onUnmounted(() => {
               </article>
               <article
                 v-else-if="section === 'follows'"
-                class="follow-row service-card"
+                class="follow-row corner-card"
               >
                 <img
                   v-if="item.avatar_url"
@@ -419,7 +434,7 @@ onUnmounted(() => {
                 :to="itemUrl(item)"
                 class="saved-item corner-card"
                 ><img :src="mediaUrl(item.cover_url)" :alt="item.title" />
-                <div>
+                <div class="saved-copy">
                   <h3>{{ item.title }}</h3>
                   <p class="subtle">
                     {{
@@ -436,8 +451,8 @@ onUnmounted(() => {
               ></template
             >
           </div></AsyncState
-        ></template
-      >
+        >
+      </template>
     </div>
     <Teleport to="body"
       ><div
@@ -446,7 +461,7 @@ onUnmounted(() => {
         @click.self="selectedAssignment = undefined"
       >
         <section
-          class="auth-sheet corner-card"
+          class="auth-sheet corner-card service-sheet"
           role="dialog"
           aria-modal="true"
           aria-labelledby="assignment-title"
@@ -465,8 +480,8 @@ onUnmounted(() => {
                 v-model.trim="submission"
                 required
                 maxlength="10000"
-              /></label
-            ><button class="primary-button" :disabled="busy">
+            /></label>
+            <button class="primary-button" :disabled="busy">
               {{ busy ? "提交中…" : "提交给老师" }}
             </button>
           </form>
@@ -476,122 +491,313 @@ onUnmounted(() => {
   </div>
 </template>
 <style scoped>
+.service-page {
+  min-height: 100dvh;
+  padding-bottom: 12px;
+  background: #f5ede4;
+  color: #2d1810;
+}
+.service-body {
+  padding: 14px 16px 24px;
+}
+.service-intro {
+  margin-bottom: 14px;
+  color: #8a7a70;
+  font: 400 11px/1.7 var(--sans);
+}
+.service-form,
+.join-form {
+  gap: 12px;
+  margin: 0;
+}
+.service-form label,
+.join-form label,
+.service-sheet label {
+  gap: 6px;
+  color: #8a7a70;
+  font: 400 11px/1.4 var(--sans);
+  letter-spacing: 1px;
+}
+.service-form input,
+.service-form textarea,
+.join-form input,
+.service-sheet input,
+.service-sheet textarea {
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid rgba(200, 169, 110, 0.45);
+  border-radius: 10px;
+  background: #fffdf8;
+  color: #2d1810;
+  font: 400 14px/1.6 var(--sans);
+  letter-spacing: 0;
+}
+.service-form textarea,
+.service-sheet textarea {
+  min-height: 110px;
+}
+.service-page .primary-button,
+.service-sheet .primary-button {
+  min-height: 44px;
+  border: 1px solid rgba(232, 217, 168, 0.55);
+  border-radius: 10px;
+  background: #8b1a1a;
+  color: #f6ead9;
+  font: 500 13px/1.4 var(--sans);
+  letter-spacing: 2px;
+  box-shadow: 0 6px 16px rgba(139, 26, 26, 0.16);
+}
+.text-link {
+  padding: 4px 0;
+  color: #8a6125;
+  font: 400 11px/1.4 var(--sans);
+  letter-spacing: 0.5px;
+}
+.text-link:disabled {
+  opacity: 0.5;
+}
+.status-chip {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid rgba(139, 26, 26, 0.28);
+  border-radius: 999px;
+  background: #fff0f0;
+  color: #8b1a1a;
+  font: 400 10px/1.5 var(--sans);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+.feedback-list {
+  display: flex;
+  flex-direction: column;
+}
+.feedback-item {
+  padding: 14px 0;
+  border-top: 1px solid rgba(200, 169, 110, 0.22);
+}
+.feedback-item:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+.feedback-item:last-child {
+  padding-bottom: 0;
+}
+.feedback-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.feedback-date {
+  margin-left: auto;
+  color: #8a7a70;
+  font: 400 10px/1.5 var(--sans);
+}
+.feedback-content {
+  margin-top: 8px;
+  color: #4a3228;
+  font: 400 13px/1.85 var(--sans);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.feedback-reply {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-left: 2px solid #c8a96e;
+  border-radius: 0 8px 8px 0;
+  background: rgba(200, 169, 110, 0.1);
+}
+.feedback-reply b {
+  display: block;
+  color: #8a6125;
+  font: 500 11px/1.5 var(--sans);
+  letter-spacing: 1px;
+}
+.feedback-reply small {
+  display: block;
+  margin-top: 4px;
+  color: #8a7a70;
+  font: 400 10px/1.5 var(--sans);
+}
+.class-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.class-card {
+  padding: 14px;
+}
+.class-card h2 {
+  color: #2d1810;
+  font: 500 14px/1.5 var(--sans);
+  overflow-wrap: anywhere;
+}
+.class-card .subtle {
+  margin-top: 4px;
+  color: #8a7a70;
+  font: 400 10px/1.5 var(--sans);
+}
+.class-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.class-actions .outline-button {
+  flex: 1;
+}
 .service-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
 }
 .service-card {
-  padding: 20px;
-}
-.service-card > p {
-  margin-top: 12px;
-}
-.service-card form {
-  margin-top: 24px;
-}
-.service-card .outline-button {
-  margin-top: 16px;
-  width: 100%;
-}
-.service-caption {
-  font-size: 11px;
-  color: var(--muted);
-  line-height: 1.8;
+  padding: 14px;
 }
 .service-card h2 {
+  color: #2d1810;
+  font: 500 14px/1.55 var(--sans);
+  letter-spacing: 0.3px;
   overflow-wrap: anywhere;
 }
+.service-card > p {
+  margin-top: 8px;
+}
+.service-card > p.subtle {
+  color: #8a7a70;
+  font: 400 11px/1.7 var(--sans);
+}
+.service-caption {
+  color: #8a7a70;
+  font: 400 10px/1.6 var(--sans);
+  letter-spacing: 0.5px;
+}
 .submission-content {
-  padding: 14px;
-  background: var(--track);
-  font-size: 12px;
-  line-height: 1.8;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(200, 169, 110, 0.12);
+  color: #4a3228;
+  font: 400 12px/1.85 var(--sans);
   white-space: pre-line;
 }
 .review-score {
-  font: 26px var(--serif);
-  color: var(--clay);
-}
-.join-form {
-  padding-bottom: 28px;
+  color: #8b1a1a;
+  font: 500 18px/1.4 var(--serif);
 }
 .order-price {
   display: block;
-  font: 26px var(--serif);
-  color: var(--clay);
-  margin-top: 16px;
+  margin-top: 10px;
+  color: #8b1a1a;
+  font: 500 20px/1.3 var(--serif);
+  letter-spacing: 0.5px;
 }
-.saved-item {
-  display: flex;
-  gap: 16px;
-  padding: 14px;
+.service-page .outline-button,
+.service-sheet .outline-button {
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid rgba(139, 26, 26, 0.24);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+  color: #8b1a1a;
+  font: 500 11px/1 var(--sans);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
 }
-.saved-item img {
-  height: 76px;
-  width: 76px;
-  border-radius: 10px;
-  object-fit: cover;
-  flex-shrink: 0;
+.service-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
 }
-.saved-item h3 {
-  font-size: 14px;
-  line-height: 1.8;
+.service-actions .outline-button {
+  flex: 1;
+  margin: 0;
+}
+.service-card > .outline-button {
+  width: 100%;
+  margin-top: 12px;
+}
+.contest-badge {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #a33a3a, #8b1a1a);
+  color: #f6ead9;
+  font: 500 10px/1.5 var(--sans);
+  vertical-align: middle;
 }
 .follow-row {
   display: flex;
-  gap: 16px;
   align-items: center;
+  gap: 12px;
+  padding: 14px;
 }
 .follow-row img,
 .small-avatar {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
   border-radius: 50%;
   object-fit: cover;
 }
 .small-avatar {
   display: grid;
   place-items: center;
-  background: var(--coral);
-  color: var(--paper);
+  background: #8b1a1a;
+  color: #f6ead9;
+  font: 400 16px/1 var(--serif);
 }
 .follow-row h3 {
-  font-size: 14px;
+  color: #2d1810;
+  font: 500 14px/1.5 var(--sans);
 }
-.contest-badge {
-  display: inline-block;
-  background: linear-gradient(135deg, #b85450, #8a2b2b);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 7px;
-  border-radius: 4px;
-  margin-right: 6px;
-  vertical-align: middle;
-}
-.feedback-history {
-  margin-top: 28px;
-}
-.feedback-heading {
+.saved-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
+  gap: 12px;
+  padding: 10px;
 }
-.feedback-heading h2 {
-  font: 22px var(--serif);
+.saved-item:active {
+  background: #fbf4ea;
 }
-.feedback-content {
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  line-height: 1.8;
+.saved-item img {
+  width: 68px;
+  height: 68px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #f0e3d6;
 }
-.feedback-reply {
-  margin-top: 16px;
-  padding: 16px;
-  background: var(--track);
-  border-radius: 12px;
+.saved-copy {
+  min-width: 0;
+}
+.saved-item h3 {
+  color: #2d1810;
+  font: 500 13px/1.6 var(--sans);
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.saved-item p {
+  margin-top: 4px;
+  color: #8a7a70;
+  font: 400 10px/1.5 var(--sans);
+}
+.service-sheet h2 {
+  margin: 4px 0 14px;
+  color: #2d1810;
+  font: 500 20px/1.3 var(--serif);
+  letter-spacing: 2px;
+}
+.service-sheet form {
+  gap: 12px;
+  margin-top: 14px;
+}
+.service-sheet .primary-button {
+  width: 100%;
 }
 </style>
+

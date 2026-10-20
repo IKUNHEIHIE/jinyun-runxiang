@@ -11,8 +11,9 @@ from sqlalchemy import func, or_
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.core import file_urls
 from app.core.course_badges import COURSE_BADGE_CATEGORIES, course_badge_progress
-from app.core.task_assets import owned_task_for_asset
+from app.core.task_assets import IMAGE_SUFFIXES, owned_task_for_asset, task_cover_url
 from app.core.security import get_current_user, get_current_user_optional, require_admin, require_teacher
 from app.schemas.common import success_response
 from app.models.entities import (
@@ -50,7 +51,8 @@ def canvas_design_payload(task: AiTask):
 
 @router.post("/workshop/designs")
 def save_canvas_design(req: SavedDesignInput, user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
-    asset = db.query(Asset).filter_by(file_url=req.cover_url, created_by=user["user_id"], asset_type="IMAGE").first()
+    asset = db.query(Asset).filter_by(file_url=file_urls.split_signature(req.cover_url)[0],
+                                      created_by=user["user_id"], asset_type="IMAGE").first()
     if not asset:
         raise HTTPException(404, "设计图片不存在或不属于当前用户")
     task = AiTask(task_id=uuid.uuid4().hex, user_id=user["user_id"], tool_type="BRONZE", status="SUCCESS", progress=100,
@@ -70,7 +72,8 @@ def update_canvas_design(task_id: str, req: SavedDesignInput, user: dict = Depen
     if not task or task.tool_type != "BRONZE" or \
             (task.result_summary_json or {}).get("source") != "user_canvas":
         raise HTTPException(404, "设计不存在或不可编辑")
-    asset = db.query(Asset).filter_by(file_url=req.cover_url, created_by=user["user_id"], asset_type="IMAGE").first()
+    asset = db.query(Asset).filter_by(file_url=file_urls.split_signature(req.cover_url)[0],
+                                      created_by=user["user_id"], asset_type="IMAGE").first()
     if not asset:
         raise HTTPException(404, "设计图片不存在或不属于当前用户")
     task.input_json = {"title": req.title, "composition": [e.model_dump() for e in req.composition],
@@ -241,12 +244,27 @@ class ProfileInput(BaseModel):
     bio: str = Field("", max_length=255)
     school_name: str = Field("", max_length=128)
     district: str = Field("", max_length=64)
+    avatar_url: str | None = Field(None, max_length=500)
+
+
+def owned_avatar_path(db: Session, user_id: int, raw_url: str) -> str:
+    """Only images uploaded by the caller through the asset endpoint may become an avatar."""
+    path = file_urls.split_signature(raw_url)[0]
+    if not path.startswith("/static/uploads/"):
+        raise HTTPException(404, "头像资源无效")
+    asset = db.query(Asset).filter_by(file_url=path, created_by=user_id).first()
+    if not asset or not (asset.mime_type or "").startswith("image/"):
+        raise HTTPException(404, "头像资源无效")
+    return path
 
 
 @router.put("/me/profile")
 def update_profile(req: ProfileInput, user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
     record = lock_user(db, user["user_id"])
+    avatar_path = owned_avatar_path(db, record.id, req.avatar_url) if req.avatar_url else None
     record.nickname, record.grade = req.nickname, req.grade
+    if avatar_path:
+        record.avatar_url = avatar_path
     profile = db.get(UserProfile, record.id)
     if not profile:
         profile = UserProfile(user_id=record.id)
@@ -254,7 +272,9 @@ def update_profile(req: ProfileInput, user: dict = Depends(get_current_user), db
     for key in ("bio", "school_name", "district"):
         setattr(profile, key, getattr(req, key))
     db.commit()
-    return success_response(req.model_dump(), message="个人资料已保存")
+    payload = req.model_dump()
+    payload["avatar_url"] = record.avatar_url
+    return success_response(payload, message="个人资料已保存")
 
 
 @router.get("/me/summary")
@@ -356,9 +376,11 @@ def collections(kind: Literal["COURSE", "POST", "HERITAGE", "ASSET"] | None = No
         if record.target_type == "ASSET":
             task = owned_task_for_asset(db, target, user["user_id"])
             summary = task.result_summary_json
+            # A favourited 3D work points at a GLB, which is not something an <img> can render.
+            cover = task_cover_url(task) or (target.file_url if (target.file_url or "").split("?")[0].lower().endswith(IMAGE_SUFFIXES) else "")
             result.append({"type":"ASSET", "id":target.id, "task_id":task.task_id, "tool_type":task.tool_type,
                            "title":summary.get("title") or summary.get("role_type") or "我的皮影创作",
-                           "cover_url":target.file_url, "created_at":record.created_at.isoformat()})
+                           "cover_url":cover, "created_at":record.created_at.isoformat()})
             continue
         result.append({"type": record.target_type, "id": target.id, "title": target.title,
                        "cover_url": target.cover_url, "created_at": record.created_at.isoformat()})

@@ -249,7 +249,7 @@ F08B64DC…包实际完成教师开发账号当天签到100→110；重复接口
 
 1. 全部有效设计页、所有状态及多尺寸的逐页验收。当前已能从 `docs/mastergo/*.html` 渲染设计导出基准并完成首页、课程、非遗、地图、市集、AI 工坊、个人中心的重点对照；剩余页面/状态与原始画布位图仍需继续核对。final26 再次核查原图通道：MasterGo Web 画布未登录时文件接口返回 401/403；Magic MCP 0.2.8 工具列表没有位图导出；文档 API 仅返回元数据/封面路径；Vibe MCP 的 `get_selection_image` 需要桌面客户端和当前选中图层。因此原始 PNG 仍不能在本地生成，需登录桌面端/提供分享链接后再导出。备课原稿的 4px 横向装饰线也未作为已验收项。
 2. 作品许可、设计者/生产者归属、真实授权协议与生产对接；现有说明或标签不代表协议已落地。
-3. 正式教学视频、音频生成、LoRA、三维、支付及远程视频课堂等服务。真实图像生成与参考图重绘已在 2026-10-19 完成本地接入，后台与接口已部署线上并完成真实生图与编辑验证，详见 `AI_WORKSHOP_INTEGRATION.md`。
+3. 正式教学视频、音频生成、LoRA、支付及远程视频课堂等服务。真实图像生成与参考图重绘已在 2026-10-19 完成本地接入，后台与接口已部署线上并完成真实生图与编辑验证，详见 `AI_WORKSHOP_INTEGRATION.md`。三维部分为馆藏 GLB 模型库演示，不生成真实几何。
 4. 部分页面的设计细节；顶部悬浮搜索已补齐，课程播放页教师卡片、随堂鉴赏外框与底部工具条已按设计重建，但原始画布位图与多尺寸/多状态逐页对照仍未完成。地图底图已替换为天津行政区示意图，不再使用设计稿中的美国地图。
 5. 实体设备、API 24-28 旧系统、系统内存压力下的自然进程回收及跨日回归；本轮已在 API 30 AVD 补测师生全路由，并补显式 force-stop 冷启动、离线冷启动/重试与师生双向切号，但这些环境仍未验证。Debug 包体积与生产发布配置仍需评估。
 
@@ -274,3 +274,152 @@ F08B64DC…包实际完成教师开发账号当天签到100→110；重复接口
 18 个客户端专项、手机端类型检查与 Android 构建、后台类型检查与生产构建通过。浏览器 28 条主要路由在实际 360/411px 下共 56 次检查无文档溢出、意外裁切控件、已完成加载图片破损或可见错误提示。三个工坊实际完成 LOCAL 生成与 SVG 导出，导出内容与服务端一致，皮影/漆绣收藏通过；本轮没有付费生图调用。最终线上包在 Android 模拟器验证创作入口、纹样弹窗和返回关闭，安装包散列一致。未扩大为实体手机、旧系统或全量设计验收。
 
 现有线上后台静态资源已更新，95 个文件散列验证通过，后端未重启，数据库与模型配置保留；备份 `/var/backups/jinyun/polish-20261019T000014Z`。最终连接正式服务的包：`.local/android/artifacts/jinyun-polish-cloud-debug.apk`，56,001,223 字节，SHA256 `A7F4FDED2A1476FFF8D6255F367158A9453D9D1C669D56D952BA843BA00C20A2`。本轮不创建 Release 或标签。完整范围与证据见 [体验打磨记录](POLISH_20261019.md)。
+
+
+## 2026-10-19 AI 工坊 3D 数字沙盘（演示增强）
+
+AI 工坊首页新增黑漆描金风格 3D 入口，`/ai-workshop/3d` 页面接入 Three.js 实时 GLB 渲染、自动旋转/线框/视角重置、五阶段复原管线动画、结果指标面板与 7 件馆藏模型库。页面与入口统一使用宣纸底、墨蓝标题、朱砂印章与描金线条，展台为黑漆描金视觉，避免与 App 古典风格割裂。
+
+- 模型全部为 CC0 成品，存放于 `backend/static/models/heritage3d/`；来源与许可见 [IMAGE_CREDITS.md](IMAGE_CREDITS.md)。
+- 新增 `GET /api/ai/3d/catalog` 与 `POST /api/ai/3d/generate`；后者按描述关键词在模型库内随机匹配（灯→宫灯、青花→瓷瓶、圈椅→圈椅等），并避开该用户上一次结果，写入 `MESH_3D` 成功任务。
+- Nginx 新增 `/static/models/` 反代并已重载；线上接口实测：宫灯→六方宫灯、青花梅瓶→青花瓷韵、圈椅→津作圈椅、琉璃蟠龙→琉璃蟠龙。连续生成会返回不同模型。
+- API 37 模拟器实测：黑漆描金入口卡、蟠龙预览、六方宫灯/木构灯彩生成、管线段与结果面板均正常；截图 `.local/deploy/3d-entry-classical.png`、`3d-page-classical.png`、`3d-pipeline-classical.png`、`3d-result-classical.png`。
+- 最新安装包：`jinyun-runxiang-final32-slim.apk`（仓库根目录与桌面各一份），56,210,147 字节，SHA256 `2e74ab89543f08d61b4c6a7de430f2686bb7fe6235ccfb92e939d6a3af2ed888`。桌面启动脚本仍使用原文件名，无需改动。
+
+
+## 2026-10-19 三大非遗工坊视觉提升
+
+- AI 工坊首页三张工坊卡统一升级：朱砂序号“壹/贰/叁”、大号水印编号、朱砂印章“纹/影/漆”、描金内框、馆藏高清标签与更清晰的标签/按钮层级，保留各工坊原有主色。
+- 皮影角色设计页重做头图：取消原先多图层绝对定位造成的文字重叠和白块，改为左侧宣纸文案、右侧皮影人物照片、朱砂“影”印，内容区恢复为纸面卡片并留出统一间距。
+- 青铜纹样工坊页头部改为墨蓝标题 + 描金卡框 + 朱砂“纹”印，返回键统一为纸面方钮；纹样库与设计画布加描金边框。
+- 漆绣智绘页保持原有大图叙事版式，未破坏已验收布局。
+- 模拟器截图：`.local/deploy/workshop-cards-after.png`、`shadow-page-after.png`、`bronze-page-final.png`。
+
+
+## 2026-10-19 皮影三维营造与剪影画像
+
+- AI 工坊首页新增“一张驴皮，三千刀 / 皮影营造 · 三维工序”入口，进入 `/ai-workshop/shadow-3d`。
+- 页面第一部分为六道工序三维展台：选皮、描样、镂刻、敷彩、缀结、亮影。使用馆藏皮影实物图做分层三维材质，头、身、双袖独立图层，配合皮料纹理、线稿、纸雕剪影、彩色透光四种着色状态，并加入铜铆钉、三根竹签、灯光与轻微旋转；支持单步点选与自动播放。
+- 页面第二部分为“按意生成剪影画像”：用户选择生/旦/净/丑、凤冠/云髻/花冠/翎羽/方巾、团扇/折扇/长剑/纸伞/花枝，并输入描述，后端按关键词与显式选择生成 600×800 剪影 SVG，带标题、诗句、朱砂印章和参数标签，支持保存。
+- 新增接口 `POST /api/ai/silhouette/generate`，生成文件写入 `/static/generated/` 并登记 Asset；后端新增 `app/core/silhouette.py`。
+- 云端已部署并通过接口实测，返回 `凤冠团扇 · 旦角剪影`；模拟器截图：`.local/deploy/shadow3d-step1.png`、`shadow3d-step2.png`、`shadow3d-step3-final.png`、`shadow3d-final-step6.png`、`shadow3d-generator-result2.png`、`workshop-shadow3d-entry.png`。
+
+## 2026-10-19 AI 工坊功能卡视觉统一
+
+- AI 工坊首页五张入口卡（三维数字沙盘、皮影三维营造、青铜纹样工坊、皮影角色设计、漆绣智绘）合并为同一套 `feature-card` 组件：固定 206px 高、左侧文案 + 右侧 118px 媒体栏的两列网格、统一纸面/描金边框，序号“壹—伍”、朱砂印章、馆藏高清标签、三枚标签与底部对齐的进入按钮位置全部一致。
+- 移除此前的黑漆大卡、独立皮影入口卡与高窄工坊卡三种异构版式；标题字号改为 `clamp(17px, 4.9vw, 19px)`，最长标题“一张驴皮，三千刀”在模拟器上无截断。
+- 前两张卡不再使用线框立方体与简化剪影：三维沙盘改用应用内 Three.js 实拍的琉璃蟠龙展台（新增 `public/design/images/3d-stage-card.webp`，标签“实时演算”），皮影三维营造改用馆藏皮影实物图（标签“馆藏皮影”），与下方三张馆藏照片卡的质感一致。
+- 模拟器截图：`.local/deploy/workshop-cards-media-top.png`、`workshop-cards-media-bottom.png`（旧版对照为 `workshop-cards-unified-top.png`、`workshop-cards-unified-bottom.png`）；五张卡片同高、同结构、同留白节奏，5 张媒体图均加载成功（naturalWidth>0）。
+- 新安装包：`jinyun-runxiang-final32-slim.apk`（仓库根目录与 `D:\admin\desktop` 各一份），55,320,782 字节，SHA256 `906c813a9e4c976b68fb28e984d9855aac7bb2e2f52d11001c9b4df8cca8ae7f`；设备内 `base.apk` 散列与产物一致，`lastUpdateTime=2026-10-19 11:12:49`（模拟器时钟为 UTC）。该包取代上一节的 56,210,147 字节包。
+
+
+## 2026-10-20 AI 工坊成品化（接线 / 作品闭环 / 上线加固）
+
+按三轮完成代码改造，细节见 [AI_WORKSHOP_INTEGRATION.md](AI_WORKSHOP_INTEGRATION.md#2026-10-20-工坊成品化三轮改造)。
+
+- 第一轮接线：剪影与三维结果可真正保存/分享并收藏回流；删除置信度、体素分辨率、伪造阶段耗时等虚假指标，管线阶段标注“演示”，帧率改为查看器实测；三个工坊与两个新页面统一加入“请导师点评”；三维查看器支持键盘轨道与无障碍标签。
+- 第二轮作品闭环：新增 `GET /api/ai/tasks`、`DELETE /api/ai/tasks/{id}` 与 `/ai-workshop/works` 作品页（筛选、分页、收藏、两步删除，删除会连带清理 Asset、收藏与生成文件）；剪影生成改为真正的 `SILHOUETTE` 任务并纳入额度/幂等/奖励；全部生成入口加 `request_id` 幂等与响应令牌隔离、失败重发起、离线拦截与状态徽标；皮影角色设计补“参考图 · 选填”上传（后端把草图校验收紧为“本人 Asset + 文件存在 + 剥离签名”，本地模板明确不识别图片）；修掉青铜工坊写死的空“窃曲纹”分类（改为按纹样分组生成 tab，补齐 8 个真实分组）与 AI 结果覆盖手绘画布无提示的问题。
+- 第三轮上线加固：`/static/generated/*` 改为 12 小时 HMAC 能力 URL（中间件统一签名、无签名读取 403，历史数据不重写）；新增每日/每分钟额度（`SysConfig(ai_quota)` 可覆写，默认每人每日 60、每分钟 30）与 `GET /api/ai/quota`；复用后台敏感词做内容检查 + 提示注入清洗与定界，点评文本以不可信数据送模；`prune_orphan_assets.py` 覆盖 `generated/` 且把收藏视为有效引用；新增管理员 `GET /api/ai/stats` 真实漏斗并在后台“AI模型与LoRA”页顶部展示。
+- 独立复审修正（每条已补回归）：删除作品不再误删 `static/models/heritage3d/*.glb` 共享馆藏模型（原本一个学生删作品会让所有人的三维结果与模型库一起失效）；能力 URL 守卫改为按与 `StaticFiles` 一致的归一化路径判定，`/static//generated/x`、`/static/uploads/../generated/x` 不再绕过 403；修复 `sign_json` 正则回溯导致的“已签名链接被截断重签”；内容检查补齐换行分隔（`忽略\n指令`）、NFKC 同形字、软连字符；导师点评的标题/手记/门类三个字段先清洗再送模并 `as_untrusted_data` 定界、门类加长度上限；社区发布改用同一套 `find_blocked_text`（原本裸子串匹配，插一个零宽字符即自动过审）；`require_signature` 不再放过无查询串的裸生成链接；作品页补账号切换清空 + 删除/收藏令牌隔离 + 确认状态复位；`saveAsset` 用去掉签名的真实路径判定文件容器（此前本地 SVG 会被存成 `.png` 文件名）；`deploy/nginx/jinyun.conf` 对 `/static/generated/` 关闭缓存（`no-store`），`.gitignore` 补 `backend/data/*.key`，密钥以 `O_CREAT|O_EXCL` + 0600 创建。
+- 已知未做（非本轮范围）：`/ai/evaluate` 只受每分钟节流、不计每日额度也不写 `AiTask`；分钟节流按进程计算；`OperationStatDaily` 用 UTC 日而额度用上海日，且作品删除后不再计入漏斗；上传的参考图不会被删除流程回收。
+- 验收：后端全量 `166 passed`（含 10 项治理回归）；`user-web` 与 `admin-web` 类型检查 0 错误；`vite preview` 产物在 360×780 CDP 巡检 7 条工坊路由，五张卡等高 206px、媒体图全部加载、作品页与皮影“参考图 · 选填”控件正常、青铜分类为八个真实分组、无横向溢出、无未捕获异常（证据 `.local/android/workshop-ui-audit-20261020.json`）。
+- 安装包 `.local/android/artifacts/jinyun-runxiang-debug.apk`（55,332,663 字节，SHA256 `680757273d207292c8935b0e1ef01432aee40b1e935093e2d8b8dbe71138b764`，2026-10-20 21:25 构建）指向 `https://admin.wentian.org/api`。线上后端仍是 2026-10-19 版本，缺少本轮新增接口，因此该包**不做设备演示、也不替换仓库根目录/桌面的 final32-slim 包**；待授权部署新后端后再重出包并在模拟器与实体机验收。
+- 待办（需授权）：部署后端到 `core.wentian.org`（含 `backend/data/file_url_secret.key` 的共享与备份、多 worker 同主机、`/static/generated/` 关缓存、按需配置 `ai_quota`），随后重跑签名作品/收藏/额度端到端与 APK 实测。本轮未改动云端任何服务、配置或数据，也没有向已连接的实体手机 `HGR3TH52` 安装应用。
+
+## 2026-10-20 深夜：生产后端上的模拟器实机演示（设备端结论）
+
+时点说明：以下几节记录同一自然日深夜的一轮，前一节“未改动云端”为其当时状态；本轮已取得后端部署授权并完成部署与设备演示。
+
+- 演示环境：Android 模拟器 `Medium_Phone_API_37.0`（emulator-5554）上已安装的 debug 包 `com.jinyun.runxiang`（pid 3601），WebView CDP 通过 `adb forward tcp:9333 localabstract:webview_devtools_remote_3601` 驱动；后端 API 与静态资源均为生产域名 `https://admin.wentian.org`。演示账号为开发演示用的学生「林锦」（`student_demo`），登录态来自设备 localStorage。驱动脚本 `.local/deploy/workshop-cloud-demo.mjs`，一次性求值脚本 `.local/deploy/cdp-eval.mjs`（配套表达式 `.local/deploy/expr-*.js`）。
+- 设备端截图（均在 `.local/deploy/`）：
+  - `demo-shadow-ref.png`：皮影角色编辑器新增的「参考图 · 选填」卡片已渲染，本地模板模式下文案为「本地模板按角色与配色生成，不读取图片内容」。
+  - `demo-shadow-result.png`：文字描述填入「提灯旦角，海棠花冠，云髻步摇」后生成本地皮影，预览卡显示「丑角 · 皮影创作 / 镂空轮廓图」。
+  - `demo-works3.png`：我的作品页 16 件，新建皮影作品封面是真实 SVG（`naturalWidth` 540 加载成功），三维沙盘条目改为金字「三」占位而非破图，整页 `broken images = 0`。
+  - `demo-silhouette.png`：剪影画像「凤冠团扇 · 旦角剪影」在生产后端生成，签名 SVG 600×800 正常显示，配额行显示「今日剩余 58 次」，并标注「本地规则模板 · 不调用外部生成模型」。
+  - `demo-3d.png`：三维数字沙盘 WebGL 画布 756×672 渲染成功，8,321 三角面 / 5 网格 / 3.6 MB，0.7s 完成馆藏匹配；页面文案为「演示模式 · 后端从馆藏级 CC0 模型库匹配返回」和「模型为 CC0 成品，本功能不生成新的几何体，也不声称按描述重建了器物」。
+  - `demo-delete-arm.png`：删除二次确认提示「再点一次「删除」确认删除这件作品」出现在界面上时的截图。
+- 闭环验证（均为生产环境实测）：皮影作品 `5fa2be101c106bc7de4c14344ce7ffff` 创建成功 → 收藏按钮 `aria-pressed` false→true 并提示「已收藏到我的收藏」→ 作品列表 15→16 → 两次点击删除（第一次仅武装确认，第二次真正删除）→ 列表回到 15、提示「作品已删除」，`GET /api/mobile/me/collections?kind=ASSET` 由 4 条降为 3 条且被删作品的收藏行一并消失（无孤儿收藏）；10/19 生成的三维沙盘作品仍在，说明共享 CC0 库模型文件未被误删。
+- 范围限定：以上证据只覆盖该台 API 37 模拟器、该生产后端与该演示账号下的工坊创作/作品/收藏/删除路径，不构成实体设备、其他账号或权限矩阵的验收结论。
+
+## 2026-10-20 深夜：演示中发现并修复的删除残留缺陷
+
+- 现象：删除皮影作品时，后端只清理了 `_colored.svg`，`_lineart.svg` 与 `_template.svg` 连同它们的 `Asset` 行残留在服务器上。该缺陷由真机演示发现，此前测试未覆盖。
+- 根因：`backend/app/core/task_assets.py` 的 `task_result_urls()` 依赖固定字段白名单 `RESULT_URL_FIELDS`，遗漏了皮影结果里的 `line_art_url`、`print_template_url`（以及青铜/时调/漆绣路径里的 `completed_sketch_url`、`sheet_music_url`、`model_url`）。
+- 修法：新增 `_generated_urls()` 递归遍历 `result_summary_json`，收集所有以 `/static/generated/` 开头的字符串（含嵌套 dict/list）；`task_result_urls()` 改为「原白名单 ∪ 递归遍历结果」。这样既补齐删除清理，又保留 MESH_3D 的 `/static/models/...` 结果 URL 集合语义（社区发布时 `community.py` 的图集归属校验依赖它，不能缩小）。
+- 回归测试：`backend/tests/test_workshop_governance.py` 新增 `test_deleting_a_shadow_work_removes_every_generated_file`，断言删除返回 `removed_assets == 3 and removed_files == 3`、三个文件均从磁盘消失、该用户 `Asset` 行清零。
+- 后端全量：WSL 下 `/home/ubuntu/.venvs/jinyun-android/bin/python -m pytest tests/ -q` 结果 **168 passed**（修复前为 167 passed）。
+
+## 2026-10-20 深夜：云端二次部署与生产删除链路复测
+
+- 本轮云端只改一个文件：`backend/app/core/task_assets.py` 以 sha256 前缀 `ad1f4fcbf924ffa6` 上传，远端 `sha256sum` 一致；旧文件先备份到 `/tmp/task_assets.py.bak-<epoch>`，再用 `sudo install -o jinyun -g jinyun -m 640` 落位；`sudo systemctl restart jinyun-backend` 后 `is-active=active`、`http://127.0.0.1:8000/health=200`。首次部署（当日 13:35Z 的 `backend/app` 全量包）记录见 [AI 工坊治理改造线上部署记录](AI_WORKSHOP_DEPLOYMENT_20261020.md)，本次是在其之上只替换该文件。
+- 生产端删除链路复测：脚本 `.local/deploy/verify-shadow-purge.py` 用演示学生账号新建一个 LOCAL 皮影作品 `b727e76826e5f18b0387e443d9c51b15`，三个产物 URL 删除前均为 200，DELETE 返回 `removed_assets 3 / removed_files 3`，删除后三个 URL 均 404，脚本输出 `VERDICT PASS`（日志 `.local/deploy/purge-mine*.json`、`.local/deploy/leftovers-pretty.json`）。
+- 除上述单文件替换、后端服务重启与演示产生的数据外，本轮未改动云端 Nginx/systemd 配置、数据库结构或其他后端源码。
+
+## 2026-10-20 深夜：生成目录孤儿文件与孤儿 Asset 行（已批量清理）
+
+- 先用只读分类脚本 `.local/deploy/classify-generated-leftovers.py` 统计（结果 `.local/deploy/leftovers-pretty.json`）：`static/generated` 共 149 个文件、36 条 `Asset` 行、26 个仍被任务引用、5 个被收藏引用。本轮先清掉自己演示产生的 2 条孤儿 `Asset` 行与 2 个文件。
+- 经用户批准后执行批量清理：先备份 `/var/backups/jinyun/generated-before-orphan-purge-20261020T151859Z.tgz`，再用 `.local/deploy/purge-generated-leftovers.py --apply` 删掉 8 条孤儿 `Asset` 行（id 36–43，属主为 user 1、2）与 121 个无引用文件；目录项 147→26，`Asset` 行 34→26，孤儿行/孤儿文件均归零。删行与删文件在同一轮里分两遍做，因为文件是否算孤儿取决于行是否还在。
+- 清理后核对：`health=200`，`GET /api/ai/tasks` 仍 16 件且封面字段正常，`GET /api/mobile/me/collections?kind=ASSET` 3 条无孤儿，模拟器作品页 6 张签名 SVG 全部加载、破图 0。完整表格见 [AI 工坊治理改造线上部署记录](AI_WORKSHOP_DEPLOYMENT_20261020.md)。
+
+## 2026-10-20 深夜：教师后台生成漏斗面板上线
+
+- 经用户批准后把 `admin-web` 生产构建部署到 `admin.wentian.org`（根目录 `/var/www/jinyun-admin`，属主 `www-data:www-data`，目录 755 / 文件 644）。部署前备份 `/var/backups/jinyun/admin-web-before-20261020T152258Z.tgz`（2.5 MB）；产物 tar `c0210c3206119b60…` 本地与远端散列一致，`rsync -a --delete` 替换后 95 个文件，`platform-config.json` 与线上原文件 md5 相同（`cda09d6d…`），确认不是运行时配置回退。
+- 上线前本地核对：`pnpm typecheck` 退出码 0、0 错误；`pnpm build` 退出码 0；`VITE_PUBLIC_PATH=/` 生效（`index.html` 内 `src`/`href` 均以 `/` 开头）；漏斗卡片确实进包（`dist/static/js/ModelsView-*.js` 命中「生成漏斗」「/ai/stats?days=14」）。前端读取字段与后端 `workshop_stats()` 返回逐字段一致（`window_days`、`totals`、`tools` 的 `total/success/success_rate/avg_seconds/failed/cancelled/running`、`quota_limits`）。
+- 生产页面实测（Edge CDP 隔离上下文登录 admin 后打开 `#/models/index`）：提交任务 39 / 成功产出 39 / 失败 0 / 用户取消 0；分工坊行含青铜 6、刺绣 6、三维 12、皮影 7 等；限流脚注显示每人每日 60 次（剪影 50 / 三维 50）、每分钟 30 次。
+- 上线后按实机观感修了三处并二次构建部署：卡片标题里的 emoji 在该控制台渲染成方框，已去掉；`CERAMICS`、`PAPER_CUTTING`、`SHADOW` 这些历史 `tool_type` 码不再裸显，统一显示为「历史任务 · 原码」；「平均耗时」原样输出秒数（青铜 39478 秒），改为秒/分钟/小时/天自适应显示（青铜现为 11.0 小时），并在脚注补明该值是提交到成功的墙钟时间、含排队等待。
+- 提示：`index.html` 不带 `Cache-Control`，只带 ETag，控制台更新后需强刷一次才会取到新入口 chunk。
+
+## 2026-10-21 凌晨：跑得更快——封面 WebP 化 + 静态缓存 + 骨架占位
+
+- 封面体积：后端 `/static/design` 下 30 张课程/作品封面原本是 78 MB 的原始 PNG（单张最大 6.5 MB）。用 ffmpeg 统一转 WebP（最长边 800、quality 80）后共 **2.4 MB**，回传到服务器同目录（保留原 PNG 不动），并用 `.local/deploy/switch-covers-to-webp.py`（默认 dry-run，`--apply` 写入）把数据库里 438 条单值引用 + 211 条图集引用改为 `.webp`，仅当对应 WebP 文件存在时才替换。抽样：`b81867c8….png` 478 KB → `.webp` 32 KB。
+- HTTP 缓存：两个 `/static/` 位置块新增 `Cache-Control` ——`design` 为 `public, max-age=2592000, immutable`（文件名是内容哈希），`uploads` 为 `public, max-age=604800`；`generated` 仍保持 `no-store`（签名 URL 是短期凭据）。改动前备份 `/var/backups/jinyun/nginx-before-cache-<epoch>.conf`，`nginx -t` 通过后 reload；仓库里的 `deploy/nginx/jinyun.live-copy.conf` 已同步。
+- 首屏观感：新增 `components/SkeletonImage.vue` —— 羊皮纸底 + 白色高光扫过的 shimmer 动画，图片加载完成后 0.3s 淡入，失败显示线框图标，默认 `loading="lazy"`、`decoding="async"`、`fetchpriority` 按首屏/非首屏区分；`prefers-reduced-motion` 下动画停用。
+- 列表渲染：重复卡片加 `content-visibility: auto` 与 `contain-intrinsic-size`，屏幕外卡片跳过渲染。
+- 落地范围：`CourseCard`、首页入口/推荐、社区列表、我的收藏、市集商品与兑换、非遗百科、工坊作品、社区详情头图与相关推荐共 8 个文件、13 处封面换成骨架占位；`content-visibility` 加在课程卡（260/104px）、社区卡（320px）、收藏卡（190px）、商品卡（280px）、非遗卡（300px）、作品行（98px）。
+- 验证：`vue-tsc` 0 错误、构建通过；截住 `/static/*` 图片请求后社区页 20 张卡片全部显示 shimmer 占位（`.skeleton-shimmer` × 20，无破图）；放行后恢复；首页/小课堂/社区/市集/百科逐页 `broken images = 0`，设备上封面为 `webp`（`naturalWidth=800`）。debug APK 重构建并安装（55,332,582 B，SHA256 `6C24BA6ED0D5F5E9A94DAA8EF4ED5A925F189DDBED6C62EC659A6B631B8A01C3`）。
+
+## 2026-10-21 凌晨：小课堂/社区改为分页 + 下拉刷新
+
+- 数据扩容后原先"一次追加 50 条"的加载更多仍会让列表越滚越长，改为真正的分页：`components/PagerBar.vue`（上一页 / 第 X / Y 页 / 共 N 条 / 下一页，首末页自动禁用），小课堂与社区统一每页 20 条，切换筛选条件回到第 1 页，翻页后平滑回到页顶；`AsyncState` 重试改为按当前页重载。
+- 新增 `components/PullToRefresh.vue`：页面在顶部时下拉，56px 阈值触发刷新，过程中显示"下拉刷新 / 松开刷新 / 正在刷新…"，`prefers-reduced-motion` 下关闭过渡；监听 window 的 touch 事件，仅在顶部且向下拉动时阻止原生滚动。
+- 浏览器验证（411×915）：小课堂第 1 页 20 张（1/4 页、共 69 门），翻到第 4 页 9 张、"下一页"禁用；社区第 1 页 20 张（1/11 页、共 217 件）。下拉手势实测：下拉 96px 显示"松开刷新"，松手后显示"正在刷新…"并新增一次 `/community/posts` 请求（1→2），随后指示条复位。
+- 说明：列表数据仍是服务端分页（`page`/`pageSize`），前端不再把多页数据堆在同一个 DOM 里。
+- 翻页条排版修正：`.pager-state` 用 flex 列布局时，"第 / 数字 / / 11 页"被当成三个独立子项竖向堆叠，实机上显示成竖排文字；改为把整段包进 `.pager-count` 并加 `white-space: nowrap`，中间恢复为「第 1 / 11 页」+「共 217 件」两行居中，实测宽度 250px、高度 31px。
+- 设备验证：debug APK 重构建并安装（55,330,813 B，SHA256 `7282B693DAB07043560218AFCA7F5CF314D742D92359EB5DF261DC31F52FB06F`）。模拟器上小课堂第 1 页 20 张、页码 1/4、共 69 门，翻页回顶；社区翻页条为「第 1 / 11 页」「共 217 件」两行居中（实测 183×31）；静止时下拉指示条完全收在屏幕外；合成下拉手势依次显示"松开刷新""正在刷新…"，并新增一次 `/mobile/courses` 请求（2→3）。
+
+## 2026-10-21 凌晨：头像上传 + 批量演示数据
+
+- 头像上传：`ProfileInput` 新增可选 `avatar_url`，`PUT /me/profile` 用 `owned_avatar_path()` 校验——去签名后必须以 `/static/uploads/` 开头、存在属于本人的 `Asset`、且 `mime_type` 为 `image/*`，否则 404「头像资源无效」；上传复用既有 `POST /ai/assets/upload`。资料编辑弹层新增头像行（5MB 上限、仅 PNG/JPEG/WebP、本地预览、上传中禁用、保存后刷新）。新增 `backend/tests/test_avatar_upload.py` 7 例，后端全量 **176 passed**；`vue-tsc` 0 错误。后端 `backend/app/api/mobile.py` 已部署（sha 前缀 `828961c33fbb993a`，备份 `/tmp/mobile.py.bak-<epoch>`，服务 active、health 200）。生产复测：上传 200 → 设置 200 → `/auth/me` 回读一致；`/static/generated/...`、他人资源、路径穿越三种输入均 404。演示账号「林锦」已上传并设置一张 SVG 头像（`/static/uploads/509a0f94...svg`），设备端已验证显示。
+- 批量演示数据（经用户批准写入生产）：`.local/deploy/seed-bulk-demo.py`，`--apply` 写入、`--rollback` 按 `sys_config.demo_bulk_seed_20261021` 里记录的 id 精确回滚，脚本默认 dry-run。本次生成 200 门课程（4 章/门，共 800 章，视频沿用 MDN flower 与 Sintel 两条 CC0 示例）、200 条已过审社区作品（复用 30 张 `/static/design` 封面轮换）、299 条评论；落库后总量：课程 206、章节 806、作品 222（已过审 217）、详情 222、评论 326。分类覆盖 8 个非遗门类，学段 PRIMARY_HIGH 137 / PRIMARY_LOW 69。
+- 列表分页：小课堂与社区原本各只取前 50 条且没有继续加载入口，数据扩容后新增「加载更多（还有 N 门/件）」，按页追加并按 total 判断收敛；实测小课堂 50 → 69 后按钮消失，社区显示「还有 167 件」。
+- 交付包：debug APK 重构建并安装（55,328,680 B，SHA256 `5F32FE97CDB9F63EB58AABA0369CEB30A7E63F37C6D0DF7F370F5A168C05B48D`，`lastUpdateTime=2026-10-20 17:12:35Z`）。设备实测：头像 `naturalWidth=256` 正常显示；小课堂 50 张卡片带「加载更多（还有 19 门）」，点击后 69 张、按钮消失。
+- 已知取舍：社区演示作品的 `comment_count` 与评论行一致（每条 1–2 条评论），点赞/浏览为随机演示值；课程按 id 升序，原有 6 门课排在新增课程之前。
+
+## 2026-10-21 凌晨：全站 UI 重构（第一批：设计系统 + 9 个页面）
+
+用户要求把整站前端按「我的」页的新风格重构。第一批交付：
+
+- 设计系统：`components/PageHeader.vue` 重写为吸顶应用栏（`title`/`subtitle`/`back`/`backTo` + 右侧插槽），凡已使用它的页面自动换新；新增 `components/SectionCard.vue`（标题红竖条 + 金色分隔线 + `meta` 槽）、`components/CellGroup.vue`、`components/CellRow.vue`（48px 行高、危险行居中变红、`#value` 槽）。「我的」页同步改为使用这三个组件，视觉不变。
+- 已重构页面：首页、通知、在线课堂大厅、小课堂、课堂房间、课程播放页、社区、AI 工坊首页、我的工坊作品。约束是只改模板与样式，不动请求/路由/事件/文案，不引入 Vant/NutUI 依赖。
+- 路由 `meta.surface` 统一：`/`、`/courses`、`/community`、`/ai-workshop`、`/ai-workshop/works` 改为 `#f5ede4`，避免状态栏下方出现旧配色的色带。
+- 验证：`vue-tsc --noEmit` 0 错误；`vite build --mode android` 成功；8 条路由在 411×915 下横向溢出均为 411/411、破图 0；debug APK 重新构建并安装（`adb install -r` 成功），设备上首页、AI 工坊、社区显示新布局。证据 `.local/deploy/ui-*.png`、`device-home-batch1.png`、`device-workshop-batch1.png`。
+- 待办：非遗百科/详情、社区详情、市集、地图、行走档案、个人服务、对抗赛、发布页、工坊编辑器、3D 页、教师端各页仍为旧样式，按第二批推进。
+
+## 2026-10-21 凌晨：「我的」页布局重做（已进 APK，模拟器实测）
+
+用户明确要求按成熟组件库（Vant/NutUI 个人中心）的结构重做本页，本轮据此改动 `user-web/src/mobile/views/ProfilePage.vue`：
+
+- 结构：顶部吸顶应用栏（返回、标题「我的」、右侧「编辑资料 / 登录」）→ 头图条 + 悬浮身份卡（64px 头像、昵称、等级、研学记录说明、作品/关注/粉丝/能量四格统计）→ 三个分区卡（今日修习、所获徽章、我的收藏，统一 `corner-card` 圆角与投影）→ 分成两组的 cell 列表（学习与班级 3 项、服务与设置 3 项 + 红色居中「退出登录」）。
+- 移除：原 353px 绝对定位头图、头像装饰点、悬浮年份胶囊、`profile-services` 竖列链接；徽章横滑条隐藏原生滚动条。
+- 保留：全部数据绑定与交互（登录/编辑表单、徽章弹层、收藏跳转、教师入口 `v-if`、退出登录），脚本只新增应用栏滚动高度判断与一个等级文案 computed。
+- 验证：`vue-tsc --noEmit` 0 错误；以生产 API 构建后，在 Chromium 411×915 移动视口下核对登录态（林锦 / 12 作品 / 0 关注 / 0 粉丝 / 370 能量 / 6 个 cell）与未登录态（点击登录、四格归零、空态文案），横向溢出 411/411，点击 cell 能跳到 `#/me/orders`。证据 `.local/deploy/profile-redesign-top.png`、`profile-redesign-bottom.png`。
+- 设备验证：`scripts/build_android_debug.ps1` 重新构建 debug APK（55,333,231 B，SHA256 `3B47617556A55E5F90B46D276ED8313E9A8B5ECE89BC770C1DF7B93CD5103159`，API 仍为 `https://admin.wentian.org/api`），`adb install -r` 成功，设备内 `base.apk` 拉回后散列与产物一致（`3b476175…`），`lastUpdateTime=2026-10-20 16:33:46Z`。模拟器上「我的」页四项统计为 12/0/0/370、6 个 cell、横向溢出 411/411，滚动后应用栏保持吸顶并出现细分隔线；证据 `.local/deploy/profile-device-final-top.png`、`profile-device-final-scrolled.png`、`profile-device-loaded.png`。
+- 顺带修掉一处旧残留：`user-web/src/mobile/router.ts` 里 `/profile` 的 `meta.surface` 仍按旧 305px 头图配 `#c5aaa1` 渐变，导致状态栏下方出现一条赭色带；改为 `#f5ede4` 后与新页底色一致。
+- 限制：样式仍沿用项目自有字体与配色变量，未引入 Vant/NutUI 依赖，也未替换其它页面；浅色/深色主题与 360dp 窄屏未在本轮复验。
+
+## 2026-10-20 深夜：本轮已知未覆盖范围
+
+- 设备侧：本轮全部实机证据来自 Android 15/API 37 模拟器 + 生产后端；实体设备、Android 11/API 30 与 API 28 旧 WebView 未在本轮复跑。
+- 教师后台：生成漏斗面板已上线并核对，但其余后台页面本轮未做全量回归；`/ai/stats` 的历史耗时统计口径含旧数据（0.0 秒多为导入种子行 `created_at == updated_at`）。
+- 测试脚手架：`#/ai-workshop/shadow` 这类动态路由在设备 WebView 里用 `location.hash` 直接赋值会被弹回 `#/`，需通过界面点击；router-link 的 touch→click 在该 WebView 下不总触发，故驱动脚本对 `<a>` 额外补发 click。这属于测试脚手架适配，未改动产品代码。
+- 本地壳行为：签名 URL 在设备里由 `mediaUrl()` 前缀成绝对地址后加载正常，但直接用相对路径 fetch 会被 Capacitor 的 `shouldInterceptRequest` 以 404/空响应拦下，这是本地壳行为不是服务端故障。

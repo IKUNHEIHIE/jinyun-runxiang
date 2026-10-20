@@ -5,6 +5,8 @@ import { api, post, requireSession, notify, mediaUrl, session } from "../api";
 import { saveProgress, progressState, syncProgress } from "../progress";
 import { designImage, designIcon, categoryName } from "../design";
 import AsyncState from "../components/AsyncState.vue";
+import PageHeader from "../components/PageHeader.vue";
+import SectionCard from "../components/SectionCard.vue";
 const route = useRoute(),
   router = useRouter(),
   course = ref<any>(),
@@ -259,24 +261,23 @@ onUnmounted(() => {
 </script>
 <template>
   <div class="player-page" data-design-node="5:01018">
+    <PageHeader
+      :title="course?.title || '非遗研习'"
+      :subtitle="
+        course
+          ? '第 ' + (chapterIndex + 1) + '/' + course.chapters.length + ' 课'
+          : undefined
+      "
+      back-to="/courses"
+    >
+      <span v-if="course?.rating" class="header-rating">
+        <img :src="designIcon('layer-5-01018', '5:01265')" alt="" /><b>{{
+          course.rating
+        }}</b>
+      </span>
+    </PageHeader>
     <AsyncState :loading="loading" :error="error" @retry="load">
       <template v-if="course">
-        <header class="player-top">
-          <button class="player-back" aria-label="返回上一页" @click="back">
-            ‹
-          </button>
-          <div class="lesson-pill">
-            <span
-              >第 {{ chapterIndex + 1 }}/{{ course.chapters.length }} 课</span
-            >
-            <template v-if="course.rating"
-              ><img
-                :src="designIcon('layer-5-01018', '5:01265')"
-                alt="" /><b>{{ course.rating }}</b></template
-            >
-          </div>
-          <span aria-hidden="true"></span>
-        </header>
         <div class="player-body">
           <div class="video-frame">
             <video
@@ -344,12 +345,15 @@ onUnmounted(() => {
               重试同步
             </button>
           </p>
-          <section class="lesson-intro corner-card">
+          <SectionCard class="lesson-intro">
             <h1>{{ course.title }}</h1>
             <div class="teacher-row">
               <img
                 class="teacher-avatar"
-                :src="mediaUrl(course.cover_url) || designImage('layer-5-01018', '5:01157')"
+                :src="
+                  mediaUrl(course.cover_url) ||
+                  designImage('layer-5-01018', '5:01157')
+                "
                 :alt="course.title"
               />
               <div class="teacher-meta">
@@ -368,19 +372,17 @@ onUnmounted(() => {
               v-if="currentChapter?.key_points?.length"
               class="key-points"
             >
-              <li
-                v-for="(point, i) in currentChapter.key_points"
-                :key="i"
-              >
+              <li v-for="(point, i) in currentChapter.key_points" :key="i">
                 {{ point }}
               </li>
             </ul>
-          </section>
-          <section id="study-chapters" class="chapter-list">
-            <div class="section-heading">
-              <h2>继续研习</h2>
-              <span>{{ course.chapters.length }} 章节</span>
-            </div>
+          </SectionCard>
+          <SectionCard
+            id="study-chapters"
+            class="chapter-list"
+            title="继续研习"
+            :meta="course.chapters.length + ' 章节'"
+          >
             <button
               v-for="(ch, i) in course.chapters"
               :key="ch.id"
@@ -397,14 +399,17 @@ onUnmounted(() => {
                   : Math.ceil(ch.duration_seconds / 60) + "分钟"
               }}</span>
             </button>
-          </section>
-          <section v-if="quiz && quiz.questions?.length" class="quiz-card corner-card">
-            <div class="quiz-heading">
-              <h2>随堂 · 鉴宝</h2>
-              <span v-if="currentQuestion"
-                >第 {{ quizIndex + 1 }}/{{ quiz.questions.length }} 题</span
-              >
-            </div>
+          </SectionCard>
+          <SectionCard
+            v-if="quiz && quiz.questions?.length"
+            class="quiz-card"
+            title="随堂 · 鉴宝"
+            :meta="
+              currentQuestion
+                ? '第 ' + (quizIndex + 1) + '/' + quiz.questions.length + ' 题'
+                : undefined
+            "
+          >
             <template v-if="currentQuestion">
               <img class="quiz-image" :src="quizImage" :alt="course.title" />
               <p class="quiz-question">
@@ -488,16 +493,18 @@ onUnmounted(() => {
                 </button>
               </div>
             </template>
-          </section>
-          <form class="rating-form player-rating" @submit.prevent="rate">
-            <label
-              >课程评价<select v-model="rating">
-                <option v-for="star in 5" :key="star" :value="star">
-                  {{ star }} 星
-                </option>
-              </select></label
-            ><button class="text-button">提交评价</button>
-          </form>
+          </SectionCard>
+          <SectionCard class="player-rating">
+            <form class="rating-form" @submit.prevent="rate">
+              <label
+                >课程评价<select v-model="rating">
+                  <option v-for="star in 5" :key="star" :value="star">
+                    {{ star }} 星
+                  </option>
+                </select></label
+              ><button class="text-button">提交评价</button>
+            </form>
+          </SectionCard>
         </div>
         <footer class="player-toolbar">
           <span class="toolbar-energy" title="完成课程可获得能量">
@@ -534,68 +541,40 @@ onUnmounted(() => {
 <style scoped>
 .player-page {
   min-height: 100dvh;
-  padding-bottom: calc(86px + var(--safe-bottom));
-  background:
-    radial-gradient(120% 70% at 50% 0%, rgba(255, 252, 244, 0.9), transparent 60%),
-    linear-gradient(#f7efe0, #f4e7d2);
-  color: #2a2620;
+  padding-bottom: calc(96px + var(--safe-bottom));
+  background: #f5ede4;
+  color: #2d1810;
 }
-.player-top {
-  position: sticky;
-  top: 0;
-  z-index: 8;
-  display: grid;
-  grid-template-columns: 40px 1fr 40px;
-  align-items: center;
-  padding: calc(8px + var(--safe-top)) 14px 8px;
-  background: rgba(249, 244, 232, 0.92);
-  backdrop-filter: blur(10px);
-}
-.player-back {
-  width: 36px;
-  height: 36px;
-  border: 1px solid rgba(201, 168, 76, 0.45);
-  border-radius: 50%;
-  background: rgba(253, 251, 245, 0.85);
-  color: #5e5448;
-  font-size: 24px;
-  line-height: 1;
-  padding: 0 0 3px;
-}
-.lesson-pill {
-  justify-self: center;
+.header-rating {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  height: 32px;
-  padding: 0 14px;
+  gap: 4px;
+  height: 26px;
+  padding: 0 10px;
+  border: 1px solid rgba(200, 169, 110, 0.45);
   border-radius: 999px;
-  background: #fdfbf5;
-  border: 1px solid rgba(201, 168, 76, 0.35);
-  box-shadow: 0 2px 10px rgba(212, 140, 88, 0.08);
-  font-size: 12px;
-  color: #6b5b45;
+  background: rgba(255, 253, 248, 0.8);
+  color: #8b1a1a;
+  font: 500 11px/1 var(--sans);
   white-space: nowrap;
 }
-.lesson-pill img {
-  width: 13px;
-  height: 13px;
+.header-rating img {
+  width: 12px;
+  height: 12px;
 }
-.lesson-pill b {
-  color: #c47040;
+.header-rating b {
   font-weight: 600;
 }
 .player-body {
-  padding: 2px 20px 0;
+  padding: 14px 16px 0;
 }
 .video-frame {
   position: relative;
-  margin: 6px 0 0;
-  border-radius: 16px;
+  border-radius: 14px;
   overflow: hidden;
-  border: 2px solid rgba(245, 232, 184, 0.6);
+  border: 1px solid rgba(200, 169, 110, 0.55);
   background: #201a15;
-  box-shadow: 0 8px 32px rgba(212, 140, 88, 0.12);
+  box-shadow: 0 8px 24px rgba(70, 42, 26, 0.12);
 }
 .video-frame video {
   display: block;
@@ -605,102 +584,126 @@ onUnmounted(() => {
   background: #201a15;
 }
 .video-unavailable {
+  position: relative;
   min-height: 208px;
+  display: grid;
+  place-items: center;
+}
+.video-unavailable img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.45;
+}
+.video-unavailable p {
+  position: relative;
+  color: #f6ead9;
+  font: 400 12px/1.6 var(--sans);
+  letter-spacing: 0.6px;
 }
 .video-hd {
   position: absolute;
-  left: 14px;
-  top: 14px;
-  padding: 3px 11px;
+  left: 12px;
+  top: 12px;
+  padding: 3px 9px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #c47040, #b86040);
-  color: #fdfbf5;
-  font-size: 11px;
-  font-weight: 600;
+  background: rgba(139, 26, 26, 0.9);
+  color: #f6ead9;
+  font: 500 10px/1.4 var(--sans);
   letter-spacing: 0.6px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 .video-duration {
   position: absolute;
-  right: 14px;
-  top: 14px;
-  padding: 3px 9px;
+  right: 12px;
+  top: 12px;
+  padding: 3px 8px;
   border-radius: 6px;
-  background: rgba(26, 24, 20, 0.7);
-  color: #f9f4e8;
-  font-size: 11px;
+  background: rgba(26, 20, 16, 0.72);
+  color: #f6ead9;
+  font: 400 10px/1.4 var(--sans);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
 }
 .video-play {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 62px;
-  height: 62px;
-  margin: -31px 0 0 -31px;
+  width: 58px;
+  height: 58px;
+  margin: -29px 0 0 -29px;
   display: grid;
   place-items: center;
   border-radius: 50%;
-  border: 2px solid #d48c58;
-  background: rgba(249, 244, 232, 0.9);
-  box-shadow: 0 4px 20px rgba(212, 140, 88, 0.25);
+  border: 1px solid #c8a96e;
+  background: rgba(253, 249, 242, 0.92);
+  box-shadow: 0 4px 18px rgba(70, 42, 26, 0.28);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
 }
 .video-play img {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
 }
 .video-progress {
   position: absolute;
   left: 2px;
   right: 2px;
   bottom: 0;
-  height: 4px;
-  background: rgba(42, 38, 32, 0.3);
+  height: 3px;
+  background: rgba(42, 32, 26, 0.35);
 }
 .video-progress i {
   display: block;
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #d48c58, #e0c05c 50%, #e0a878);
+  background: #8b1a1a;
 }
 .video-error {
-  margin: 8px 4px 0;
+  margin: 8px 2px 0;
+  font-size: 11px;
+  line-height: 1.8;
+  color: #8b1a1a;
 }
 .progress-sync {
-  margin: 12px 2px 0;
+  margin: 8px 2px 0;
+  color: #8a7a70;
+  font-size: 11px;
+  line-height: 1.8;
+}
+.progress-sync .text-button {
+  padding: 2px 4px;
+  color: #8b1a1a;
+  font-size: 11px;
 }
 .lesson-intro {
-  margin-top: 16px;
-  padding: 20px 18px 16px;
-  background: linear-gradient(127deg, #f9f4e8 4%, #fdfbf5 100%);
-  border: 1px solid rgba(245, 232, 184, 0.5);
-  box-shadow: 0 4px 20px rgba(212, 140, 88, 0.06);
+  margin-top: 14px;
+  padding: 16px 14px;
+  border-radius: 14px;
+  background: #fdf9f2;
 }
 .lesson-intro h1 {
-  margin: 0 0 14px;
-  font-family: var(--serif);
-  font-size: 21px;
-  line-height: 1.5;
-  letter-spacing: 0.5px;
-  color: #2a2620;
+  margin: 0 0 12px;
+  font: 500 16px/1.45 var(--serif);
+  letter-spacing: 1.5px;
+  color: #2d1810;
 }
 .teacher-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 10px;
 }
 .teacher-avatar {
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #e0a878;
-  flex: 0 0 42px;
+  border: 1px solid rgba(200, 169, 110, 0.7);
+  flex: 0 0 40px;
 }
 .teacher-meta {
   min-width: 0;
-  padding-top: 1px;
 }
 .teacher-line {
   display: flex;
@@ -709,50 +712,45 @@ onUnmounted(() => {
   flex-wrap: wrap;
 }
 .teacher-line b {
-  font-size: 13px;
-  font-weight: 600;
-  color: #3a342c;
+  font: 500 13px/1.4 var(--sans);
+  color: #2d1810;
 }
 .teacher-badge {
-  padding: 2px 8px;
+  padding: 1px 7px;
   border-radius: 999px;
-  border: 1px solid #ebc4a8;
-  background: #fbf0e8;
-  color: #9c4828;
-  font-size: 9px;
-  line-height: 14px;
+  border: 1px solid rgba(200, 169, 110, 0.5);
+  background: rgba(200, 169, 110, 0.12);
+  color: #8a6125;
+  font: 400 10px/1.5 var(--sans);
   white-space: nowrap;
 }
 .teacher-meta p {
-  margin: 5px 0 0;
-  color: #7a6e5e;
-  font-size: 11px;
-  line-height: 1.6;
+  margin: 3px 0 0;
+  color: #8a7a70;
+  font: 400 11px/1.6 var(--sans);
 }
 .chapter-count {
   margin-left: auto;
-  padding-top: 3px;
-  color: #c47040;
-  font-size: 11px;
+  flex-shrink: 0;
+  color: #8b1a1a;
+  font: 400 10px/1.5 var(--sans);
   white-space: nowrap;
 }
 .lesson-desc {
-  margin: 14px 0 0;
-  color: #5e5448;
-  font-size: 13px;
-  line-height: 1.85;
+  margin: 12px 0 0;
+  color: #5a3e36;
+  font: 400 13px/1.85 var(--sans);
 }
 .key-points {
   list-style: none;
-  margin: 14px 0 0;
+  margin: 10px 0 0;
   padding: 0;
 }
 .key-points li {
   position: relative;
   padding-left: 14px;
-  color: #7a6e5e;
-  font-size: 12px;
-  line-height: 1.9;
+  color: #8a7a70;
+  font: 400 13px/1.9 var(--sans);
 }
 .key-points li::before {
   content: "";
@@ -762,56 +760,43 @@ onUnmounted(() => {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #e0a878;
+  background: #c8a96e;
 }
 .chapter-list {
-  margin: 24px 0 0;
-}
-.section-heading {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-.section-heading h2 {
-  margin: 0;
-  font-family: var(--serif);
-  font-size: 17px;
-  color: #2a2620;
-}
-.section-heading span {
-  color: #a08b74;
-  font-size: 11px;
+  scroll-margin-top: 12px;
 }
 .chapter-list button {
   width: 100%;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px;
+  padding: 10px 12px;
   margin-bottom: 8px;
-  border: 1px solid rgba(201, 168, 76, 0.25);
-  border-radius: 12px;
-  background: rgba(253, 251, 245, 0.72);
+  border: 1px solid rgba(200, 169, 110, 0.3);
+  border-radius: 10px;
+  background: #fffdf8;
   text-align: left;
-  color: #5e5448;
-  font-size: 12px;
+  color: #5a3e36;
+  font: 400 13px/1.4 var(--sans);
+}
+.chapter-list button:last-child {
+  margin-bottom: 0;
 }
 .chapter-list button.active {
-  background: #f4e7d4;
-  border-color: rgba(196, 112, 64, 0.35);
-  color: #a0522d;
+  background: rgba(139, 26, 26, 0.06);
+  border-color: rgba(139, 26, 26, 0.28);
+  color: #8b1a1a;
 }
 .chapter-seq {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   display: grid;
   place-items: center;
   border-radius: 50%;
   background: #f3e9d8;
-  color: #b07a4a;
-  font-size: 10px;
-  flex: 0 0 24px;
+  color: #8a6125;
+  font: 400 10px/1 var(--sans);
+  flex: 0 0 22px;
 }
 .chapter-title {
   min-width: 0;
@@ -821,47 +806,26 @@ onUnmounted(() => {
 }
 .chapter-status {
   margin-left: auto;
-  color: #a08b74;
-  font-size: 10px;
+  color: #8a7a70;
+  font: 400 10px/1.4 var(--sans);
   white-space: nowrap;
 }
 .quiz-card {
-  margin-top: 22px;
-  padding: 18px 16px 16px;
-  background: linear-gradient(160deg, #f9f4e8 0%, #fdfbf5 55%, #f8eddd 100%);
-  border: 1px solid rgba(201, 168, 76, 0.3);
-  box-shadow: 0 6px 24px rgba(212, 140, 88, 0.08);
-}
-.quiz-heading {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-.quiz-heading h2 {
-  margin: 0;
-  font-family: var(--serif);
-  font-size: 18px;
-  color: #2a2620;
-}
-.quiz-heading span {
-  color: #c47040;
-  font-size: 11px;
+  background: linear-gradient(160deg, #fdf9f2 0%, #f7efe0 100%);
 }
 .quiz-image {
   display: block;
   width: 100%;
-  max-height: 158px;
+  max-height: 150px;
   object-fit: cover;
   border-radius: 10px;
-  border: 1px solid rgba(201, 168, 76, 0.3);
-  margin: 4px 0 12px;
+  border: 1px solid rgba(200, 169, 110, 0.35);
+  margin: 0 0 12px;
 }
 .quiz-question {
   margin: 0 0 10px;
-  color: #3a342c;
-  font-size: 13px;
-  line-height: 1.8;
+  color: #2d1810;
+  font: 400 13px/1.8 var(--sans);
 }
 .quiz-options {
   display: grid;
@@ -869,50 +833,48 @@ onUnmounted(() => {
 }
 .quiz-option {
   width: 100%;
-  min-height: 48px;
+  min-height: 46px;
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
-  border: 1px solid #e8d9c0;
-  border-radius: 12px;
+  border: 1px solid rgba(200, 169, 110, 0.35);
+  border-radius: 10px;
   background: #fffdf8;
-  color: #3a342c;
+  color: #2d1810;
   text-align: left;
-  font-size: 12px;
-  line-height: 1.5;
+  font: 400 13px/1.5 var(--sans);
 }
 .quiz-option b {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   display: grid;
   place-items: center;
-  flex: 0 0 24px;
+  flex: 0 0 22px;
   border-radius: 50%;
-  background: #f5eee0;
-  color: #9a7b55;
-  font-size: 11px;
-  font-weight: 600;
+  background: #f5ede4;
+  color: #8a6125;
+  font: 500 10px/1 var(--sans);
 }
 .quiz-option-text {
   min-width: 0;
 }
 .quiz-mark {
   margin-left: auto;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
 }
 .quiz-option.selected {
-  border-color: #d48c58;
-  background: #f8eee3;
+  border-color: #8a6125;
+  background: rgba(200, 169, 110, 0.14);
 }
 .quiz-option.selected b {
-  background: #e8cbb2;
-  color: #8a4a2a;
+  background: rgba(200, 169, 110, 0.32);
+  color: #6b4a1c;
 }
 .quiz-option.correct {
   border-color: #5a7d4a;
-  background: #eff4e9;
+  background: #eef4e8;
 }
 .quiz-option.correct b,
 .quiz-option.correct .quiz-mark {
@@ -920,35 +882,34 @@ onUnmounted(() => {
   color: #4e7240;
 }
 .quiz-option.wrong {
-  border-color: #b85450;
-  background: #f8e9e4;
+  border-color: #8b1a1a;
+  background: #f8e9e6;
 }
 .quiz-option.wrong b,
 .quiz-option.wrong .quiz-mark {
   background: #f0d7d2;
-  color: #a33f3a;
+  color: #8b1a1a;
 }
 .quiz-explanation {
   margin: 10px 0 0;
-  color: #7a6e5e;
-  font-size: 11px;
-  line-height: 1.75;
+  color: #8a7a70;
+  font: 400 11px/1.75 var(--sans);
 }
 .quiz-nav {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   margin-top: 14px;
 }
 .quiz-arrow {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   padding: 0 0 3px;
   border-radius: 50%;
-  border: 1px solid rgba(201, 168, 76, 0.35);
+  border: 1px solid rgba(200, 169, 110, 0.45);
   background: #fffdf8;
-  color: #8a6a4a;
-  font-size: 19px;
+  color: #8a6125;
+  font-size: 18px;
   line-height: 1;
 }
 .quiz-arrow:disabled {
@@ -967,43 +928,47 @@ onUnmounted(() => {
   background: #e3d5c1;
 }
 .quiz-dots i.done {
-  background: #d8ab80;
+  background: #c8a96e;
 }
 .quiz-dots i.active {
   width: 16px;
   border-radius: 999px;
-  background: #c47040;
+  background: #8b1a1a;
 }
 .quiz-next,
 .quiz-submit {
   min-height: 40px;
-  padding: 0 18px;
+  padding: 0 16px;
   font-size: 12px;
-  border-radius: 12px;
+  border-radius: 10px;
 }
 .quiz-submit {
-  background: linear-gradient(90deg, #c06a52, #a94a46);
-  border-color: transparent;
-  color: #fdfbf5;
+  border: 1px solid transparent;
+  background: #8b1a1a;
+  color: #f6ead9;
+}
+.quiz-next {
+  border-color: rgba(200, 169, 110, 0.55);
+  color: #8a6125;
 }
 .quiz-result {
   margin-top: 12px;
   padding: 10px 12px;
   border-radius: 10px;
-  background: rgba(244, 231, 212, 0.7);
-  color: #6b5b45;
+  background: rgba(200, 169, 110, 0.14);
+  color: #5a3e36;
   font-size: 12px;
   line-height: 1.7;
 }
 .quiz-result h3 {
   margin: 0;
-  font-family: var(--serif);
-  font-size: 14px;
-  color: #a0522d;
+  font: 500 14px/1.5 var(--serif);
+  color: #8b1a1a;
 }
 .quiz-result p {
   margin: 4px 0 0;
   font-size: 11px;
+  color: #8a7a70;
 }
 .quiz-after {
   display: flex;
@@ -1015,19 +980,40 @@ onUnmounted(() => {
 }
 .quiz-after .outline-button,
 .dark-button {
-  min-height: 44px;
-  border-radius: 12px;
+  min-height: 42px;
+  border-radius: 10px;
   font-size: 12px;
 }
+.quiz-after .outline-button {
+  border-color: rgba(200, 169, 110, 0.55);
+  color: #8a6125;
+}
 .dark-button {
-  border: 1px solid #2b2620;
-  background: #2b2620;
-  color: #f9f4e8;
+  border: 1px solid #2d1810;
+  background: #2d1810;
+  color: #f6ead9;
 }
 .player-rating {
-  margin: 18px 0 4px;
-  padding-top: 14px;
-  border-top: 1px dashed rgba(201, 168, 76, 0.4);
+  padding: 14px;
+}
+.player-rating .rating-form {
+  gap: 12px;
+}
+.player-rating label {
+  font: 400 12px/1.5 var(--sans);
+  color: #5a3e36;
+}
+.player-rating select {
+  border-color: rgba(200, 169, 110, 0.45);
+  border-radius: 10px;
+  background: #fffdf8;
+  color: #2d1810;
+}
+.player-rating .text-button {
+  align-self: flex-end;
+  padding: 4px 8px;
+  color: #8b1a1a;
+  font-size: 12px;
 }
 .player-toolbar {
   position: fixed;
@@ -1038,24 +1024,24 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: auto auto auto 1fr;
   align-items: center;
-  gap: 12px;
-  padding: 9px 16px calc(9px + var(--safe-bottom));
-  background: rgba(250, 246, 238, 0.97);
-  border-top: 1px solid rgba(201, 168, 76, 0.45);
-  box-shadow: 0 -4px 20px rgba(61, 35, 20, 0.08);
+  gap: 10px;
+  padding: 9px 14px calc(9px + var(--safe-bottom));
+  background: rgba(245, 237, 228, 0.97);
+  border-top: 1px solid rgba(200, 169, 110, 0.42);
+  box-shadow: 0 -6px 20px rgba(70, 42, 26, 0.08);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
 .toolbar-energy {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  color: #8b7355;
-  font-size: 12px;
-  font-weight: 600;
+  color: #8a6125;
+  font: 500 11px/1 var(--sans);
 }
 .toolbar-energy img {
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
 }
 .toolbar-action {
   display: inline-flex;
@@ -1064,8 +1050,8 @@ onUnmounted(() => {
   padding: 4px 2px;
   border: 0;
   background: none;
-  color: #8b7355;
-  font-size: 11px;
+  color: #5a3e36;
+  font: 400 11px/1 var(--sans);
   white-space: nowrap;
 }
 .toolbar-action img {
@@ -1073,16 +1059,16 @@ onUnmounted(() => {
   height: 14px;
 }
 .toolbar-action.active {
-  color: #a0522d;
+  color: #8b1a1a;
 }
 .toolbar-ai {
   justify-self: end;
-  padding: 9px 14px;
+  padding: 8px 13px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #c47040, #b86040);
-  color: #fdfbf5;
-  font-size: 11px;
+  background: #8b1a1a;
+  color: #f6ead9;
+  font: 500 11px/1.2 var(--sans);
+  letter-spacing: 0.5px;
   white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(184, 96, 64, 0.25);
 }
 </style>

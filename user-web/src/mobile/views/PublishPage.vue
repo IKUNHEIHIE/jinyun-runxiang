@@ -4,6 +4,7 @@ import { useRouter, onBeforeRouteLeave } from "vue-router";
 import { api, post, mediaUrl, notify, session } from "../api";
 import { categories } from "../design";
 import PageHeader from "../components/PageHeader.vue";
+import SectionCard from "../components/SectionCard.vue";
 const router = useRouter(),
   title = ref(""),
   content = ref(""),
@@ -128,78 +129,102 @@ async function publish() {
 }
 </script>
 <template>
-  <div>
+  <div class="publish-page">
     <PageHeader title="发布作品" />
-    <form class="page-padding" :aria-busy="busy" @submit.prevent="publish">
-      <label
-        >作品图片<input
-          type="file"
-          multiple
-          accept="image/png,image/jpeg,image/webp"
-          :disabled="busy"
-          @change="upload"
-      /></label>
-      <p class="subtle">最多 10 张，每张不超过 20MB。第一张作为封面，上传后可调整。</p>
-      <p v-if="uploading" class="upload-progress" role="status">正在上传 {{ uploaded + 1 }} / {{ uploadTotal }} 张，请稍候…</p>
-      <div v-if="gallery.length" class="publish-gallery">
-        <article v-for="(image, index) in gallery" :key="image">
-          <img :src="mediaUrl(image)" :alt="'作品图片' + (index + 1)" /><span
-            v-if="index === 0"
-            >封面</span
-          >
-          <button
-            v-else
-            type="button"
-            class="text-button"
+    <form class="publish-body" :aria-busy="busy" @submit.prevent="publish">
+      <SectionCard>
+        <label class="upload-field"
+          >作品图片<input
+            type="file"
+            multiple
+            accept="image/png,image/jpeg,image/webp"
             :disabled="busy"
-            @click="
-              gallery = [image, ...gallery.filter((url) => url !== image)]
-            "
-          >
-            设为封面
-          </button>
-          <button
-            type="button"
-            class="text-button"
-            :disabled="busy"
-            @click="gallery.splice(index, 1)"
-          >
-            移除
-          </button>
-        </article>
-      </div>
-      <label
-        >作品名称<input v-model.trim="title" :disabled="busy" required maxlength="128" placeholder="为你的作品起一个名字" /></label
-      ><label
-        >非遗分类<select v-model="category" :disabled="busy">
-          <option
-            v-for="item in categories.filter((c) => c.value)"
-            :key="item.value"
-            :value="item.value"
-          >
-            {{ item.label }}
-          </option>
-        </select></label
-      ><label
-        >创作故事<textarea
-          v-model.trim="content"
-          :disabled="busy"
-          required
-          maxlength="5000"
-          placeholder="介绍灵感、制作过程与非遗文化内涵"
-        />
-      </label>
-      <fieldset class="artwork-spec-fields">
-        <legend>作品规格（选填）</legend>
-        <label v-for="spec in specifications" :key="spec.label"
-          >{{ spec.label }}<input v-model.trim="spec.value" :disabled="busy" maxlength="128"
+            @change="upload"
         /></label>
+        <p class="subtle upload-hint">
+          最多 10 张，每张不超过 20MB。第一张作为封面，上传后可调整。
+        </p>
+        <p v-if="uploading" class="upload-progress" role="status">
+          正在上传 {{ uploaded + 1 }} / {{ uploadTotal }} 张，请稍候…
+        </p>
+        <div v-if="gallery.length" class="publish-gallery">
+          <article v-for="(image, index) in gallery" :key="image">
+            <img :src="mediaUrl(image)" :alt="'作品图片' + (index + 1)" /><span
+              v-if="index === 0"
+              class="cover-tag"
+              >封面</span
+            >
+            <button
+              v-else
+              type="button"
+              class="text-button"
+              :disabled="busy"
+              @click="
+                gallery = [image, ...gallery.filter((url) => url !== image)]
+              "
+            >
+              设为封面
+            </button>
+            <button
+              type="button"
+              class="text-button"
+              :disabled="busy"
+              @click="gallery.splice(index, 1)"
+            >
+              移除
+            </button>
+          </article>
+        </div>
+      </SectionCard>
+      <SectionCard>
+        <div class="publish-fields">
+          <label
+            >作品名称<input
+              v-model.trim="title"
+              :disabled="busy"
+              required
+              maxlength="128"
+              placeholder="为你的作品起一个名字" /></label
+          ><label
+            >非遗分类<select v-model="category" :disabled="busy">
+              <option
+                v-for="item in categories.filter((c) => c.value)"
+                :key="item.value"
+                :value="item.value"
+              >
+                {{ item.label }}
+              </option>
+            </select></label
+          ><label
+            >创作故事<textarea
+              v-model.trim="content"
+              :disabled="busy"
+              required
+              maxlength="5000"
+              placeholder="介绍灵感、制作过程与非遗文化内涵"
+            />
+          </label>
+        </div>
+      </SectionCard>
+      <fieldset class="artwork-spec-fields corner-card">
+        <legend>作品规格（选填）</legend>
+        <div class="publish-fields">
+          <label v-for="spec in specifications" :key="spec.label"
+            >{{ spec.label }}<input
+              v-model.trim="spec.value"
+              :disabled="busy"
+              maxlength="128"
+          /></label>
+        </div>
       </fieldset>
-      <fieldset class="appreciation-fields">
+      <fieldset class="appreciation-fields corner-card">
         <legend>鉴赏要点（选填）</legend>
         <article v-for="(point, index) in appreciation" :key="index">
           <label
-            >要点标题<input v-model.trim="point.title" :disabled="busy" maxlength="64" /></label
+            >要点标题<input
+              v-model.trim="point.title"
+              :disabled="busy"
+              maxlength="64" /></label
           ><label
             >要点内容<textarea
               v-model.trim="point.body"
@@ -208,7 +233,7 @@ async function publish() {
             /></label
           ><button
             type="button"
-            class="text-button"
+            class="text-button remove-point"
             :disabled="busy"
             @click="appreciation.splice(index, 1)"
           >
@@ -218,7 +243,7 @@ async function publish() {
         <button
           v-if="appreciation.length < 10"
           type="button"
-          class="outline-button"
+          class="outline-button add-point"
           :disabled="busy"
           @click="appreciation.push({ title: '', body: '' })"
         >
@@ -226,50 +251,194 @@ async function publish() {
         </button>
       </fieldset>
       <p v-if="error" class="form-error" role="alert">{{ error }}</p>
-      <button class="primary-button" :disabled="busy">
+      <button class="primary-button publish-submit" :disabled="busy">
         {{ uploading ? "图片上传中…" : busy ? "正在提交…" : "提交作品审核" }}
       </button>
     </form>
   </div>
 </template>
 <style scoped>
+.publish-page {
+  min-height: 100dvh;
+  padding-bottom: 12px;
+  background: #f5ede4;
+  color: #2d1810;
+}
+.publish-body {
+  gap: 0;
+  padding: 14px 16px 24px;
+}
+.publish-body label {
+  gap: 6px;
+  color: #8a7a70;
+  font: 400 11px/1.4 var(--sans);
+  letter-spacing: 1px;
+}
+.publish-body input:not([type="file"]),
+.publish-body select,
+.publish-body textarea {
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid rgba(200, 169, 110, 0.45);
+  border-radius: 10px;
+  background: #fffdf8;
+  color: #2d1810;
+  font: 400 14px/1.6 var(--sans);
+  letter-spacing: 0;
+}
+.publish-body textarea {
+  min-height: 108px;
+  resize: vertical;
+}
+.publish-body .upload-field {
+  gap: 8px;
+  color: #5a3e36;
+  font: 500 13px/1.4 var(--sans);
+  letter-spacing: 0.5px;
+}
+.upload-field input[type="file"] {
+  min-height: 46px;
+  padding: 9px 10px;
+  border: 1px dashed rgba(200, 169, 110, 0.55);
+  border-radius: 10px;
+  background: #fffdf8;
+  color: #8a7a70;
+  font: 400 11px/1.5 var(--sans);
+  letter-spacing: 0;
+}
+.upload-field input[type="file"]::file-selector-button {
+  margin-right: 10px;
+  padding: 6px 12px;
+  border: 1px solid rgba(139, 26, 26, 0.22);
+  border-radius: 999px;
+  background: rgba(139, 26, 26, 0.06);
+  color: #8b1a1a;
+  font: 500 11px/1.4 var(--sans);
+  letter-spacing: 0.5px;
+}
+.upload-hint {
+  margin-top: 8px;
+  color: #8a7a70;
+  font: 400 10px/1.7 var(--sans);
+}
+.upload-progress {
+  margin-top: 8px;
+  color: #8b1a1a;
+  font: 400 11px/1.6 var(--sans);
+}
 .publish-gallery {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin: 18px 0;
+  gap: 10px;
+  margin-top: 12px;
 }
 .publish-gallery article {
-  border: 1px solid var(--gold-light);
-  padding: 8px;
-  border-radius: 12px;
+  position: relative;
+  padding: 6px;
+  border: 1px solid rgba(200, 169, 110, 0.28);
+  border-radius: 10px;
+  background: #fffdf8;
 }
 .publish-gallery img {
   width: 100%;
-  height: 150px;
-  object-fit: contain;
-  background: var(--track);
+  height: 132px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #f0e3d6;
 }
-.publish-gallery span,
-.publish-gallery button {
-  font-size: 11px;
-  margin-right: 8px;
+.cover-tag {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #8b1a1a;
+  color: #f6ead9;
+  font: 400 10px/1.5 var(--sans);
+  letter-spacing: 1px;
+}
+.publish-gallery .text-button {
+  display: inline-block;
+  margin-top: 4px;
+  margin-right: 10px;
+  padding: 2px 0;
+  color: #8a6125;
+  font: 400 10px/1.5 var(--sans);
+  letter-spacing: 0.5px;
+}
+.publish-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 .artwork-spec-fields,
 .appreciation-fields {
-  border: 1px solid var(--gold-light);
-  border-radius: 12px;
-  padding: 16px;
-  margin: 24px 0;
+  margin: 0 0 14px;
+  padding: 16px 14px;
+  border: 0;
 }
 .artwork-spec-fields legend,
 .appreciation-fields legend {
-  font: 15px var(--serif);
-  padding: 0 8px;
+  position: relative;
+  margin-bottom: 14px;
+  padding: 0 0 0 11px;
+  color: #2d1810;
+  font: 500 16px/1.4 var(--serif);
+  letter-spacing: 1.6px;
+}
+.artwork-spec-fields legend::before,
+.appreciation-fields legend::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 3px;
+  width: 3px;
+  height: 15px;
+  border-radius: 2px;
+  background: #8b1a1a;
 }
 .appreciation-fields article {
-  padding-bottom: 16px;
-  margin-bottom: 16px;
-  border-bottom: 1px solid var(--gold-light);
+  margin-bottom: 10px;
+  padding: 12px;
+  border: 1px dashed rgba(200, 169, 110, 0.4);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.45);
+}
+.appreciation-fields .remove-point {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 0;
+  color: #8b1a1a;
+  font: 400 10px/1.5 var(--sans);
+}
+.add-point {
+  width: 100%;
+  min-height: 38px;
+  border: 1px dashed rgba(139, 26, 26, 0.3);
+  border-radius: 10px;
+  background: rgba(139, 26, 26, 0.04);
+  color: #8b1a1a;
+  font: 500 12px/1.4 var(--sans);
+  letter-spacing: 1px;
+}
+.form-error {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-left: 2px solid #8b1a1a;
+  border-radius: 0 8px 8px 0;
+  background: #fff0f0;
+  color: #8b1a1a;
+  font: 400 12px/1.7 var(--sans);
+}
+.publish-submit {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid rgba(232, 217, 168, 0.55);
+  border-radius: 10px;
+  background: #8b1a1a;
+  color: #f6ead9;
+  font: 500 14px/1.4 var(--sans);
+  letter-spacing: 3px;
+  box-shadow: 0 8px 20px rgba(139, 26, 26, 0.18);
 }
 </style>
+

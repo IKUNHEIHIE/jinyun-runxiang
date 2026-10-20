@@ -3,6 +3,7 @@ import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { api, post, requireSession, notify, mediaUrl } from "../api";
 import PageHeader from "../components/PageHeader.vue";
+import SectionCard from "../components/SectionCard.vue";
 import AsyncState from "../components/AsyncState.vue";
 const route = useRoute(),
   router = useRouter(),
@@ -44,15 +45,9 @@ watch(() => route.params.id, load, { immediate: true });
 <template>
   <div
     class="heritage-detail"
-    :class="{ bronze: entry?.category === 'BRONZE' }"
     :data-design-node="entry?.category === 'BRONZE' ? '40:32808' : '40:32809'"
   >
-    <header v-if="entry?.category === 'BRONZE'" class="bronze-header">
-      <button aria-label="返回上一页" @click="back">‹</button>
-      <h1>{{ entry.title }}</h1>
-      <p>{{ entry.era }} · 青铜器</p>
-    </header>
-    <PageHeader v-else :title="entry?.title || '非遗典藏'">
+    <PageHeader :title="entry?.title || '非遗典藏'" back-to="/heritage">
       <span v-if="entry && !loading && !error" class="heritage-header-actions">
         <button
           aria-label="收藏典藏"
@@ -61,53 +56,50 @@ watch(() => route.params.id, load, { immediate: true });
         >
           {{ collected ? "★" : "☆" }}
         </button>
-      </span></PageHeader
-    ><AsyncState
-      :loading="loading"
-      :error="error"
-      @retry="load"
-      ><template v-if="entry"
-        ><header
-          v-if="entry.category !== 'BRONZE'"
-          class="heritage-detail-title"
-        >
-          <p class="eyebrow">{{ entry.era }}</p>
-          <h1>{{ entry.title }}</h1>
-          <p>{{ entry.summary }}</p>
-        </header>
-        <div class="artifact-viewer">
-          <img
-            :src="mediaUrl(entry.content.hero_url || entry.cover_url)"
-            :alt="entry.title"
-            :style="{ transform: 'scale(' + zoom + ')' }"
-          />
-          <div class="viewer-tools">
-            <button
-              aria-label="缩小文物图片"
-              :disabled="zoom <= 1"
-              @click="zoom = Math.max(1, zoom - 0.25)"
-            >
-              −</button
-            ><button
-              aria-label="放大文物图片"
-              :disabled="zoom >= 3"
-              @click="zoom = Math.min(3, zoom + 0.25)"
-            >
-              ＋</button
-            ><button @click="zoom = 1">复位</button>
-          </div>
-        </div>
-        <p v-if="!entry.model_url" class="resource-note">
-          当前提供高清图片鉴赏，三维模型尚未提供
-        </p>
-        <div class="page-padding">
-          <section
+      </span>
+    </PageHeader>
+    <AsyncState :loading="loading" :error="error" @retry="load"
+      ><template v-if="entry">
+        <div class="detail-body">
+          <SectionCard class="heritage-detail-title">
+            <p class="eyebrow">{{ entry.era }}</p>
+            <h1>{{ entry.title }}</h1>
+            <p class="detail-summary">{{ entry.summary }}</p>
+          </SectionCard>
+          <section class="artifact-viewer corner-card">
+            <img
+              :src="mediaUrl(entry.content.hero_url || entry.cover_url)"
+              :alt="entry.title"
+              :style="{ transform: 'scale(' + zoom + ')' }"
+            />
+            <div class="viewer-tools">
+              <button
+                aria-label="缩小文物图片"
+                :disabled="zoom <= 1"
+                @click="zoom = Math.max(1, zoom - 0.25)"
+              >
+                −</button
+              ><button
+                aria-label="放大文物图片"
+                :disabled="zoom >= 3"
+                @click="zoom = Math.min(3, zoom + 0.25)"
+              >
+                ＋</button
+              ><button @click="zoom = 1">复位</button>
+            </div>
+          </section>
+          <p v-if="!entry.model_url" class="resource-note">
+            当前提供高清图片鉴赏，三维模型尚未提供
+          </p>
+          <SectionCard
             v-if="entry.content.metrics?.length"
             class="artifact-metrics"
+            title="核心数据"
           >
-            <h2>核心数据</h2>
-            <p class="eyebrow">Key Metrics</p>
-            <div>
+            <template #meta>
+              <span class="eyebrow">Key Metrics</span>
+            </template>
+            <div class="metric-grid">
               <article
                 v-for="metric in entry.content.metrics"
                 :key="metric.label"
@@ -116,20 +108,24 @@ watch(() => route.params.id, load, { immediate: true });
                 ><span>{{ metric.label }}</span>
               </article>
             </div>
-          </section>
-          <section
+          </SectionCard>
+          <SectionCard
             v-for="(section, i) in entry.content.sections || []"
             :key="i"
             class="heritage-article"
+            :title="section.title"
           >
-            <p v-if="section.eyebrow" class="eyebrow">{{ section.eyebrow }}</p>
-            <h2>{{ section.title }}</h2>
+            <template #meta>
+              <span v-if="section.eyebrow" class="eyebrow">{{
+                section.eyebrow
+              }}</span>
+            </template>
             <img
               v-if="section.image_url"
               :src="mediaUrl(section.image_url)"
               :alt="section.title"
             />
-            <p>{{ section.body }}</p>
+            <p class="article-body">{{ section.body }}</p>
             <div v-if="section.steps" class="craft-steps">
               <article v-for="(step, n) in section.steps" :key="n">
                 <span>{{ String(Number(n) + 1).padStart(2, "0") }}</span>
@@ -174,9 +170,9 @@ watch(() => route.params.id, load, { immediate: true });
               <p>“{{ section.quote.text }}”</p>
               <cite>— {{ section.quote.source }}</cite>
             </blockquote>
-          </section>
+          </SectionCard>
           <button
-            class="primary-button"
+            class="primary-button detail-collect"
             :aria-pressed="collected"
             @click="collect"
           >
@@ -188,43 +184,58 @@ watch(() => route.params.id, load, { immediate: true });
   </div>
 </template>
 <style scoped>
+.heritage-detail {
+  min-height: 100dvh;
+  padding-bottom: 12px;
+  background: #f5ede4;
+  color: #2d1810;
+}
+.detail-body {
+  padding: 14px 16px 24px;
+}
 .heritage-header-actions {
   display: flex;
   align-items: center;
 }
 .heritage-header-actions button {
-  width: 38px;
-  height: 38px;
+  width: 32px;
+  height: 32px;
   padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--clay);
-  font-size: 20px;
+  border: 1px solid rgba(200, 169, 110, 0.45);
+  border-radius: 50%;
+  background: rgba(255, 253, 248, 0.8);
+  color: #8a6125;
+  font-size: 16px;
   line-height: 1;
 }
 .heritage-header-actions button[aria-pressed="true"] {
-  color: var(--gold);
+  border-color: rgba(139, 26, 26, 0.3);
+  color: #8b1a1a;
 }
 .heritage-detail-title {
-  padding: 36px 24px 24px;
-  text-align: center;
+  padding: 16px 14px;
+}
+.heritage-detail-title .eyebrow {
+  color: #8a6125;
 }
 .heritage-detail-title h1 {
-  font-size: 36px;
-  margin: 14px 0;
-  color: var(--cinnabar);
-  line-height: 1.5;
+  margin: 6px 0 8px;
+  color: #2d1810;
+  font: 500 18px/1.5 var(--serif);
+  letter-spacing: 1.5px;
 }
-.heritage-detail-title > p:last-child {
-  font-size: 12px;
-  line-height: 2;
-  color: var(--muted);
+.detail-summary {
+  color: #8a7a70;
+  font: 400 13px/1.9 var(--sans);
 }
 .artifact-viewer {
   position: relative;
-  height: 370px;
+  height: 300px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(200, 169, 110, 0.35);
+  border-radius: 14px;
   overflow: hidden;
-  background: #e8dcca;
+  background: #f0e3d2;
   display: grid;
   place-items: center;
 }
@@ -236,96 +247,116 @@ watch(() => route.params.id, load, { immediate: true });
 }
 .viewer-tools {
   position: absolute;
-  bottom: 14px;
-  right: 14px;
+  bottom: 12px;
+  right: 12px;
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 .viewer-tools button {
-  background: var(--paper);
-  border: 1px solid var(--gold);
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0 8px;
+  border: 1px solid rgba(200, 169, 110, 0.5);
   border-radius: 8px;
-  min-width: 36px;
-  min-height: 36px;
-  font-size: 14px;
+  background: rgba(255, 253, 248, 0.92);
+  color: #5a3e36;
+  font: 400 12px/1 var(--sans);
+}
+.viewer-tools button:disabled {
+  opacity: 0.4;
 }
 .resource-note {
+  margin: -4px 2px 12px;
   text-align: center;
-  font-size: 10px;
-  color: var(--muted);
-  padding: 12px 20px;
+  color: #8a7a70;
+  font: 400 10px/1.7 var(--sans);
 }
-.artifact-metrics > div {
+.artifact-metrics .eyebrow {
+  color: #8a6125;
+}
+.metric-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin: 24px 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
 }
-.artifact-metrics article {
+.metric-grid article {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  border-bottom: 1px solid var(--gold-light);
-  padding-bottom: 14px;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid rgba(200, 169, 110, 0.24);
+  border-radius: 10px;
+  background: #fffdf8;
 }
-.artifact-metrics strong {
-  font-family: var(--serif);
-  font-size: 23px;
-  color: var(--clay);
+.metric-grid strong {
+  color: #8b1a1a;
+  font: 500 18px/1.3 var(--serif);
 }
-.artifact-metrics span {
-  font-size: 11px;
-  color: var(--muted);
-}
-.heritage-article {
-  margin-bottom: 32px;
-}
-.heritage-article h2 {
-  font-size: 23px;
-  margin: 10px 0 18px;
-}
-.heritage-article > p:last-child,
-.craft-steps p {
-  font-size: 13px;
-  line-height: 2;
-  white-space: pre-line;
-  color: var(--muted);
+.metric-grid span {
+  color: #8a7a70;
+  font: 400 10px/1.5 var(--sans);
+  letter-spacing: 0.5px;
 }
 .heritage-article img {
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(200, 169, 110, 0.28);
+  border-radius: 10px;
+}
+.article-body {
+  color: #5a3e36;
+  font: 400 13px/2 var(--sans);
+  white-space: pre-line;
+}
+.craft-steps {
+  margin-top: 6px;
 }
 .craft-steps article {
-  padding: 24px 0;
-  border-bottom: 1px solid var(--gold-light);
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(200, 169, 110, 0.2);
+}
+.craft-steps article:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
 }
 .craft-steps span {
-  font: 28px var(--serif);
-  color: var(--gold);
+  display: block;
+  color: #8a6125;
+  font: 500 16px/1.4 var(--serif);
+  letter-spacing: 1px;
 }
 .craft-steps h3 {
-  font-size: 17px;
-  margin: 12px 0;
+  margin: 4px 0 6px;
+  color: #2d1810;
+  font: 500 14px/1.5 var(--serif);
+}
+.craft-steps p {
+  color: #5a3e36;
+  font: 400 13px/1.9 var(--sans);
+  white-space: pre-line;
 }
 .heritage-themes {
   display: grid;
-  gap: 18px;
-  margin-top: 22px;
+  gap: 12px;
+  margin-top: 6px;
 }
 .heritage-themes article {
   overflow: hidden;
-  border: 1px solid rgba(201, 168, 76, 0.3);
+  border: 1px solid rgba(200, 169, 110, 0.3);
   border-radius: 12px;
-  background: #fdfbf5;
+  background: #fffdf8;
 }
 .theme-image {
   position: relative;
-  height: 168px;
-  background: #e8dcca;
+  height: 150px;
+  background: #f0e3d2;
 }
-.theme-image img {
+.heritage-article .theme-image img {
   width: 100%;
   height: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
   object-fit: cover;
 }
 .theme-image > span {
@@ -334,182 +365,112 @@ watch(() => route.params.id, load, { immediate: true });
   top: 10px;
   padding: 3px 9px;
   border-radius: 999px;
-  background: rgba(196, 163, 90, 0.92);
-  color: #fff;
-  font-size: 9px;
-}
-.heritage-themes article > .eyebrow,
-.heritage-themes article > h3,
-.heritage-themes article > p:last-child {
-  margin-left: 14px;
-  margin-right: 14px;
+  background: rgba(139, 97, 37, 0.92);
+  color: #fffdf8;
+  font: 400 10px/1.4 var(--sans);
 }
 .heritage-themes article > .eyebrow {
-  margin-top: 12px;
+  margin: 12px 12px 0;
+  color: #8a6125;
 }
 .heritage-themes h3 {
-  margin-top: 4px;
-  margin-bottom: 6px;
-  font-family: var(--serif);
-  font-size: 19px;
+  margin: 4px 12px 6px;
+  color: #2d1810;
+  font: 500 14px/1.5 var(--serif);
 }
 .heritage-themes article > p:last-child {
-  margin-top: 0;
-  margin-bottom: 16px;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.9;
+  margin: 0 12px 14px;
+  color: #8a7a70;
+  font: 400 12px/1.85 var(--sans);
 }
 .heritage-timeline {
-  margin-top: 18px;
+  margin-top: 6px;
   padding-left: 6px;
-  border-left: 1px solid rgba(201, 168, 76, 0.45);
+  border-left: 1px solid rgba(200, 169, 110, 0.45);
 }
 .heritage-timeline article {
   position: relative;
   display: flex;
-  gap: 14px;
-  padding: 0 0 22px 18px;
+  gap: 12px;
+  padding: 0 0 18px 16px;
 }
 .heritage-timeline article:last-child {
   padding-bottom: 0;
 }
 .timeline-era {
-  width: 34px;
-  height: 34px;
-  flex: 0 0 34px;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
   display: grid;
   place-items: center;
-  margin-left: -36px;
+  margin-left: -32px;
   border-radius: 50%;
-  background: #f4e7d4;
-  border: 1px solid rgba(201, 168, 76, 0.5);
-  color: #a0522d;
-  font-family: var(--serif);
-  font-size: 14px;
+  background: #f6ecdd;
+  border: 1px solid rgba(200, 169, 110, 0.5);
+  color: #8b1a1a;
+  font: 500 12px/1 var(--serif);
 }
 .heritage-timeline h3 {
-  margin: 4px 0 6px;
-  font-size: 16px;
+  margin: 2px 0 4px;
+  color: #2d1810;
+  font: 500 14px/1.5 var(--serif);
 }
 .heritage-timeline p:last-child {
   margin: 0;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.8;
+  color: #8a7a70;
+  font: 400 12px/1.8 var(--sans);
+}
+.heritage-timeline .eyebrow {
+  color: #8a6125;
 }
 .heritage-features {
   display: grid;
-  gap: 10px;
-  margin-top: 16px;
+  gap: 8px;
+  margin-top: 6px;
 }
 .heritage-features article {
-  padding: 14px 16px;
-  border-left: 2px solid var(--gold);
-  background: rgba(250, 245, 240, 0.8);
+  padding: 10px 12px;
+  border-left: 2px solid #c8a96e;
+  border-radius: 0 8px 8px 0;
+  background: rgba(200, 169, 110, 0.1);
 }
 .heritage-features h3 {
-  margin: 0 0 6px;
-  font-size: 15px;
+  margin: 0 0 4px;
+  color: #2d1810;
+  font: 500 13px/1.5 var(--serif);
 }
 .heritage-features p {
   margin: 0;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.9;
+  color: #8a7a70;
+  font: 400 12px/1.8 var(--sans);
 }
 .heritage-quote {
-  margin: 20px 0 0;
-  padding: 20px 18px;
+  margin: 12px 0 0;
+  padding: 14px 12px;
   border: 0;
   border-radius: 12px;
-  background: #f4e7d4;
+  background: #f6ecdd;
   text-align: center;
 }
 .heritage-quote p {
-  margin: 0;
   color: #6b4a32;
-  font-family: var(--serif);
-  font-size: 15px;
-  line-height: 1.9;
+  font: 400 14px/1.9 var(--serif);
 }
 .heritage-quote cite {
   display: block;
-  margin-top: 8px;
-  color: var(--muted);
-  font-size: 10px;
+  margin-top: 6px;
+  color: #8a7a70;
+  font: 400 10px/1.6 var(--sans);
   font-style: normal;
 }
-.bronze-header {
-  position: relative;
-  padding: 28px 24px 22px;
-  text-align: center;
-  background: #372116;
-  color: #e8d5a3;
-}
-.bronze-header > button {
-  position: absolute;
-  left: 16px;
-  top: 24px;
-  width: 38px;
-  height: 38px;
-  border: 1px solid rgba(232, 213, 163, 0.45);
-  border-radius: 50%;
-  color: #e8d5a3;
-  font-size: 24px;
-  line-height: 1;
-}
-.bronze-header h1 {
-  margin: 0;
-  font-family: var(--serif);
-  font-size: 30px;
-  letter-spacing: 4px;
-  color: #e8d5a3;
-}
-.bronze-header p {
-  margin-top: 8px;
-  font-size: 12px;
-  color: #bca98b;
-  letter-spacing: 1px;
-}
-.bronze {
-  min-height: 100dvh;
-  background: #372116;
-  color: #eadbc1;
-}
-.bronze .artifact-viewer {
-  background: #1d1712;
-}
-.bronze .resource-note {
-  color: #a9957c;
-  background: #372116;
-}
-.bronze .artifact-metrics strong {
-  color: #d8b56d;
-}
-.bronze .artifact-metrics span,
-.bronze .artifact-metrics .eyebrow {
-  color: #bca98b;
-}
-.bronze .heritage-article {
-  padding: 18px;
+.detail-collect {
+  width: 100%;
+  margin: 0 0 8px;
+  border: 1px solid transparent;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.045);
-}
-.bronze .heritage-article h2 {
-  color: #e8d5a3;
-}
-.bronze .heritage-article > p:last-child,
-.bronze .craft-steps p {
-  color: #c9b79c;
-}
-.bronze .craft-steps tspan,
-.bronze .craft-steps span {
-  color: #d8b56d;
-}
-.bronze .primary-button {
-  border: 1px solid #c5a059;
-  background: transparent;
-  color: #e8d5a3;
+  background: #8b1a1a;
+  color: #f6ead9;
+  font-size: 13px;
+  letter-spacing: 1px;
 }
 </style>

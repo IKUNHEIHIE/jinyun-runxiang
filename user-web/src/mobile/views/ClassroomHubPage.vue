@@ -4,6 +4,9 @@ import { useRouter } from "vue-router";
 import { api, post, notify, session } from "../api";
 import PageHeader from "../components/PageHeader.vue";
 import AsyncState from "../components/AsyncState.vue";
+import SectionCard from "../components/SectionCard.vue";
+import CellGroup from "../components/CellGroup.vue";
+import CellRow from "../components/CellRow.vue";
 const router = useRouter(),
   classes = ref<any[]>([]),
   classId = ref<number>(),
@@ -74,50 +77,65 @@ watch(() => [session.token, teacher.value], () => {
 }, { immediate: true });
 </script>
 <template>
-  <div>
+  <div class="classroom-page">
     <PageHeader title="在线课堂" subtitle="课堂讨论 · 举手互动答疑" />
-    <div class="page-padding">
-      <label
-        >选择班级<select v-model="classId" :disabled="busy" @change="load">
-          <option v-for="c in classes" :key="c.id" :value="c.id">
-            {{ c.name }}
-          </option>
-        </select></label
-      ><button
-        v-if="teacher"
-        class="primary-button start-classroom"
-        :disabled="loading || busy || !classId"
-        @click="creating = true"
-      >
-        开启课堂</button
-      ><AsyncState
-        :loading="loading"
-        :error="error"
-        :empty="!rooms.length"
-        empty-text="暂时没有课堂，等待老师开启吧"
-        @retry="load"
-        ><div class="room-list">
-          <RouterLink
-            v-for="room in rooms"
-            :key="room.id"
-            :to="'/classroom/' + room.id"
-            class="room-card corner-card"
-            ><span>{{ room.status === "LIVE" ? "进行中" : "已结束" }}</span>
-            <h2>{{ room.title }}</h2>
-            <p>
-              {{
-                room.stream_url ? "课堂视频 · 互动讨论" : "互动讨论 · 举手提问"
-              }}
-            </p>
-            <strong
-              >{{
-                room.status === "LIVE" ? "进入课堂" : "查看课堂记录"
-              }}
-              ›</strong
-            ></RouterLink
-          >
-        </div></AsyncState
-      >
+    <div class="classroom-body">
+      <SectionCard title="班级">
+        <label class="classroom-class"
+          ><span>选择班级</span
+          ><select v-model="classId" :disabled="busy" @change="load">
+            <option v-for="c in classes" :key="c.id" :value="c.id">
+              {{ c.name }}
+            </option>
+          </select></label
+        >
+      </SectionCard>
+      <CellGroup v-if="teacher" label="课堂操作">
+        <CellRow
+          label="开启课堂"
+          :disabled="loading || busy || !classId"
+          @click="creating = true"
+        />
+      </CellGroup>
+      <SectionCard title="课堂房间">
+        <AsyncState
+          :loading="loading"
+          :error="error"
+          :empty="!rooms.length"
+          empty-text="暂时没有课堂，等待老师开启吧"
+          @retry="load"
+          ><div class="classroom-rooms">
+            <RouterLink
+              v-for="room in rooms"
+              :key="room.id"
+              :to="'/classroom/' + room.id"
+              class="classroom-room"
+            >
+              <div class="classroom-room-head">
+                <span
+                  class="classroom-state"
+                  :class="{ live: room.status === 'LIVE' }"
+                  >{{
+                    room.status === "LIVE" ? "进行中" : "已结束"
+                  }}</span
+                >
+                <h3>{{ room.title }}</h3>
+              </div>
+              <p>
+                {{
+                  room.stream_url ? "课堂视频 · 互动讨论" : "互动讨论 · 举手提问"
+                }}
+              </p>
+              <strong
+                >{{
+                  room.status === "LIVE" ? "进入课堂" : "查看课堂记录"
+                }}
+                ›</strong
+              >
+            </RouterLink>
+          </div></AsyncState
+        >
+      </SectionCard>
     </div>
     <Teleport to="body"
       ><div
@@ -161,39 +179,87 @@ watch(() => [session.token, teacher.value], () => {
   </div>
 </template>
 <style scoped>
-.start-classroom {
-  width: 100%;
-  margin-top: 20px;
+.classroom-page {
+  min-height: 100dvh;
+  padding-bottom: 12px;
+  background: #f5ede4;
+  color: #2d1810;
 }
-.room-list {
+.classroom-body {
+  padding: 14px 16px 24px;
+}
+.classroom-class {
+  gap: 6px;
+  margin: 0;
+}
+.classroom-class > span {
+  color: #8a7a70;
+  font: 400 10px/1.4 var(--sans);
+  letter-spacing: 1px;
+}
+.classroom-class select {
+  min-height: 42px;
+  border-color: rgba(200, 169, 110, 0.45);
+  border-radius: 10px;
+  background: #fffdf8;
+  color: #2d1810;
+  font: 400 14px/1.4 var(--sans);
+  letter-spacing: 0;
+}
+.classroom-rooms {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  margin-top: 28px;
+  gap: 10px;
 }
-.room-card {
-  padding: 24px 20px;
-}
-.room-card > span {
-  font-size: 10px;
-  color: var(--clay);
-  border: 1px solid var(--gold);
-  border-radius: 20px;
-  padding: 4px 10px;
-}
-.room-card > h2 {
-  font-size: 20px;
-  margin: 20px 0 12px;
-}
-.room-card > p {
-  font-size: 12px;
-  color: var(--muted);
-}
-.room-card > strong {
+.classroom-room {
   display: block;
-  font-size: 12px;
-  color: var(--clay);
-  font-weight: 500;
-  margin-top: 22px;
+  padding: 14px;
+  border: 1px solid rgba(200, 169, 110, 0.28);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.55);
+}
+.classroom-room:active {
+  background: rgba(200, 169, 110, 0.12);
+}
+.classroom-room-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.classroom-state {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border: 1px solid rgba(200, 169, 110, 0.55);
+  border-radius: 999px;
+  color: #8a6125;
+  font: 400 10px/1.5 var(--sans);
+  letter-spacing: 0.5px;
+}
+.classroom-state.live {
+  border-color: rgba(139, 26, 26, 0.35);
+  background: #fff0f0;
+  color: #8b1a1a;
+}
+.classroom-room h3 {
+  display: -webkit-box;
+  min-width: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  color: #2d1810;
+  font: 500 14px/1.5 var(--sans);
+}
+.classroom-room p {
+  margin-top: 6px;
+  color: #8a7a70;
+  font: 400 11px/1.6 var(--sans);
+}
+.classroom-room strong {
+  display: block;
+  margin-top: 10px;
+  color: #8b1a1a;
+  font: 500 12px/1.5 var(--serif);
+  letter-spacing: 0.5px;
 }
 </style>

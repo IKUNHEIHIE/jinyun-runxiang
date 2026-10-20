@@ -15,6 +15,8 @@ import { formatDate } from "../dates";
 import { useRouter } from "vue-router";
 import { designImage, designIcon } from "../design";
 import AsyncState from "../components/AsyncState.vue";
+import PageHeader from "../components/PageHeader.vue";
+import SectionCard from "../components/SectionCard.vue";
 const router = useRouter(),
   screen = "layer-40-07198";
 const img = (node: string) => designImage(screen, node),
@@ -371,64 +373,59 @@ watch(
 );
 </script>
 <template>
-  <div
-    class="walking-profile"
-    data-design-node="40:07198"
-    :style="{ backgroundImage: 'url(' + img('40:07200') + ')' }"
-  >
-    <header class="walker-header">
-      <button aria-label="返回上一页" @click="router.back()">
-        <img :src="icon('40:05889')" alt="" />
-      </button>
-      <h1>个人中心</h1>
-      <button aria-label="个人资料设置" @click="editProfile">
-        <img :src="icon('40:05893')" alt="" />
-      </button>
-    </header>
-    <section class="walker-identity">
+  <div class="walking-profile" data-design-node="40:07198">
+    <PageHeader title="个人中心" subtitle="文化行者">
       <button
-        class="walking-avatar"
-        aria-label="编辑个人资料"
+        class="walker-settings"
+        aria-label="个人资料设置"
         @click="editProfile"
       >
-        <span
-          ><img
-            v-if="session.profile?.avatar_url"
-            :src="mediaUrl(session.profile.avatar_url)"
-            alt=""
-          /><b v-else>{{
-            session.profile?.nickname?.slice(0, 1) || "学"
-          }}</b></span
-        ><i><img :src="icon('40:05897')" alt="" /></i>
+        <img :src="icon('40:05893')" alt="" />
       </button>
-      <h2>{{ session.profile?.nickname || "文化行者" }}</h2>
-      <div class="walker-labels">
-        <span><img :src="icon('40:05901')" alt="" />行走 · 非遗</span
-        ><span><img :src="icon('40:05905')" alt="" />文化行者</span>
-      </div>
-      <div class="walking-counters">
-        <button @click="historyVisible = true">
-          <strong>{{ count(footprints.landmark_count) }}</strong
-          ><span>足迹</span
-          ><small
-            >已探
-            {{ loading ? "—" : (totalDistance / 1000).toFixed(2) }}km</small
-          ></button
-        ><RouterLink to="/me/collections"
-          ><strong>{{ count(summary.collection_count) }}</strong
-          ><span>收藏</span><small>非遗好物</small></RouterLink
-        ><RouterLink to="/me/posts"
-          ><strong>{{ count(summary.like_count) }}</strong
-          ><span>获赞</span><small>知音共赏</small></RouterLink
+    </PageHeader>
+    <div class="walker-content">
+      <section class="walker-identity corner-card">
+        <button
+          class="walking-avatar"
+          aria-label="编辑个人资料"
+          @click="editProfile"
         >
-      </div>
-    </section>
-    <main class="walker-content">
-      <section class="walking-today">
-        <div class="walker-heading">
-          <h2>今日行走</h2>
-          <span>{{ today }}</span>
+          <span
+            ><img
+              v-if="session.profile?.avatar_url"
+              :src="mediaUrl(session.profile.avatar_url)"
+              alt=""
+            /><b v-else>{{
+              session.profile?.nickname?.slice(0, 1) || "学"
+            }}</b></span
+          ><i><img :src="icon('40:05897')" alt="" /></i>
+        </button>
+        <h2>{{ session.profile?.nickname || "文化行者" }}</h2>
+        <div class="walker-labels">
+          <span><img :src="icon('40:05901')" alt="" />行走 · 非遗</span
+          ><span><img :src="icon('40:05905')" alt="" />文化行者</span>
         </div>
+        <div class="walking-counters">
+          <button @click="historyVisible = true">
+            <strong>{{ count(footprints.landmark_count) }}</strong
+            ><span>足迹</span
+            ><small
+              >已探
+              {{ loading ? "—" : (totalDistance / 1000).toFixed(2) }}km</small
+            ></button
+          ><RouterLink to="/me/collections"
+            ><strong>{{ count(summary.collection_count) }}</strong
+            ><span>收藏</span><small>非遗好物</small></RouterLink
+          ><RouterLink to="/me/posts"
+            ><strong>{{ count(summary.like_count) }}</strong
+            ><span>获赞</span><small>知音共赏</small></RouterLink
+          >
+        </div>
+      </section>
+      <SectionCard title="今日行走">
+        <template #meta>
+          <span class="walker-lunar">{{ today }}</span>
+        </template>
         <article
           v-if="dataReady"
           class="walk-card"
@@ -486,9 +483,8 @@ watch(
           </p>
         </article>
         <AsyncState v-else :loading="loading" :error="error" @retry="load" />
-      </section>
-      <section class="walking-explore">
-        <div class="walker-heading"><h2>探索天地</h2></div>
+      </SectionCard>
+      <SectionCard title="探索天地">
         <div class="explore-cards">
           <RouterLink to="/landmarks"
             ><div class="explore-cover">
@@ -512,11 +508,11 @@ watch(
             <p>匠心手作，共创文化新生</p></RouterLink
           >
         </div>
-      </section>
-      <section class="walking-badges">
-        <div class="walker-heading">
-          <h2>所获徽章</h2>
+      </SectionCard>
+      <SectionCard title="所获徽章">
+        <template #meta>
           <button
+            class="badge-more"
             :disabled="loading || (!badges.length && !!error)"
             @click="
               historyVisible = false;
@@ -532,7 +528,7 @@ watch(
             }}
             ›
           </button>
-        </div>
+        </template>
         <AsyncState
           :loading="loading"
           :error="badges.length ? '' : error"
@@ -551,10 +547,9 @@ watch(
             </button>
           </div></AsyncState
         >
-      </section>
-      <section class="walking-services">
-        <div class="walker-heading"><h2>我的服务</h2></div>
-        <div>
+      </SectionCard>
+      <SectionCard title="我的服务">
+        <div class="service-links">
           <RouterLink to="/me/reviews"
             ><span><img :src="icon('40:05945')" alt="" /></span>我的评价<img
               :src="icon('40:05949')"
@@ -565,8 +560,8 @@ watch(
               alt=""
           /></RouterLink>
         </div>
-      </section>
-    </main>
+      </SectionCard>
+    </div>
     <Teleport to="body"
       ><div
         v-if="activeBadge || historyVisible || walkControlsVisible"
@@ -578,7 +573,7 @@ watch(
         "
       >
         <section
-          class="auth-sheet walker-sheet"
+          class="auth-sheet corner-card walker-sheet"
           role="dialog"
           aria-modal="true"
           :aria-label="
@@ -704,76 +699,65 @@ watch(
 <style scoped>
 .walking-profile,
 .walker-sheet {
-  --walker-ink: #3f3830;
-  --walker-green: #6b8e6b;
-  --walker-muted: #9c8f7e;
+  --walker-muted: #8a7a70;
+  --walker-gold: #8a6125;
+  --walker-red: #8b1a1a;
 }
 .walking-profile {
-  background-color: #d4d6c1;
-  background-position: center top;
-  background-size: 100% 420px;
-  background-repeat: no-repeat;
-  color: var(--walker-ink);
-  font-family: "Noto Serif SC", serif;
-  min-height: 1437px;
+  min-height: 100dvh;
+  padding-bottom: 12px;
+  background: #f5ede4;
+  color: #2d1810;
 }
-.walking-profile h1,
 .walking-profile h2,
 .walking-profile h3,
 .walking-profile p {
   margin: 0;
   font-weight: 400;
 }
-.walker-header {
-  height: 60px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 4px 20px 16px;
-}
-.walker-header h1 {
-  font-size: 16px;
-  line-height: 24px;
-  letter-spacing: 0.6px;
-  margin-top: 8px;
-}
-.walker-header button {
-  width: 40px;
-  height: 40px;
+.walker-settings {
+  width: 34px;
+  height: 34px;
   display: grid;
   place-items: center;
-  background: #fff9;
+  border: 1px solid rgba(139, 105, 48, 0.18);
   border-radius: 50%;
-  box-shadow: 0 2px 8px #0000000f;
+  background: rgba(255, 255, 255, 0.6);
 }
-.walker-header img {
-  width: 20px;
-  height: 20px;
+.walker-settings img {
+  width: 16px;
+  height: 16px;
+}
+.walker-content {
+  padding: 14px 16px 24px;
 }
 .walker-identity {
-  padding: 8px 20px 24px;
+  margin-bottom: 14px;
+  padding: 18px 16px 0;
+  overflow: hidden;
+  background: #fdf9f2;
   text-align: center;
-  min-height: 329px;
 }
 .walking-avatar {
-  width: 96px;
-  height: 96px;
   position: relative;
-  padding: 5px;
-  background: linear-gradient(135deg, #a8c5a0 5%, #8fbc8f 50%, #6b8e6b 100%);
-  border-radius: 50%;
-  box-shadow: 0 8px 24px #8fbc8f4d;
-  margin: auto;
   display: block;
-}
-.walking-avatar > span {
   width: 86px;
   height: 86px;
+  margin: 0 auto;
+  padding: 4px;
+  border: 2px solid rgba(200, 169, 110, 0.85);
   border-radius: 50%;
-  overflow: hidden;
+  background: #8b1a1a;
+  box-shadow: 0 8px 20px rgba(139, 26, 26, 0.18);
+}
+.walking-avatar > span {
   display: grid;
   place-items: center;
-  background: #d4d6c1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #8b1a1a;
 }
 .walking-avatar img {
   width: 100%;
@@ -781,261 +765,197 @@ watch(
   object-fit: cover;
 }
 .walking-avatar b {
-  font-size: 36px;
-  font-weight: 400;
-  color: #556b55;
+  color: #f6ead9;
+  font: 400 30px/1 var(--serif);
 }
 .walking-avatar i {
   position: absolute;
-  bottom: 4px;
-  right: 4px;
+  right: 0;
+  bottom: 2px;
   width: 24px;
   height: 24px;
   display: grid;
   place-items: center;
+  border: 2px solid #fdf9f2;
   border-radius: 50%;
-  background: #8fbc8f;
-  border: 2.5px solid #fff;
-  box-shadow: 0 1px 2px #0000000d;
+  background: #8b1a1a;
 }
 .walking-avatar i img {
   width: 10px;
   height: 10px;
 }
 .walker-identity > h2 {
-  font-size: 20px;
-  line-height: 28px;
-  letter-spacing: 0.6px;
-  margin-top: 16px;
+  margin-top: 14px;
+  color: #2d1810;
+  font: 500 20px/1.4 var(--serif);
+  letter-spacing: 2px;
 }
 .walker-labels {
   display: flex;
   justify-content: center;
   gap: 8px;
   margin-top: 8px;
-  height: 30px;
 }
 .walker-labels span {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  border-radius: 15px;
-  padding: 6px 12px;
-  background: #ffffffb3;
-  color: #556b55;
-  font-size: 12px;
-  line-height: 18px;
+  gap: 5px;
+  padding: 5px 11px;
+  border: 1px solid rgba(200, 169, 110, 0.4);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.6);
+  color: #8b1a1a;
+  font: 400 10px/1.5 var(--sans);
+  letter-spacing: 1px;
 }
 .walker-labels span:last-child {
-  color: #8b6f47;
-  background: #a88b5e1a;
-  border: 1px solid #a88b5e33;
+  border-color: rgba(200, 169, 110, 0.5);
+  background: rgba(200, 169, 110, 0.12);
+  color: #8a6125;
 }
 .walker-labels img {
   width: 10px;
   height: 10px;
+  opacity: 0.8;
 }
 .walking-counters {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 20px;
+  margin-top: 16px;
+  padding: 12px 0 6px;
+  border-top: 1px solid rgba(200, 169, 110, 0.28);
 }
 .walking-counters > * {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 99px;
-  border-radius: 16px;
-  background: #ffffffcc;
-  border: 1px solid #e3ebde80;
-  box-shadow: 0 4px 16px #0000000a;
-  padding: 16px 3px;
+  gap: 2px;
+  min-width: 0;
+  padding: 4px 2px 8px;
+}
+.walking-counters > * + * {
+  border-left: 1px solid rgba(200, 169, 110, 0.2);
 }
 .walking-counters strong {
-  font-size: 20px;
-  line-height: 28px;
-  font-weight: 400;
-  color: #556b55;
+  color: #8b1a1a;
+  font: 500 19px/1.3 var(--serif);
 }
 .walking-counters span {
-  font-size: 11px;
-  line-height: 16.5px;
-  letter-spacing: 0.6px;
-  color: var(--walker-muted);
-  margin-top: 2px;
+  color: #8a7a70;
+  font: 400 10px/1.4 var(--sans);
+  letter-spacing: 1px;
 }
 .walking-counters small {
-  font-size: 10px;
-  line-height: 15px;
-  color: #b8ad9e;
-  margin-top: 3px;
+  color: #8a6125;
+  font: 400 10px/1.4 var(--sans);
 }
-.walker-content {
-  padding: 0 20px;
-}
-.walker-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  height: 24px;
-  margin-bottom: 16px;
-}
-.walker-heading h2 {
-  font-size: 16px;
-  line-height: 24px;
-  letter-spacing: 0.6px;
-  padding-left: 12px;
-  position: relative;
-}
-.walker-heading h2:before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 2px;
-  width: 4px;
-  height: 20px;
-  border-radius: 9px;
-  background: linear-gradient(#8fbc8f, #a8c5a0);
-}
-.walker-heading > span,
-.walker-heading > button {
-  font-size: 12px;
-  line-height: 16px;
-  color: #b8ad9e;
+.walker-lunar {
+  color: #8a7a70;
+  font: 400 10px/1.4 var(--sans);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 .walk-card {
+  padding: 14px;
+  border: 1px solid rgba(200, 169, 110, 0.28);
+  border-radius: 12px;
+  background: #fffdf8;
   cursor: pointer;
-  padding: 20px;
-  border-radius: 20px;
-  background: #fff;
-  box-shadow: 0 4px 20px #0000000d;
-  border: 1px solid #e3ebde4d;
-  min-height: 152px;
 }
 .walk-card:focus-visible {
-  outline: 2px solid #6b8e6b;
+  outline: 2px solid rgba(139, 26, 26, 0.4);
   outline-offset: 3px;
 }
 .walk-card-top {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
 }
 .walk-card-top > div {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
 }
 .walk-card-top h3 {
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: 0.6px;
+  color: #2d1810;
+  font: 500 14px/1.5 var(--sans);
 }
 .walk-card-top p {
-  background: #e3ebde80;
-  border-radius: 10px;
-  color: #556b55;
+  flex-shrink: 0;
   padding: 2px 7px;
-  font-size: 10px;
-  line-height: 15px;
+  border: 1px solid rgba(139, 26, 26, 0.2);
+  border-radius: 999px;
+  background: #fff0f0;
+  color: #8b1a1a;
+  font: 400 10px/1.5 var(--sans);
 }
 .walk-card-top > strong {
-  font-size: 18px;
-  line-height: 28px;
-  font-weight: 400;
-  color: var(--walker-green);
+  flex-shrink: 0;
+  color: #8b1a1a;
+  font: 500 20px/1.2 var(--serif);
 }
 .walk-progress-label {
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--walker-muted);
-  margin-top: -4px !important;
+  margin-top: 6px;
+  color: #8a7a70;
+  font: 400 10px/1.5 var(--sans);
+  letter-spacing: 0.5px;
 }
 .walk-track {
-  height: 10px;
-  border-radius: 9px;
-  background: #e3ebde;
+  height: 6px;
+  margin-top: 10px;
   overflow: hidden;
-  margin-top: 16px;
+  border-radius: 999px;
+  background: #f0e3d6;
 }
 .walk-track i {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, #8fbc8f, #6b8e6b);
   border-radius: inherit;
+  background: linear-gradient(90deg, #c8a96e, #8b1a1a);
+  transition: width 0.3s;
 }
 .walk-notes {
   display: flex;
-  gap: 12px;
-  margin-top: 12px;
+  gap: 10px;
+  margin-top: 10px;
 }
 .walk-notes p {
-  font-size: 12px;
-  line-height: 16px;
   flex: 1;
-  color: var(--walker-muted);
+  color: #8a7a70;
+  font: 400 10px/1.6 var(--sans);
 }
 .walk-notes p:last-child {
-  flex: 1.6;
-  color: var(--walker-green);
-}
-.walk-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 16px;
-}
-.walk-actions button {
-  flex: 1;
-  min-height: 36px;
-  border-radius: 12px;
-  background: var(--walker-green);
-  color: white;
-  font-size: 12px;
-  line-height: 20px;
-  padding: 8px;
-}
-.walk-actions button + button {
-  background: #e3ebde;
-  color: #556b55;
-}
-.location-note {
-  font-size: 10px;
-  line-height: 16px;
-  color: var(--walker-muted);
-  margin-top: 8px !important;
+  flex: 1.4;
+  color: #8a6125;
 }
 .walk-error {
-  font-size: 12px;
-  line-height: 20px;
-  color: #8b3a3a;
-  margin-top: 12px !important;
+  margin-top: 10px;
+  color: #8b1a1a;
+  font: 400 11px/1.7 var(--sans);
 }
 .walk-error button {
   text-decoration: underline;
 }
-.walking-explore {
-  min-height: 264px;
-  margin-top: 24px;
-}
 .explore-cards {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 10px;
 }
 .explore-cards > a {
   display: block;
-  min-height: 220px;
-  border-radius: 20px;
   overflow: hidden;
-  background: #fff;
-  box-shadow: 0 4px 20px #0000000d;
-  border: 1px solid #e3ebde4d;
+  border: 1px solid rgba(200, 169, 110, 0.28);
+  border-radius: 12px;
+  background: #fffdf8;
+}
+.explore-cards > a:active {
+  background: #fbf4ea;
 }
 .explore-cover {
-  height: 140px;
   position: relative;
+  height: 112px;
   overflow: hidden;
 }
 .explore-cover > img {
@@ -1047,192 +967,204 @@ watch(
 }
 .explore-cover > span {
   position: absolute;
-  left: 12px;
-  top: 12px;
+  left: 8px;
+  top: 8px;
   display: grid;
   place-items: center;
-  height: 32px;
-  width: 32px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
-  background: #ffffffe6;
-  box-shadow: 0 1px 2px #0000000d;
+  background: rgba(255, 253, 248, 0.9);
+  box-shadow: 0 1px 4px rgba(60, 38, 24, 0.12);
 }
 .explore-cover > span img {
-  width: 18px;
-  height: 18px;
+  width: 14px;
+  height: 14px;
 }
 .explore-cards h3 {
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: 0.6px;
-  margin: 12px 12px 4px;
+  margin: 10px 10px 4px;
+  color: #2d1810;
+  font: 500 13px/1.5 var(--sans);
 }
 .explore-cards p {
-  font-size: 11px;
-  line-height: 16px;
-  letter-spacing: 0.6px;
-  color: var(--walker-muted);
-  margin: 0 12px 12px;
-}
-.walking-badges {
-  min-height: 144px;
-  margin-top: 20px;
+  margin: 0 10px 12px;
+  color: #8a7a70;
+  font: 400 10px/1.5 var(--sans);
 }
 .badge-grid {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   overflow-x: auto;
-  padding-bottom: 8px;
+  padding: 2px 2px 8px;
+  scrollbar-width: none;
+}
+.badge-grid::-webkit-scrollbar {
+  display: none;
 }
 .badge-grid button {
-  flex: 0 0 72px;
+  flex: 0 0 64px;
   display: flex;
-  align-items: center;
   flex-direction: column;
-  gap: 8px;
-  font-size: 11px;
-  line-height: 16.5px;
-  letter-spacing: 0.6px;
-  color: #5e5449;
+  align-items: center;
+  gap: 7px;
+  color: #5a3e36;
+  font: 400 10px/1.5 var(--sans);
+  letter-spacing: 0.5px;
+  text-align: center;
 }
 .badge-grid span {
   position: relative;
-  display: block;
-  width: 72px;
-  height: 72px;
+  width: 64px;
+  height: 64px;
   padding: 4px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #a8c5a0, #6b8e6b);
-  box-shadow: 0 4px 12px #0000000f;
+  background: linear-gradient(135deg, #e8d9a8, #c8a96e);
+  box-shadow: 0 4px 12px rgba(138, 97, 37, 0.16);
 }
 .badge-grid span::after {
   content: "";
   position: absolute;
   inset: 2px;
-  border: 2px solid #fff;
+  border: 2px solid #fffdf8;
   border-radius: 50%;
 }
 .badge-grid img {
-  height: 64px;
-  width: 64px;
-  object-fit: cover;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
+  object-fit: cover;
 }
 .badge-grid .locked {
   opacity: 0.45;
   filter: grayscale(1);
 }
-.badge-course-link {
-  display: block;
-  padding: 10px 16px;
-  border-radius: 12px;
-  background: #6b8e6b;
-  color: white;
-  text-align: center;
+.badge-more {
+  flex-shrink: 0;
+  padding: 3px 0;
+  color: #8a6125;
+  font: 400 10px/1.4 var(--sans);
+  letter-spacing: 1px;
 }
-.walking-services {
-  margin-top: 20px;
-}
-.walking-services > div:last-child {
-  background: #fff;
-  border-radius: 20px;
+.service-links {
   overflow: hidden;
-  box-shadow: 0 4px 20px #0000000d;
+  border-radius: 10px;
 }
-.walking-services a {
-  min-height: 68px;
-  padding: 16px 20px;
+.service-links a {
   display: flex;
-  gap: 12px;
   align-items: center;
-  font-size: 14px;
-  line-height: 20px;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 2px;
+  color: #2d1810;
+  font: 400 14px/1.4 var(--sans);
 }
-.walking-services a + a {
-  border-top: 1px solid #e3ebde66;
+.service-links a + a {
+  border-top: 1px solid rgba(200, 169, 110, 0.2);
 }
-.walking-services a > span {
-  height: 36px;
-  width: 36px;
-  border-radius: 50%;
-  background: #e3ebde80;
+.service-links a > span {
   display: grid;
   place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(200, 169, 110, 0.16);
 }
-.walking-services a > span img {
-  height: 16px;
-  width: 16px;
+.service-links a > span img {
+  width: 14px;
+  height: 14px;
 }
-.walking-services a > img {
+.service-links a > img {
+  width: 12px;
+  height: 12px;
   margin-left: auto;
-  height: 16px;
-  width: 16px;
+  opacity: 0.55;
 }
 .walker-sheet {
-  background: #f4f7f2;
-  border-radius: 20px;
-  color: #3f3830;
-  position: relative;
+  background: #fdf9f2;
+  color: #2d1810;
+}
+.walker-sheet h2 {
+  margin: 4px 0 10px;
+  color: #2d1810;
+  font: 500 20px/1.35 var(--serif);
+  letter-spacing: 2px;
 }
 .walker-sheet > p,
 .walker-sheet article p {
-  font-size: 12px;
-  line-height: 20px;
-  color: #6b8e6b;
   margin-top: 8px;
+  color: #5a3e36;
+  font: 400 12px/1.8 var(--sans);
+}
+.walker-sheet .walk-error {
+  color: #8b1a1a;
 }
 .walker-sheet article {
-  padding: 16px 0;
-  border-bottom: 1px solid #e3ebde;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(200, 169, 110, 0.22);
 }
 .walker-sheet article h3 {
-  font-size: 14px;
-  line-height: 22px;
+  color: #2d1810;
+  font: 500 13px/1.7 var(--sans);
+}
+.walk-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+.walk-actions button {
+  flex: 1;
+  min-height: 42px;
+  padding: 8px 10px;
+  border: 1px solid rgba(200, 169, 110, 0.5);
+  border-radius: 10px;
+  background: rgba(200, 169, 110, 0.14);
+  color: #8a6125;
+  font: 500 12px/1.4 var(--sans);
+  letter-spacing: 1px;
+}
+.walk-actions button:last-child {
+  border-color: #8b1a1a;
+  background: #8b1a1a;
+  color: #f6ead9;
+}
+.location-note {
+  margin-top: 10px;
+  color: #8a7a70;
+  font: 400 10px/1.6 var(--sans);
 }
 .catalog-badge {
   display: flex;
   align-items: center;
   gap: 12px;
-  text-align: left;
   width: 100%;
-  padding: 12px 0;
+  padding: 10px 0;
+  text-align: left;
 }
 .catalog-badge img {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   object-fit: contain;
+}
+.catalog-badge > span {
+  color: #2d1810;
+  font: 500 13px/1.5 var(--sans);
 }
 .catalog-badge small {
   display: block;
-  margin-top: 4px;
-  color: #9c8f7e;
+  margin-top: 2px;
+  color: #8a7a70;
+  font: 400 10px/1.5 var(--sans);
 }
-@media (max-width: 370px) {
-  .badge-grid {
-    gap: 10px;
-  }
-  .badge-grid span {
-    width: 64px;
-    height: 64px;
-  }
-  .badge-grid img {
-    width: 56px;
-    height: 56px;
-  }
-  .walk-card {
-    padding: 16px;
-  }
-  .walk-card-top > div {
-    gap: 4px;
-  }
-  .walk-card-top h3 {
-    font-size: 13px;
-  }
-  .walker-labels {
-    gap: 6px;
-  }
-  .walker-labels span {
-    padding: 6px 10px;
-  }
+.badge-course-link {
+  display: grid;
+  place-items: center;
+  min-height: 42px;
+  margin-top: 12px;
+  border-radius: 10px;
+  background: #8b1a1a;
+  color: #f6ead9;
+  font: 500 13px/1.4 var(--sans);
+  letter-spacing: 1px;
 }
 </style>
+

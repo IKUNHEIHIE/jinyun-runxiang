@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { designImage, designIcon } from "../design";
-import { mediaUrl, notify } from "../api";
+import { mediaUrl, notify, requireSession } from "../api";
 const props = defineProps<{
   generationMode: string;
   task?: any;
   working: boolean;
+  uploading: boolean;
   loading: boolean;
   error: string;
   publishing: boolean;
@@ -19,11 +20,13 @@ const emit = defineEmits<{
   export: [];
   favorite: [];
   publish: [];
+  upload: [event: Event];
 }>();
 const role = defineModel<string>("role", { required: true });
 const color = defineModel<string>("color", { required: true });
 const prompt = defineModel<string>("prompt", { required: true });
 const faceStyle = defineModel<string>("faceStyle", { required: true });
+const sketch = defineModel<string>("sketch", { required: true });
 const selectedResult = defineModel<string>("selectedResult", {
   required: true,
 });
@@ -31,7 +34,11 @@ const screen = "layer-5-3193" as const;
 const roleBox = ref<HTMLElement | null>(null),
   paletteBox = ref<HTMLElement | null>(null),
   description = ref<HTMLTextAreaElement | null>(null),
-  history = ref<HTMLElement | null>(null);
+  history = ref<HTMLElement | null>(null),
+  fileInput = ref<HTMLInputElement | null>(null);
+const disabled = computed(
+  () => props.working || props.loading || props.uploading,
+);
 const hasResult = computed(
   () => props.task?.status === "SUCCESS" && !!props.task?.result,
 );
@@ -109,6 +116,13 @@ function generate() {
   if (!prompt.value.trim()) description.value?.focus();
   emit("generate");
 }
+function chooseUpload() {
+  if (!disabled.value && requireSession()) fileInput.value?.click();
+}
+function uploaded(event: Event) {
+  if (!(event.target as HTMLInputElement).files?.length) return;
+  emit("upload", event);
+}
 function exportResult() {
   if (hasResult.value) emit("export");
   else notify("请先生成皮影角色");
@@ -138,23 +152,19 @@ function publish() {
   <div class="shadow-workshop" data-design-node="5:3193">
     <header class="shadow-header">
       <img class="hero-photo" :src="designImage(screen, '5:3835')" alt="" />
-      <div class="hero-paper" aria-hidden="true" />
-      <img class="hero-art" :src="designImage(screen, '5:3846')" alt="" />
-      <img class="hero-decoration" :src="designIcon(screen, '5:3838')" alt="" />
+      <div class="hero-veil" aria-hidden="true" />
       <button class="shadow-back" aria-label="返回上一页" @click="emit('back')">
         <img :src="designIcon(screen, '40:55070')" alt="" />
       </button>
-      <div class="vertical-motto">
-        <span>非遗传承</span><span>匠心独具</span>
+      <span class="shadow-seal" aria-hidden="true">影</span>
+      <div class="shadow-hero-copy">
+        <span class="shadow-kicker">蓟州皮影 · 非遗数字工坊</span>
+        <h1><span>AI</span>皮影角色设计</h1>
+        <p>一刀一刻承古韵 · 一光一影舞千秋</p>
+        <div class="shadow-meta">
+          <i />千年光影<i />数字新生
+        </div>
       </div>
-      <span class="ai-label">AI赋能</span>
-      <div class="heritage-title">
-        <span>蓟州皮影</span>
-        <p>千年光影</p>
-        <small>一刀一刻承古韵 · 一光一影舞千秋</small>
-      </div>
-      <span class="heritage-seal">非物质文化遗产</span>
-      <h1><span>AI皮影</span><strong>角色设计</strong></h1>
     </header>
     <form
       class="shadow-form"
@@ -292,10 +302,62 @@ function publish() {
               </button>
             </div>
           </section>
+          <section class="control-card reference-card">
+            <h2>参考图 · 选填</h2>
+            <div class="reference-body">
+              <button
+                class="upload-target"
+                :class="{ filled: !!sketch }"
+                :disabled="disabled"
+                :aria-label="sketch ? '重新上传参考图' : '上传皮影参考图'"
+                @click="chooseUpload"
+              >
+                <img
+                  v-if="sketch"
+                  class="uploaded-sketch"
+                  :src="mediaUrl(sketch)"
+                  alt="已上传的参考图"
+                />
+                <template v-else
+                  ><b aria-hidden="true">+</b
+                  ><span>{{ uploading ? "上传中…" : "点击上传" }}</span
+                  ><small>草图 / 照片</small></template
+                >
+              </button>
+              <input
+                ref="fileInput"
+                class="file-input"
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                @change="uploaded"
+              />
+              <div class="reference-copy">
+                <p>
+                  {{
+                    generationMode === "AI"
+                      ? sketch
+                        ? "AI 模式会按这张参考图重绘轮廓与配色"
+                        : "选择或拍摄一张皮影、照片，AI 模式可按图重绘"
+                      : sketch
+                        ? "本地模板不识别图片，参考图仅作构图记录"
+                        : "本地模板按角色与配色生成，不读取图片内容"
+                  }}
+                </p>
+                <button
+                  v-if="sketch"
+                  type="button"
+                  :disabled="disabled"
+                  @click="sketch = ''"
+                >
+                  移除参考图
+                </button>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
       <slot name="generation-mode" />
-      <button class="generate-button" :disabled="working || loading">
+      <button class="generate-button" :disabled="disabled">
         <img :src="designIcon(screen, '5:3663')" alt="" />{{
           working ? "正在创作…" : generationMode === 'AI' ? "AI 生成皮影" : "生成本地皮影"
         }}
@@ -422,158 +484,129 @@ function publish() {
   height: 276px;
   overflow: hidden;
 }
+.shadow-header {
+  position: relative;
+  height: 286px;
+  overflow: hidden;
+  background: #f7f0e2;
+}
 .hero-photo {
   position: absolute;
-  left: 15px;
-  top: -4px;
-  width: calc(100% - 25px);
-  height: 280px;
+  right: 0;
+  top: 0;
+  width: 72%;
+  height: 100%;
   object-fit: cover;
+  object-position: center top;
 }
-.hero-paper {
+.hero-veil {
   position: absolute;
-  left: 75px;
-  right: 5px;
-  top: 67px;
-  height: 125px;
-  background: #fff;
-}
-.hero-art {
-  position: absolute;
-  left: 16px;
-  top: 98px;
-  width: 313.55px;
-  height: 165px;
-  object-fit: fill;
-}
-.hero-decoration {
-  position: absolute;
-  right: 16px;
-  top: 20px;
-  width: 64px;
-  height: 64px;
-  opacity: 0.2;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(250, 246, 238, 0.99) 0%, rgba(250, 246, 238, 0.96) 46%, rgba(250, 246, 238, 0.32) 72%, rgba(250, 246, 238, 0.08) 100%),
+    linear-gradient(180deg, transparent 58%, rgba(250, 246, 238, 0.94) 100%);
 }
 .shadow-back {
   position: absolute;
-  left: 15px;
-  top: 0;
-  width: 40px;
-  height: 40px;
+  left: 16px;
+  top: 16px;
+  width: 38px;
+  height: 38px;
   padding: 0;
-  border: 1px solid rgba(201, 168, 76, 0.3);
-  border-radius: 50%;
-  background: rgba(240, 230, 208, 0.8);
+  border: 1px solid rgba(139, 105, 48, 0.4);
+  border-radius: 8px;
+  background: rgba(250, 246, 238, 0.88);
   display: grid;
   place-items: center;
-  z-index: 2;
+  z-index: 3;
 }
 .shadow-back img {
-  width: 5.833px;
-  height: 11.667px;
+  width: 6px;
+  height: 12px;
 }
-.vertical-motto {
+.shadow-seal {
   position: absolute;
-  left: 33.79px;
-  top: 28px;
+  right: 22px;
+  top: 22px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid rgba(139, 26, 26, 0.75);
+  border-radius: 3px;
+  color: #8b1a1a;
+  background: rgba(250, 246, 238, 0.55);
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1;
+  transform: rotate(-4deg);
+}
+.shadow-hero-copy {
+  position: absolute;
+  left: 20px;
+  top: 74px;
+  z-index: 2;
+  max-width: 86%;
   display: flex;
-  gap: 8px;
-  opacity: 0.6;
+  flex-direction: column;
+  align-items: flex-start;
 }
-.vertical-motto span {
-  writing-mode: vertical-rl;
-  font-size: 12px;
-  line-height: 16px;
-  letter-spacing: 2.24px;
-  color: #785223;
-  font-weight: 700;
+.shadow-kicker {
+  padding: 4px 9px;
+  border: 1px solid rgba(139, 105, 48, 0.35);
+  border-radius: 999px;
+  color: #8a6a37;
+  background: rgba(250, 246, 238, 0.72);
+  font-size: 9px;
+  letter-spacing: 1.8px;
 }
-.ai-label {
-  position: absolute;
-  top: 28px;
-  left: 76.56px;
-  padding: 4.5px 9px;
-  font-size: 10px;
-  line-height: 15px;
-  font-weight: 700;
-  letter-spacing: -0.9px;
-  color: #99854b;
-  border: 1px solid rgba(201, 168, 76, 0.3);
-  border-radius: 4px;
-}
-.shadow-header h1 {
-  margin: 0;
+.shadow-hero-copy h1 {
+  margin: 14px 0 0;
   font-family: "Ma Shan Zheng", var(--serif);
+  font-size: 42px;
+  line-height: 1.18;
   font-weight: 400;
-  color: #a8800f;
+  letter-spacing: 2px;
+  color: #2c1810;
+  text-shadow: 0 1px rgba(255, 250, 238, 0.7);
 }
-.shadow-header h1 span {
-  position: absolute;
-  left: 76.56px;
-  top: 73px;
-  font-size: 48px;
-  line-height: 60px;
-  font-weight: 400;
-  white-space: nowrap;
+.shadow-hero-copy h1 span {
+  margin-right: 6px;
+  color: #8b1a1a;
+  font-size: 36px;
 }
-.shadow-header h1 strong {
-  position: absolute;
-  left: 76.56px;
-  top: 127px;
-  font-size: 60px;
-  line-height: 60px;
-  font-weight: 400;
-  white-space: nowrap;
+.shadow-hero-copy > p {
+  margin: 10px 0 0;
+  font-size: 11px;
+  line-height: 1.7;
+  letter-spacing: 1px;
+  color: rgba(60, 40, 24, 0.68);
 }
-.heritage-title {
-  position: absolute;
-  top: 187px;
-  left: 40.18px;
-  color: var(--shadow-gold);
+.shadow-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #9a7a3e;
 }
-.heritage-title > span {
-  display: block;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 16px;
-  letter-spacing: 2.24px;
-  margin-left: 36px;
-}
-.heritage-title > p {
-  margin-top: 11px;
-  font:
-    30px/37.5px "Ma Shan Zheng",
-    var(--serif);
-}
-.heritage-title > small {
-  display: block;
-  margin-top: 5px;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--shadow-muted);
-  white-space: nowrap;
-}
-.heritage-seal {
-  position: absolute;
-  top: 189.52px;
-  left: 270.15px;
-  writing-mode: vertical-rl;
-  font-size: 10px;
-  line-height: 12px;
-  letter-spacing: 2.24px;
-  font-weight: 700;
-  color: #c9a84c;
+.shadow-meta i {
+  width: 12px;
+  height: 1px;
+  background: rgba(139, 105, 48, 0.45);
 }
 .shadow-form {
   display: block;
-  margin: 0 4.2px 0 20.6px;
+  margin: 16px 16px 0;
 }
 .design-columns {
   display: grid;
   grid-template-columns: minmax(0, 192.366fr) minmax(0, 145.172fr);
-  gap: 12.23px;
+  gap: 14px;
   min-height: 531px;
-  background: rgba(205, 186, 154, 0.59);
+  background: transparent;
 }
 .preview-column,
 .settings-column {
@@ -828,6 +861,80 @@ function publish() {
   box-shadow:
     0 0 15px rgba(201, 168, 76, 0.3),
     0 0 0 2px var(--shadow-gold);
+}
+.reference-card {
+  margin-top: 12px;
+  min-height: 118px;
+}
+.reference-body {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  align-items: flex-start;
+}
+.upload-target {
+  flex: none;
+  width: 76px;
+  height: 76px;
+  padding: 0;
+  border: 1px dashed rgba(139, 26, 26, 0.45);
+  border-radius: 10px;
+  background: rgba(245, 237, 224, 0.7);
+  color: var(--shadow-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  overflow: hidden;
+}
+.upload-target.filled {
+  border-style: solid;
+  border-color: rgba(201, 168, 76, 0.55);
+}
+.upload-target b {
+  font: 400 22px/22px var(--serif);
+  color: rgba(139, 26, 26, 0.7);
+}
+.upload-target span {
+  font-size: 10px;
+  line-height: 15px;
+  font-weight: 700;
+  color: var(--shadow-ink);
+}
+.upload-target small {
+  font-size: 9px;
+  line-height: 13px;
+}
+.uploaded-sketch {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: var(--shadow-paper);
+}
+.file-input {
+  display: none;
+}
+.reference-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.reference-copy p {
+  margin: 0;
+  font-size: 10px;
+  line-height: 16px;
+  color: var(--shadow-muted);
+}
+.reference-copy button {
+  align-self: flex-start;
+  padding: 5px 9px;
+  border: 1px solid rgba(139, 26, 26, 0.4);
+  border-radius: 7px;
+  color: #8b1a1a;
+  font-size: 10px;
+  line-height: 14px;
 }
 .generate-button {
   margin: 35px 14.92px 0;

@@ -49,3 +49,5 @@ user-web/android/app/src/main/assets/
 backend/static/uploads/
 backend/static/generated/
 /*.apk
+# Workshop capability-URL signing key (never commit)
+backend/data/*.key

@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { api, mediaUrl } from "../api";
+import { api } from "../api";
 import { designImage } from "../design";
 import AsyncState from "../components/AsyncState.vue";
+import PageHeader from "../components/PageHeader.vue";
+import SectionCard from "../components/SectionCard.vue";
+import SkeletonImage from "../components/SkeletonImage.vue";
 const router = useRouter();
 const keyword = ref(""),
   entries = ref<any[]>([]),
@@ -47,10 +50,8 @@ onMounted(() => search());
 </script>
 <template>
   <div class="heritage-page" data-design-node="40:32437">
-    <div class="heritage-top">
-      <button class="heritage-back" aria-label="返回上一页" @click="back">
-        ‹
-      </button>
+    <PageHeader title="非遗百科" subtitle="天津非物质文化遗产" />
+    <div class="heritage-body">
       <form class="heritage-quick-search" @submit.prevent="quickSearch">
         <label class="sr-only" for="heritage-quick-input"
           >搜索文物与非遗资源</label
@@ -61,54 +62,45 @@ onMounted(() => search());
           maxlength="100"
         /><button>搜索</button>
       </form>
-    </div>
-    <section
-      class="heritage-hero"
-      :style="{
-        backgroundImage:
-          'linear-gradient(90deg,rgba(245,240,232,.94) 0%,rgba(245,240,232,.72) 52%,rgba(245,240,232,.28) 100%),url(' +
-          designImage('layer-40-32437', '5:01455') +
-          ')',
-      }"
-    >
-      <p class="eyebrow">TIANJIN HERITAGE</p>
-      <h1>津门遗韵<br /><em>美育传承</em></h1>
-      <p class="subtle">
-        图文探索天津非物质文化遗产，从青铜器纹样到皮影戏光影，<br />让传统美学融入现代教育，传承津门文化根脉。
-      </p>
-      <button class="primary-button" type="button" @click="explore">开始探索</button
-      ><RouterLink class="text-button" to="/teacher/lesson-plan"
-        >浏览教案</RouterLink
+      <section
+        class="heritage-hero corner-card"
+        :style="{
+          backgroundImage:
+            'linear-gradient(90deg,rgba(245,240,232,.94) 0%,rgba(245,240,232,.72) 52%,rgba(245,240,232,.28) 100%),url(' +
+            designImage('layer-40-32437', '5:01455') +
+            ')',
+        }"
       >
-      <div class="heritage-stats" aria-label="平台资源统计">
-        <div class="heritage-stat">
-          <strong
-            >{{ stats ? stats.heritage_projects : "—"
-            }}<span v-if="stats">+</span></strong
-          ><small>非遗项目</small>
+        <p class="eyebrow">TIANJIN HERITAGE</p>
+        <h1>津门遗韵<br /><em>美育传承</em></h1>
+        <p class="heritage-hero-desc">
+          图文探索天津非物质文化遗产，从青铜器纹样到皮影戏光影，<br />让传统美学融入现代教育，传承津门文化根脉。
+        </p>
+        <div class="heritage-hero-actions">
+          <button class="primary-button" type="button" @click="explore">
+            开始探索</button
+          ><RouterLink class="text-button" to="/teacher/lesson-plan"
+            >浏览教案</RouterLink
+          >
         </div>
-        <i aria-hidden="true" />
-        <div class="heritage-stat">
-          <strong
-            >{{ stats ? stats.teaching_resources : "—"
-            }}<span v-if="stats">+</span></strong
-          ><small>教学资源</small>
+        <div class="heritage-stats" aria-label="平台资源统计">
+          <div class="heritage-stat">
+            <strong
+              >{{ stats ? stats.heritage_projects : "—"
+              }}<span v-if="stats">+</span></strong
+            ><small>非遗项目</small>
+          </div>
+          <i aria-hidden="true" />
+          <div class="heritage-stat">
+            <strong
+              >{{ stats ? stats.teaching_resources : "—"
+              }}<span v-if="stats">+</span></strong
+            ><small>教学资源</small>
+          </div>
         </div>
-      </div>
-    </section>
-    <div class="page-padding">
-      <section class="heritage-search corner-card">
-        <h2>资源检索</h2>
-        <p class="subtle">快速定位您需要的非遗教学资源</p>
-        <form @submit.prevent="search()">
-          <label class="sr-only" for="heritage-search">搜索文物与非遗资源</label
-          ><input
-            id="heritage-search"
-            v-model="keyword"
-            placeholder="搜索文物、教案、皮影戏..."
-            maxlength="100"
-          /><button class="primary-button">搜索</button>
-        </form>
+      </section>
+      <SectionCard title="资源检索">
+        <p class="card-lede">快速定位您需要的非遗教学资源</p>
         <div class="hot-searches">
           <span>热门搜索：</span
           ><button
@@ -126,10 +118,9 @@ onMounted(() => search());
             {{ text }}
           </button>
         </div>
-      </section>
-      <section id="heritage-results" class="heritage-results">
-        <h2>文物图文浏览</h2>
-        <p class="subtle">探索天津非遗瑰宝，感受千年文化脉动</p>
+      </SectionCard>
+      <SectionCard id="heritage-results" title="文物图文浏览">
+        <p class="card-lede">探索天津非遗瑰宝，感受千年文化脉动</p>
         <AsyncState
           :loading="loading"
           :error="error"
@@ -142,69 +133,49 @@ onMounted(() => search());
               :key="entry.id"
               :to="'/heritage/' + entry.id"
               class="heritage-card corner-card"
-              ><img
-                :src="mediaUrl(entry.cover_url)"
+              ><SkeletonImage
+                :src="entry.cover_url"
                 :alt="entry.title"
-                loading="lazy"
+                class="heritage-cover"
               />
-              <div>
+              <div class="heritage-card-body">
                 <p class="eyebrow">{{ entry.era }}</p>
                 <h3>{{ entry.title }}</h3>
-                <p class="subtle">{{ entry.summary }}</p>
-                <span class="text-button">查看图文详情 ›</span>
+                <p class="heritage-summary">{{ entry.summary }}</p>
+                <span class="heritage-more">查看图文详情 ›</span>
               </div></RouterLink
             >
           </div></AsyncState
         >
-      </section>
+      </SectionCard>
     </div>
   </div>
 </template>
 <style scoped>
 .heritage-page {
-  position: relative;
+  min-height: 100dvh;
+  padding-bottom: 12px;
+  background: #f5ede4;
+  color: #2d1810;
 }
-.heritage-top {
-  position: absolute;
-  top: calc(10px + var(--safe-top));
-  left: 16px;
-  right: 16px;
-  z-index: 6;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.heritage-back {
-  width: 38px;
-  height: 38px;
-  flex: 0 0 38px;
-  padding: 0 0 3px;
-  border-radius: 50%;
-  border: 1px solid rgba(201, 168, 76, 0.4);
-  background: rgba(250, 246, 238, 0.86);
-  color: #6b5b45;
-  font-size: 24px;
-  line-height: 1;
-  backdrop-filter: blur(6px);
+.heritage-body {
+  padding: 14px 16px 24px;
 }
 .heritage-quick-search {
-  flex: 1 1 0;
-  width: 0;
-  min-width: 0;
-  height: 38px;
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 6px;
-  padding: 3px 4px 3px 14px;
+  height: 40px;
+  margin-bottom: 14px;
+  padding: 0 4px 0 14px;
+  border: 1px solid rgba(200, 169, 110, 0.42);
   border-radius: 999px;
-  border: 1px solid rgba(201, 168, 76, 0.4);
-  background: rgba(250, 246, 238, 0.9);
-  backdrop-filter: blur(6px);
-  box-shadow: 0 4px 16px rgba(61, 35, 20, 0.06);
+  background: rgba(255, 253, 248, 0.9);
+  box-shadow: 0 4px 14px rgba(70, 42, 26, 0.05);
 }
 .heritage-quick-search input {
-  flex: 1 1 0;
+  flex: 1;
   width: 0;
   min-width: 0;
   height: 30px;
@@ -213,145 +184,206 @@ onMounted(() => search());
   border: 0;
   background: transparent;
   box-shadow: none;
-  font-size: 12px;
+  font: 400 12px/1.4 var(--sans);
 }
 .heritage-quick-search button {
-  height: 28px;
-  min-height: 28px;
-  padding: 0 13px;
-  border: 0;
-  border-radius: 999px;
-  background: #a0522d;
-  color: #fffaf2;
-  font-size: 11px;
   flex: 0 0 auto;
+  height: 30px;
+  min-height: 30px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: #8b1a1a;
+  color: #f6ead9;
+  font: 500 11px/1 var(--sans);
+  letter-spacing: 1px;
 }
 .heritage-hero {
-  text-align: left;
-  padding: 108px 24px 40px;
-  min-height: 560px;
-  position: relative;
-  overflow: hidden;
+  margin-bottom: 14px;
+  padding: 20px 16px 16px;
+  border-radius: 14px;
+  background-color: #f7efe3;
   background-size: cover;
   background-position: center top;
 }
+.heritage-hero .eyebrow {
+  color: #8a6125;
+  letter-spacing: 2.4px;
+}
 .heritage-hero h1 {
-  font-size: 44px;
-  line-height: 1.3;
-  margin: 14px 0;
-  color: var(--clay);
+  margin: 8px 0 0;
+  font: 500 22px/1.4 var(--serif);
+  letter-spacing: 3px;
+  color: #2d1810;
 }
 .heritage-hero em {
   font-style: normal;
-  color: var(--cinnabar);
+  color: #8b1a1a;
 }
-.heritage-hero > .primary-button {
-  width: 150px;
-  display: inline-flex;
+.heritage-hero-desc {
+  margin-top: 8px;
+  color: #8a7a70;
+  font: 400 12px/1.9 var(--sans);
 }
-.heritage-hero > .text-button {
-  display: inline-block;
-  padding: 14px;
+.heritage-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.heritage-hero-actions .primary-button {
+  width: 132px;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: #8b1a1a;
+  color: #f6ead9;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+.heritage-hero-actions .text-button {
+  padding: 8px 6px;
+  color: #8b1a1a;
+  font-size: 12px;
 }
 .heritage-stats {
   display: flex;
   align-items: center;
-  gap: 32px;
-  margin-top: 26px;
-  padding-top: 32px;
+  gap: 24px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(200, 169, 110, 0.3);
 }
 .heritage-stat {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 .heritage-stat strong {
   display: flex;
   align-items: flex-start;
-  color: #5c4033;
-  font-family: var(--serif);
-  font-size: 30px;
-  font-weight: 700;
-  line-height: 36px;
-  letter-spacing: -0.25px;
+  color: #8b1a1a;
+  font: 500 20px/1.2 var(--serif);
 }
 .heritage-stat strong span {
   margin-left: 1px;
-  color: #c5a059;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 28px;
+  color: #8a6125;
+  font-size: 12px;
+  line-height: 1.6;
 }
 .heritage-stat small {
-  margin-top: 5px;
-  color: #9b7b6a;
-  font-size: 14px;
-  line-height: 20px;
+  color: #8a7a70;
+  font: 400 10px/1.5 var(--sans);
+  letter-spacing: 1px;
 }
 .heritage-stats > i {
   width: 1px;
-  height: 40px;
-  background: rgba(197, 160, 89, 0.35);
+  height: 28px;
+  background: rgba(200, 169, 110, 0.4);
 }
-.heritage-search {
-  padding: 24px 18px;
+.card-lede {
+  margin: -4px 0 12px;
+  color: #8a7a70;
+  font: 400 11px/1.7 var(--sans);
 }
-.heritage-search > p {
-  margin: 8px 0 18px;
-}
-.heritage-search form {
+.heritage-search-form {
   flex-direction: row;
+  align-items: center;
   gap: 8px;
 }
-.heritage-search input {
+.heritage-search-form input {
+  flex: 1;
+  width: 0;
   min-width: 0;
+  min-height: 42px;
+  padding: 10px 12px;
+  border-color: rgba(200, 169, 110, 0.42);
+  border-radius: 10px;
+  background: #fffdf8;
   font-size: 12px;
 }
-.heritage-search button {
-  flex-shrink: 0;
+.heritage-search-form .primary-button {
+  flex: 0 0 auto;
+  width: 76px;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: #8b1a1a;
+  color: #f6ead9;
+  font-size: 12px;
+  letter-spacing: 1px;
 }
 .hot-searches {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  font-size: 10px;
-  margin-top: 18px;
-  line-height: 1.8;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+.hot-searches > span {
+  color: #8a7a70;
+  font: 400 10px/1.5 var(--sans);
 }
 .hot-searches button {
-  padding: 0;
-  color: var(--clay);
+  padding: 4px 10px;
+  border: 1px solid rgba(200, 169, 110, 0.42);
+  border-radius: 999px;
+  background: #fffdf8;
+  color: #5a3e36;
+  font: 400 11px/1.4 var(--sans);
 }
-.heritage-results {
-  padding-top: 32px;
-  scroll-margin-top: 20px;
-}
-.heritage-results > p {
-  margin: 8px 0 20px;
+.hot-searches button:active {
+  border-color: rgba(139, 26, 26, 0.26);
+  background: rgba(139, 26, 26, 0.06);
+  color: #8b1a1a;
 }
 .heritage-grid {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
 }
 .heritage-card {
-  overflow: hidden;
+  display: block;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 300px;
+  border: 1px solid rgba(200, 169, 110, 0.3);
+  border-radius: 14px;
+  background: #fffdf8;
 }
-.heritage-card > img {
-  width: 100%;
-  height: 210px;
-  object-fit: cover;
+.heritage-card > .heritage-cover {
+  height: 156px;
+  border-radius: 14px 14px 0 0;
 }
-.heritage-card > div {
-  padding: 20px;
+.heritage-card-body {
+  padding: 12px;
+}
+.heritage-card-body .eyebrow {
+  color: #8a6125;
 }
 .heritage-card h3 {
-  font-family: var(--serif);
-  font-size: 20px;
-  margin: 6px 0 12px;
+  margin: 4px 0 6px;
+  color: #2d1810;
+  font: 500 15px/1.45 var(--serif);
+  letter-spacing: 1px;
 }
-.heritage-card .text-button {
+.heritage-summary {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  color: #8a7a70;
+  font: 400 12px/1.8 var(--sans);
+}
+.heritage-more {
   display: block;
-  padding: 14px 0 0;
+  margin-top: 8px;
+  color: #8b1a1a;
+  font: 400 11px/1.5 var(--sans);
+  letter-spacing: 0.5px;
+}
+.heritage-page :deep(.async-state) {
+  padding: 6px 2px 2px;
 }
 .sr-only {
   position: absolute;

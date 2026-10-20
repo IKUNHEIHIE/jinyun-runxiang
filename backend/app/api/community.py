@@ -5,6 +5,8 @@ from typing import Optional, Annotated
 from urllib.parse import urlsplit
 
 from app.core.database import get_db
+from app.core import file_urls, moderation
+from app.core.task_assets import task_result_urls
 from app.core.security import get_current_user, get_current_user_optional
 from app.schemas.common import success_response, error_response
 from app.models.entities import (
@@ -243,8 +245,9 @@ def publish_post(
     task = db.query(AiTask).filter_by(task_id=req.source_task_id, user_id=user_id, status="SUCCESS").first() if req.source_task_id else None
     if req.source_task_id and not task:
         raise HTTPException(404, "创作任务不存在或不属于当前用户")
-    task_urls = {v for k,v in (task.result_summary_json or {}).items() if k.endswith("_url") and isinstance(v, str)} if task else set()
-    gallery = list(dict.fromkeys([req.cover_url] + req.gallery))
+    task_urls = task_result_urls(task) if task else set()
+    cover_url = file_urls.split_signature(req.cover_url)[0]
+    gallery = list(dict.fromkeys([cover_url] + [file_urls.split_signature(url)[0] for url in req.gallery]))
     if len(gallery) > 10:
         raise HTTPException(422, "作品图集最多包含10张图片")
     for url in gallery:
@@ -260,9 +263,11 @@ def publish_post(
         raise HTTPException(404, "话题不存在")
 
     # Keyword screening only. No image model has been configured here.
-    sensitive_words = ["暴力", "低俗", "赌博", "违规"]
+    sensitive_words = moderation.screening_words(db)
     submitted_text = req.title + req.content + " ".join(s.label+s.value for s in req.specifications) + " ".join(p.title+p.body for p in req.appreciation)
-    has_sensitive = any(w in submitted_text for w in sensitive_words)
+    # Same rule set as the workshop: hidden characters and injection phrasing route the post to a
+    # human review queue instead of slipping through a raw substring match.
+    has_sensitive = moderation.find_blocked_text(submitted_text, sensitive_words) is not None
     initial_status = "PENDING_REVIEW" if has_sensitive else "APPROVED"
 
     post = CommunityPost(
@@ -270,7 +275,7 @@ def publish_post(
         title=req.title,
         content=req.content,
         category=req.category,
-        cover_url=req.cover_url,
+        cover_url=cover_url,
         source_task_id=req.source_task_id,
         topic_id=req.topic_id,
         status=initial_status

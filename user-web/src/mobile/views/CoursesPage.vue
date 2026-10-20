@@ -4,11 +4,18 @@ import { useRoute, useRouter } from "vue-router";
 import { api } from "../api";
 import { categories, designImage, designIcon } from "../design";
 import AsyncState from "../components/AsyncState.vue";
+import PageHeader from "../components/PageHeader.vue";
+import SectionCard from "../components/SectionCard.vue";
 import CourseCard from "../components/CourseCard.vue";
+import PagerBar from "../components/PagerBar.vue";
+import PullToRefresh from "../components/PullToRefresh.vue";
 const route = useRoute(), router = useRouter();
+const PAGE_SIZE = 20;
 const courses = ref<any[]>([]),
   loading = ref(false),
   error = ref("");
+const page = ref(1),
+  total = ref(0);
 const categoryTabs = ref<HTMLDivElement | null>(null);
 const category = computed(() =>
   categories.some((c) => c.value === route.query.category)
@@ -28,22 +35,35 @@ function setFilters(nextCategory: string, nextAge = age.value) {
   });
 }
 let loadVersion = 0;
-async function load() {
+async function load(target = 1) {
   const version = ++loadVersion;
   loading.value = true;
   error.value = "";
   try {
-    const q = new URLSearchParams({ pageSize: "50", age_group: age.value });
+    const q = new URLSearchParams({
+      pageSize: String(PAGE_SIZE),
+      page: String(target),
+      age_group: age.value,
+    });
     if (category.value) q.set("category", category.value);
     const result = await api("/mobile/courses?" + q);
-    if (version === loadVersion) courses.value = result.list;
+    if (version === loadVersion) {
+      courses.value = result.list;
+      total.value = result.total;
+      page.value = target;
+    }
   } catch (e) {
     if (version === loadVersion) error.value = (e as Error).message;
   } finally {
     if (version === loadVersion) loading.value = false;
   }
 }
-watch([category, age], load, { immediate: true });
+function changePage(next: number) {
+  if (next === page.value) return;
+  void load(next).then(() => window.scrollTo({ top: 0, behavior: "smooth" }));
+}
+const refresh = () => load(page.value);
+watch([category, age], () => load(1), { immediate: true });
 onMounted(() => {
   const tabs = categoryTabs.value;
   const active = tabs?.querySelector<HTMLButtonElement>(".active");
@@ -57,95 +77,111 @@ onMounted(() => {
 </script>
 <template>
   <div class="courses-page" data-design-node="40:32392">
-    <section
-      class="course-banner"
-      :style="{
-        backgroundImage:
-          'url(' +
-          designImage('layer-40-32392', '5:06022/5:05686') +
-          '),linear-gradient(rgba(107,42,42,.19),rgba(107,42,42,.19)),url(' +
-          designImage('layer-40-32392', '5:06022/5:05671') +
-          ')',
-      }"
-    >
-      <p>非遗美育课程</p>
-      <h2>津门非遗 · 线上小课</h2>
-      <span>按学段选课，观看视频并完成随堂鉴赏</span>
-    </section>
-    <div ref="categoryTabs" class="category-tabs" aria-label="课程分类">
-      <button
-        v-for="c in categories"
-        :key="c.value"
-        :class="{ active: category === c.value }"
-        :aria-pressed="category === c.value"
-        @click="setFilters(c.value)"
+    <PullToRefresh :on-refresh="refresh" />
+    <PageHeader title="小课堂" subtitle="非遗美育课程" :back="false" />
+    <div class="courses-body">
+      <section
+        class="course-banner corner-card"
+        :style="{
+          backgroundImage:
+            'url(' +
+            designImage('layer-40-32392', '5:06022/5:05686') +
+            '),linear-gradient(rgba(107,42,42,.19),rgba(107,42,42,.19)),url(' +
+            designImage('layer-40-32392', '5:06022/5:05671') +
+            ')',
+        }"
       >
-        {{ c.label }}
-      </button>
+        <p>非遗美育课程</p>
+        <h2>津门非遗 · 线上小课</h2>
+        <span>按学段选课，观看视频并完成随堂鉴赏</span>
+      </section>
+      <SectionCard title="非遗典藏 · 小课">
+        <template #meta>
+          <div class="course-tools">
+            <span class="course-heading-dots" aria-hidden="true"
+              ><i /><i /><i
+            /></span>
+            <div class="age-tabs">
+              <button
+                :class="{ active: age === 'PRIMARY_LOW' }"
+                :aria-pressed="age === 'PRIMARY_LOW'"
+                @click="setFilters(category, 'PRIMARY_LOW')"
+              >
+                1-3年级</button
+              ><button
+                :class="{ active: age === 'PRIMARY_HIGH' }"
+                :aria-pressed="age === 'PRIMARY_HIGH'"
+                @click="setFilters(category, 'PRIMARY_HIGH')"
+              >
+                4-6年级
+              </button>
+            </div>
+          </div>
+        </template>
+        <div ref="categoryTabs" class="category-tabs" aria-label="课程分类">
+          <button
+            v-for="c in categories"
+            :key="c.value"
+            :class="{ active: category === c.value }"
+            :aria-pressed="category === c.value"
+            @click="setFilters(c.value)"
+          >
+            {{ c.label }}
+          </button>
+        </div>
+        <AsyncState
+          :loading="loading"
+          :error="error"
+          :empty="!courses.length"
+          @retry="load(page)"
+          ><div class="course-grid">
+            <CourseCard
+              v-for="course in courses"
+              :key="course.id"
+              :course="course"
+            /></div
+        ></AsyncState>
+        <PagerBar
+          :page="page"
+          :total="total"
+          :page-size="PAGE_SIZE"
+          unit="门"
+          @change="changePage"
+        />
+      </SectionCard>
+      <footer
+        class="course-brand corner-card"
+        :style="{
+          backgroundImage:
+            'linear-gradient(rgba(92,64,51,.3),rgba(92,64,51,.3)),url(' +
+            designImage('layer-40-32392', '5:05321') +
+            ')',
+        }"
+      >
+        <div class="course-brand-ornament">
+          <i /><img :src="designIcon('layer-40-32392', '5:05297')" alt="" /><i />
+        </div>
+        <h1>非遗典藏 · 小课堂</h1>
+        <p>传承千年技艺，点亮文化之光</p>
+      </footer>
     </div>
-    <div class="section-heading course-section-heading">
-      <h2>非遗典藏 · 小课</h2>
-      <span class="course-heading-dots" aria-hidden="true"
-        ><i /><i /><i
-      /></span>
-      <div class="age-tabs">
-        <button
-          :class="{ active: age === 'PRIMARY_LOW' }"
-          :aria-pressed="age === 'PRIMARY_LOW'"
-          @click="setFilters(category, 'PRIMARY_LOW')"
-        >
-          1-3年级</button
-        ><button
-          :class="{ active: age === 'PRIMARY_HIGH' }"
-          :aria-pressed="age === 'PRIMARY_HIGH'"
-          @click="setFilters(category, 'PRIMARY_HIGH')"
-        >
-          4-6年级
-        </button>
-      </div>
-    </div>
-    <AsyncState
-      :loading="loading"
-      :error="error"
-      :empty="!courses.length"
-      @retry="load"
-      ><div class="course-grid">
-        <CourseCard
-          v-for="course in courses"
-          :key="course.id"
-          :course="course"
-        /></div
-    ></AsyncState>
-    <footer
-      class="course-brand"
-      :style="{
-        backgroundImage:
-          'linear-gradient(rgba(92,64,51,.3),rgba(92,64,51,.3)),url(' +
-          designImage('layer-40-32392', '5:05321') +
-          ')',
-      }"
-    >
-      <div class="course-brand-ornament">
-        <i /><img :src="designIcon('layer-40-32392', '5:05297')" alt="" /><i />
-      </div>
-      <h1>非遗典藏 · 小课堂</h1>
-      <p>传承千年技艺，点亮文化之光</p>
-    </footer>
   </div>
 </template>
 <style scoped>
 .courses-page {
-  padding: 0 20px 24px;
-  background: #f5f0e6;
-  color: #5c4033;
-  min-height: calc(100dvh - 74px - var(--safe-top) - var(--safe-bottom));
+  min-height: 100dvh;
+  padding-bottom: 12px;
+  background: #f5ede4;
+  color: #2d1810;
+}
+.courses-body {
+  padding: 14px 16px 24px;
 }
 .course-banner {
-  height: 155px;
-  margin: 0 -20px;
-  padding: 20px;
-  border-radius: 0;
-  overflow: hidden;
+  height: 148px;
+  margin-bottom: 14px;
+  padding: 18px 16px;
+  border-radius: 14px;
   background-color: #6b2a2a;
   background-size: cover;
   background-position: center;
@@ -156,67 +192,31 @@ onMounted(() => {
 }
 .course-banner > p {
   padding: 2px 10px;
-  border: 1px solid rgba(196, 162, 101, 0.3);
-  border-radius: 30px;
-  color: #d4bc8a;
-  background: rgba(196, 162, 101, 0.2);
-  font-size: 10px;
-  font-weight: 500;
-  line-height: 15px;
-  letter-spacing: 0.25px;
+  border: 1px solid rgba(200, 169, 110, 0.4);
+  border-radius: 999px;
+  color: #e8d9a8;
+  background: rgba(60, 24, 24, 0.28);
+  font: 500 10px/1.5 var(--sans);
+  letter-spacing: 1px;
 }
 .course-banner h2 {
-  margin-top: 6px;
-  font: 700 20px/25px var(--serif);
-  letter-spacing: 0.5px;
+  margin-top: 8px;
+  font: 500 18px/1.4 var(--serif);
+  letter-spacing: 1.5px;
   color: #fff;
+  text-shadow: 0 1px 8px rgba(40, 16, 12, 0.35);
 }
 .course-banner > span {
   margin-top: 4px;
-  color: rgba(232, 220, 192, 0.8);
-  font-size: 12px;
-  line-height: 18px;
+  color: rgba(246, 234, 217, 0.85);
+  font: 400 11px/1.6 var(--sans);
   letter-spacing: 0.6px;
 }
-.courses-page .category-tabs {
+.course-tools {
   display: flex;
-  gap: 10px;
-  overflow: auto;
-  margin: 10px -20px 20px;
-  padding: 0 8px;
-}
-.category-tabs button {
-  height: 37px;
-  min-width: 68px;
-  padding: 0 20px;
-  border: 1px solid #e0d5c5;
-  border-radius: 30px;
-  background: #fffdf8;
-  color: #5c4033;
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 20px;
+  align-items: center;
+  gap: 8px;
   flex-shrink: 0;
-}
-.category-tabs button.active {
-  min-width: 66px;
-  border: 0;
-  background: #8b3a3a;
-  color: #fff;
-  box-shadow: 0 2px 5px rgba(92, 64, 51, 0.14);
-}
-.course-section-heading {
-  height: 42px;
-  margin: 0 0 8px;
-  gap: 8px;
-}
-.course-section-heading h2 {
-  font: 700 17px/25.5px var(--serif);
-  letter-spacing: 0.43px;
-}
-.age-tabs {
-  gap: 8px;
-  margin-left: auto;
 }
 .course-heading-dots {
   display: flex;
@@ -226,24 +226,58 @@ onMounted(() => {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: rgba(196, 162, 101, 0.5);
+  background: rgba(200, 169, 110, 0.6);
 }
 .course-heading-dots i:nth-child(2) {
-  background: rgba(196, 162, 101, 0.7);
+  background: rgba(200, 169, 110, 0.85);
+}
+.age-tabs {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
 }
 .age-tabs button {
-  height: 26px;
-  padding: 0 11px;
-  border: 1px solid #ebe3d5;
-  background: #fffdf8;
-  color: #a89880;
-  font-size: 11px;
-  line-height: 16px;
+  height: 24px;
+  padding: 0 6px;
+  border: 1px solid rgba(200, 169, 110, 0.42);
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.7);
+  color: #8a7a70;
+  font: 400 10px/1 var(--sans);
+  white-space: nowrap;
 }
 .age-tabs button.active {
+  border-color: rgba(139, 26, 26, 0.26);
+  background: rgba(139, 26, 26, 0.08);
+  color: #8b1a1a;
+  font-weight: 500;
+}
+.category-tabs {
+  display: flex;
+  gap: 8px;
+  overflow: auto;
+  margin: 0 -14px 12px;
+  padding: 0 14px 2px;
+  scrollbar-width: none;
+}
+.category-tabs::-webkit-scrollbar {
+  display: none;
+}
+.category-tabs button {
+  flex-shrink: 0;
+  height: 30px;
+  padding: 0 14px;
+  border: 1px solid rgba(200, 169, 110, 0.42);
+  border-radius: 999px;
+  background: #fffdf8;
+  color: #5a3e36;
+  font: 400 12px/1 var(--sans);
+  white-space: nowrap;
+}
+.category-tabs button.active {
   border-color: transparent;
-  background: rgba(139, 58, 58, 0.1);
-  color: #8b3a3a;
+  background: #8b1a1a;
+  color: #f6ead9;
   font-weight: 500;
 }
 .course-grid {
@@ -251,15 +285,16 @@ onMounted(() => {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
+.courses-page :deep(.async-state) {
+  padding: 6px 2px 2px;
+}
 .course-brand {
-  height: 120px;
-  margin-top: 24px;
-  border-radius: 16px;
-  overflow: hidden;
+  height: 112px;
+  padding: 20px 12px 16px;
+  border-radius: 14px;
   text-align: center;
   background-size: cover;
   background-position: center;
-  padding: 26px 8px 20px;
 }
 .course-brand-ornament {
   display: flex;
@@ -275,26 +310,29 @@ onMounted(() => {
 .course-brand-ornament i {
   width: 32px;
   height: 1px;
-  background: rgba(196, 162, 101, 0.7);
+  background: rgba(232, 217, 168, 0.7);
 }
 .course-brand h1 {
   margin-top: 4px;
-  font: 700 18px/27px var(--serif);
-  letter-spacing: 3.6px;
+  font: 500 16px/1.7 var(--serif);
+  letter-spacing: 3.2px;
   color: #fff;
 }
 .course-brand p {
-  margin-top: 4px;
-  color: rgba(232, 220, 192, 0.9);
-  font-size: 11px;
-  line-height: 16.5px;
-  letter-spacing: 0.55px;
+  margin-top: 2px;
+  color: rgba(246, 234, 217, 0.9);
+  font: 400 10px/1.6 var(--sans);
+  letter-spacing: 0.6px;
 }
 @media (max-width: 350px) {
-  .course-section-heading {
-    height: auto;
-    flex-wrap: wrap;
-    padding: 8px 0;
+  .course-heading-dots {
+    display: none;
+  }
+  .course-tools {
+    gap: 4px;
+  }
+  .age-tabs button {
+    padding: 0 4px;
   }
 }
 </style>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { mediaUrl } from "../api";
 import { designIcon } from "../design";
+import SkeletonImage from "./SkeletonImage.vue";
 defineProps<{
   course: {
     id: number;
@@ -22,12 +22,11 @@ defineProps<{
     :class="{ compact, 'corner-card': compact }"
     :aria-label="'学习：' + course.title"
   >
-    <img
+    <SkeletonImage
       v-if="course.cover_url"
       class="course-cover"
-      :src="mediaUrl(course.cover_url)"
+      :src="course.cover_url"
       :alt="course.title"
-      loading="lazy"
     />
     <div v-else class="course-cover image-empty">非遗</div>
     <div class="course-info">
@@ -86,6 +85,13 @@ defineProps<{
   </RouterLink>
 </template>
 <style scoped>
+.course-card {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 260px;
+}
+.course-card.compact {
+  contain-intrinsic-size: auto 104px;
+}
 .course-card:not(.compact) {
   border: 1px solid #ebe3d5;
   border-radius: 16px;
@@ -188,6 +194,10 @@ defineProps<{
   background: none;
 }
 .compact .course-cover {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  border-radius: 10px;
   border: 1px solid #e8d9a8;
 }
 .compact:after {

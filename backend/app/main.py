@@ -51,6 +51,28 @@ app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 # 链路追踪与结构化访问日志中间件
 @app.middleware("http")
+async def protect_and_sign_generated_files(request: Request, call_next):
+    """Generated workshop files are only readable through a short-lived signed URL."""
+    from app.core import file_urls
+    from starlette.responses import Response
+    # StaticFiles collapses slashes and ".." while resolving, so the guard normalizes the same
+    # way; otherwise "/static//generated/x" or "/static/uploads/../generated/x" leaks the bytes.
+    path = file_urls.normalize_path(request.url.path)
+    if path.startswith("/static/generated/") and not file_urls.verify(path, request.url.query):
+        return JSONResponse(status_code=403,
+                            content={"code": 403, "message": "作品文件链接已过期，请重新打开作品", "data": None})
+    response = await call_next(request)
+    media_type = response.headers.get("content-type", "")
+    if media_type.startswith("application/json"):
+        body = b"".join([chunk async for chunk in response.body_iterator])
+        headers = dict(response.headers)
+        headers.pop("content-length", None)
+        return Response(content=file_urls.sign_json(body), status_code=response.status_code,
+                        headers=headers, media_type=media_type)
+    return response
+
+
+@app.middleware("http")
 async def add_trace_id_and_log(request: Request, call_next):
     request_id = request.headers.get("X-Request-Id", uuid.uuid4().hex)
     response = await call_next(request)

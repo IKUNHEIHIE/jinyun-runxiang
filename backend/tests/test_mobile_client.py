@@ -14,7 +14,9 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app.main import app
+from app.core import file_urls, quota
 from app.core.database import Base, get_db
+from asset_urls import bare, generated_file
 from app.core.security import create_access_token, hash_password
 from app.models.entities import (
     SysUser, UserGrowth, Course, CommunityPost, TeacherClass, Assignment, Asset,
@@ -60,6 +62,7 @@ def client():
         db.commit()
     with TestClient(app) as c:
         c.sessions = sessions
+        quota.reset_windows()
         yield c
     app.dependency_overrides.clear()
     engine.dispose()
@@ -758,13 +761,13 @@ def test_shadow_task_generates_owned_assets_and_reports_actual_capabilities(clie
     assert "尚未经过实体装配" in result["description"]
     for key in ["colored_image_url", "line_art_url", "print_template_url"]:
         assert result[key].startswith('/static/generated/')
-        assert (tmp_path / result[key].split('/')[-1]).is_file()
-    colored = (tmp_path / result["colored_image_url"].split('/')[-1]).read_text()
-    line = (tmp_path / result["line_art_url"].split('/')[-1]).read_text()
+        assert generated_file(tmp_path, result[key]).is_file()
+    colored = generated_file(tmp_path, result["colored_image_url"]).read_text()
+    line = generated_file(tmp_path, result["line_art_url"]).read_text()
     assert '#1256AB' in colored and '#1256AB' not in line
     assert client.get('/api/ai/tasks/' + task_id, headers=auth(4)).json()["code"] == 4040
     latest = client.get('/api/ai/tasks/latest?tool_type=SHADOW_PUPPET', headers=auth()).json()["data"]
-    assert latest["task_id"] == task_id and latest["result"] == result
+    assert latest["task_id"] == task_id and bare(latest["result"]) == bare(result)
     assert client.get('/api/mobile/me/summary', headers=auth()).json()["data"]["energy_value"] == 120
     assert client.get('/api/mobile/me/summary', headers=auth(4)).json()["data"]["energy_value"] == 0
     favorite_path = '/api/ai/tasks/' + task_id + '/favorite'
@@ -774,7 +777,7 @@ def test_shadow_task_generates_owned_assets_and_reports_actual_capabilities(clie
     assert client.get('/api/ai/tasks/' + task_id, headers=auth()).json()["data"]["collected"]
     collections = client.get('/api/mobile/me/collections', headers=auth()).json()["data"]
     assert len(collections) == 1 and collections[0]["task_id"] == task_id
-    assert collections[0]["type"] == "ASSET" and collections[0]["cover_url"] == result["colored_image_url"]
+    assert collections[0]["type"] == "ASSET" and bare(collections[0]["cover_url"]) == bare(result["colored_image_url"])
     assert client.post(favorite_path, headers=auth(4), json={"collected":True}).status_code == 404
     assert client.post('/api/mobile/collections/ASSET/' + str(collections[0]["id"]), headers=auth(4)).status_code == 404
     assert client.get('/api/mobile/me/collections', headers=auth(4)).json()["data"] == []
@@ -804,10 +807,10 @@ def test_shadow_roles_and_face_styles_change_vector_geometry(client, monkeypatch
         saved = client.get('/api/ai/tasks/' + created["task_id"], headers=auth()).json()["data"]
         assert saved["status"] == "SUCCESS" and saved["result"]["role_type"] == role
         assert saved["result"]["face_style"] == style
-        art = (tmp_path / saved["result"]["colored_image_url"].split('/')[-1]).read_text()
+        art = generated_file(tmp_path, saved["result"]["colored_image_url"]).read_text()
         tree = ET.fromstring(art)
         shapes.append(tuple(node.attrib.get("d") for node in tree.iter() if node.tag.endswith("path")))
-        paper = (tmp_path / saved["result"]["print_template_url"].split('/')[-1]).read_text()
+        paper = generated_file(tmp_path, saved["result"]["print_template_url"]).read_text()
         assert "未验证实体装配" in paper and "直接将本文件发送至激光切割机" not in paper
         assert ET.fromstring(paper).tag.endswith("svg")
     assert len(set(shapes)) == 3
@@ -844,7 +847,7 @@ def test_language_analysis_cannot_replace_selected_role_or_palette(client, monke
         "face_style":"BOLD", "color_palette":["#8B1A1A"]}}).json()["data"]
     result = client.get('/api/ai/tasks/' + created["task_id"], headers=auth()).json()["data"]["result"]
     assert result["role_type"] == "净角" and result["title"] == "模型建议" and result["llm_generated"]
-    art = (tmp_path / result["colored_image_url"].split('/')[-1]).read_text()
+    art = generated_file(tmp_path, result["colored_image_url"]).read_text()
     assert "#8B1A1A" in art and "#0000FF" not in art
     assert result["color_palette"][0] == "#8B1A1A" and result["generation_method"] == "local_template"
 
@@ -870,7 +873,8 @@ def test_legacy_shadow_claims_are_corrected_without_mutating_saved_results(clien
     for url in ['/api/ai/tasks/legacy-shadow', '/api/ai/tasks/latest?tool_type=SHADOW_PUPPET']:
         result = client.get(url, headers=auth()).json()["data"]["result"]
         assert result["mesh_3d_url"] is None and "三维模型生成尚未接入" in result["description"]
-        assert result["colored_image_url"] == original["colored_image_url"]
+        served = file_urls.split_signature(result["colored_image_url"])
+        assert served[0] == original["colored_image_url"] and file_urls.verify(served[0], served[1])
         assert result["color_palette"][0] == "#B85450"
     with client.sessions() as db:
         assert db.query(AiTask).filter_by(task_id="legacy-shadow").one().result_summary_json == original
@@ -1117,7 +1121,7 @@ def test_ballad_returns_template_and_never_mislabels_rain_as_generated_audio(cli
     result=saved["result"]
     assert result["audio_url"] is None and not result["audio_available"] and not result["custom_melody_available"]
     assert result["generation_method"] == "local_sheet_template" and "固定示例音符" in result["description"]
-    assert (tmp_path/result["sheet_music_url"].split("/")[-1]).is_file()
+    assert generated_file(tmp_path, result["sheet_music_url"]).is_file()
     with client.sessions() as db:
         db.add(AiTask(task_id="legacy-ballad",user_id=3,tool_type="BALLAD",status="SUCCESS",input_json={},result_summary_json={
             "audio_url":"https://actions.google.com/sounds/v1/water/rain_heavy.ogg","description":"已完成配曲"}))
@@ -1289,7 +1293,7 @@ def test_lacquer_owned_reference_local_pattern_and_actual_capabilities(client, m
     assert result['completed_sketch_url'] is None and result['print_template_url'] is None
     assert not any(result[k] for k in ['model_available','sketch_redraw_available','lora_available','lora_applied'])
     assert '未进行轮廓识别或草图重绘' in result['description']
-    svg = (tmp_path / result['colored_image_url'].split('/')[-1]).read_text()
+    svg = generated_file(tmp_path, result['colored_image_url']).read_text()
     root = ElementTree.fromstring(svg)
     assert '#1256AB' in svg and '本地二维纹样参考' in ''.join(root.itertext())
     paths = root.findall('.//{http://www.w3.org/2000/svg}path')

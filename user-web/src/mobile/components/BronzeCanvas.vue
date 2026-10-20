@@ -66,6 +66,7 @@ const visiblePatterns = computed(() =>
     (p) => category.value === "全部纹样" || p.group === category.value,
   ),
 );
+const patternTabs = ["全部纹样", ...Array.from(new Set(patterns.map((p) => p.group)))];
 const filterFor = (value: string) =>
   value === "鎏金拓印"
     ? "sepia(1) saturate(1.4)"
@@ -295,6 +296,7 @@ watch(
         checkpoint();
         elements.value = [];
         selected.value = "";
+        notify("AI 结果已替换画布，可点撤销找回之前的手绘排版");
       }
       return;
     }
@@ -420,7 +422,7 @@ onUnmounted(() => {
   <section class="bronze-editor">
     <nav class="pattern-tabs" aria-label="纹样分类">
       <button
-        v-for="tab in ['全部纹样', '饕餮纹', '云雷纹', '窃曲纹']"
+        v-for="tab in patternTabs"
         :key="tab"
         :aria-pressed="category === tab"
         :class="{ active: category === tab }"
@@ -679,14 +681,14 @@ onUnmounted(() => {
   padding: 12px 16px 17px;
   height: 66px;
   overflow: auto;
-  background: rgba(250, 247, 240, 0.9);
-  border-bottom: 1px solid #e7e7e7;
+  background: rgba(250, 247, 240, 0.94);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.3);
 }
 .pattern-tabs button {
   flex-shrink: 0;
-  border: 1px solid #e7e7e7;
-  background: #fff;
-  color: #5d5d5d;
+  border: 1px solid rgba(201, 168, 76, 0.32);
+  background: #fffdf8;
+  color: #6b5634;
   height: 37px;
   border-radius: 30px;
   padding: 0 20px;
@@ -694,9 +696,10 @@ onUnmounted(() => {
   font-weight: 500;
 }
 .pattern-tabs button.active {
-  background: #8a6125;
-  color: #fff;
-  border-color: #8a6125;
+  background: linear-gradient(100deg, #6b4a1f, #8a6125);
+  color: #fbf3e0;
+  border-color: rgba(201, 168, 76, 0.7);
+  box-shadow: 0 4px 12px rgba(107, 74, 31, 0.2);
 }
 .pattern-library {
   padding: 24px 16px 8px;
@@ -732,7 +735,7 @@ onUnmounted(() => {
   align-items: center;
   min-width: 0;
   padding: 0;
-  color: #6d6d6d;
+  color: #6b5634;
   font-size: 11px;
   line-height: 16px;
   touch-action: pan-x;
@@ -741,10 +744,11 @@ onUnmounted(() => {
   width: 100%;
   aspect-ratio: 1;
   position: relative;
-  background: #fff;
-  border: 1px solid #e7e7e7;
+  background: #fffdf8;
+  border: 1px solid rgba(201, 168, 76, 0.3);
   border-radius: 12px;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(80, 58, 28, 0.06);
 }
 .pattern-image > img {
   width: 100%;
@@ -753,7 +757,8 @@ onUnmounted(() => {
   pointer-events: none;
 }
 .pattern-image.chosen {
-  border: 2px solid #d9ae5e;
+  border: 2px solid #b8862f;
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.12);
 }
 .pattern-image > i {
   display: grid;
@@ -779,8 +784,8 @@ onUnmounted(() => {
 }
 .canvas-card {
   margin: 24px 16px 0;
-  background: #fff;
-  border: 1px solid #f9f0dc;
+  background: #fffdf8;
+  border: 1px solid rgba(201, 168, 76, 0.32);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 2px 16px #0000000a;
