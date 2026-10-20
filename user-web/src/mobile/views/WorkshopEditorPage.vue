@@ -34,7 +34,13 @@ const title = computed(
       lacquer: "漆绣智绘",
     })[type.value] || "非遗工坊",
 );
-const prompt = ref(""),
+const PROMPT_DEFAULTS: Record<string, string> = {
+  bronze: "饕餮纹与云雷纹交错，青铜绿锈底色，适合做一盏六方宫灯",
+  shadow: "提灯旦角，海棠花冠，红绿撞色，镂空衣纹",
+  lacquer: "漆器底胎，缠枝莲纹，朱红与金线，适合做一团盒盖",
+};
+const defaultPrompt = () => PROMPT_DEFAULTS[type.value] || "";
+const prompt = ref(defaultPrompt()),
   role = ref("生"),
   color = ref("#B85450"),
   task = ref<any>(),
@@ -333,7 +339,7 @@ async function restore() {
     requested = route.query.task_id;
   clearTimeout(pollTimer);
   task.value = undefined;
-  prompt.value = "";
+  prompt.value = defaultPrompt();
   error.value = "";
   bronzeGenerating.value = false;
   closeTheater();
@@ -355,8 +361,7 @@ async function restore() {
       : type.value === "lacquer"
         ? "#C4A35A"
         : "#B85450";
-  selectedResult.value =
-    type.value === "shadow" ? "line_art_url" : "colored_image_url";
+  selectedResult.value = "colored_image_url";
   if (!session.token) return;
   restoring.value = true;
   try {

@@ -214,6 +214,7 @@ function generate() {
       :preview="theaterPreview"
       :stats="theaterStats"
       :caption="theaterCaption"
+      :waiting="working"
       @done="theater = false"
     />
     <div class="presentation">

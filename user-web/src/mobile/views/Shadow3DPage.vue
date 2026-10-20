@@ -230,6 +230,7 @@ onBeforeUnmount(() => {
         { label: '引擎', value: '本地模板' },
       ]"
       caption="本地规则模板 · 按行当、头冠、执物与描述拼装，不调用外部生成模型"
+      :waiting="generating"
       @done="theater = false"
     />
 

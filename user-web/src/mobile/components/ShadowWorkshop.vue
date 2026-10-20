@@ -232,6 +232,7 @@ function publish() {
       :preview="theaterPreview"
       :stats="theaterStats"
       :caption="theaterCaption"
+      :waiting="working"
       @done="theater = false"
     />
     <header class="shadow-header">

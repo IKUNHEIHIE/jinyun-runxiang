@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
 export type TheaterStat = { label: string; value: string };
 
@@ -11,6 +11,7 @@ const props = withDefaults(
     preview?: string;
     stepMs?: number;
     caption?: string;
+    waiting?: boolean;
   }>(),
   {
     stats: () => [],
@@ -18,6 +19,7 @@ const props = withDefaults(
     preview: "",
     stepMs: 520,
     caption: "本地规则引擎 · 不调用外部生成模型",
+    waiting: false,
   },
 );
 
@@ -25,6 +27,7 @@ const emit = defineEmits<{ (event: "done"): void }>();
 
 const current = ref(0);
 const finished = ref(false);
+const holding = ref(false);
 const elapsed = ref(0);
 let timer = 0;
 let ticker = 0;
@@ -33,10 +36,29 @@ const progress = computed(() =>
   finished.value ? 100 : Math.round(((current.value + 0.4) / props.steps.length) * 100),
 );
 
-function finish() {
+function reveal() {
   finished.value = true;
+  holding.value = false;
   window.setTimeout(() => emit("done"), 900);
 }
+
+function complete() {
+  if (props.waiting) {
+    holding.value = true;
+    window.setTimeout(() => {
+      if (holding.value) reveal();
+    }, 15000);
+    return;
+  }
+  reveal();
+}
+
+watch(
+  () => props.waiting,
+  (busy) => {
+    if (!busy && holding.value) reveal();
+  },
+);
 
 onMounted(() => {
   const started = performance.now();
@@ -47,7 +69,7 @@ onMounted(() => {
     if (current.value < props.steps.length - 1) current.value += 1;
     else {
       window.clearInterval(timer);
-      finish();
+      complete();
     }
   }, props.stepMs);
 });
@@ -64,7 +86,7 @@ onBeforeUnmount(() => {
       <div class="theater-card">
         <header class="theater-head">
           <span class="theater-kicker">AI 工坊 · 生成现场</span>
-          <h3>{{ finished ? "已交付" : title }}</h3>
+          <h3>{{ finished ? "已交付" : holding ? "正在合成成品" : title }}</h3>
           <span class="theater-clock">{{ elapsed.toFixed(1) }}s</span>
         </header>
 

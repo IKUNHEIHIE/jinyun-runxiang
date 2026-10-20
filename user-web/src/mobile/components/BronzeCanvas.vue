@@ -793,6 +793,7 @@ onUnmounted(() => {
       :preview="theaterPreview"
       :stats="theaterStats"
       :caption="theaterCaption"
+      :waiting="busy"
       @done="finishTheater"
     />
     <nav class="pattern-tabs" aria-label="纹样分类">
