@@ -91,6 +91,7 @@ onBeforeUnmount(() => {
         </header>
 
         <div class="theater-stage" :class="{ done: finished }">
+          <img v-if="preview" :src="preview" alt="" class="theater-veil" aria-hidden="true" />
           <img v-if="preview" :src="preview" alt="" class="theater-preview" />
           <div v-else class="theater-orb" aria-hidden="true"><i /><i /><i /></div>
           <span class="theater-scan" aria-hidden="true" />
@@ -182,10 +183,22 @@ onBeforeUnmount(() => {
   place-items: center;
 }
 .theater-preview {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: contain;
-  opacity: 0.86;
+  opacity: 0.9;
+}
+.theater-veil {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(18px) saturate(1.1);
+  opacity: 0.35;
+  transform: scale(1.15);
 }
 .theater-orb {
   position: relative;

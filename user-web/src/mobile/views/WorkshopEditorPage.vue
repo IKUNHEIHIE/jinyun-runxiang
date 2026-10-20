@@ -93,6 +93,14 @@ function backToWorkshop() {
 function closeTheater() {
   theater.value = false;
 }
+function finishBronzeTheater() {
+  theater.value = false;
+  window.setTimeout(() => {
+    document
+      .querySelector(".canvas-card")
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, 120);
+}
 const activeResultUrl = computed(
   () =>
     task.value?.result?.[selectedResult.value] ||
@@ -546,7 +554,7 @@ onUnmounted(() => {
         @favorite="favorite"
         @generate="openBronzeGenerator"
         @publish="publish"
-        @theater-done="theater = false"
+        @theater-done="finishBronzeTheater"
       />
       <div v-if="bronzeGenerating && !theater" class="sheet-overlay">
         <section

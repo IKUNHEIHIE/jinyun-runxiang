@@ -36,6 +36,7 @@ const roleBox = ref<HTMLElement | null>(null),
   paletteBox = ref<HTMLElement | null>(null),
   description = ref<HTMLTextAreaElement | null>(null),
   history = ref<HTMLElement | null>(null),
+  previewBox = ref<HTMLElement | null>(null),
   fileInput = ref<HTMLInputElement | null>(null);
 const disabled = computed(
   () => props.working || props.loading || props.uploading,
@@ -182,6 +183,17 @@ const theaterCaption = computed(() =>
     ? "AI 图像生成 · 结果为二维创意参考，不是可编辑矢量或切割纸样"
     : "本地规则模板 · 按行当、脸谱与配色拼装，不调用外部生成模型",
 );
+function finishTheater() {
+  theater.value = false;
+  window.setTimeout(() => {
+    previewBox.value?.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "instant"
+        : "smooth",
+      block: "start",
+    });
+  }, 120);
+}
 function measureArt(event: Event) {
   const image = event.target as HTMLImageElement;
   if (!image.naturalWidth || !image.naturalHeight) return;
@@ -233,7 +245,7 @@ function publish() {
       :stats="theaterStats"
       :caption="theaterCaption"
       :waiting="working"
-      @done="theater = false"
+      @done="finishTheater"
     />
     <header class="shadow-header">
       <img class="hero-photo" :src="designImage(screen, '5:3835')" alt="" />
@@ -258,7 +270,7 @@ function publish() {
     >
       <div class="design-columns">
         <div class="preview-column">
-          <section class="puppet-preview" aria-label="皮影预览">
+          <section ref="previewBox" class="puppet-preview" aria-label="皮影预览">
             <span v-if="hasResult" class="preview-title">{{
               task.result.title || task.result.role_type
             }}</span>

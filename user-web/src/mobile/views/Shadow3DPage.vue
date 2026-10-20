@@ -130,6 +130,14 @@ async function generateSilhouette() {
     if (token === requestToken) generating.value = false;
   }
 }
+function finishTheater() {
+  theater.value = false;
+  window.setTimeout(() => {
+    document
+      .querySelector(".silhouette-result")
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, 120);
+}
 
 async function toggleFavorite() {
   if (!taskId.value) return;
@@ -231,7 +239,7 @@ onBeforeUnmount(() => {
       ]"
       caption="本地规则模板 · 按行当、头冠、执物与描述拼装，不调用外部生成模型"
       :waiting="generating"
-      @done="theater = false"
+      @done="finishTheater"
     />
 
     <header class="lab-top">

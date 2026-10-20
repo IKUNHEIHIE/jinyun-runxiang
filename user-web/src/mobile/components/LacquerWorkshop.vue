@@ -32,7 +32,7 @@ const pattern = defineModel<string>("pattern", { required: true });
 const sketch = defineModel<string>("sketch", { required: true });
 const editorOpen = ref(false),
   input = ref<HTMLInputElement>();
-const workbench = ref<HTMLElement>(), showShortcut = ref(true);
+const workbench = ref<HTMLElement>(), previewBox = ref<HTMLElement>(), showShortcut = ref(true);
 let workbenchObserver: IntersectionObserver | undefined;
 onMounted(() => {
   if (!workbench.value || typeof IntersectionObserver === "undefined") return;
@@ -45,6 +45,15 @@ onUnmounted(() => workbenchObserver?.disconnect());
 function openWorkbench() {
   workbench.value?.scrollIntoView({ block: "start", behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? "instant" : "smooth" });
   workbench.value?.focus({ preventScroll: true });
+}
+function finishTheater() {
+  theater.value = false;
+  window.setTimeout(() => {
+    previewBox.value?.scrollIntoView({
+      block: "center",
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? "instant" : "smooth",
+    });
+  }, 120);
 }
 watch(
   () => session.token,
@@ -215,7 +224,7 @@ function generate() {
       :stats="theaterStats"
       :caption="theaterCaption"
       :waiting="working"
-      @done="theater = false"
+      @done="finishTheater"
     />
     <div class="presentation">
       <img
@@ -479,6 +488,7 @@ function generate() {
             accept="image/png,image/jpeg,image/webp"
             @change="uploaded"
           /><button
+            ref="previewBox"
             class="reference-preview"
             :disabled="disabled"
             aria-label="查看创作参数或结果"

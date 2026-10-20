@@ -183,6 +183,14 @@ function onViewerError(message: string) {
   viewerError.value = message;
   theater.value = false;
 }
+function finishTheater() {
+  theater.value = false;
+  window.setTimeout(() => {
+    document
+      .querySelector(".stage-card")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 120);
+}
 
 function usePreset(item: (typeof presets)[number]) {
   prompt.value = item.text;
@@ -326,7 +334,7 @@ onBeforeUnmount(() => {
       :steps="theaterSteps"
       :stats="theaterStats"
       :caption="theaterCaption"
-      @done="theater = false"
+      @done="finishTheater"
     />
 
     <header class="lab-top">
