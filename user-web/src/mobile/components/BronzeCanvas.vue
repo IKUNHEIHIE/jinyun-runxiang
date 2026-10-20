@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from "vue";
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from "vue";
 import {
   api,
   post,
@@ -11,12 +11,20 @@ import {
 } from "../api";
 import { designImage, designIcon } from "../design";
 import { saveBlob, saveAsset } from "../files";
-const props = defineProps<{ savedTask?: any; publishing?: boolean; favoriteBusy?: boolean }>();
+import GenerationTheater from "./GenerationTheater.vue";
+const props = defineProps<{
+  savedTask?: any;
+  publishing?: boolean;
+  favoriteBusy?: boolean;
+  theater?: boolean;
+  generationMode?: string;
+}>();
 const emit = defineEmits<{
   saved: [task: any];
   generate: [style: string, pattern: string];
   publish: [];
   favorite: [];
+  "theater-done": [];
 }>();
 const patterns = [
   { label: "兽面纹", node: "5:5103", group: "饕餮纹" },
@@ -82,8 +90,328 @@ const resultUrl = computed(
     readyResult.value?.rendered_image_url ||
     readyResult.value?.colored_image_url,
 );
+interface ResultMeta {
+  width: number;
+  height: number;
+  layers: number;
+  motifs: number;
+}
+interface ResultCheck {
+  label: string;
+  value?: string;
+  colors?: { hex: string; name: string }[];
+}
+const svgMarkup = ref(""),
+  svgMeta = ref<ResultMeta>(),
+  svgRevealed = ref(false),
+  bitmapReveal = ref(false),
+  imageSize = ref<{ width: number; height: number }>(),
+  revealHost = ref<HTMLElement>();
+let svgController: AbortController | undefined,
+  svgReady: Promise<void> = Promise.resolve(),
+  svgVersion = 0,
+  revealedFor = "",
+  revealInFlight = "",
+  revealTimer: ReturnType<typeof setTimeout> | undefined;
+const svgResult = computed(() =>
+  /\.svg$/i.test((resultUrl.value || "").split("?")[0]),
+);
+const composition = computed<any[]>(() => {
+  const value = props.savedTask?.input?.composition;
+  return Array.isArray(value) ? value : [];
+});
+const palette = computed(() => {
+  const value = readyResult.value?.color_palette;
+  if (!Array.isArray(value)) return [] as { hex: string; name: string }[];
+  const seen = new Set<string>();
+  const result: { hex: string; name: string }[] = [];
+  for (const item of value) {
+    const text = String(item || "");
+    const hex = text.match(/#[0-9a-f]{3,8}\b/i)?.[0];
+    if (!hex || seen.has(hex.toLowerCase())) continue;
+    seen.add(hex.toLowerCase());
+    result.push({
+      hex: hex.slice(0, 7),
+      name: text.replace(hex, "").replace(/[（）()]/g, " ").trim(),
+    });
+  }
+  return result;
+});
+const resultSize = computed(() => {
+  if (svgMeta.value?.width && svgMeta.value?.height)
+    return svgMeta.value.width + "×" + svgMeta.value.height;
+  if (imageSize.value)
+    return imageSize.value.width + "×" + imageSize.value.height;
+  return "";
+});
+const symmetryAxis = computed(() => {
+  const list = composition.value;
+  if (list.length < 2) return "";
+  if (
+    !list.every((item) =>
+      [item.x, item.y, item.scale, item.rotation].every(Number.isFinite),
+    )
+  )
+    return "";
+  const used = new Array(list.length).fill(false);
+  let pairs = 0;
+  for (let i = 0; i < list.length; i += 1) {
+    if (used[i]) continue;
+    const item = list[i];
+    if (Math.abs(item.x - 0.5) < 0.02) {
+      used[i] = true;
+      continue;
+    }
+    let mirror = -1;
+    for (let j = i + 1; j < list.length; j += 1) {
+      if (used[j]) continue;
+      const other = list[j];
+      if (
+        other.label === item.label &&
+        Math.abs(other.x + item.x - 1) < 0.02 &&
+        Math.abs(other.y - item.y) < 0.02 &&
+        Math.abs(other.scale - item.scale) < 0.02 &&
+        Math.abs(other.rotation + item.rotation) <= 3
+      ) {
+        mirror = j;
+        break;
+      }
+    }
+    if (mirror < 0) return "";
+    used[mirror] = true;
+    used[i] = true;
+    pairs += 1;
+  }
+  return pairs ? "纵向 · 1 轴" : "";
+});
+const theaterStats = computed(() => [
+  {
+    label: "纹样组数",
+    value: svgMeta.value?.motifs ? svgMeta.value.motifs + " 组" : "—",
+  },
+  {
+    label: "图层数",
+    value: svgMeta.value ? svgMeta.value.layers + " 层" : "—",
+  },
+  { label: "尺寸", value: resultSize.value || "—" },
+]);
+const theaterPreview = computed(() => {
+  if (resultUrl.value) return mediaUrl(resultUrl.value);
+  return elements.value.length ? preview.value : "";
+});
+const aiGeneration = computed(() =>
+  readyResult.value
+    ? readyResult.value.generation_method === "ai_image"
+    : props.generationMode === "AI",
+);
+const theaterSteps = computed(() =>
+  aiGeneration.value
+    ? ["解析纹样母题", "调用图像生成模型", "校正对称与留白", "烧制配色"]
+    : ["解析纹样母题", "组合云雷纹", "校正对称与留白", "烧制配色"],
+);
+const theaterCaption = computed(() =>
+  aiGeneration.value
+    ? "AI 图像模型 · 演示生成，结果不代表真实铸造"
+    : "本地规则模板 · 演示生成，不调用外部生成模型",
+);
+const resultChecks = computed<ResultCheck[]>(() => {
+  const checks: ResultCheck[] = [];
+  const count = composition.value.length || svgMeta.value?.motifs || 0;
+  if (count) checks.push({ label: "纹样组数", value: count + " 组" });
+  if (symmetryAxis.value)
+    checks.push({ label: "对称轴", value: symmetryAxis.value });
+  if (svgMeta.value?.layers)
+    checks.push({ label: "图层", value: svgMeta.value.layers + " 层" });
+  if (resultSize.value) checks.push({ label: "尺寸", value: resultSize.value });
+  if (palette.value.length)
+    checks.push({
+      label:
+        readyResult.value?.generation_method === "ai_image" ? "配色" : "主色",
+      colors: palette.value,
+    });
+  return checks;
+});
 const icon = (node: string) => designIcon("layer-40-55030", node);
 const image = (node: string) => designImage("layer-40-55030", node);
+function readSvg(source: string) {
+  const document = new DOMParser().parseFromString(source, "image/svg+xml");
+  const root = document.documentElement;
+  if (!root || root.localName !== "svg" || document.querySelector("parsererror"))
+    return null;
+  root
+    .querySelectorAll("script, foreignObject")
+    .forEach((node) => node.remove());
+  [root, ...Array.from(root.querySelectorAll("*"))].forEach((node) => {
+    for (const attribute of Array.from(node.attributes)) {
+      if (
+        /^on/i.test(attribute.name) ||
+        (/^(href|xlink:href)$/i.test(attribute.name) &&
+          /^\s*javascript:/i.test(attribute.value))
+      )
+        node.removeAttribute(attribute.name);
+    }
+  });
+  const viewBox = (root.getAttribute("viewBox") || "")
+    .split(/[\s,]+/)
+    .map(Number);
+  const width = Math.round(viewBox[2] || Number(root.getAttribute("width")));
+  const height = Math.round(viewBox[3] || Number(root.getAttribute("height")));
+  if (!width || !height || !Number.isFinite(width) || !Number.isFinite(height))
+    return null;
+  const layers = root.querySelectorAll("g").length;
+  const motifs = Array.from(root.children).filter(
+    (node) => node.localName === "g" && node.hasAttribute("transform"),
+  ).length;
+  root.setAttribute("preserveAspectRatio", "xMidYMid meet");
+  root.removeAttribute("width");
+  root.removeAttribute("height");
+  return {
+    markup: root.outerHTML,
+    meta: { width, height, layers, motifs },
+  };
+}
+function loadResultMeta(url: string) {
+  svgVersion += 1;
+  const version = svgVersion;
+  svgController?.abort();
+  svgController = undefined;
+  svgMarkup.value = "";
+  svgMeta.value = undefined;
+  svgRevealed.value = false;
+  bitmapReveal.value = false;
+  imageSize.value = undefined;
+  clearTimeout(revealTimer);
+  const source = mediaUrl(url);
+  if (!source) {
+    svgReady = Promise.resolve();
+    return;
+  }
+  const probe = new Image();
+  probe.onload = () => {
+    if (
+      alive &&
+      version === svgVersion &&
+      probe.naturalWidth &&
+      probe.naturalHeight
+    )
+      imageSize.value = {
+        width: probe.naturalWidth,
+        height: probe.naturalHeight,
+      };
+  };
+  probe.src = source;
+  if (!svgResult.value) {
+    svgReady = Promise.resolve();
+    return;
+  }
+  const controller = new AbortController();
+  svgController = controller;
+  const timer = setTimeout(() => controller.abort(), 8000);
+  svgReady = (async () => {
+    try {
+      const response = await fetch(source, { signal: controller.signal });
+      if (!response.ok) throw new Error("结果文件读取失败");
+      const parsed = readSvg(await response.text());
+      if (!parsed) throw new Error("结果不是有效矢量图");
+      if (!alive || version !== svgVersion) return;
+      svgMarkup.value = parsed.markup;
+      svgMeta.value = parsed.meta;
+    } catch {
+      // 矢量读取失败时保留位图预览，显现动画退化为遮罩揭示
+    } finally {
+      clearTimeout(timer);
+    }
+  })();
+}
+function onResultImageLoad(event: Event) {
+  if (elements.value.length || !resultUrl.value) return;
+  const image = event.target as HTMLImageElement;
+  if (image.naturalWidth && image.naturalHeight)
+    imageSize.value = {
+      width: image.naturalWidth,
+      height: image.naturalHeight,
+    };
+}
+function traceResultSvg() {
+  const svg = revealHost.value?.querySelector("svg");
+  if (!svg) return false;
+  if (
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  ) {
+    svgRevealed.value = true;
+    return true;
+  }
+  svgRevealed.value = true;
+  svg.animate([{ opacity: 0.35 }, { opacity: 1 }], {
+    duration: 1200,
+    easing: "ease-out",
+    fill: "forwards",
+  });
+  svg
+    .querySelectorAll<SVGGeometryElement>(
+      "path, line, polyline, polygon, circle, ellipse, rect",
+    )
+    .forEach((shape) => {
+      const styles = getComputedStyle(shape);
+      if (
+        !styles.stroke ||
+        styles.stroke === "none" ||
+        !(parseFloat(styles.strokeWidth) > 0) ||
+        (styles.strokeDasharray && styles.strokeDasharray !== "none")
+      )
+        return;
+      let length = 0;
+      try {
+        length = shape.getTotalLength();
+      } catch {
+        return;
+      }
+      if (!Number.isFinite(length) || length <= 0) return;
+      shape.style.strokeDasharray = String(length);
+      shape.style.strokeDashoffset = String(length);
+      const animation = shape.animate(
+        [{ strokeDashoffset: String(length) }, { strokeDashoffset: "0" }],
+        { duration: 1200, easing: "ease-out", fill: "forwards" },
+      );
+      animation.onfinish = () => {
+        shape.style.strokeDasharray = "";
+        shape.style.strokeDashoffset = "";
+        animation.cancel();
+      };
+    });
+  return true;
+}
+function finishTheater() {
+  emit("theater-done");
+}
+function playBitmapReveal() {
+  bitmapReveal.value = true;
+  clearTimeout(revealTimer);
+  revealTimer = setTimeout(() => {
+    bitmapReveal.value = false;
+  }, 1300);
+}
+async function revealResult(url: string) {
+  if (!alive || revealedFor === url || revealInFlight === url) return;
+  revealInFlight = url;
+  try {
+    if (svgResult.value) {
+      await svgReady;
+      if (!alive || resultUrl.value !== url) return;
+      if (svgMarkup.value) {
+        await nextTick();
+        if (!traceResultSvg()) return;
+        revealedFor = url;
+        return;
+      }
+    }
+    playBitmapReveal();
+    revealedFor = url;
+  } finally {
+    if (revealInFlight === url) revealInFlight = "";
+  }
+}
 const snapshot = (): Snapshot => ({
   elements: elements.value.map((e) => ({ ...e })),
   style: style.value,
@@ -331,6 +659,32 @@ watch(
   },
   { immediate: true },
 );
+watch(
+  resultUrl,
+  (url) => {
+    if (!url) {
+      svgVersion += 1;
+      svgController?.abort();
+      svgMarkup.value = "";
+      svgMeta.value = undefined;
+      svgRevealed.value = false;
+      bitmapReveal.value = false;
+      imageSize.value = undefined;
+      clearTimeout(revealTimer);
+      return;
+    }
+    loadResultMeta(url);
+  },
+  { immediate: true },
+);
+watch(
+  [resultUrl, () => props.theater, () => elements.value.length],
+  ([url, theater, count]) => {
+    if (!url || theater || count) return;
+    void revealResult(url);
+  },
+  { immediate: true },
+);
 async function save() {
   if (!requireSession() || busy.value) return;
   if (!elements.value.length) {
@@ -411,15 +765,31 @@ watch(
     editableTaskId = "";
   },
 );
-onMounted(loadOverview);
+onMounted(() => {
+  void loadOverview();
+  if (resultUrl.value && !props.theater && !elements.value.length)
+    void revealResult(resultUrl.value);
+});
 onUnmounted(() => {
   alive = false;
   clearTimeout(previewTimer);
+  clearTimeout(revealTimer);
+  svgVersion += 1;
+  svgController?.abort();
   if (preview.value) URL.revokeObjectURL(preview.value);
 });
 </script>
 <template>
   <section class="bronze-editor">
+    <GenerationTheater
+      v-if="theater"
+      title="正在铸纹"
+      :steps="theaterSteps"
+      :preview="theaterPreview"
+      :stats="theaterStats"
+      :caption="theaterCaption"
+      @done="finishTheater"
+    />
     <nav class="pattern-tabs" aria-label="纹样分类">
       <button
         v-for="tab in patternTabs"
@@ -564,13 +934,49 @@ onUnmounted(() => {
       <div class="render-preview">
         <img
           v-if="elements.length ? preview : resultUrl"
+          :class="{
+            'ink-reveal': !elements.length && bitmapReveal,
+            'is-covered': !elements.length && !!svgMarkup,
+          }"
           :src="elements.length ? preview : mediaUrl(resultUrl)"
           alt="当前设计效果"
+          @load="onResultImageLoad"
         />
-        <p v-else>
+        <div
+          v-if="!elements.length && svgMarkup"
+          ref="revealHost"
+          class="result-art svg-result"
+          :class="{ revealed: svgRevealed }"
+          v-html="svgMarkup"
+        />
+        <p v-if="!(elements.length ? preview : resultUrl)">
           {{ elements.length ? "正在更新预览…" : "添加纹样后预览你的设计" }}
         </p>
         <span>{{ style }}效果</span>
+      </div>
+      <div
+        v-if="!elements.length && resultUrl && resultChecks.length"
+        class="result-checks"
+        aria-label="成品检验读数"
+      >
+        <em>成品检验</em>
+        <span
+          v-for="check in resultChecks"
+          :key="check.label"
+          class="result-check"
+        >
+          <em>{{ check.label }}</em>
+          <b v-if="check.colors" class="check-swatches">
+            <i
+              v-for="color in check.colors"
+              :key="color.hex"
+              :style="{ background: color.hex }"
+              :title="color.name || color.hex"
+            />
+            <em>{{ check.colors.length }} 色</em>
+          </b>
+          <b v-else>{{ check.value }}</b>
+        </span>
       </div>
       <button
         class="generate-button"
@@ -1017,6 +1423,99 @@ onUnmounted(() => {
   color: #4f4f4f;
   font-size: 11px;
   line-height: 16px;
+}
+.render-preview > .result-art {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.result-art.svg-result {
+  opacity: 0;
+}
+.result-art.svg-result.revealed {
+  opacity: 1;
+}
+.result-art :deep(svg) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.render-preview > img.ink-reveal {
+  animation: bronze-ink-reveal 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.render-preview > img.is-covered {
+  opacity: 0;
+}
+@keyframes bronze-ink-reveal {
+  from {
+    opacity: 0.35;
+    clip-path: inset(100% 0 0 0);
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: scale(1);
+  }
+}
+.result-checks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(201, 168, 76, 0.32);
+  border-radius: 12px;
+  background: #fffdf8;
+}
+.result-checks > em {
+  font-style: normal;
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  color: #8a6125;
+}
+.result-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  line-height: 1.4;
+  color: #8a7a63;
+}
+.result-check > em {
+  font-style: normal;
+  letter-spacing: 0.6px;
+}
+.result-check > b {
+  font: 600 12px/1.2 var(--serif);
+  color: #6b4a1f;
+}
+.check-swatches {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.check-swatches i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(61, 61, 61, 0.16);
+}
+.check-swatches em {
+  margin-left: 1px;
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 400;
+  color: #6b4a1f;
+}
+@media (prefers-reduced-motion: reduce) {
+  .render-preview > img.ink-reveal {
+    animation: none;
+  }
 }
 .generate-button {
   display: flex;

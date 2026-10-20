@@ -49,6 +49,7 @@ const sketch = ref(""),
   localPattern = ref("FLORAL"),
   selectedResult = ref("colored_image_url");
 const bronzeGenerating = ref(false);
+const theater = ref(false);
 const generationMode = ref("LOCAL");
 const imageCapabilities = ref({ image_generation: false, image_edit: false });
 const quota = ref<{ used_today: number; remaining_today: number; daily_limit: number } | null>(null);
@@ -82,6 +83,9 @@ function openBronzeGenerator(renderStyle: string, pattern: string) {
 }
 function backToWorkshop() {
   window.history.state.back ? router.back() : router.replace("/ai-workshop");
+}
+function closeTheater() {
+  theater.value = false;
 }
 const activeResultUrl = computed(
   () =>
@@ -130,9 +134,12 @@ async function poll() {
     }
     if (["QUEUED", "RUNNING"].includes(result.status))
       pollTimer = setTimeout(poll, 1500);
-    else if (result.status === "FAILED")
+    else if (result.status === "FAILED") {
       error.value = result.error_message || "创作失败，请重试";
+      closeTheater();
+    } else if (result.status === "CANCELLED") closeTheater();
   } catch (e) {
+    closeTheater();
     if (current(c)) error.value = (e as Error).message;
   }
 }
@@ -178,6 +185,7 @@ async function create() {
       pendingCreate = { signature, requestId: typeof crypto !== "undefined" && crypto.randomUUID
         ? crypto.randomUUID() : "create-" + Date.now().toString(36) + Math.random().toString(36).slice(2) };
     }
+    if (type.value === "bronze") theater.value = true;
     const result = await post("/ai/tasks", { ...body, request_id: pendingCreate.requestId });
     if (!current(c)) return;
     if (result?.quota) quota.value = result.quota;
@@ -191,6 +199,7 @@ async function create() {
     }
     await poll();
   } catch (e) {
+    closeTheater();
     if (current(c)) error.value = (e as Error).message;
   } finally {
     if (current(c)) busy.value = false;
@@ -209,6 +218,7 @@ async function cancel() {  const c = context(),
     if (!current(c) || task.value?.task_id !== id) return;
     clearTimeout(pollTimer);
     task.value.status = "CANCELLED";
+    closeTheater();
     notify("创作任务已取消");
   } catch (e) {
     if (current(c)) notify((e as Error).message);
@@ -326,6 +336,7 @@ async function restore() {
   prompt.value = "";
   error.value = "";
   bronzeGenerating.value = false;
+  closeTheater();
   busy.value = false;
   uploading.value = false;
   publishing.value = false;
@@ -524,12 +535,15 @@ onUnmounted(() => {
         :saved-task="task"
         :favorite-busy="favoriteBusy"
         :publishing="publishing"
+        :theater="theater"
+        :generation-mode="generationMode"
         @saved="saved"
         @favorite="favorite"
         @generate="openBronzeGenerator"
         @publish="publish"
+        @theater-done="theater = false"
       />
-      <div v-if="bronzeGenerating" class="sheet-overlay">
+      <div v-if="bronzeGenerating && !theater" class="sheet-overlay">
         <section
           class="generation-form corner-card"
           role="dialog"

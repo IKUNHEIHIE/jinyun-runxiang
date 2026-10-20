@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { designImage, designIcon } from "../design";
 import { mediaUrl, notify, requireSession } from "../api";
+import GenerationTheater from "./GenerationTheater.vue";
 const props = defineProps<{
   generationMode: string;
   task?: any;
@@ -112,6 +113,80 @@ const eras = [
     body: "非遗传承融合人工智能，让千年皮影在数字时代焕发新生",
   },
 ];
+const theater = ref(false);
+const theaterElapsed = ref(0);
+const artSize = ref("");
+let generationStartedAt = 0;
+watch(
+  () => props.working,
+  (working) => {
+    if (!working || props.loading) return;
+    theater.value = true;
+    theaterElapsed.value = 0;
+    artSize.value = "";
+    generationStartedAt = performance.now();
+  },
+);
+watch(
+  () => props.error,
+  (message) => {
+    if (message) theater.value = false;
+  },
+);
+watch(
+  () => props.task?.status,
+  (status) => {
+    if (status === "SUCCESS" && generationStartedAt) {
+      theaterElapsed.value = (performance.now() - generationStartedAt) / 1000;
+    }
+    if (status === "FAILED" || status === "CANCELLED") theater.value = false;
+  },
+);
+const resultColors = computed<string[]>(() => {
+  const list = props.task?.result?.color_palette;
+  if (!Array.isArray(list)) return [];
+  const hexes = list
+    .map((item) => {
+      if (typeof item !== "string") return "";
+      const match = item.match(/#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}/);
+      if (!match) return "";
+      const hex = match[0].toUpperCase();
+      return hex.length === 4
+        ? "#" + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3]
+        : hex;
+    })
+    .filter((item) => !!item);
+  return [...new Set(hexes)].slice(0, 6);
+});
+const resultFace = computed(
+  () =>
+    faces.find((item) => item.key === props.task?.result?.face_style)?.label ||
+    "—",
+);
+const theaterPreview = computed(() =>
+  hasResult.value ? mediaUrl(resultUrl.value) : "",
+);
+const theaterStats = computed(() => [
+  { label: "画幅", value: artSize.value || "—" },
+  {
+    label: "取色",
+    value: resultColors.value.length ? resultColors.value.length + " 色" : "—",
+  },
+  {
+    label: "耗时",
+    value: theaterElapsed.value ? theaterElapsed.value.toFixed(1) + "s" : "—",
+  },
+]);
+const theaterCaption = computed(() =>
+  props.generationMode === "AI"
+    ? "AI 图像生成 · 结果为二维创意参考，不是可编辑矢量或切割纸样"
+    : "本地规则模板 · 按行当、脸谱与配色拼装，不调用外部生成模型",
+);
+function measureArt(event: Event) {
+  const image = event.target as HTMLImageElement;
+  if (!image.naturalWidth || !image.naturalHeight) return;
+  artSize.value = image.naturalWidth + "×" + image.naturalHeight;
+}
 function generate() {
   if (!prompt.value.trim()) description.value?.focus();
   emit("generate");
@@ -150,6 +225,15 @@ function publish() {
 </script>
 <template>
   <div class="shadow-workshop" data-design-node="5:3193">
+    <GenerationTheater
+      v-if="theater"
+      title="正在镂刻"
+      :steps="['解析行当与配色', '描样勾脸谱', '镂空分层', '合成皮影成品']"
+      :preview="theaterPreview"
+      :stats="theaterStats"
+      :caption="theaterCaption"
+      @done="theater = false"
+    />
     <header class="shadow-header">
       <img class="hero-photo" :src="designImage(screen, '5:3835')" alt="" />
       <div class="hero-veil" aria-hidden="true" />
@@ -179,8 +263,10 @@ function publish() {
             }}</span>
             <img
               v-if="hasResult"
+              class="result-art"
               :src="mediaUrl(resultUrl)"
               alt="当前皮影创作结果"
+              @load="measureArt"
             />
             <template v-else
               ><img
@@ -198,6 +284,10 @@ function publish() {
                 }}
               </p></template
             >
+            <template v-if="hasResult">
+              <i class="lamp-veil" aria-hidden="true" />
+              <i class="lamp-glow" aria-hidden="true" />
+            </template>
             <i class="preview-corner top-left" aria-hidden="true" /><i
               class="preview-corner top-right"
               aria-hidden="true"
@@ -237,6 +327,19 @@ function publish() {
               </div>
             </div>
           </section>
+          <div v-if="hasResult" class="craft-readout" aria-label="工艺读数">
+            <span><em>行当</em><b>{{ task.result.role_type || "—" }}</b></span>
+            <span><em>脸谱</em><b>{{ resultFace }}</b></span>
+            <span class="readout-colors">
+              <em>取色</em>
+              <i
+                v-for="hex in resultColors"
+                :key="hex"
+                :style="{ backgroundColor: hex }"
+              />
+              <b>{{ resultColors.length ? resultColors.length + " 色" : "—" }}</b>
+            </span>
+          </div>
           <section class="control-card face-card">
             <h2>脸谱样式</h2>
             <div class="face-options">
@@ -629,6 +732,103 @@ function publish() {
 .puppet-preview .example-art {
   object-fit: cover;
   opacity: 0.81;
+}
+.puppet-preview > img.result-art {
+  animation: shadow-develop 0.6s ease-out both;
+}
+.lamp-veil,
+.lamp-glow {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+}
+.lamp-veil {
+  background: radial-gradient(
+    ellipse at 50% 38%,
+    rgba(38, 20, 12, 0.45),
+    rgba(24, 12, 8, 0.82) 76%
+  );
+  animation: lamp-veil-lift 0.6s ease-out both;
+}
+.lamp-glow {
+  background: radial-gradient(
+    circle at 50% 36%,
+    rgba(255, 206, 128, 0.62),
+    rgba(255, 168, 84, 0.2) 44%,
+    transparent 70%
+  );
+  mix-blend-mode: screen;
+  animation: lamp-glow 1.6s ease-out both;
+}
+@keyframes shadow-develop {
+  0% {
+    opacity: 0.24;
+    filter: brightness(0.32) grayscale(1) contrast(1.35);
+  }
+  55% {
+    opacity: 0.9;
+    filter: brightness(0.86) grayscale(0.45) saturate(0.8);
+  }
+  100% {
+    opacity: 1;
+    filter: brightness(1) grayscale(0) saturate(1);
+  }
+}
+@keyframes lamp-veil-lift {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes lamp-glow {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  24% {
+    opacity: 0.92;
+  }
+  100% {
+    opacity: 0.32;
+    transform: scale(1.03);
+  }
+}
+.craft-readout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 10px;
+  padding: 8px 10px;
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  border-radius: 10px;
+  background: var(--shadow-paper);
+  font-size: 9px;
+  line-height: 16px;
+  letter-spacing: 1px;
+  color: var(--shadow-muted);
+}
+.craft-readout > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.craft-readout em {
+  font-style: normal;
+  letter-spacing: 1.4px;
+  color: #8a6a37;
+}
+.craft-readout b {
+  font-weight: 700;
+  color: var(--shadow-ink);
+}
+.craft-readout .readout-colors i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1px solid rgba(44, 24, 16, 0.25);
 }
 .example-label {
   position: absolute;
@@ -1240,6 +1440,17 @@ function publish() {
   }
   .palette-options {
     gap: 8px 5px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .puppet-preview > img.result-art,
+  .lamp-veil,
+  .lamp-glow {
+    animation: none;
+  }
+  .lamp-veil,
+  .lamp-glow {
+    display: none;
   }
 }
 </style>

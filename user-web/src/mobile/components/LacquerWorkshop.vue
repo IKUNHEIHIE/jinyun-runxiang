@@ -2,6 +2,7 @@
 import { computed, ref, watch, onMounted, onUnmounted } from "vue";
 import { designIcon, designImage } from "../design";
 import { mediaUrl, notify, requireSession, session } from "../api";
+import GenerationTheater from "./GenerationTheater.vue";
 
 const screen = "layer-40-55031";
 const props = defineProps<{
@@ -73,6 +74,108 @@ const patternOptions = [
   { value: "GEOMETRIC", label: "几何纹样" },
   { value: "AUSPICIOUS", label: "吉祥文字" },
 ];
+const theater = ref(false);
+const theaterElapsed = ref(0);
+const resultSize = ref("");
+let generationStartedAt = 0;
+watch(
+  () => props.working,
+  (working) => {
+    if (!working || props.loading) return;
+    theater.value = true;
+    theaterElapsed.value = 0;
+    resultSize.value = "";
+    generationStartedAt = performance.now();
+  },
+);
+watch(
+  () => props.error,
+  (message) => {
+    if (message) theater.value = false;
+  },
+);
+watch(
+  () => props.task?.status,
+  (status) => {
+    if (status === "SUCCESS" && generationStartedAt) {
+      theaterElapsed.value = (performance.now() - generationStartedAt) / 1000;
+    }
+    if (status === "FAILED" || status === "CANCELLED") theater.value = false;
+  },
+);
+const resultColors = computed<string[]>(() => {
+  const list = props.task?.result?.color_palette;
+  if (!Array.isArray(list)) return [];
+  const hexes = list
+    .map((item) => {
+      if (typeof item !== "string") return "";
+      const match = item.match(/#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}/);
+      if (!match) return "";
+      const hex = match[0].toUpperCase();
+      return hex.length === 4
+        ? "#" + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3]
+        : hex;
+    })
+    .filter((item) => !!item);
+  return [...new Set(hexes)].slice(0, 6);
+});
+/** 结果图分层：仅当接口真的返回多张图时才逐层描金，否则按单张处理。 */
+const resultLayers = computed<string[]>(() => {
+  const result = props.task?.result;
+  if (!result) return [];
+  for (const candidate of [result.layers, result.layer_urls, result.image_urls]) {
+    if (!Array.isArray(candidate)) continue;
+    const urls = [
+      ...new Set(
+        candidate.filter(
+          (item): item is string => typeof item === "string" && !!item,
+        ),
+      ),
+    ];
+    if (urls.length > 1) return urls;
+  }
+  const single = props.resultUrl || result.colored_image_url || "";
+  return single ? [single] : [];
+});
+const mainColor = computed(
+  () => resultColors.value[0] || props.task?.result?.color_palette?.[0] || "",
+);
+const mainColorName = computed(() => {
+  const matched = palette.find(
+    (item) => item.value.toUpperCase() === mainColor.value.toUpperCase(),
+  );
+  return matched ? matched.name : mainColor.value || "—";
+});
+const patternLabel = computed(() => {
+  const key = props.task?.result?.local_pattern;
+  return patternOptions.find((item) => item.value === key)?.label || "—";
+});
+const theaterPreview = computed(() =>
+  hasResult.value && resultLayers.value.length
+    ? mediaUrl(resultLayers.value[0])
+    : "",
+);
+const theaterStats = computed(() => [
+  { label: "画幅", value: resultSize.value || "—" },
+  {
+    label: "取色",
+    value: resultColors.value.length ? resultColors.value.length + " 色" : "—",
+  },
+  {
+    label: "耗时",
+    value: theaterElapsed.value ? theaterElapsed.value.toFixed(1) + "s" : "—",
+  },
+]);
+const theaterCaption = computed(() =>
+  props.generationMode === "AI"
+    ? "AI 图像生成 · 结果为二维创意参考，不是可编辑矢量"
+    : "本地规则纹样模板 · 按纹样类型与配色绘制，不调用外部生成模型",
+);
+function measureResult(event: Event) {
+  const image = event.target as HTMLImageElement;
+  if (!image.naturalWidth || !image.naturalHeight) return;
+  resultSize.value = image.naturalWidth + "×" + image.naturalHeight;
+}
 function choosePattern(value: string) {
   if (disabled.value || !requireSession()) return;
   pattern.value = value;
@@ -104,6 +207,15 @@ function generate() {
 
 <template>
   <div class="lacquer-workshop" data-design-node="40:55031">
+    <GenerationTheater
+      v-if="theater"
+      title="正在描金"
+      :steps="['解析纹样与主色', '起稿分线', '逐层描金', '合成纹样参考']"
+      :preview="theaterPreview"
+      :stats="theaterStats"
+      :caption="theaterCaption"
+      @done="theater = false"
+    />
     <div class="presentation">
       <img
         class="paper-texture silk"
@@ -371,17 +483,38 @@ function generate() {
             aria-label="查看创作参数或结果"
             @click="edit"
           >
-            <img
-              :src="
-                hasResult ? mediaUrl(resultUrl) : designImage(screen, '5:00086')
-              "
-              :alt="hasResult ? '当前纹样创作结果' : '设计中的工艺参考示例'"
-            /><img
-              v-if="!hasResult"
-              class="preview-frame"
-              :src="designImage(screen, '5:00089')"
-              alt=""
-            /><span>{{
+            <template v-if="hasResult">
+              <img
+                v-for="(url, index) in resultLayers"
+                :key="index + '-' + url"
+                :class="resultLayers.length > 1 ? 'layer-art' : 'result-art'"
+                :style="
+                  resultLayers.length > 1
+                    ? { animationDelay: index * 0.12 + 's' }
+                    : undefined
+                "
+                :src="mediaUrl(url)"
+                alt="当前纹样创作结果"
+                @load="measureResult"
+              />
+              <i
+                v-if="resultLayers.length < 2"
+                class="gild-sweep"
+                aria-hidden="true"
+              />
+            </template>
+            <template v-else>
+              <img
+                :src="designImage(screen, '5:00086')"
+                alt="设计中的工艺参考示例"
+              />
+              <img
+                class="preview-frame"
+                :src="designImage(screen, '5:00089')"
+                alt=""
+              />
+            </template>
+            <span>{{
               uploading
                 ? "上传中…"
                 : processing
@@ -394,6 +527,19 @@ function generate() {
             }}</span>
           </button>
         </div>
+      </div>
+      <div v-if="hasResult" class="craft-readout" aria-label="工艺读数">
+        <span
+          ><em>主色</em
+          ><i class="readout-dot" :style="{ backgroundColor: mainColor }" /><b>{{
+            mainColorName
+          }}</b></span
+        >
+        <span><em>纹样</em><b>{{ patternLabel }}</b></span>
+        <span
+          ><em>取色</em
+          ><b>{{ resultColors.length ? resultColors.length + " 色" : "—" }}</b></span
+        >
       </div>
       <div class="traditional-palette">
         <h3><img :src="designIcon(screen, '5:00217')" alt="" />传统配色参考</h3>
@@ -1217,6 +1363,100 @@ function generate() {
   position: absolute;
   inset: 0;
 }
+.reference-preview > img.result-art {
+  animation: gild-reveal 0.9s ease-out both;
+}
+.reference-preview > img.layer-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  animation: layer-in 0.42s ease-out forwards;
+}
+.gild-sweep {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 24%,
+    rgba(212, 175, 55, 0.45) 45%,
+    rgba(255, 240, 200, 0.92) 52%,
+    rgba(212, 175, 55, 0.42) 58%,
+    transparent 78%
+  );
+  transform: translateX(-130%);
+  animation: gild-scan 1s ease-out 0.12s both;
+}
+@keyframes gild-reveal {
+  from {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0.4;
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+@keyframes layer-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes gild-scan {
+  0% {
+    transform: translateX(-130%);
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(130%);
+    opacity: 0;
+  }
+}
+.craft-readout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin-top: 12px;
+  padding: 9px 12px;
+  border: 1px solid #b8a67a;
+  border-radius: 10px;
+  background: rgba(247, 244, 237, 0.6);
+  font-size: 11px;
+  line-height: 17px;
+  color: #5c5c5c;
+}
+.craft-readout > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.craft-readout em {
+  font-style: normal;
+  letter-spacing: 1.6px;
+  color: #8b8273;
+}
+.craft-readout b {
+  font-weight: 600;
+  color: #2d4a3e;
+}
+.readout-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(45, 74, 62, 0.35);
+}
 .reference-preview span {
   position: absolute;
   left: 50%;
@@ -1498,6 +1738,19 @@ function generate() {
   }
   .hero-quote {
     font-size: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reference-preview > img.result-art,
+  .reference-preview > img.layer-art,
+  .gild-sweep {
+    animation: none;
+    opacity: 1;
+    clip-path: none;
+    transform: none;
+  }
+  .gild-sweep {
+    display: none;
   }
 }
 </style>

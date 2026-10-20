@@ -5,6 +5,7 @@ import { api, mediaUrl, notify, post, requireSession } from "../api";
 import { saveAsset } from "../files";
 import { useEvaluation } from "../useEvaluation";
 import ShadowPuppet3D from "../components/ShadowPuppet3D.vue";
+import GenerationTheater from "../components/GenerationTheater.vue";
 
 type Quota = { used_today: number; remaining_today: number; daily_limit: number };
 type SilhouetteResult = {
@@ -88,6 +89,7 @@ const collected = ref(false);
 const quota = ref<Quota | null>(null);
 const online = ref(typeof navigator === "undefined" ? true : navigator.onLine);
 const restoring = ref(false);
+const theater = ref(false);
 const review = useEvaluation("SHADOW_PUPPET");
 let requestToken = 0;
 const requestId = () => crypto.randomUUID().replace(/-/g, "");
@@ -105,6 +107,7 @@ async function generateSilhouette() {
   }
   const token = ++requestToken;
   generating.value = true;
+  theater.value = true;
   error.value = "";
   try {
     const data = await post<SilhouetteResult & { quota?: Quota }>("/ai/silhouette/generate", {
@@ -122,6 +125,7 @@ async function generateSilhouette() {
   } catch (e) {
     if (token !== requestToken) return;
     error.value = e instanceof Error ? e.message : "剪影生成失败，请稍后重试";
+    theater.value = false;
   } finally {
     if (token === requestToken) generating.value = false;
   }
@@ -211,6 +215,23 @@ onBeforeUnmount(() => {
 <template>
   <div class="shadow-lab">
     <div class="lab-bg" aria-hidden="true"><i class="wash a" /><i class="wash b" /><i class="grain" /></div>
+
+    <GenerationTheater
+      v-if="theater"
+      title="正在落刀"
+      :steps="['解析人物描述', '匹配行当与头冠', '雕刻镂空纹样', '输出高清剪影']"
+      :preview="silhouette ? mediaUrl(silhouette.image_url) : ''"
+      :stats="[
+        {
+          label: '画幅',
+          value: silhouette ? silhouette.width + '×' + silhouette.height : '600×800',
+        },
+        { label: '分层', value: '3 层' },
+        { label: '引擎', value: '本地模板' },
+      ]"
+      caption="本地规则模板 · 按行当、头冠、执物与描述拼装，不调用外部生成模型"
+      @done="theater = false"
+    />
 
     <header class="lab-top">
       <button class="back" aria-label="返回 AI 工坊" @click="back">

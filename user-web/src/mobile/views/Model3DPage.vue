@@ -4,6 +4,7 @@ import { useRoute, useRouter } from "vue-router";
 import { api, mediaUrl, notify, post, requireSession } from "../api";
 import { saveAsset } from "../files";
 import Model3DViewer from "../components/Model3DViewer.vue";
+import GenerationTheater from "../components/GenerationTheater.vue";
 
 type Quota = { used_today: number; remaining_today: number; daily_limit: number };
 type ModelEntry = {
@@ -70,6 +71,8 @@ const quota = ref<Quota | null>(null);
 const online = ref(typeof navigator === "undefined" ? true : navigator.onLine);
 const elapsedMs = ref(0);
 const restoring = ref(false);
+const theater = ref(false);
+const tourPaused = ref(false);
 let requestToken = 0;
 const requestId = () => crypto.randomUUID().replace(/-/g, "");
 
@@ -105,11 +108,31 @@ const progress = computed(() => {
   return Math.min(96, Math.round(((stageIndex.value + 1) / pipelineDefaults.length) * 100));
 });
 const elapsedText = computed(() =>
-  result.value ? (elapsedMs.value / 1000).toFixed(1) + "s" : "—",
+  result.value && elapsedMs.value > 0 ? (elapsedMs.value / 1000).toFixed(1) + "s" : "—",
 );
 const triangleText = computed(() => {
   const value = result.value?.model.triangles || stats.value.triangles || currentModel.value?.triangles || 0;
   return value >= 10000 ? (value / 10000).toFixed(1) + "万" : value.toLocaleString("zh-CN");
+});
+const meshText = computed(() => {
+  const value =
+    result.value?.model.meshes || stats.value.meshes || currentModel.value?.meshes || 0;
+  return value ? String(value) : "—";
+});
+const sizeText = computed(() => {
+  const value = currentModel.value?.size_mb || 0;
+  return value ? value.toFixed(1) + " MB" : "—";
+});
+const theaterSteps = ["解析描述", "检索馆藏库", "装配三维场景", "灯光与材质校准"];
+const theaterStats = computed(() => [
+  { label: "三角面", value: result.value ? triangleText.value : "—" },
+  { label: "网格", value: result.value ? meshText.value : "—" },
+  { label: "匹配耗时", value: elapsedText.value },
+]);
+const theaterCaption = computed(() => {
+  const size = result.value?.model.size_mb;
+  const file = size ? "馆藏 GLB " + size.toFixed(1) + "MB · " : "";
+  return file + "后端从馆藏级 CC0 模型库匹配返回，不生成新的几何体";
 });
 
 let stageTimer: ReturnType<typeof setInterval> | undefined;
@@ -119,6 +142,46 @@ function startStages() {
   stageTimer = setInterval(() => {
     if (stageIndex.value < pipelineDefaults.length - 1) stageIndex.value += 1;
   }, 760);
+}
+
+/** 自动巡游：默认慢速自转，拖动一停就暂停，松手 3 秒后恢复。 */
+let tourTimer: ReturnType<typeof setTimeout> | undefined;
+function pauseTour() {
+  if (tourTimer) clearTimeout(tourTimer);
+  tourTimer = undefined;
+  tourPaused.value = true;
+}
+function resumeTourLater() {
+  if (tourTimer) clearTimeout(tourTimer);
+  tourTimer = setTimeout(() => {
+    tourPaused.value = false;
+    tourTimer = undefined;
+  }, 3000);
+}
+function endTourPause() {
+  window.removeEventListener("pointerup", endTourPause);
+  window.removeEventListener("pointercancel", endTourPause);
+  resumeTourLater();
+}
+function beginTourPause(event: PointerEvent) {
+  if (event.button > 0) return;
+  pauseTour();
+  window.addEventListener("pointerup", endTourPause, { once: true });
+  window.addEventListener("pointercancel", endTourPause, { once: true });
+}
+function onStageWheel() {
+  pauseTour();
+  resumeTourLater();
+}
+function toggleTour() {
+  autoRotate.value = !autoRotate.value;
+  if (tourTimer) clearTimeout(tourTimer);
+  tourTimer = undefined;
+  tourPaused.value = false;
+}
+function onViewerError(message: string) {
+  viewerError.value = message;
+  theater.value = false;
 }
 
 function usePreset(item: (typeof presets)[number]) {
@@ -146,6 +209,7 @@ async function generate() {
   }
   const token = ++requestToken;
   busy.value = true;
+  theater.value = true;
   viewerError.value = "";
   result.value = null;
   collected.value = false;
@@ -165,6 +229,7 @@ async function generate() {
     result.value = data;
   } catch (error) {
     if (token !== requestToken) return;
+    theater.value = false;
     notify(error instanceof Error ? error.message : "三维复原失败，请稍后重试");
   } finally {
     clearInterval(stageTimer);
@@ -240,6 +305,9 @@ onMounted(async () => {
 });
 onBeforeUnmount(() => {
   clearInterval(stageTimer);
+  if (tourTimer) clearTimeout(tourTimer);
+  window.removeEventListener("pointerup", endTourPause);
+  window.removeEventListener("pointercancel", endTourPause);
   requestToken += 1;
   window.removeEventListener("online", setOnline);
   window.removeEventListener("offline", setOnline);
@@ -251,6 +319,15 @@ onBeforeUnmount(() => {
     <div class="lab-bg" aria-hidden="true">
       <i class="wash wash-a" /><i class="wash wash-b" /><i class="paper-grain" />
     </div>
+
+    <GenerationTheater
+      v-if="theater"
+      title="正在匹配馆藏"
+      :steps="theaterSteps"
+      :stats="theaterStats"
+      :caption="theaterCaption"
+      @done="theater = false"
+    />
 
     <header class="lab-top">
       <button class="lab-back" aria-label="返回 AI 工坊" @click="backToWorkshop">
@@ -284,24 +361,30 @@ onBeforeUnmount(() => {
         <span class="hud-live"><i />实时渲染</span>
         <span class="hud-engine">黑漆描金 · 数字展台</span>
       </div>
-      <div class="stage-canvas">
+      <div class="stage-canvas" @pointerdown="beginTourPause" @wheel.passive="onStageWheel">
         <Model3DViewer
           v-if="viewerUrl"
           ref="viewer"
           :url="viewerUrl"
-          :auto-rotate="autoRotate"
+          :auto-rotate="autoRotate && !tourPaused"
           :wireframe="wireframe"
           :label="(currentModel?.name || '馆藏模型') + ' 三维模型，聚焦后可用方向键旋转视角'"
           @loaded="stats = $event"
           @fps="fps = $event"
           @progress="viewerProgress = $event"
-          @error="viewerError = $event"
+          @error="onViewerError"
         />
         <div v-else class="stage-empty">
           <i class="scan-cube" /><p>正在启封馆藏模型…</p>
         </div>
         <div class="stage-shine" aria-hidden="true" />
         <span class="corner tl" /><span class="corner tr" /><span class="corner bl" /><span class="corner br" />
+        <div v-if="currentModel" class="stage-hud-stats">
+          <div><em>三角面</em><b>{{ triangleText }}</b></div>
+          <div><em>网格</em><b>{{ meshText }}</b></div>
+          <div><em>体量</em><b>{{ sizeText }}</b></div>
+          <div class="match"><em>馆藏匹配</em><b>{{ elapsedText }}</b></div>
+        </div>
         <div v-if="currentModel" class="stage-caption">
           <span>馆藏编号 / {{ currentModel.id.toUpperCase() }}</span>
           <b>{{ currentModel.name }}</b>
@@ -315,18 +398,17 @@ onBeforeUnmount(() => {
         <div v-if="viewerError" class="stage-error">{{ viewerError }}</div>
       </div>
       <div class="stage-tools">
-        <button :class="{ on: autoRotate }" @click="autoRotate = !autoRotate">
-          <i class="dot" />自动旋转
+        <button
+          :class="{ on: autoRotate, paused: autoRotate && tourPaused }"
+          :aria-pressed="autoRotate"
+          @click="toggleTour"
+        >
+          <i class="dot" />自动巡游
         </button>
-        <button :class="{ on: wireframe }" @click="wireframe = !wireframe">
+        <button :class="{ on: wireframe }" :aria-pressed="wireframe" @click="wireframe = !wireframe">
           <i class="wire" />线框
         </button>
         <button @click="viewer?.resetView()"><i class="reset" />重置视角</button>
-        <span class="telemetry">
-          <b>{{ triangleText }}</b>面<i />
-          <b>{{ stats.meshes || currentModel?.meshes || 0 }}</b>网格<i />
-          <b>{{ (currentModel?.size_mb || 0).toFixed(1) }}</b>MB
-        </span>
       </div>
     </section>
 
@@ -430,7 +512,7 @@ onBeforeUnmount(() => {
 
     <Teleport to="body">
       <Transition name="fade">
-        <div v-if="busy" class="pipeline-mask">
+        <div v-if="busy && !theater" class="pipeline-mask">
           <div class="pipeline-panel">
             <div class="pipeline-title">
               <i class="pipeline-seal">造</i>
@@ -825,6 +907,12 @@ onBeforeUnmount(() => {
   color: #e7cf9a;
   box-shadow: 0 0 10px rgba(201, 168, 76, 0.12) inset;
 }
+.stage-tools button.paused {
+  border-color: rgba(201, 168, 76, 0.34);
+  border-style: dashed;
+  color: rgba(216, 190, 138, 0.52);
+  box-shadow: none;
+}
 .stage-tools button i {
   width: 6px;
   height: 6px;
@@ -842,24 +930,48 @@ onBeforeUnmount(() => {
   border: 1px solid currentColor;
   border-right-color: transparent;
 }
-.telemetry {
-  margin-left: auto;
+.stage-hud-stats {
+  position: absolute;
+  top: 34px;
+  right: 12px;
+  min-width: 98px;
   display: flex;
-  align-items: center;
-  gap: 4px;
+  flex-direction: column;
+  gap: 3px;
+  padding: 7px 9px;
+  border: 1px solid rgba(200, 169, 110, 0.3);
+  border-radius: 7px;
+  background: rgba(16, 12, 8, 0.62);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+  pointer-events: none;
+}
+.stage-hud-stats div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
   font-size: 8px;
   letter-spacing: 0.8px;
-  color: rgba(216, 190, 138, 0.38);
+  color: rgba(216, 190, 138, 0.5);
 }
-.telemetry b {
-  color: rgba(240, 226, 197, 0.82);
+.stage-hud-stats em {
+  font-style: normal;
+}
+.stage-hud-stats b {
+  font-family: var(--serif);
+  font-size: 10px;
   font-weight: 600;
+  letter-spacing: 0.4px;
+  color: #c8a96e;
+  font-variant-numeric: tabular-nums;
 }
-.telemetry i {
-  width: 1px;
-  height: 9px;
-  margin: 0 3px;
-  background: rgba(201, 168, 76, 0.2);
+.stage-hud-stats div.match {
+  margin-top: 1px;
+  padding-top: 4px;
+  border-top: 1px dashed rgba(200, 169, 110, 0.22);
+}
+.stage-hud-stats div.match b {
+  color: #e7cf9a;
 }
 .control-card,
 .result-card,
