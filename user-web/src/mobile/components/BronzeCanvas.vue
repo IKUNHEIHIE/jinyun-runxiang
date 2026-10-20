@@ -140,7 +140,7 @@ const palette = computed(() => {
 const resultSize = computed(() => {
   if (svgMeta.value?.width && svgMeta.value?.height)
     return svgMeta.value.width + "×" + svgMeta.value.height;
-  if (imageSize.value)
+  if ((!svgResult.value || !svgMarkup.value) && imageSize.value)
     return imageSize.value.width + "×" + imageSize.value.height;
   return "";
 });
@@ -196,8 +196,9 @@ const theaterStats = computed(() => [
   { label: "尺寸", value: resultSize.value || "—" },
 ]);
 const theaterPreview = computed(() => {
+  if (elements.value.length && preview.value) return preview.value;
   if (resultUrl.value) return mediaUrl(resultUrl.value);
-  return elements.value.length ? preview.value : "";
+  return "";
 });
 const aiGeneration = computed(() =>
   readyResult.value
@@ -393,7 +394,11 @@ function playBitmapReveal() {
   }, 1300);
 }
 async function revealResult(url: string) {
-  if (!alive || revealedFor === url || revealInFlight === url) return;
+  if (!alive || revealInFlight === url) return;
+  if (revealedFor === url) {
+    if (svgResult.value) svgRevealed.value = true;
+    return;
+  }
   revealInFlight = url;
   try {
     if (svgResult.value) {
@@ -957,6 +962,7 @@ onUnmounted(() => {
       <div
         v-if="!elements.length && resultUrl && resultChecks.length"
         class="result-checks"
+        role="group"
         aria-label="成品检验读数"
       >
         <em>成品检验</em>
