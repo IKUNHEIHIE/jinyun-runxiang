@@ -50,6 +50,7 @@ type Contest = {
 };
 
 const classes = ref<any[]>([]);
+const partners = ref<any[]>([]);
 const contests = ref<Contest[]>([]);
 const loading = ref(true);
 const busy = ref(false);
@@ -77,6 +78,16 @@ const form = ref({
   deadline_days: 7,
 });
 
+// 客队可以挑别班老师的班：这类班级只能整班应战，名单由对方教师自己维护。
+const awayOptions = computed(() => [
+  ...classes.value.map((item) => ({ ...item, own: true })),
+  ...partners.value.map((item) => ({ ...item, own: false })),
+]);
+const awayOwned = computed(() =>
+  Boolean(
+    awayOptions.value.find((item) => item.id === form.value.away_class_id)?.own,
+  ),
+);
 const statusText: Record<string, string> = {
   OPEN: "进行中",
   SCORING: "评分中",
@@ -102,16 +113,24 @@ async function load() {
   loading.value = true;
   error.value = "";
   try {
-    const [classRows, contestRows] = await Promise.all([
+    const [classRows, contestRows, partnerRows] = await Promise.all([
       api<any[]>("/teacher/classes"),
       api<Contest[]>("/teacher/contests"),
+      api<any[]>("/teacher/contest-partners"),
     ]);
     classes.value = classRows;
     contests.value = contestRows;
+    partners.value = partnerRows;
     if (!form.value.home_class_id && classRows.length)
       form.value.home_class_id = classRows[0].id;
     if (!form.value.away_class_id && classRows.length > 1)
       form.value.away_class_id = classRows[1].id;
+    if (
+      !form.value.away_class_id &&
+      classRows.length < 2 &&
+      partnerRows.length
+    )
+      form.value.away_class_id = partnerRows[0].id;
   } catch (e) {
     error.value = (e as Error).message;
   } finally {
@@ -121,6 +140,11 @@ async function load() {
 
 async function loadStudents(classId: number, side: "home" | "away") {
   if (!classId) return;
+  if (side === "away" && !awayOwned.value) {
+    awayStudents.value = [];
+    selectedAway.value = [];
+    return;
+  }
   try {
     const rows = await api<Student[]>(
       `/mobile/teacher/classes/${classId}/students`,
@@ -142,16 +166,18 @@ async function loadStudents(classId: number, side: "home" | "away") {
 }
 
 async function openCreate() {
-  if (classes.value.length < 2) {
+  if (classes.value.length + partners.value.length < 2) {
     notify("至少需要两个班级才能创建对抗赛");
     return;
   }
-  if (!form.value.home_class_id) form.value.home_class_id = classes.value[0].id;
+  if (!form.value.home_class_id) form.value.home_class_id = classes.value[0]?.id;
   if (
     !form.value.away_class_id ||
     form.value.away_class_id === form.value.home_class_id
   )
-    form.value.away_class_id = classes.value[1].id;
+    form.value.away_class_id =
+      classes.value.find((item) => item.id !== form.value.home_class_id)?.id ??
+      partners.value[0]?.id;
   await Promise.all([
     loadStudents(form.value.home_class_id, "home"),
     loadStudents(form.value.away_class_id, "away"),
@@ -168,8 +194,8 @@ async function createContest() {
     notify("请选择两个不同班级");
     return;
   }
-  if (!selectedHome.value.length || !selectedAway.value.length) {
-    notify("两个班级都至少选择一名参赛学生");
+  if (!selectedHome.value.length || (awayOwned.value && !selectedAway.value.length)) {
+    notify(awayOwned.value ? "两个班级都至少选择一名参赛学生" : "主队至少选择一名参赛学生");
     return;
   }
   busy.value = true;
@@ -181,7 +207,7 @@ async function createContest() {
       round_no: Number(form.value.round_no),
       deadline_days: Number(form.value.deadline_days),
       home_student_ids: selectedHome.value,
-      away_student_ids: selectedAway.value,
+      away_student_ids: awayOwned.value ? selectedAway.value : null,
     });
     creating.value = false;
     form.value.title = "";
@@ -430,8 +456,8 @@ load();
                   v-model.number="form.away_class_id"
                   @change="loadStudents(form.away_class_id, 'away')"
                 >
-                  <option v-for="c in classes" :key="c.id" :value="c.id">
-                    {{ c.name }}
+                  <option v-for="c in awayOptions" :key="c.id" :value="c.id">
+                    {{ c.name }}{{ c.own ? "" : " · " + c.teacher_name }}
                   </option>
                 </select></label>
             </div>
@@ -478,26 +504,31 @@ load();
               </label>
             </div>
             <div class="roster-block">
-              <h3>{{ classes.find((c) => c.id === form.away_class_id)?.name }} 参赛名单</h3>
-              <p v-if="!awayStudents.length" class="subtle">该班暂无学生</p>
-              <label
-                v-for="student in awayStudents"
-                :key="student.id"
-                class="student-check"
-              >
-                <input
-                  type="checkbox"
-                  :checked="selectedAway.includes(student.id)"
-                  @change="
-                    selectedAway = join(
-                      selectedAway,
-                      student.id,
-                      ($event.target as HTMLInputElement).checked,
-                    )
-                  "
-                />
-                {{ student.nickname }}
-              </label>
+              <h3>{{ awayOptions.find((c) => c.id === form.away_class_id)?.name }} 参赛名单</h3>
+              <p v-if="!awayOwned" class="subtle">
+                客队由其他教师带班 · 创建后该班全体学生自动参赛，对方教师可在自己端内调整名单
+              </p>
+              <template v-else>
+                <p v-if="!awayStudents.length" class="subtle">该班暂无学生</p>
+                <label
+                  v-for="student in awayStudents"
+                  :key="student.id"
+                  class="student-check"
+                >
+                  <input
+                    type="checkbox"
+                    :checked="selectedAway.includes(student.id)"
+                    @change="
+                      selectedAway = join(
+                        selectedAway,
+                        student.id,
+                        ($event.target as HTMLInputElement).checked,
+                      )
+                    "
+                  />
+                  {{ student.nickname }}
+                </label>
+              </template>
             </div>
             <button class="primary-button" :disabled="busy">
               {{ busy ? "创建中…" : "创建对抗赛" }}

@@ -313,7 +313,7 @@ class ContestCreate(BaseModel):
     scoring_mode: Literal["TOTAL", "AVERAGE"] = "TOTAL"
     deadline_days: int = Field(7, ge=1, le=365)
     home_student_ids: list[int] = Field(min_length=1, max_length=200)
-    away_student_ids: list[int] = Field(min_length=1, max_length=200)
+    away_student_ids: list[int] | None = Field(None, min_length=1, max_length=200)
 
     @field_validator("title", "description", mode="before")
     @classmethod
@@ -338,7 +338,19 @@ def list_teacher_contests(
 ):
     query = db.query(Contest)
     if current_user["role_code"] != "ADMIN":
-        query = query.filter(Contest.teacher_id == current_user["user_id"])
+        # 与读权限保持一致：主办教师或任一方班级教师都要能在自己的列表里看到这场对抗赛，
+        # 否则被挑战的一方根本发现不了它。
+        own = [
+            record.id
+            for record in db.query(TeacherClass.id).filter_by(
+                teacher_id=current_user["user_id"]
+            ).all()
+        ]
+        query = query.filter(
+            (Contest.teacher_id == current_user["user_id"])
+            | (Contest.home_class_id.in_(own))
+            | (Contest.away_class_id.in_(own))
+        )
     if class_id:
         _owned_class(db, class_id, current_user)
         query = query.filter(
@@ -365,6 +377,37 @@ def list_teacher_contests(
     ])
 
 
+@router.get("/teacher/contest-partners")
+def list_contest_partners(
+    current_user: dict = Depends(require_teacher),
+    db: Session = Depends(get_db),
+):
+    # 可挑战的其他班级：只暴露班级与带队教师，不含学生名单。
+    query = db.query(TeacherClass).filter(TeacherClass.status == "ACTIVE")
+    if current_user["role_code"] != "ADMIN":
+        query = query.filter(TeacherClass.teacher_id != current_user["user_id"])
+    records = query.order_by(TeacherClass.id).all()
+    nicknames = {
+        user.id: user.nickname
+        for user in db.query(SysUser).filter(
+            SysUser.id.in_({record.teacher_id for record in records})
+        ).all()
+    } if records else {}
+    return success_response([
+        {
+            "id": record.id,
+            "name": record.name,
+            "grade": record.grade,
+            "teacher_id": record.teacher_id,
+            "teacher_name": nicknames.get(record.teacher_id, ""),
+            "student_count": db.query(ClassMember).filter_by(
+                class_id=record.id, status="ACTIVE"
+            ).count(),
+        }
+        for record in records
+    ])
+
+
 @router.post("/teacher/contests")
 def create_contest(
     req: ContestCreate,
@@ -374,9 +417,22 @@ def create_contest(
     if req.home_class_id == req.away_class_id:
         raise HTTPException(409, "对抗赛必须选择两个不同班级")
     home = _owned_class(db, req.home_class_id, current_user)
-    away = _owned_class(db, req.away_class_id, current_user)
+    # 客队允许是别的老师带的班（跨班挑战是常态），但发起方不能替对方点名：
+    # 不传 away_student_ids 即客队全班参赛，对方教师之后可在自己端内调整本班名单。
+    away = db.get(TeacherClass, req.away_class_id)
+    if not away or away.status != "ACTIVE":
+        raise HTTPException(404, "客队班级不存在")
+    if away.teacher_id != current_user["user_id"] and current_user["role_code"] != "ADMIN":
+        if req.away_student_ids is not None:
+            raise HTTPException(403, "客队名单只能由本班教师指定，留空则客队全班参赛")
     home_students = _validated_roster(db, home.id, req.home_student_ids)
-    away_students = _validated_roster(db, away.id, req.away_student_ids)
+    away_students = (
+        _validated_roster(db, away.id, req.away_student_ids)
+        if req.away_student_ids is not None
+        else _active_students(db, away.id)
+    )
+    if not away_students:
+        raise HTTPException(409, "客队班级没有在读学生")
     overlap = {student.id for student in home_students} & {student.id for student in away_students}
     if overlap:
         raise HTTPException(409, "同一学生不能同时代表两个班级参赛")
