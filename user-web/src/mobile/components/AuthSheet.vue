@@ -95,9 +95,13 @@ async function submit() {
     session.authVisible = false;
     window.dispatchEvent(new Event("jinyun-signed-in"));
     notify(isRegistration ? "注册成功，欢迎来到津韵润乡" : "登录成功");
-    if (destination) await router.push(destination);
-    else if (["TEACHER", "ADMIN"].includes(result.user?.role_code))
-      await router.replace("/teacher");
+    const teacherRole = ["TEACHER", "ADMIN"].includes(result.user?.role_code);
+    // 从「我的」点登录会带上 authRedirect=/profile，教师会被留在学生档案页；教师端外壳优先。
+    const target =
+      teacherRole && (!destination || destination === "/" || destination === "/profile")
+        ? "/teacher"
+        : destination;
+    if (target) await (target === "/teacher" ? router.replace(target) : router.push(target));
   } catch (e) {
     if (isCurrent()) error.value = (e as Error).message;
   } finally {

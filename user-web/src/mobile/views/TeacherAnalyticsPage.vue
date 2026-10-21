@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
-import { useRouter } from "vue-router";
 import { api, session, mediaUrl, notify } from "../api";
 import { designImage, designIcon } from "../design";
 import AsyncState from "../components/AsyncState.vue";
-const router = useRouter();
 const classes = ref<any[]>([]),
   classId = ref<number>(),
   data = ref<any>({});
@@ -107,9 +105,6 @@ function value(n: number | null | undefined, suffix = "") {
 }
 function portrait(s: any) {
   return mediaUrl(s.avatar_url);
-}
-function back() {
-  window.history.state?.back ? router.back() : router.replace("/teacher");
 }
 function close() {
   if (!busy.value) {
@@ -299,13 +294,8 @@ onUnmounted(() => {
 <template>
   <div class="teacher-analytics" data-design-node="5:3855">
     <header class="analytics-header" data-design-node="5:4694">
-      <button class="analytics-back" aria-label="返回教学工坊" @click="back">
-        <img :src="designIcon('layer-5-3855', '5:4721')" alt="" />
-      </button>
       <h1>教师端 · 实时数据</h1>
-      <RouterLink class="student-mode" to="/profile"
-        >学生模式<span aria-hidden="true"><i /></span
-      ></RouterLink>
+      <RouterLink class="student-mode" to="/courses">学生端 ›</RouterLink>
     </header>
     <main class="analytics-body" :aria-busy="loading">
       <section class="analytics-picker" data-design-node="5:4588">
@@ -769,20 +759,6 @@ onUnmounted(() => {
   border-bottom: 1px solid rgba(200, 168, 130, 0.2);
   backdrop-filter: blur(12px);
 }
-.analytics-back {
-  width: 40px;
-  height: 40px;
-  flex: none;
-  display: grid;
-  place-items: center;
-  background: rgba(240, 230, 208, 0.8);
-  border: 1px solid rgba(245, 232, 184, 0.5);
-  border-radius: 50%;
-}
-.analytics-back img {
-  width: 6px;
-  height: 12px;
-}
 .analytics-header h1 {
   font-size: 16px;
   line-height: 24px;
@@ -792,29 +768,15 @@ onUnmounted(() => {
   color: #5d4040;
 }
 .student-mode {
-  font: 12px/16px var(--serif);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--a-muted);
+  flex: none;
+  padding: 7px 12px;
+  border: 1px solid rgba(184, 149, 106, 0.55);
+  border-radius: 999px;
+  background: rgba(255, 251, 249, 0.9);
+  font: 12px/1 var(--serif);
+  letter-spacing: 1px;
+  color: #6c2e11;
   white-space: nowrap;
-}
-.student-mode > span {
-  width: 56px;
-  height: 32px;
-  border: 2px solid var(--a-gold);
-  border-radius: 16px;
-  background: #f0e0d0;
-  padding: 2px;
-  display: flex;
-  justify-content: flex-end;
-}
-.student-mode i {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: #b8956a;
-  box-shadow: 0 2px 6px rgba(200, 168, 130, 0.4);
 }
 .analytics-body {
   padding: 24px 20px 40px;

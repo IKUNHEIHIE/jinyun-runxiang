@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-import { session } from "./api";
+import { session, loadProfile } from "./api";
 import { restorePageScroll } from "./page-scroll";
 const router = createRouter({
   history: createWebHashHistory(),
@@ -201,7 +201,14 @@ const router = createRouter({
   },
 });
 const TEACHER_ROLES = ["TEACHER", "ADMIN"];
-router.beforeEach((to, from) => {
+router.beforeEach(async (to, from) => {
+  // 冷启动时 session.profile 还没回来，教师会先闪一下学生首页；这里等一次 /auth/me 再判定落在哪一端。
+  if (
+    session.token &&
+    !session.profile &&
+    (to.path === "/" || to.meta.teacher)
+  )
+    await loadProfile().catch(() => null);
   if (
     to.path === "/" &&
     session.token &&

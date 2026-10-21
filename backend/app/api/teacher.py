@@ -292,17 +292,27 @@ def list_assignments(
     assignments = query.order_by(Assignment.created_at.desc()).all()
 
     res = []
+    ids = [a.id for a in assignments]
+    submissions = db.query(AssignmentSubmission).filter(
+        AssignmentSubmission.assignment_id.in_(ids)).all() if ids else []
+    reviewed_ids = {r.submission_id for r in db.query(AssignmentReview).filter(
+        AssignmentReview.submission_id.in_([s.id for s in submissions])).all()} if submissions else set()
+    counts = {}
+    for s in submissions:
+        c = counts.setdefault(s.assignment_id, {"submitted": 0, "review_pending": 0})
+        c["submitted"] += 1
+        if s.id not in reviewed_ids:
+            c["review_pending"] += 1
     for a in assignments:
-        submit_count = db.query(AssignmentSubmission).filter(
-            AssignmentSubmission.assignment_id == a.id
-        ).count()
+        c = counts.get(a.id, {"submitted": 0, "review_pending": 0})
         res.append({
             "id": a.id,
             "title": a.title,
             "type": a.type,
             "tool_type": a.tool_type,
             "deadline": a.deadline.strftime("%Y-%m-%d %H:%M"),
-            "submit_count": submit_count,
+            "submit_count": c["submitted"],
+            "review_pending": c["review_pending"],
             "status": a.status
         })
     return success_response(res)

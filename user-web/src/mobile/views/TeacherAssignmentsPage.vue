@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import { useRoute } from "vue-router";
 import { api, post, notify } from "../api";
 import PageHeader from "../components/PageHeader.vue";
@@ -23,6 +23,9 @@ const form = ref({
   type: "AI_CREATION",
   tool_type: "SHADOW_PUPPET",
 });
+const pendingReview = computed(() =>
+  assignments.value.reduce((total, item) => total + (item.review_pending || 0), 0),
+);
 async function load() {
   loading.value = true;
   error.value = "";
@@ -99,7 +102,11 @@ watch(
 </script>
 <template>
   <div :class="{ 'assignment-tab': !route.params.id }">
-    <PageHeader :title="route.params.id ? '作业批改' : '作业 · 对抗赛'" />
+    <PageHeader
+      :title="route.params.id ? '作业批改' : '作业 · 对抗赛'"
+      :back="!!route.params.id"
+      back-to="/teacher/assignments"
+    />
     <div class="page-padding">
       <template v-if="!route.params.id"
         ><label
@@ -115,7 +122,10 @@ watch(
           ><RouterLink class="outline-button" to="/teacher/analytics"
             >班级学情排行</RouterLink
           >
-        </div></template
+        </div>
+        <p v-if="pendingReview" class="review-summary">
+          本班还有 <strong>{{ pendingReview }}</strong> 份作业待批改，点下面的卡片即可逐份打分写评语。
+        </p></template
       ><AsyncState
         :loading="loading"
         :error="error"
@@ -140,7 +150,11 @@ watch(
               <p class="subtle">截止 {{ assignment.deadline }}</p>
               <div>
                 <span>已提交 {{ assignment.submit_count }} 份</span
-                ><span>查看与批改 ›</span>
+                ><span
+                  :class="{ 'need-review': assignment.review_pending }"
+                  >待批改 {{ assignment.review_pending ?? 0 }} 份 ·
+                  {{ assignment.submit_count ? "去批改 ›" : "查看 ›" }}</span
+                >
               </div></RouterLink
             ></template
           ><template v-else
@@ -337,5 +351,22 @@ watch(
   border-radius: 4px;
   margin-right: 6px;
   vertical-align: middle;
+}
+.review-summary {
+  margin: -8px 0 18px;
+  padding: 10px 14px;
+  border: 1px solid rgba(168, 74, 59, 0.32);
+  border-radius: 10px;
+  background: rgba(255, 246, 236, 0.9);
+  color: #6c2e11;
+  font: 400 12px/1.7 var(--sans);
+}
+.review-summary strong {
+  color: #a84a3b;
+  font: 700 15px/1 var(--serif);
+}
+.assignment-card > div:last-child .need-review {
+  color: #a84a3b;
+  font-weight: 600;
 }
 </style>

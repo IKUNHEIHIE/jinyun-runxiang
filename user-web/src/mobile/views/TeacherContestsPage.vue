@@ -330,7 +330,7 @@ load();
 
 <template>
   <div class="contest-root">
-    <PageHeader title="班级对抗赛" subtitle="两班同题创作 · 评分与排名" />
+    <PageHeader title="班级对抗赛" subtitle="两班同题创作 · 评分与排名" :back="false" />
     <div class="page-padding">
       <div class="contest-actions">
         <button class="primary-button" @click="openCreate">新建对抗赛</button>

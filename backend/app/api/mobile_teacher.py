@@ -164,6 +164,13 @@ def overview(user: dict = Depends(require_teacher), db: Session = Depends(get_db
         AssignmentSubmission, AssignmentSubmission.id == AssignmentReview.submission_id).filter(
         AssignmentReview.teacher_id == user["user_id"],
         AssignmentSubmission.assignment_id.in_(assignment_classes)).count() if assignments else 0
+    # 待批改 = 本班学生已提交、且还没有任何批改记录的作业（assignment_review.submission_id 唯一）。
+    member_submissions = [s for s in (db.query(AssignmentSubmission).filter(
+        AssignmentSubmission.assignment_id.in_(assignment_classes)).all() if assignments else [])
+        if (assignment_classes[s.assignment_id], s.student_id) in member_pairs]
+    reviewed_submission_ids = {r.submission_id for r in db.query(AssignmentReview).filter(
+        AssignmentReview.submission_id.in_([s.id for s in member_submissions])).all()} if member_submissions else set()
+    review_pending = sum(1 for s in member_submissions if s.id not in reviewed_submission_ids)
     from app.core.course_badges import course_badge_progress
     completed_courses = sum(p["completed_courses"] for p in course_badge_progress(db, user["user_id"]).values())
     # The design names four achievements but supplies no thresholds. These are
@@ -184,6 +191,7 @@ def overview(user: dict = Depends(require_teacher), db: Session = Depends(get_db
         "class_count":len(classes), "student_count":len(student_ids), "assignment_count":len(assignments),
         "submission_count":len(submitted_pairs), "submission_expected":expected_submissions,
         "submission_pending":expected_submissions - len(submitted_pairs),
+        "review_pending":review_pending, "submission_submitted":len(member_submissions),
         "submission_rate":round(100 * len(submitted_pairs) / expected_submissions, 1) if expected_submissions else None,
         "next_assignment_deadline":next_deadline.replace(tzinfo=timezone.utc).isoformat() if next_deadline else None,
         "active_contest_count":sum(a.type == "CONTEST" for a in pending_assignments),

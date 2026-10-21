@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
-import { useRouter } from "vue-router";
 import { api, session, mediaUrl } from "../api";
 import { designImage, designIcon } from "../design";
 import AsyncState from "../components/AsyncState.vue";
 
-const router = useRouter();
 const stats = ref<any>({}),
   personal = ref<any>({}),
   loading = ref(false),
@@ -82,18 +80,62 @@ const metricRows = computed(() => [
     unit: "分",
     icon: "40:5091",
     key: "activity",
-    description:
-      stats.value.interaction_count == null
-        ? "课堂数据加载后显示"
-        : "今日互动 " +
-          stats.value.interaction_count +
-          " 次 · 举手 " +
-          stats.value.hand_raiser_count +
-          " 人 · 参与 " +
-          stats.value.activity_participant_count +
-          " 人",
+    description: activityDescription(),
   },
 ]);
+function activityDescription() {
+  if (stats.value.interaction_count == null) return "课堂数据加载后显示";
+  if (!stats.value.session_count)
+    return "还没有课堂记录 · 开启在线课堂后自动统计举手与互动";
+  return (
+    "今日互动 " +
+    stats.value.interaction_count +
+    " 次 · 举手 " +
+    stats.value.hand_raiser_count +
+    " 人 · 参与 " +
+    stats.value.activity_participant_count +
+    " 人"
+  );
+}
+// 待办只在真实数据上出现：没有待批改就显示 0 行，而不是造一条空任务。
+const todos = computed(() => {
+  const rows: { label: string; action: string; path: string }[] = [];
+  if (stats.value.review_pending)
+    rows.push({
+      label: "待批改 " + stats.value.review_pending + " 份作业",
+      action: "去批改",
+      path: "/teacher/assignments",
+    });
+  if (stats.value.attendance_unrecorded)
+    rows.push({
+      label: "今日考勤还有 " + stats.value.attendance_unrecorded + " 人未记录",
+      action: "记考勤",
+      path: "/teacher/analytics",
+    });
+  if (stats.value.active_contest_count)
+    rows.push({
+      label: stats.value.active_contest_count + " 场对抗赛进行中",
+      action: "看排名",
+      path: "/teacher/contests",
+    });
+  if (stats.value.submission_pending)
+    rows.push({
+      label: "还有 " + stats.value.submission_pending + " 份作业待学生提交",
+      action: "催交",
+      path: "/teacher/notices",
+    });
+  return rows;
+});
+const assignmentSummary = computed(() => {
+  const total = stats.value.assignment_count;
+  if (total == null) return "作业 —";
+  return (
+    "作业 " +
+    total +
+    " 份" +
+    (stats.value.review_pending ? " · 待批改 " + stats.value.review_pending : "")
+  );
+});
 const shortcuts = [
   {
     label: "发布作业",
@@ -101,8 +143,8 @@ const shortcuts = [
     icon: "40:00505",
   },
   { label: "班级通知", path: "/teacher/notices", icon: "40:00513" },
-  { label: "成绩录入", path: "/teacher/assignments", icon: "40:00514" },
-  { label: "设置", path: "/profile?edit=1", icon: "40:00521" },
+  { label: "学生成绩", path: "/teacher/analytics", icon: "40:5081" },
+  { label: "在线课堂", path: "/teacher/classroom", icon: "40:00489" },
 ];
 function deadline(value: string) {
   return new Intl.DateTimeFormat("zh-CN", {
@@ -142,9 +184,6 @@ async function load() {
 }
 function refreshVisible() {
   if (document.visibilityState === "visible" && session.token) void load();
-}
-function back() {
-  window.history.state.back ? router.back() : router.replace("/");
 }
 onMounted(() => {
   void load();
@@ -193,9 +232,6 @@ watch(
         :src="designImage('layer-40-8834', '40:8847')"
         alt=""
       />
-      <button class="teacher-back" aria-label="返回上一页" @click="back">
-        <img :src="designIcon('layer-40-8834', '40:5073')" alt="" />
-      </button>
       <RouterLink
         to="/profile?edit=1"
         class="teacher-avatar"
@@ -286,6 +322,24 @@ watch(
         </AsyncState>
       </section>
       <section
+        v-if="todos.length"
+        class="teacher-block teacher-todo"
+        aria-labelledby="teacher-todo-title"
+      >
+        <div class="teacher-heading">
+          <h2 id="teacher-todo-title">今日待办</h2>
+          <span>{{ todos.length }} 项</span>
+        </div>
+        <RouterLink
+          v-for="item in todos"
+          :key="item.label"
+          :to="item.path"
+          class="todo-row"
+          ><i aria-hidden="true" /><span>{{ item.label }}</span
+          ><em>{{ item.action }} ›</em></RouterLink
+        >
+      </section>
+      <section
         class="teacher-block teaching-workshop"
         aria-labelledby="teaching-tools-title"
       >
@@ -326,8 +380,12 @@ watch(
             /></span>
             <h3>作业·对抗赛</h3>
             <p>发布作业 · 批改与班级任务</p>
-            <small
-              >作业 {{ stats.assignment_count ?? "—" }} 份</small
+            <small>{{ assignmentSummary }}</small
+            ><i
+              v-if="stats.review_pending"
+              class="tool-alert"
+              aria-hidden="true"
+              >{{ stats.review_pending }}</i
             ></RouterLink
           >
           <RouterLink to="/teacher/classroom" class="classroom-tool"
@@ -503,6 +561,54 @@ watch(
   color: var(--muted);
   font: 400 11px/1.6 var(--sans);
 }
+.teacher-todo {
+  padding: 14px 16px 6px;
+  border-radius: 16px;
+  border: 1px solid rgba(168, 74, 59, 0.22);
+  background: linear-gradient(180deg, rgba(255, 250, 242, 0.94), rgba(250, 240, 230, 0.86));
+}
+.todo-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 2px;
+  border-top: 1px solid rgba(139, 115, 85, 0.16);
+  margin-top: 10px;
+  font: 500 13px/1.4 var(--serif);
+  color: #2c1810;
+}
+.todo-row i {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--teacher-red);
+  box-shadow: 0 0 0 4px rgba(168, 74, 59, 0.14);
+}
+.todo-row span {
+  min-width: 0;
+  flex: 1;
+}
+.todo-row em {
+  flex: none;
+  font: 600 11px/1 var(--sans);
+  letter-spacing: 0.04em;
+  color: var(--teacher-red);
+}
+.tool-alert {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--teacher-red);
+  color: #fff9f2;
+  font: 700 12px/1 var(--sans);
+}
 .teacher-profile {
   --teacher-red: #a84a3b;
   --teacher-gold: #b8956a;
@@ -531,23 +637,6 @@ watch(
   height: 2px;
   left: calc(50% - 40px);
   top: 12px;
-}
-.teacher-back {
-  position: absolute;
-  left: 20px;
-  top: 20px;
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: #fff9;
-  box-shadow: 0 1px 2px #0000000d;
-  backdrop-filter: blur(4px);
-}
-.teacher-back img {
-  width: 5px;
-  height: 9px;
 }
 .teacher-avatar {
   position: absolute;
