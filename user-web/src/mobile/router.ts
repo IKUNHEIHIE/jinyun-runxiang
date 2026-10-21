@@ -111,6 +111,16 @@ const router = createRouter({
       },
     },
     {
+      path: "/teacher/profile",
+      component: () => import("./views/TeacherProfilePage.vue"),
+      meta: {
+        tab: "profile",
+        title: "我的",
+        teacher: true,
+        surface: "#e5d6d6",
+      },
+    },
+    {
       path: "/teacher/lesson-plan",
       component: () => import("./views/LessonPlanPage.vue"),
       meta: {
@@ -206,7 +216,7 @@ router.beforeEach(async (to, from) => {
   if (
     session.token &&
     !session.profile &&
-    (to.path === "/" || to.meta.teacher)
+    (to.path === "/" || to.path === "/profile" || to.meta.teacher)
   )
     await loadProfile().catch(() => null);
   if (
@@ -216,6 +226,13 @@ router.beforeEach(async (to, from) => {
     TEACHER_ROLES.includes(session.profile.role_code)
   )
     return "/teacher";
+  if (
+    to.path === "/profile" &&
+    session.token &&
+    TEACHER_ROLES.includes(session.profile?.role_code || "")
+  )
+    // 教师端底部「我的」不能落到学生档案页（动态/关注/能量都是学生概念），改走教师账号页。
+    return { path: "/teacher/profile", query: to.query };
   if ((to.meta.requiresAuth || to.meta.teacher) && !session.token) {
     session.authRedirect = to.fullPath;
     session.authVisible = true;
