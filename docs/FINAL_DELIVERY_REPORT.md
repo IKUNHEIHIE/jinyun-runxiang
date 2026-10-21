@@ -445,3 +445,21 @@ AI 工坊首页新增黑漆描金风格 3D 入口，`/ai-workshop/3d` 页面接�
 - 代码提交：`bcb7af0`（等待结果 + 默认值）、`9e351eb`（预览不裁切 + 自动定位）、`64fcada`（本条记录）已推送到 `IKUNHEIHIE/jinyun-runxiang` master（推送中途 GCM 凭据失效，重新登录后成功）。交付包同时复制为 `jinyun-runxiang-final33-demo.apk`（仓库根目录、`D:\admin\desktop`、`.local/android/artifacts/` 各一份，56,109,796 B）。
 - 观感修正（用户截图反馈）：皮影页「皮影工艺 / 设计流程 / 历史传承 / 功能特色」直接铺在驴皮花纹照片上，实机小字几乎读不出。给 `.craft-region`、`.history-region` 各加一层 `::before` 米纸渐变（0.82→0.90 / 0.90→0.94，`isolation: isolate` 保证压在图上、字在下），花纹退为底纹。设备复验 `.local/deploy/device-shadow-history-veil.png`、`device-shadow-craft-veil.png`；漆绣页脚是深底亮字，未改。commit `186084a` 已推送。
 - 交付包更新：`jinyun-runxiang-final34-demo.apk`，56,109,801 B，SHA256 `2ea33fb63cfacd62ce3b247323949c9b43312c8711f750f91391250a831a747f`（仓库根、`D:\admin\desktop`、`.local/android/artifacts/` 各一份），已 `adb install -r` 到 emulator-5554。
+
+## 2026-10-21 上午：教师端（角色决定 App 外壳）
+
+- 测试教师账号：`teacher_li / teacher_zhao / teacher_su` 已写入生产库（`.local/deploy/create-teacher-accounts.py --apply`，可用 `--rollback --apply` 整体撤回），并各自带班级、成员、通知、作业、提交、今日考勤与一场跨班对抗赛。账号与口令只存在 `.local/deploy/teacher-credentials.txt`（gitignored，不入库、不打印）。
+- 角色分流：学生账号登录仍是「首页/小课堂/AI工坊/社区/我的」，教师与管理员登录后落地 `#/teacher`，标签栏换成「教学/班级/作业/对抗赛/我的」（内联线稿图标，避免借用学生图标串义）。commit `83f73f1`。
+- 冷启动不再闪学生首页：`router.beforeEach` 在目标为 `/` 或教师路由且本地还没有 profile 时先 `await loadProfile()`，拿到角色再决定落点。
+- 教师从「我的」页登录也会被送到教学工坊：`AuthSheet` 里 `authRedirect=/profile` 不再压过角色判定（教师 + 空/`/`/`/profile` → `replace('/teacher')`）。
+- 待批改闭环：`/mobile/teacher/overview` 与 `/teacher/assignments` 新增 `review_pending`（本班学生已提交且 `assignment_review` 无记录），教学工坊页据此显示「今日待办」（待批改 / 待记录考勤 / 进行中对抗赛 / 待提交催交，每条直达对应 tab），作业卡显示「待批改 N · 去批改」。
+- 去掉已升为 tab 后遗留的详情页外壳：教学工坊返回箭头、班级页返回箭头与伪「学生模式」开关（改为指向 `/courses` 的「学生端」入口），作业/对抗赛 tab 的 `PageHeader :back="false"`，只有 `#/teacher/assignments/:id` 这类详情页保留返回箭头。
+- 快捷操作换成真实入口：原「成绩录入」只是跳到作业列表、「设置」跳个人资料编辑，现改为「学生成绩」→ `/teacher/analytics`、「在线课堂」→ `/teacher/classroom`；课堂活跃度为 `—` 时补一句「还没有课堂记录 · 开启在线课堂后自动统计举手与互动」。
+- 验证（emulator-5554 + 生产 API，`vue-tsc --noEmit` 0 错误）：
+  - 教师登录落地与外壳：`#/teacher`、tabs `教学/班级/作业/对抗赛/我的`、无返回箭头、待办 3 条、`作业 3 份 · 待批改 5`。证据 `.local/deploy/device-teacher-hub-v2.png`、`device-teacher-hub-v5.png`、`device-review-hub-after.png`。
+  - 四个 tab 与详情页：班级页无返回箭头且「学生端 ›」指向 `#/courses`；作业 tab 汇总条「本班还有 5 份作业待批改」+ 三张卡 0/3/2 份待批改；对抗赛 tab 无返回箭头；`#/teacher/assignments/6` 保留返回箭头并列出 3 份提交。证据 `device-teacher-class-v2.png`、`device-teacher-work-v2.png`、`device-teacher-contest-v2.png`、`device-teacher-review-detail-v2.png`。
+  - 批改端到端：给「完成一张旦角线稿」的一份提交打 92 分 + 评语 → 详情页变「已批改」→ 作业 tab 汇总 5→4、卡片 3→2、教学工坊 `待批改 5`→`待批改 4`、待办首条同步。证据 `device-review-before-list.png`、`device-review-detail.png`、`device-review-sheet-filled.png`、`device-review-after-save.png`。
+  - 冷启动：教师 `#/teacher`（token 331 位）稳定；学生 `student_demo01` 冷启动仍是 `#/` + 学生五个 tab，未被误跳。证据 `device-teacher-cold-final.png`、`device-student-cold-final.png`。
+  - 破图/溢出：教师端各页 `broken: []`、`overflow: false`。
+- 交付物：本轮 APK `user-web/android/app/build/outputs/apk/debug/app-debug.apk`，55,997,524 B，SHA256 `1d426febadd2588848a15eb6136e0da1a205f7e064f71201910553e13e4c3943`。注意：该包同时包含另一会话未提交的「我的/工坊」改版，未复制为 `finalNN-demo.apk` 交付包，等那次改版提交后再出包。
+- 已知缺口：教师端「我的」tab 仍是学生档案页（0 作品 / 0 能量 / 学生徽章墙），要改成教师档案需动 `ProfilePage.vue`，该文件正被另一会话编辑，本轮避开。
