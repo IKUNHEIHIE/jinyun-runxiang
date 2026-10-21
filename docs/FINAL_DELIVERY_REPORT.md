@@ -495,5 +495,11 @@ AI 工坊首页新增黑漆描金风格 3D 入口，`/ai-workshop/3d` 页面接�
 - 已知缺口（本轮刻意不动）：① 冷启动瞬间（`/auth/me` 返回前）`MobileApp.vue` 会先按 `studentTabs` 渲染一次底栏，教师会看到约一帧的学生五个 tab；彻底修法是角色未知时先不渲染底栏，或用缓存角色，两处都在另一会话正在改的 `MobileApp.vue` 里。② `jinyun_user_info` 这个 localStorage 键只有 removeItem、从未写入，属历史遗留。
 - 本轮安装包：`user-web/android/app/build/outputs/apk/debug/app-debug.apk`，56,027,203 B，SHA256 `3c310b2298021736a8a337198bfec088408e19fe3ea9d119e2d78fd9f753370c`（`vue-tsc --noEmit` 0 错误；仍含另一会话未提交的改版，故不出 `finalNN-demo.apk` 交付包）。
 - 窄屏与链接复验（`device-teacher-profile-widths.mjs`、`device-teacher-profile-links.mjs`）：360dp 与 411dp 下页面与编辑资料弹层均 `doc==vw`（360/360、411/411）、0 破图、0 元素裁切、无超高标题；四张指标卡分别指向 `#/teacher/analytics`×2、`#/teacher/assignments`、`#/teacher/lesson-plan`（原先全指 analytics，已按含义拆开），五个入口指向 `assignments/lesson-plan/contests/classroom/courses`，真点「备课教案」落到 `#/teacher/lesson-plan` 且表单存在。据此重打包：56,027,2xx B（含 `resize:none` 去掉简介文本域拖拽把手）。commit `0b7e634` 与本次微调已推送 `IKUNHEIHIE/jinyun-runxiang` master。
+- 在线课堂端到端（此前 `teacher_li` 的 `session_count=0`、课堂活跃度一直是 `—`，是教师端最后一个没有真实数据的核心动作）：
+  - 教师端 UI 开课：`#/teacher/classroom` → 「开启课堂」→ 填「皮影刻刀与灯箱 · 第三回合讲评」→「开始课堂」→ 进入 `#/classroom/2`，`GET /mobile/classroom/2` 返回 `LIVE`。脚本 `device-teacher-classroom-e2e.mjs` 首轮误判"没开出课堂"，原因是它查了 `/mobile/teacher/classes`（不存在，返回空）——教师班级列表实际是 `/teacher/classes`，学生名单是 `/mobile/teacher/classes/{id}/students`，两条路径前缀不一致，已记入 `device-teacher-classroom-part2.mjs`。
+  - 学生互动：从 `.local/deploy/student-credentials.txt` 逐个登录、只保留 id 落在本班（6/7/8/9/10/11）的账号，取到 王小雨(6)、李思远(7)，各发 1 条 `HAND` + 1 条 `CHAT`，四条全部 200。**注意**：这一步是 API 侧发言（学生端课堂页与教师端共用 `ClassroomHubPage`，其渲染与空态文案已在路由审计里验过），不是学生 App 里手点。
+  - 教师端实时看到：房间页按顺序渲染 4 条，含昵称、✋ 举手标记与 13:27 时间戳；点「结束课堂并保存记录」→ `status=ENDED`、页面出现「课堂已结束 · 讨论记录已保存」。
+  - 工坊页回填：`授课 1（累计 1 场）`、`课堂活跃度 33 分 · 今日互动 4 次 · 举手 2 人 · 参与 2 人`（2/6 人参与）、教学工坊卡改显示「暂无进行中课堂」。证据 `device-teacher-classroom-live.png`、`device-teacher-classroom-interaction.png`、`device-teacher-classroom-ended.png`、`device-teacher-classroom-hub.png`。
+
 
 
