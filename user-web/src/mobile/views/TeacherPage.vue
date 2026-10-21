@@ -46,8 +46,11 @@ const metricRows = computed(() => [
         ? "考勤数据加载后显示"
         : "应到 " +
           stats.value.attendance_expected +
-          " 人次 · 实到 " +
+          " 人次 · 到课 " +
           stats.value.attendance_present +
+          (stats.value.attendance_late
+            ? " · 迟到 " + stats.value.attendance_late
+            : "") +
           " · 请假 " +
           stats.value.attendance_leave +
           " · 缺勤 " +

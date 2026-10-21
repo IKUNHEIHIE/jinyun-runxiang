@@ -197,6 +197,7 @@ def overview(user: dict = Depends(require_teacher), db: Session = Depends(get_db
         "active_contest_count":sum(a.type == "CONTEST" for a in pending_assignments),
         "attendance_expected":len(member_pairs), "attendance_recorded":len(attendance),
         "attendance_present":sum(a.status == "PRESENT" for a in attendance),
+        "attendance_late":sum(a.status == "LATE" for a in attendance),
         "attendance_leave":sum(a.status == "LEAVE" for a in attendance),
         "attendance_absent":sum(a.status == "ABSENT" for a in attendance),
         "attendance_unrecorded":len(member_pairs) - len(attendance),
@@ -215,7 +216,7 @@ def overview(user: dict = Depends(require_teacher), db: Session = Depends(get_db
 
 class AttendanceItem(BaseModel):
     student_id: int = Field(gt=0)
-    status: Literal["PRESENT", "LEAVE", "ABSENT"]
+    status: Literal["PRESENT", "LATE", "LEAVE", "ABSENT"]
 
 
 class AttendanceInput(BaseModel):

@@ -601,6 +601,7 @@ onUnmounted(() => {
           ><select v-model="attendanceDraft[s.id]" :disabled="busy">
             <option value="UNRECORDED">未记录</option>
             <option value="PRESENT">到课</option>
+            <option value="LATE">迟到</option>
             <option value="LEAVE">请假</option>
             <option value="ABSENT">缺勤</option>
           </select></label
