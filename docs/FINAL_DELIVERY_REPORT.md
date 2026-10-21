@@ -476,3 +476,7 @@ AI 工坊首页新增黑漆描金风格 3D 入口，`/ai-workshop/3d` 页面接�
 - 教师端剩余两个核心动作端到端复验：
   - 班级通知：以 teacher_li 在 `#/teacher/notices` 填写标题与内容 → 点「发布通知」→ 列表顶部即时出现「第三回合对抗赛：明天带刻刀与灯箱 2026-10-21 12:12」；再用 student_demo01 令牌请求 `GET /api/mobile/classes/3/notices` 返回 3 条且新通知在最前，学生端入口为「我的 → 我的班级与作业 → `/notices?class_id=3`」（`PersonalServicePage.vue` → `NoticesPage.vue`），闭环成立。证据 `device-teacher-notice-published.png`。
   - 智能备课：`#/teacher/lesson-plan` 各区块齐全（课程配置、生成教案与课件、历史备课记录含空态「还没有备课记录，生成第一份教案后会保存在这里」、推荐模板 3 张），0 破图。本轮未点「生成」以免消耗真实 AI 额度；教学成就「匠心独运」因此仍为未达成（需要至少一份教案），演示前可先生成一份点亮。证据 `device-teacher-lesson-plan.png`。
+- 堵住「假对抗赛」并修回播种数据（`teacher.py` + `TeacherAssignmentsPage.vue` + `.local/deploy/create-teacher-accounts.py`，已部署）：
+  - 发布作业弹层原先有个「任务类型 = 班级PK对抗赛」选项，走的是普通作业接口，会造出 `type=CONTEST` 但没有对手班、没有 `ContestEntry`、永远无法评分的作业，还会虚增工坊页「N 场对抗赛进行中」。前端去掉该选项并加一行指引（要做班级 PK 去「对抗赛」页），后端 `POST /teacher/assignments` 对 `type=CONTEST` 直接 409。实测：假对抗赛 409、非法 type 仍 422。
+  - 顺带发现**我自己上一轮播种留下的数据缺陷**：contest 3 的两条配套作业（id 11/12）`contest_id` 是 NULL（脚本在插 contest 之前先插了作业）。后果不只是计数不准——学生提交路径靠 `if a.contest_id:` 判断赛事阶段与名单，NULL 会让已公布赛事变成普通作业、任何人都能继续提交。已 `update assignment set contest_id=3 where id in (11,12)`，并把脚本改成插完 contest 后回写 `@k`。复验：以 student_demo01 提交到 11 号作业返回 409「对抗赛已截止提交」，名单外的 student_demo04 提交到 OPEN 的 13 号返回 404「您不在本轮参赛名单中」（修复前这两条都会写库成功）。
+  - 设备复验发布弹层：只剩「班级 + 创作工具」两个下拉与指引文案，无任务类型选项。当前安装包 `app-debug.apk` 55,997,5xx B，SHA256 前缀 `ebab923a`（仍未出交付包，理由同前：另一会话改版未提交）。

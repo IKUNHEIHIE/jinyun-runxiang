@@ -221,17 +221,14 @@ watch(
                 maxlength="10000"
               /></label
             ><label
-              >任务类型<select v-model="form.type">
-                <option value="AI_CREATION">常规创作作业</option>
-                <option value="CONTEST">班级PK对抗赛</option>
-              </select></label
-            ><label
               >创作工具<select v-model="form.tool_type">
                 <option value="SHADOW_PUPPET">皮影角色</option>
                 <option value="BRONZE">青铜纹样</option>
                 <option value="EMBROIDERY">漆绣创作</option>
               </select></label
-            ><label
+            ><p class="contest-hint">
+              要做班级 PK 对抗赛请去「对抗赛」页新建：这里发布的是单个班级的创作作业。
+            </p><label
               >截止天数<input
                 v-model.number="form.deadline_days"
                 type="number"
@@ -368,5 +365,13 @@ watch(
 .assignment-card > div:last-child .need-review {
   color: #a84a3b;
   font-weight: 600;
+}
+.contest-hint {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border-left: 3px solid rgba(168, 74, 59, 0.5);
+  background: rgba(245, 237, 228, 0.7);
+  color: #6c4a2a;
+  font: 400 11px/1.7 var(--sans);
 }
 </style>

@@ -325,6 +325,10 @@ def create_assignment(
 ):
     class_obj = owned_class(db, req.class_id, current_user)
     teacher_id = class_obj.teacher_id
+    if req.type == "CONTEST":
+        # 对抗赛必须成对生成两个班的作业并登记 ContestEntry，走 /teacher/contests；
+        # 这里放行会造出没有对手班、永远无法评分的假对抗赛，还会虚增教师端「进行中对抗赛」计数。
+        raise HTTPException(409, "班级对抗赛请在「对抗赛」页新建，单班作业不能标记为对抗赛")
     deadline = datetime.utcnow() + timedelta(days=req.deadline_days)
     
     assignment = Assignment(
