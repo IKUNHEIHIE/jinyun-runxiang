@@ -358,6 +358,20 @@ watch(
           ></RouterLink>
         </div>
       </section>
+      <section class="teacher-block student-preview" aria-labelledby="student-preview-title">
+        <div class="teacher-heading">
+          <h2 id="student-preview-title">学生端内容</h2>
+        </div>
+        <div class="student-preview-links">
+          <RouterLink to="/courses">小课堂</RouterLink>
+          <RouterLink to="/ai-workshop">AI 工坊</RouterLink>
+          <RouterLink to="/community">社区</RouterLink>
+          <RouterLink to="/heritage">非遗百科</RouterLink>
+        </div>
+        <p class="student-preview-note">
+          进学生端核对你布置的内容长什么样，回到教师端点底部「教学」。
+        </p>
+      </section>
       <section
         class="teacher-block teacher-achievements"
         aria-labelledby="teacher-achievements-title"
@@ -469,6 +483,26 @@ watch(
   </div>
 </template>
 <style scoped>
+.student-preview-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.student-preview-links a {
+  padding: 8px 14px;
+  border: 1px solid rgba(139, 26, 26, 0.28);
+  border-radius: 999px;
+  background: rgba(255, 250, 242, 0.86);
+  color: #6c2e11;
+  font: 500 12px/1 var(--sans);
+  letter-spacing: 0.08em;
+}
+.student-preview-note {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font: 400 11px/1.6 var(--sans);
+}
 .teacher-profile {
   --teacher-red: #a84a3b;
   --teacher-gold: #b8956a;

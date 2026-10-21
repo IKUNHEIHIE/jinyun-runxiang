@@ -96,6 +96,8 @@ async function submit() {
     window.dispatchEvent(new Event("jinyun-signed-in"));
     notify(isRegistration ? "注册成功，欢迎来到津韵润乡" : "登录成功");
     if (destination) await router.push(destination);
+    else if (["TEACHER", "ADMIN"].includes(result.user?.role_code))
+      await router.replace("/teacher");
   } catch (e) {
     if (isCurrent()) error.value = (e as Error).message;
   } finally {

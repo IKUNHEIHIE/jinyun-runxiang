@@ -98,7 +98,7 @@ watch(
 );
 </script>
 <template>
-  <div>
+  <div :class="{ 'assignment-tab': !route.params.id }">
     <PageHeader :title="route.params.id ? '作业批改' : '作业 · 对抗赛'" />
     <div class="page-padding">
       <template v-if="!route.params.id"
@@ -271,6 +271,9 @@ watch(
   </div>
 </template>
 <style scoped>
+.assignment-tab {
+  padding-bottom: calc(88px + var(--safe-bottom));
+}
 .assignment-actions {
   display: flex;
   gap: 12px;

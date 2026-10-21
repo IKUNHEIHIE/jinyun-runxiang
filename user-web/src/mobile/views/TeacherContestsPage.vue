@@ -329,7 +329,7 @@ load();
 </script>
 
 <template>
-  <div>
+  <div class="contest-root">
     <PageHeader title="班级对抗赛" subtitle="两班同题创作 · 评分与排名" />
     <div class="page-padding">
       <div class="contest-actions">
@@ -708,6 +708,9 @@ load();
 </template>
 
 <style scoped>
+.contest-root {
+  padding-bottom: calc(88px + var(--safe-bottom));
+}
 .page-padding {
   padding: 0 20px 40px;
 }

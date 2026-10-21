@@ -749,6 +749,7 @@ onUnmounted(() => {
   --a-card: #fffbf9;
   --a-track: #fce8e8;
   min-height: 100vh;
+  padding-bottom: calc(88px + var(--safe-bottom));
   color: var(--a-ink);
   font-family: var(--serif);
   background: linear-gradient(

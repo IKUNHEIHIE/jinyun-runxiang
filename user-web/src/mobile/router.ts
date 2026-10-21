@@ -104,7 +104,7 @@ const router = createRouter({
       path: "/teacher",
       component: () => import("./views/TeacherPage.vue"),
       meta: {
-        tab: "profile",
+        tab: "teacher",
         title: "教学工坊",
         teacher: true,
         surface: "#e5d6d6",
@@ -124,7 +124,7 @@ const router = createRouter({
       path: "/teacher/analytics",
       component: () => import("./views/TeacherAnalyticsPage.vue"),
       meta: {
-        hideTabs: true,
+        tab: "teacher_class",
         title: "班级实时数据",
         teacher: true,
         surface: "#dbdbdb",
@@ -133,7 +133,7 @@ const router = createRouter({
     {
       path: "/teacher/assignments",
       component: () => import("./views/TeacherAssignmentsPage.vue"),
-      meta: { hideTabs: true, title: "班级作业", teacher: true },
+      meta: { tab: "teacher_work", title: "班级作业", teacher: true },
     },
     {
       path: "/teacher/assignments/:id",
@@ -143,7 +143,7 @@ const router = createRouter({
     {
       path: "/teacher/contests",
       component: () => import("./views/TeacherContestsPage.vue"),
-      meta: { hideTabs: true, title: "班级对抗赛", teacher: true },
+      meta: { tab: "teacher_contest", title: "班级对抗赛", teacher: true },
     },
     {
       path: "/contests",
@@ -200,7 +200,15 @@ const router = createRouter({
     );
   },
 });
+const TEACHER_ROLES = ["TEACHER", "ADMIN"];
 router.beforeEach((to, from) => {
+  if (
+    to.path === "/" &&
+    session.token &&
+    session.profile &&
+    TEACHER_ROLES.includes(session.profile.role_code)
+  )
+    return "/teacher";
   if ((to.meta.requiresAuth || to.meta.teacher) && !session.token) {
     session.authRedirect = to.fullPath;
     session.authVisible = true;
@@ -209,7 +217,7 @@ router.beforeEach((to, from) => {
   if (
     to.meta.teacher &&
     session.profile &&
-    !["TEACHER", "ADMIN"].includes(session.profile.role_code)
+    !TEACHER_ROLES.includes(session.profile.role_code)
   ) {
     return "/profile";
   }
