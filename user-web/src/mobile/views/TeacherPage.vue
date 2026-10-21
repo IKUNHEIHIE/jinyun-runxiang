@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
-import { api, session, mediaUrl } from "../api";
+import { useRouter } from "vue-router";
+import { api, session, mediaUrl, logout, notify } from "../api";
 import { designImage, designIcon } from "../design";
 import AsyncState from "../components/AsyncState.vue";
 
+const router = useRouter();
 const stats = ref<any>({}),
   personal = ref<any>({}),
   loading = ref(false),
@@ -187,6 +189,22 @@ async function load() {
 }
 function refreshVisible() {
   if (document.visibilityState === "visible" && session.token) void load();
+}
+const signingOut = ref(false);
+const roleText = computed(
+  () => (session.profile?.role_code === "ADMIN" ? "管理员" : "教师"),
+);
+async function signOut() {
+  if (signingOut.value) return;
+  signingOut.value = true;
+  try {
+    await logout();
+    await router.replace("/profile");
+  } catch (e) {
+    notify((e as Error).message);
+  } finally {
+    signingOut.value = false;
+  }
 }
 onMounted(() => {
   void load();
@@ -498,6 +516,22 @@ watch(
           >
         </div>
       </section>
+      <section class="teacher-block teacher-account" aria-labelledby="teacher-account-title">
+        <div class="teacher-heading">
+          <h2 id="teacher-account-title">账号</h2>
+        </div>
+        <div class="account-row">
+          <span
+            >{{ session.profile?.nickname || "教学工坊" }} · {{ roleText
+            }}<small v-if="stats.class_count">{{ stats.class_count }} 个班级</small></span
+          ><button :disabled="signingOut" @click="signOut">
+            {{ signingOut ? "退出中…" : "退出登录" }}
+          </button>
+        </div>
+        <p class="account-note">
+          换学生账号登录，就能在学生端核对你布置的作业长什么样。
+        </p>
+      </section>
     </div>
     <Teleport to="body"
       ><div
@@ -597,6 +631,44 @@ watch(
   font: 600 11px/1 var(--sans);
   letter-spacing: 0.04em;
   color: var(--teacher-red);
+}
+.teacher-account {
+  padding-bottom: 14px;
+}
+.account-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+.account-row span {
+  flex: 1;
+  min-width: 0;
+  font: 600 13px/1.5 var(--serif);
+  color: #2c1810;
+}
+.account-row small {
+  margin-left: 8px;
+  font: 400 11px/1 var(--sans);
+  color: var(--teacher-muted);
+}
+.account-row button {
+  flex: none;
+  padding: 8px 16px;
+  border: 1px solid rgba(168, 74, 59, 0.45);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--teacher-red);
+  font: 500 12px/1 var(--sans);
+  letter-spacing: 0.04em;
+}
+.account-row button:disabled {
+  opacity: 0.55;
+}
+.account-note {
+  margin: 10px 0 0;
+  color: var(--teacher-muted);
+  font: 400 11px/1.7 var(--sans);
 }
 .tool-alert {
   position: absolute;
