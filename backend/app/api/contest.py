@@ -34,13 +34,33 @@ def _owned_class(db: Session, class_id: int, user: dict) -> TeacherClass:
     return record
 
 
-def _owned_contest(db: Session, contest_id: int, user: dict) -> Contest:
+def _owns_class(db: Session, class_id: int, user: dict) -> bool:
+    query = db.query(TeacherClass.id).filter(TeacherClass.id == class_id)
+    if user["role_code"] != "ADMIN":
+        query = query.filter(TeacherClass.teacher_id == user["user_id"])
+    return query.first() is not None
+
+
+def _contest_for_read(db: Session, contest_id: int, user: dict) -> Contest:
+    # 对抗赛天然是两个班的事：主办教师（teacher_id）与任一方班级教师都应能看到名单与评分，
+    # 否则跨班对抗赛对创建者自己也是 404。
     contest = db.get(Contest, contest_id)
     if not contest:
         raise HTTPException(404, "对抗赛不存在")
-    _owned_class(db, contest.home_class_id, user)
-    _owned_class(db, contest.away_class_id, user)
+    if user["role_code"] == "ADMIN" or contest.teacher_id == user["user_id"]:
+        return contest
+    if not (_owns_class(db, contest.home_class_id, user) or _owns_class(db, contest.away_class_id, user)):
+        raise HTTPException(404, "班级不存在或无权访问")
     return contest
+
+
+def _assert_can_manage(db: Session, contest: Contest, user: dict) -> None:
+    # 截止/公布会影响两个班，只有主办教师、同时带两班的教师或管理员能做。
+    if user["role_code"] == "ADMIN" or contest.teacher_id == user["user_id"]:
+        return
+    if _owns_class(db, contest.home_class_id, user) and _owns_class(db, contest.away_class_id, user):
+        return
+    raise HTTPException(404, "班级不存在或无权访问")
 
 
 def _class_name(db: Session, class_id: int) -> str:
@@ -420,7 +440,7 @@ def get_teacher_contest(
     current_user: dict = Depends(require_teacher),
     db: Session = Depends(get_db),
 ):
-    contest = _owned_contest(db, contest_id, current_user)
+    contest = _contest_for_read(db, contest_id, current_user)
     return success_response(_build_contest(db, contest))
 
 
@@ -431,13 +451,18 @@ def update_contest_entries(
     current_user: dict = Depends(require_teacher),
     db: Session = Depends(get_db),
 ):
-    contest = _owned_contest(db, contest_id, current_user)
-    if contest.status != "OPEN":
-        raise HTTPException(409, "对抗赛已截止，参赛名单不可修改")
+    contest = _contest_for_read(db, contest_id, current_user)
     sides = [
         (req.home_student_ids, contest.home_class_id, contest.home_assignment_id),
         (req.away_student_ids, contest.away_class_id, contest.away_assignment_id),
     ]
+    # 先鉴权再看状态：无权改对方班级的人不应从 409 里读到对抗赛当前阶段。
+    # 只校验真正被改动的一方：带自己班的那位教师不该能改对方班级的参赛名单。
+    for student_ids, class_id, _ in sides:
+        if student_ids is not None:
+            _owned_class(db, class_id, current_user)
+    if contest.status != "OPEN":
+        raise HTTPException(409, "对抗赛已截止，参赛名单不可修改")
     final_sets = {}
     for student_ids, class_id, assignment_id in sides:
         if student_ids is None:
@@ -483,8 +508,7 @@ def update_contest_status(
     contest = db.query(Contest).filter(Contest.id == contest_id).with_for_update().first()
     if not contest:
         raise HTTPException(404, "对抗赛不存在")
-    _owned_class(db, contest.home_class_id, current_user)
-    _owned_class(db, contest.away_class_id, current_user)
+    _assert_can_manage(db, contest, current_user)
     if contest.status == "PUBLISHED":
         if req.status == "PUBLISHED":
             return success_response(_build_contest(db, contest), message="成绩已公布")
