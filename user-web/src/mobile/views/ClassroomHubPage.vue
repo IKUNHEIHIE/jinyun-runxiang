@@ -102,7 +102,11 @@ watch(() => [session.token, teacher.value], () => {
           :loading="loading"
           :error="error"
           :empty="!rooms.length"
-          empty-text="暂时没有课堂，等待老师开启吧"
+          :empty-text="
+            teacher
+              ? '还没有课堂 · 点上方「开启课堂」就能开始文字直播'
+              : '暂时没有课堂，等待老师开启吧'
+          "
           @retry="load"
           ><div class="classroom-rooms">
             <RouterLink
