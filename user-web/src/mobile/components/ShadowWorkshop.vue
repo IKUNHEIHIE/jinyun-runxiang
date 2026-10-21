@@ -1210,6 +1210,19 @@ function publish() {
   padding-top: 14px;
   background-position: center;
   background-size: cover;
+  position: relative;
+  isolation: isolate;
+}
+.craft-region::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    rgba(245, 237, 224, 0.82),
+    rgba(245, 237, 224, 0.9)
+  );
 }
 .section-title {
   display: flex;
@@ -1341,6 +1354,19 @@ function publish() {
   margin: 0 4.2px 0 20.6px;
   background-position: center;
   background-size: cover;
+  position: relative;
+  isolation: isolate;
+}
+.history-region::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    rgba(245, 237, 224, 0.9),
+    rgba(245, 237, 224, 0.94)
+  );
 }
 .history-list {
   margin: 30px 18.65px 0;
