@@ -494,4 +494,6 @@ AI 工坊首页新增黑漆描金风格 3D 入口，`/ai-workshop/3d` 页面接�
 - 演示数据修正：teacher_li 的 `district` 播种成了「州区」（脚本切片把"蓟州区"少了首字），已 `update user_profile set district='蓟州区' where user_id=18`，并改回 `.local/deploy/create-teacher-accounts.py`；全库 district 取值复查只剩 和平区/蓟州区/武清区/南开区。教师头像换成一张墨金非遗风人像（`.local/deploy/set-teacher-avatar.py`，走真实 upload + profile PUT 链路，资料字段以 `/auth/me` 为准以免被覆盖）。
 - 已知缺口（本轮刻意不动）：① 冷启动瞬间（`/auth/me` 返回前）`MobileApp.vue` 会先按 `studentTabs` 渲染一次底栏，教师会看到约一帧的学生五个 tab；彻底修法是角色未知时先不渲染底栏，或用缓存角色，两处都在另一会话正在改的 `MobileApp.vue` 里。② `jinyun_user_info` 这个 localStorage 键只有 removeItem、从未写入，属历史遗留。
 - 本轮安装包：`user-web/android/app/build/outputs/apk/debug/app-debug.apk`，56,027,203 B，SHA256 `3c310b2298021736a8a337198bfec088408e19fe3ea9d119e2d78fd9f753370c`（`vue-tsc --noEmit` 0 错误；仍含另一会话未提交的改版，故不出 `finalNN-demo.apk` 交付包）。
+- 窄屏与链接复验（`device-teacher-profile-widths.mjs`、`device-teacher-profile-links.mjs`）：360dp 与 411dp 下页面与编辑资料弹层均 `doc==vw`（360/360、411/411）、0 破图、0 元素裁切、无超高标题；四张指标卡分别指向 `#/teacher/analytics`×2、`#/teacher/assignments`、`#/teacher/lesson-plan`（原先全指 analytics，已按含义拆开），五个入口指向 `assignments/lesson-plan/contests/classroom/courses`，真点「备课教案」落到 `#/teacher/lesson-plan` 且表单存在。据此重打包：56,027,2xx B（含 `resize:none` 去掉简介文本域拖拽把手）。commit `0b7e634` 与本次微调已推送 `IKUNHEIHIE/jinyun-runxiang` master。
+
 

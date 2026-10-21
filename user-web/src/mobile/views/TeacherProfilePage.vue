@@ -48,14 +48,15 @@ const completedAchievements = computed(
   () => achievements.value.filter((item: any) => item.completed).length,
 );
 const metricRows = computed(() => [
-  { label: "任教班级", value: stats.value.class_count, hint: "个班级" },
-  { label: "在册学生", value: stats.value.student_count, hint: "名学生" },
+  { label: "任教班级", value: stats.value.class_count, hint: "个班级", path: "/teacher/analytics" },
+  { label: "在册学生", value: stats.value.student_count, hint: "名学生", path: "/teacher/analytics" },
   {
     label: "班级作业",
     value: stats.value.assignment_count,
     hint: stats.value.review_pending ? "待批改 " + stats.value.review_pending : "已全部批改",
+    path: "/teacher/assignments",
   },
-  { label: "备课教案", value: stats.value.lesson_plan_count, hint: "份方案" },
+  { label: "备课教案", value: stats.value.lesson_plan_count, hint: "份方案", path: "/teacher/lesson-plan" },
 ]);
 const entries = [
   { label: "教学工坊", hint: "发布与批改", path: "/teacher/assignments" },
@@ -256,7 +257,7 @@ onUnmounted(() => {
       <section class="account-panel">
         <h2>教学数据</h2>
         <div class="metric-grid">
-          <RouterLink v-for="row in metricRows" :key="row.label" to="/teacher/analytics">
+          <RouterLink v-for="row in metricRows" :key="row.label" :to="row.path">
             <strong>{{ loading ? "—" : (row.value ?? "—") }}</strong>
             <span>{{ row.label }}</span>
             <small>{{ row.hint }}</small>
@@ -596,6 +597,7 @@ onUnmounted(() => {
   background: #fffaf3;
   color: var(--ta-ink);
   font: 400 14px/1.5 var(--sans);
+  resize: none;
 }
 .sheet-hint {
   margin: 0;
