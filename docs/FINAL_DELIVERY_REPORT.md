@@ -503,6 +503,8 @@ AI 工坊首页新增黑漆描金风格 3D 入口，`/ai-workshop/3d` 页面接�
 - 教师端路由审计扩到 11 条（`device-teacher-route-audit.mjs`，含新页 `#/teacher/profile` 与已结束房间 `#/classroom/2`，以及会被改写的 `#/profile`）：55 张图 0 破图、0 横向溢出（docW=vw=411）、0 JS 异常，`#/profile` 落地 hash 记为 `#/teacher/profile`。**审计脚本报出的低 `chars`（10–50）是脚本时序假象**：同一批路由改 12 秒等待后是 163–329 字、3–4 张卡（作业 tab 列出 4 条任务、批改页 3 名学生含「已批改 92 分」与评语），不是空页。
 - 教师身份数据补齐：三位演示教师互相关注（`user_follow` 18↔19、18↔20），`/mobile/me/summary` 的 following/follower 均为 2，`/mobile/me/follows?direction=following` 返回「赵振宇 · 美术组」「苏文锦 · 非遗工坊」，工坊页顶部计数由 `0 关注` 变 `2 关注 · 师友同道`。
 - 审计脚本补上视口参数与 12 秒等待后，同一批 11 条路由在 **360dp** 复跑：`docW=vw=360`、55 张图 0 破图、0 溢出、0 JS 异常，`chars` 恢复到 154–358（证明上一条的低字数确为脚本时序假象）。证据 `route-audit-teacher-shell-360.json`、`audit-360-*.png`。
+- 交付包 `jinyun-runxiang-final35-demo.apk`（2026-10-21 13:16 构建，含上述教师端改动）：56,027,204 B，SHA256 `29d701a4e3a15b9ef39bc6fb8dd3e7292b2cff56f4f9b0cbfb61969459996a72`；已复制到仓库根、`D:\admin\desktop\jinyun-runxiang-final35-demo.apk` 与 `.local/android/artifacts/` 各一份，三处散列一致，并与设备内 `base.apk` 拉回后的散列完全一致（`adb pull` 实测）。**来源说明**：该包同时包含另一会话尚未提交的「我的/工坊」UI 改版，因此不能由当前 `git HEAD`（`98a091c`）完整复现；GitHub Release 未动，仍是 beta.4。
+
 
 
 
